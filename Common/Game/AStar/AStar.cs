@@ -97,6 +97,7 @@ namespace Dwarrowdelf
 				CheckNeighbors(node);
 			}
 
+			this.LastNode = null;
 			return AStarStatus.NotFound;
 		}
 

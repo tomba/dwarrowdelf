@@ -55,6 +55,7 @@
     <Compile Include="Game\AStar\AStarTarget.cs" />
     <Compile Include="Game\AStar\AStarHelpers.cs" />
     <Compile Include="Game\AStar\AStar.cs" />
+    <Compile Include="Game\AStar\BFS.cs" />
     <Compile Include="Game\LivingExtensions.cs" />
     <Compile Include="Game\Messages\ChangeDatas.cs" />
     <Compile Include="Game\TerrainGen\RiverGen.cs" />
