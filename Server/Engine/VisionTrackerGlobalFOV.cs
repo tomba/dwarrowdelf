@@ -123,57 +123,97 @@ namespace Dwarrowdelf.Server
 			m_visibilityArray[p.Z, p.Y, p.X] = true;
 		}
 
+		class MyTarget : IBFSTarget
+		{
+			VisionTrackerGlobalFOV m_tracker;
+			IEnvironmentObject m_env;
+
+			public MyTarget(IEnvironmentObject env, VisionTrackerGlobalFOV tracker)
+			{
+				m_env = env;
+				m_tracker = tracker;
+			}
+
+			public IEnumerable<Direction> GetValidDirs(IntPoint3 p)
+			{
+				var td = m_env.GetTileData(p);
+
+				if (!td.IsSeeThrough)
+					yield break;
+
+				var positioning = DirectionSet.Planar;
+
+				if (td.IsSeeThroughDown)
+					positioning |= DirectionSet.Down;
+
+				var pu = p.Offset(0, 0, 1);
+				if (m_env.Contains(pu))
+				{
+					var tdu = m_env.GetTileData(pu);
+					if (tdu.IsSeeThroughDown)
+						positioning |= DirectionSet.Up;
+				}
+
+				foreach (var d in positioning.ToDirections())
+				{
+					var pp = p + d;
+					if (m_env.Contains(pp) && !m_tracker.GetVisible(pp))
+						yield return d;
+				}
+			}
+
+			public bool GetIsTarget(IntPoint3 location)
+			{
+				return true;
+			}
+		}
+
 		void OnTerrainOrInteriorChanged(IntPoint3 location, TileData oldData, TileData newData)
 		{
+			// if the changed tile is hidden, no new tiles can be revealed
 			if (GetVisible(location) == false)
 				return;
 
+			// if the tile's see-through didn't change, no new tiles can be revealed
+			if (oldData.IsSeeThrough == newData.IsSeeThrough && oldData.IsSeeThroughDown == newData.IsSeeThroughDown)
+				return;
+
+			// XXX this gets done quite often when a tree grows or is removed. Should trees be IsSeeThrough?
+
 			var env = m_environment;
 
-			bool revealPlanar = oldData.IsSeeThrough == false && newData.IsSeeThrough == true;
-			bool revealDown = oldData.IsSeeThroughDown == false && newData.IsSeeThroughDown == true;
+			var initLocs = new IntPoint3[] { location };
+			var target = new MyTarget(env, this);
 
-			List<IntPoint3> revealed = new List<IntPoint3>();
+			var bfs = new BFS(initLocs, target);
 
-			if (revealPlanar)
+			var revealed = bfs.Find().Where(p => p != location).ToList();
+
+			//Debug.Print("Revealed {0} tiles: {1}", revealed.Count, string.Join(", ", revealed.Select(p => p.ToString())));
+
+			if (revealed.Count == 0)
+				return;
+
+			foreach (var p in revealed)
+				SetVisible(p);
+
+			// Send new tiles
+
+			var msg = new Messages.MapDataTerrainsListMessage()
 			{
-				revealed.AddRange(DirectionExtensions.PlanarDirections
-					.Select(dir => location + dir)
-					.Where(env.Contains)
-					.Where(p => GetVisible(p) == false));
-			}
+				Environment = env.ObjectID,
+				TileDataList = revealed.Select(l => new Tuple<IntPoint3, TileData>(l, env.GetTileData(l))).ToArray(),
+			};
 
-			if (revealDown)
+			m_player.Send(msg);
+
+			// Send new objects
+
+			foreach (var ob in revealed.SelectMany(env.GetContents))
 			{
-				var p = location + Direction.Down;
-
-				if (env.Contains(p) && GetVisible(p) == false)
-					revealed.Add(p);
-			}
-
-			if (revealed.Count > 0)
-			{
-				foreach (var p in revealed)
-					SetVisible(p);
-
-				// Send new tiles
-
-				var msg = new Messages.MapDataTerrainsListMessage()
-				{
-					Environment = env.ObjectID,
-					TileDataList = revealed.Select(l => new Tuple<IntPoint3, TileData>(l, env.GetTileData(l))).ToArray(),
-				};
-
-				m_player.Send(msg);
-
-				// Send new objects
-
-				foreach (var ob in revealed.SelectMany(env.GetContents))
-				{
-					var vis = m_player.GetObjectVisibility(ob);
-					Debug.Assert(vis != ObjectVisibility.None);
-					ob.SendTo(m_player, vis);
-				}
+				var vis = m_player.GetObjectVisibility(ob);
+				Debug.Assert(vis != ObjectVisibility.None);
+				ob.SendTo(m_player, vis);
 			}
 		}
 	}
