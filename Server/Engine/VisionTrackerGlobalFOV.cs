@@ -146,7 +146,7 @@ namespace Dwarrowdelf.Server
 				if (td.IsSeeThroughDown)
 					positioning |= DirectionSet.Down;
 
-				var pu = p.Offset(0, 0, 1);
+				var pu = p.Up;
 				if (m_env.Contains(pu))
 				{
 					var tdu = m_env.GetTileData(pu);

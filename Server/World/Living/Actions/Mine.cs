@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Server
 						td.InteriorID = InteriorID.Stairs;
 						env.SetTileData(p, td);
 
-						var tdu = env.GetTileData(p + Direction.Up);
+						var tdu = env.GetTileData(p.Up);
 						if (tdu.TerrainID == TerrainID.NaturalFloor)
 						{
 							tdu.TerrainID = TerrainID.StairsDown;
@@ -136,7 +136,7 @@ namespace Dwarrowdelf.Server
 								tdu.InteriorID = InteriorID.Empty;
 								tdu.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
 							}
-							env.SetTileData(p + Direction.Up, tdu);
+							env.SetTileData(p.Up, tdu);
 						}
 
 					}
@@ -163,7 +163,7 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						if (!env.Contains(p + Direction.Down))
+						if (!env.Contains(p.Down))
 						{
 							SendFailReport(report, "tile not inside map");
 							return ActionState.Fail;
@@ -175,7 +175,7 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						var tdd = env.GetTileData(p + Direction.Down);
+						var tdd = env.GetTileData(p.Down);
 
 						bool clearDown;
 
@@ -201,11 +201,11 @@ namespace Dwarrowdelf.Server
 
 						if (clearDown)
 						{
-							tdd = env.GetTileData(p + Direction.Down);
+							tdd = env.GetTileData(p.Down);
 							tdd.TerrainID = TerrainID.NaturalFloor;
 							tdd.InteriorID = InteriorID.Empty;
 							tdd.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
-							env.SetTileData(p + Direction.Down, tdd);
+							env.SetTileData(p.Down, tdd);
 						}
 					}
 					break;

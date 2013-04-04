@@ -66,6 +66,9 @@ namespace Dwarrowdelf
 			return new IntPoint3(this.X + offsetX, this.Y + offsetY, this.Z + offsetZ);
 		}
 
+		public IntPoint3 Down { get { return new IntPoint3(this.X, this.Y, this.Z - 1); } }
+		public IntPoint3 Up { get { return new IntPoint3(this.X, this.Y, this.Z + 1); } }
+
 		public static bool operator ==(IntPoint3 left, IntPoint3 right)
 		{
 			return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));

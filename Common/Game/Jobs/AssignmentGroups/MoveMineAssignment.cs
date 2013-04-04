@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 			DirectionSet pos;
 
-			var down = p + Direction.Down;
+			var down = p.Down;
 
 			switch (mineActionType)
 			{

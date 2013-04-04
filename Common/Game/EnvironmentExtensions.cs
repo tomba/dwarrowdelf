@@ -69,7 +69,7 @@ namespace Dwarrowdelf
 				if (!td.TerrainID.IsSlope())
 					return false;
 
-				if (env.GetTerrainID(srcLoc + Direction.Up) != TerrainID.Empty)
+				if (env.GetTerrainID(srcLoc.Up) != TerrainID.Empty)
 					return false;
 
 				return true;
@@ -115,7 +115,7 @@ namespace Dwarrowdelf
 				if (!td.TerrainID.IsSlope())
 					return false;
 
-				if (env.GetTerrainID(dstLoc + Direction.Up) != TerrainID.Empty)
+				if (env.GetTerrainID(dstLoc.Up) != TerrainID.Empty)
 					return false;
 
 				return true;
@@ -152,7 +152,7 @@ namespace Dwarrowdelf
 					return true;
 			}
 
-			var pu = location + Direction.Up;
+			var pu = location.Up;
 			if (env.Contains(pu) && env.GetTileData(pu).IsSeeThroughDown)
 				return true;
 

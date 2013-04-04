@@ -174,7 +174,7 @@ namespace Dwarrowdelf.Server
 			if (srcLevel == 0)
 				return;
 
-			var down = src + Direction.Down;
+			var down = src.Down;
 
 			if (CanWaterFlow(src, down) == false)
 				return;
@@ -196,7 +196,7 @@ namespace Dwarrowdelf.Server
 				m_currentSrc = src;
 				m_currentSrcLevel = srcLevel;
 
-				var astar = new AStar(new IntPoint3[] { src + Direction.Down }, this);
+				var astar = new AStar(new IntPoint3[] { src.Down}, this);
 
 				var status = astar.Find();
 

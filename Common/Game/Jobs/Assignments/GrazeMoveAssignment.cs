@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				var p = this.Worker.Location + dir + Direction.Down;
 				if (env.Contains(p))
 				{
-					flr = env.GetTerrainID(this.Worker.Location + dir + Direction.Down);
+					flr = env.GetTerrainID(p);
 					if (flr.IsSlope() && flr.ToDir().Reverse() == dir)
 						dir |= Direction.Down;
 				}
