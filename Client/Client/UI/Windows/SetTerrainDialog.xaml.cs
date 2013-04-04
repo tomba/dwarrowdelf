@@ -65,9 +65,10 @@ namespace Dwarrowdelf.Client.UI
 					break;
 
 				case "Wall":
-					td.TerrainID = TerrainID.NaturalWall;
+					td.TerrainID = TerrainID.NaturalFloor;
 					td.TerrainMaterialID = MaterialID.Granite;
-					td.InteriorID = InteriorID.Empty;
+					td.InteriorID = InteriorID.NaturalWall;
+					td.InteriorMaterialID = MaterialID.Granite;
 					break;
 
 				case "Floor":

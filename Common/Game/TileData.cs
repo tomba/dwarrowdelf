@@ -202,8 +202,8 @@ namespace Dwarrowdelf
 		{
 			get
 			{
-				var terrain = Terrains.GetTerrain(this.TerrainID);
-				return terrain.IsMinable;
+				return this.InteriorID == Dwarrowdelf.InteriorID.NaturalWall ||
+					this.TerrainID.IsSlope();
 			}
 		}
 	}

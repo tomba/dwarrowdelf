@@ -113,22 +113,25 @@ namespace Dwarrowdelf.TerrainGen
 
 						if (z < surface)
 						{
-							td.TerrainID = TerrainID.NaturalWall;
+							td.TerrainID = TerrainID.NaturalFloor;
 							td.TerrainMaterialID = MaterialID.Granite;
+							td.InteriorID = InteriorID.NaturalWall;
+							td.InteriorMaterialID = MaterialID.Granite;
 						}
 						else if (z == surface)
 						{
 							td.TerrainID = TerrainID.NaturalFloor;
 							td.TerrainMaterialID = MaterialID.Granite;
+							td.InteriorID = InteriorID.Empty;
+							td.InteriorMaterialID = MaterialID.Undefined;
 						}
 						else
 						{
 							td.TerrainID = TerrainID.Empty;
 							td.TerrainMaterialID = MaterialID.Undefined;
+							td.InteriorID = InteriorID.Empty;
+							td.InteriorMaterialID = MaterialID.Undefined;
 						}
-
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = MaterialID.Undefined;
 
 						SetTileData(p, td);
 					}

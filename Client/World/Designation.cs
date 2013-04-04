@@ -278,7 +278,7 @@ namespace Dwarrowdelf.Client
 					return this.Environment.GetHidden(p) || td.IsMinable;
 
 				case DesignationType.CreateStairs:
-					return this.Environment.GetHidden(p) || (td.IsMinable && td.TerrainID == TerrainID.NaturalWall);
+					return this.Environment.GetHidden(p) || (td.IsMinable && td.InteriorID == InteriorID.NaturalWall);
 
 				case DesignationType.Channel:
 					// XXX

@@ -158,10 +158,10 @@ namespace Dwarrowdelf.Server.Fortress
 
 					var td = new TileData();
 
-					td.TerrainID = TerrainID.NaturalWall;
+					td.TerrainID = TerrainID.NaturalFloor;
 					td.TerrainMaterialID = MaterialID.Granite;
-					td.InteriorID = InteriorID.Empty;
-					td.InteriorMaterialID = MaterialID.Undefined;
+					td.InteriorID = InteriorID.NaturalWall;
+					td.InteriorMaterialID = MaterialID.Granite;
 
 					env.SetTileData(p, td);
 				}

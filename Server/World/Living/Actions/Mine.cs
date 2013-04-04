@@ -28,8 +28,6 @@ namespace Dwarrowdelf.Server
 			{
 				case MineActionType.Mine:
 					{
-						var id = td.TerrainID;
-
 						if (!td.IsMinable)
 						{
 							SendFailReport(report, "not mineable");
@@ -51,7 +49,7 @@ namespace Dwarrowdelf.Server
 
 						ItemObject item = null;
 
-						if (id == TerrainID.NaturalWall && this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
+						if (td.InteriorID == InteriorID.NaturalWall && this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
 						{
 							ItemID itemID;
 							MaterialInfo material;
@@ -108,8 +106,6 @@ namespace Dwarrowdelf.Server
 
 				case MineActionType.Stairs:
 					{
-						var id = td.TerrainID;
-
 						if (!td.IsMinable)
 						{
 							SendFailReport(report, "not mineable");
@@ -122,7 +118,7 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						if (id != TerrainID.NaturalWall)
+						if (td.InteriorID != InteriorID.NaturalWall)
 						{
 							SendFailReport(report, "not natural wall");
 							return ActionState.Fail;
@@ -197,7 +193,7 @@ namespace Dwarrowdelf.Server
 
 						bool clearDown;
 
-						if (tdd.TerrainID == TerrainID.NaturalWall)
+						if (tdd.InteriorID == InteriorID.NaturalWall)
 						{
 							clearDown = true;
 						}

@@ -10,6 +10,7 @@ namespace Dwarrowdelf
 	{
 		Undefined = 0,
 		Empty,
+		NaturalWall,
 		BuiltWall,
 		Pavement,
 		Stairs,
@@ -25,7 +26,8 @@ namespace Dwarrowdelf
 	public enum InteriorFlags
 	{
 		None = 0,
-		Blocker = 1 << 0,
+		Blocker = 1 << 0,		// The tile can not be entered
+		BlocksVision = 1 << 2,	// Blocks line of sight
 	}
 
 	public sealed class InteriorInfo
@@ -35,7 +37,7 @@ namespace Dwarrowdelf
 		public InteriorFlags Flags { get; internal set; }
 
 		public bool IsBlocker { get { return (this.Flags & InteriorFlags.Blocker) != 0; } }
-		public bool IsSeeThrough { get { return !this.IsBlocker; } }
+		public bool IsSeeThrough { get { return (this.Flags & InteriorFlags.BlocksVision) == 0; } }
 	}
 
 	public static class Interiors

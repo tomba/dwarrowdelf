@@ -218,11 +218,6 @@ namespace Dwarrowdelf.Client
 					tile.SymbolID = SymbolID.Floor;
 					break;
 
-				case TerrainID.NaturalWall:
-					tile.SymbolID = SymbolID.Wall;
-					tile.BgColor = GameColor.SlateGray;
-					break;
-
 				case TerrainID.StairsDown:
 					tile.SymbolID = SymbolID.StairsDown;
 					break;
@@ -339,6 +334,11 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case InteriorID.BuiltWall:
+					tile.SymbolID = SymbolID.Wall;
+					seeThrough = false;
+					break;
+
+				case InteriorID.NaturalWall:
 					tile.SymbolID = SymbolID.Wall;
 					seeThrough = false;
 					break;

@@ -7,16 +7,15 @@
 
 	<TerrainInfo ID="NaturalFloor" Flags="Supporting" />
 	<TerrainInfo ID="BuiltFloor" Flags="Supporting" />
-	<TerrainInfo ID="NaturalWall" Flags="Blocker,Minable,BlocksVision" />
 	<TerrainInfo ID="StairsDown" Flags="Supporting,SeeThroughDown,Permeable" />
 
-	<TerrainInfo ID="SlopeNorth" Flags="Supporting,Minable" />
-	<TerrainInfo ID="SlopeNorthEast" Flags="Supporting,Minable" />
-	<TerrainInfo ID="SlopeEast" Flags="Supporting,Minable" />
-	<TerrainInfo ID="SlopeSouthEast" Flags="Supporting,Minable" />
-	<TerrainInfo ID="SlopeSouth" Flags="Supporting,Minable" />
-	<TerrainInfo ID="SlopeSouthWest" Flags="Supporting,Minable" />
-	<TerrainInfo ID="SlopeWest" Flags="Supporting,Minable" />
-	<TerrainInfo ID="SlopeNorthWest" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeNorth" Flags="Supporting" />
+	<TerrainInfo ID="SlopeNorthEast" Flags="Supporting" />
+	<TerrainInfo ID="SlopeEast" Flags="Supporting" />
+	<TerrainInfo ID="SlopeSouthEast" Flags="Supporting" />
+	<TerrainInfo ID="SlopeSouth" Flags="Supporting" />
+	<TerrainInfo ID="SlopeSouthWest" Flags="Supporting" />
+	<TerrainInfo ID="SlopeWest" Flags="Supporting" />
+	<TerrainInfo ID="SlopeNorthWest" Flags="Supporting" />
 
 </x:Array>

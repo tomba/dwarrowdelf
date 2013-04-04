@@ -11,7 +11,6 @@ namespace Dwarrowdelf
 		Empty,
 		NaturalFloor,
 		BuiltFloor,
-		NaturalWall,
 		StairsDown,
 
 		SlopeNorth,
@@ -29,7 +28,6 @@ namespace Dwarrowdelf
 	{
 		None = 0,
 		Blocker = 1 << 1,		// The tile can not be entered
-		Minable = 1 << 2,		// can be mined, changing the terrain to floor
 		Permeable = 1 << 3,		// Fluids can pass through
 		Supporting = 1 << 4,	// supports standing upon
 		BlocksVision = 1 << 5,	// Blocks line of sight
@@ -56,11 +54,6 @@ namespace Dwarrowdelf
 		/// Fluids can flow downwards through the tile
 		/// </summary>
 		public bool IsPermeable { get { return (this.Flags & TerrainFlags.Permeable) != 0; } }
-
-		/// <summary>
-		/// Tile can be mined, becoming a floor
-		/// </summary>
-		public bool IsMinable { get { return (this.Flags & TerrainFlags.Minable) != 0; } }
 
 		/// <summary>
 		/// Does not block line of sight in planar directions
