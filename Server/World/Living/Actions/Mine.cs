@@ -77,15 +77,13 @@ namespace Dwarrowdelf.Server
 							item = builder.Create(this.World);
 						}
 
-						env.SetTileData(p, new TileData()
-						{
-							TerrainID = TerrainID.NaturalFloor,
-							TerrainMaterialID = env.GetTerrainMaterialID(p),
-							InteriorID = InteriorID.Empty,
-							InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined,
-							Flags = TileFlags.None,
-							WaterLevel = 0,
-						});
+						td.InteriorID = InteriorID.Empty;
+						td.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
+
+						if (td.TerrainID.IsSlope())
+							td.TerrainID = TerrainID.NaturalFloor;
+
+						env.SetTileData(p, td);
 
 						if (item != null)
 						{

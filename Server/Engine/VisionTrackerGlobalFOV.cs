@@ -164,22 +164,27 @@ namespace Dwarrowdelf.Server
 
 			public bool GetIsTarget(IntPoint3 location)
 			{
-				return true;
+				return m_tracker.GetVisible(location) == false;
 			}
 		}
 
 		void OnTerrainOrInteriorChanged(IntPoint3 location, TileData oldData, TileData newData)
 		{
-			// if the changed tile is hidden, no new tiles can be revealed
-			if (GetVisible(location) == false)
-				return;
+			bool check = false;
 
-			// if the tile's see-through didn't change, no new tiles can be revealed
-			if (oldData.IsSeeThrough == newData.IsSeeThrough && oldData.IsSeeThroughDown == newData.IsSeeThroughDown)
-				return;
+			if (oldData.IsSeeThroughDown == false && newData.IsSeeThroughDown == true &&
+				(GetVisible(location.Down) || GetVisible(location)))
+				check = true;
 
-			// XXX this gets done quite often when a tree grows or is removed. Should trees be IsSeeThrough?
+			if (oldData.IsSeeThrough == false && newData.IsSeeThrough == true && GetVisible(location))
+				check = true;
 
+			if (check)
+				CheckVisibility(location, oldData, newData);
+		}
+
+		void CheckVisibility(IntPoint3 location, TileData oldData, TileData newData)
+		{
 			var env = m_environment;
 
 			var initLocs = new IntPoint3[] { location };
@@ -187,7 +192,7 @@ namespace Dwarrowdelf.Server
 
 			var bfs = new BFS(initLocs, target);
 
-			var revealed = bfs.Find().Where(p => p != location).ToList();
+			var revealed = bfs.Find().ToList();
 
 			//Debug.Print("Revealed {0} tiles: {1}", revealed.Count, string.Join(", ", revealed.Select(p => p.ToString())));
 

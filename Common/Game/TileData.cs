@@ -122,7 +122,7 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Can one see through this tile downwards
+		/// Can one see through this tile's floor
 		/// </summary>
 		public bool IsSeeThroughDown
 		{
@@ -132,9 +132,7 @@ namespace Dwarrowdelf
 					throw new Exception();
 
 				var terrain = Terrains.GetTerrain(this.TerrainID);
-				var interior = Interiors.GetInterior(this.InteriorID);
-
-				return terrain.IsSeeThroughDown && interior.IsSeeThrough;
+				return terrain.IsSeeThroughDown;
 			}
 		}
 
