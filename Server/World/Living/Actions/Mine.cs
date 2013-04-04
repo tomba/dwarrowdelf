@@ -49,19 +49,11 @@ namespace Dwarrowdelf.Server
 
 						ItemObject item = null;
 
-						if (td.InteriorID == InteriorID.NaturalWall && this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
+						if (td.InteriorID == InteriorID.NaturalWall &&
+							this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
 						{
 							ItemID itemID;
-							MaterialInfo material;
-
-							if (env.GetInteriorID(p) == InteriorID.Ore)
-							{
-								material = env.GetInteriorMaterial(p);
-							}
-							else
-							{
-								material = env.GetTerrainMaterial(p);
-							}
+							MaterialInfo material = env.GetInteriorMaterial(p);
 
 							switch (material.Category)
 							{
@@ -132,11 +124,14 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
+						td.InteriorID = InteriorID.Stairs;
+						env.SetTileData(p, td);
+
 						var tdu = env.GetTileData(p + Direction.Up);
 						if (tdu.TerrainID == TerrainID.NaturalFloor)
 						{
 							tdu.TerrainID = TerrainID.StairsDown;
-							if (tdu.InteriorID == InteriorID.Grass)
+							if (tdu.InteriorID.IsClear())
 							{
 								tdu.InteriorID = InteriorID.Empty;
 								tdu.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
@@ -144,15 +139,6 @@ namespace Dwarrowdelf.Server
 							env.SetTileData(p + Direction.Up, tdu);
 						}
 
-						env.SetTileData(p, new TileData()
-						{
-							TerrainID = TerrainID.NaturalFloor,
-							TerrainMaterialID = env.GetTerrainMaterialID(p),
-							InteriorID = InteriorID.Stairs,
-							InteriorMaterialID = env.GetTerrainMaterialID(p),
-							Flags = TileFlags.None,
-							WaterLevel = 0,
-						});
 					}
 					break;
 

@@ -17,7 +17,6 @@ namespace Dwarrowdelf
 		Sapling,
 		Tree,
 		DeadTree,
-		Ore,
 		Grass,
 		Shrub,
 	}

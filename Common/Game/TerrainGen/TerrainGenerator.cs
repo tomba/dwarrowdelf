@@ -256,7 +256,6 @@ namespace Dwarrowdelf.TerrainGen
 			if (td.InteriorID != InteriorID.NaturalWall)
 				return;
 
-			td.InteriorID = InteriorID.Ore;
 			td.InteriorMaterialID = oreMaterialID;
 			SetTileDataNoHeight(p, td);
 		}
@@ -301,10 +300,9 @@ namespace Dwarrowdelf.TerrainGen
 			if (td.InteriorID != InteriorID.NaturalWall)
 				return;
 
-			if (td.InteriorID == InteriorID.Ore)
+			if (Materials.GetMaterial(td.InteriorMaterialID).Category != MaterialCategory.Rock)
 				return;
 
-			td.InteriorID = InteriorID.Ore;
 			td.InteriorMaterialID = oreMaterialID;
 			SetTileDataNoHeight(p, td);
 

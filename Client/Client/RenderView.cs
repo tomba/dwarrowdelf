@@ -339,8 +339,24 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case InteriorID.NaturalWall:
-					tile.SymbolID = SymbolID.Wall;
-					seeThrough = false;
+					switch (matInfo.Category)
+					{
+						case MaterialCategory.Gem:
+							tile.SymbolID = SymbolID.GemOre;
+							seeThrough = true;
+							break;
+
+						case MaterialCategory.Mineral:
+							tile.SymbolID = SymbolID.ValuableOre;
+							seeThrough = true;
+							break;
+
+						default:
+							tile.SymbolID = SymbolID.Wall;
+							seeThrough = false;
+							break;
+					}
+
 					break;
 
 				case InteriorID.Pavement:
@@ -444,23 +460,6 @@ namespace Dwarrowdelf.Client
 				case InteriorID.Shrub:
 					{
 						tile.SymbolID = SymbolID.Shrub;
-					}
-					break;
-
-				case InteriorID.Ore:
-					switch (matInfo.Category)
-					{
-						case MaterialCategory.Gem:
-							tile.SymbolID = SymbolID.GemOre;
-							break;
-
-						case MaterialCategory.Mineral:
-							tile.SymbolID = SymbolID.ValuableOre;
-							break;
-
-						default:
-							tile.SymbolID = SymbolID.Undefined;
-							break;
 					}
 					break;
 

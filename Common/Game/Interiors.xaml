@@ -11,7 +11,6 @@
 	<InteriorInfo ID="Sapling" />
 	<InteriorInfo ID="Tree" Flags="Blocker" />
 	<InteriorInfo ID="DeadTree" Flags="Blocker" />
-	<InteriorInfo ID="Ore" Flags="Blocker,BlocksVision" />
 	<InteriorInfo ID="Grass" />
 	<InteriorInfo ID="Shrub" />
 
