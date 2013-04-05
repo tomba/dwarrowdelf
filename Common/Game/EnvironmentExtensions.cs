@@ -192,5 +192,44 @@ namespace Dwarrowdelf
 		{
 			return positioning.ToSurroundingPoints(pos).Where(p => CanEnter(env, p));
 		}
+
+		/// <summary>
+		/// Get possible positioning to perform mining on given location
+		/// </summary>
+		public static DirectionSet GetPossibleMiningPositioning(this IEnvironmentObject env, IntPoint3 p,
+			MineActionType mineActionType)
+		{
+			DirectionSet ds;
+
+			var down = p.Down;
+
+			switch (mineActionType)
+			{
+				case MineActionType.Mine:
+					ds = DirectionSet.Planar;
+
+					if (env.CanMoveFrom(down, Direction.Up))
+						ds |= DirectionSet.Down;
+
+					break;
+
+				case MineActionType.Stairs:
+					ds = DirectionSet.Planar | DirectionSet.Up;
+
+					if (env.CanMoveFrom(down, Direction.Up))
+						ds |= DirectionSet.Down;
+
+					break;
+
+				case MineActionType.Channel:
+					ds = DirectionSet.Planar;
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			return ds;
+		}
 	}
 }
