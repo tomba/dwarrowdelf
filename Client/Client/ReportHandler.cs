@@ -26,6 +26,7 @@ namespace Dwarrowdelf.Client
 
 
 		World m_world;
+		bool m_verboseReports = false;
 
 		public ReportHandler(World world)
 		{
@@ -100,15 +101,15 @@ namespace Dwarrowdelf.Client
 			//	Events.AddGameEvent(living, "{0} hauled {1} to {2}", living, itemName, report.Direction);
 		}
 
-		void HandleItemActionReport(ItemActionReport report, string verb1, string verb2)
+		void HandleItemActionReport(ItemActionReport report, string verb1, string verb2, bool verboseReportMode = false)
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			var itemName = GetPrintableItemName(report.ItemObjectID);
 
-			if (report.Success)
-				Events.AddGameEvent(living, "{0} {1} {2}", living, verb1, itemName);
-			else
+			if (report.Success == false)
 				Events.AddGameEvent(living, "{0} failed to {1} {2}: {3}", living, verb2, itemName, report.FailReason);
+			else if (verboseReportMode == false || m_verboseReports)
+				Events.AddGameEvent(living, "{0} {1} {2}", living, verb1, itemName);
 		}
 
 		void HandleReport(EquipItemActionReport report)
@@ -123,12 +124,12 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(GetItemActionReport report)
 		{
-			HandleItemActionReport(report, "gets", "get");
+			HandleItemActionReport(report, "gets", "get", true);
 		}
 
 		void HandleReport(DropItemActionReport report)
 		{
-			HandleItemActionReport(report, "drops", "drop");
+			HandleItemActionReport(report, "drops", "drop", true);
 		}
 
 		void HandleReport(CarryItemActionReport report)
@@ -138,7 +139,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(ConsumeActionReport report)
 		{
-			HandleItemActionReport(report, "consumes", "consume");
+			HandleItemActionReport(report, "consumes", "consume", true);
 		}
 
 		void HandleReport(InstallItemActionReport report)
@@ -255,10 +256,10 @@ namespace Dwarrowdelf.Client
 		void HandleReport(SleepActionReport report)
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
-			if (report.Success)
-				Events.AddGameEvent(living, "{0} wakes up", living);
-			else
+			if (report.Success == false)
 				Events.AddGameEvent(living, "{0} fails to sleep: {1}", living, report.FailReason);
+			else if (m_verboseReports)
+				Events.AddGameEvent(living, "{0} wakes up", living);
 		}
 	}
 }
