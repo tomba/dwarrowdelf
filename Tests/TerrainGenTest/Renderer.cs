@@ -241,31 +241,6 @@ namespace TerrainGenTest
 					r = g = b = 0;
 					break;
 
-				case TerrainID.NaturalWall:
-					MaterialID mat;
-
-					switch (td.InteriorID)
-					{
-						case InteriorID.Empty:
-							mat = td.TerrainMaterialID;
-							break;
-
-						case InteriorID.Ore:
-							mat = td.InteriorMaterialID;
-							break;
-
-						default:
-							throw new Exception();
-					}
-
-					var matInfo = Materials.GetMaterial(mat);
-					var rgb = matInfo.Color.ToGameColorRGB();
-
-					r = rgb.R;
-					g = rgb.G;
-					b = rgb.B;
-					break;
-
 				case TerrainID.Empty:
 				case TerrainID.SlopeNorth:
 				case TerrainID.SlopeNorthEast:
@@ -285,6 +260,18 @@ namespace TerrainGenTest
 					{
 						case InteriorID.Empty:
 							r = g = b = 0;
+							break;
+
+						case InteriorID.NaturalWall:
+
+							var mat = td.InteriorMaterialID;
+
+							var matInfo = Materials.GetMaterial(mat);
+							var rgb = matInfo.Color.ToGameColorRGB();
+
+							r = rgb.R;
+							g = rgb.G;
+							b = rgb.B;
 							break;
 
 						case InteriorID.Stairs:
