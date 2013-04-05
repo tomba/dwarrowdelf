@@ -36,7 +36,8 @@ namespace Dwarrowdelf.Client
 
 			public DesignationType Type;
 			public IJob Job;
-			public bool Reachable;
+			public bool ReachableSimple;
+			public int NextReacahbleCheck;
 		}
 
 		public Designation(EnvironmentObject env)
@@ -104,7 +105,12 @@ namespace Dwarrowdelf.Client
 					if (GetTileValid(p, data.Type) == false)
 						rm.Add(p);
 
-					data.Reachable = GetTileReachable(p, data.Type);
+					bool reachable = GetTileReachableSimple(p, data.Type);
+
+					if (data.ReachableSimple == false && reachable)
+						data.NextReacahbleCheck = 0;
+
+					data.ReachableSimple = reachable;
 				}
 
 				foreach (var p in rm)
@@ -136,7 +142,7 @@ namespace Dwarrowdelf.Client
 				}
 
 				var data = new DesignationData(type);
-				data.Reachable = GetTileReachable(p, type);
+				data.ReachableSimple = GetTileReachableSimple(p, type);
 				m_map[p] = data;
 
 				this.Environment.OnTileExtraChanged(p);
@@ -158,14 +164,26 @@ namespace Dwarrowdelf.Client
 
 		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
+			var tick = this.Environment.World.TickNumber;
+
 			var designations = m_map
-				.Where(kvp => kvp.Value.Reachable && kvp.Value.Job == null)
+				.Where(kvp => kvp.Value.Job == null && kvp.Value.ReachableSimple && kvp.Value.NextReacahbleCheck <= tick)
 				.OrderBy(kvp => (kvp.Key - living.Location).Length);
 
 			foreach (var d in designations)
 			{
 				var p = d.Key;
 				var dt = d.Value;
+
+				var ds = GetDesignationPositioning(p, dt.Type);
+
+				// XXX we should pass the found path to the job, to avoid re-pathing
+				bool canreach = AStar.CanReach(this.Environment, living.Location, p, ds);
+				if (!canreach)
+				{
+					dt.NextReacahbleCheck = tick + 10;
+					continue;
+				}
 
 				IAssignment job;
 
@@ -174,22 +192,7 @@ namespace Dwarrowdelf.Client
 					case DesignationType.Mine:
 					case DesignationType.CreateStairs:
 					case DesignationType.Channel:
-						MineActionType mat;
-
-						switch (dt.Type)
-						{
-							case DesignationType.Mine:
-								mat = MineActionType.Mine;
-								break;
-							case DesignationType.CreateStairs:
-								mat = MineActionType.Stairs;
-								break;
-							case DesignationType.Channel:
-								mat = MineActionType.Channel;
-								break;
-							default:
-								throw new Exception();
-						}
+						MineActionType mat = DesignationTypeToMineActionType(dt.Type);
 
 						job = new Jobs.AssignmentGroups.MoveMineAssignment(this, this.Environment, p, mat);
 
@@ -215,18 +218,23 @@ namespace Dwarrowdelf.Client
 
 		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
+			var p = FindLocationFromJob(job);
+
 			switch (status)
 			{
 				case JobStatus.Ok:
 					break;
 
 				case JobStatus.Done:
-					RemoveDesignation(FindLocationFromJob(job));
+					RemoveDesignation(p);
 					break;
 
 				case JobStatus.Abort:
+					RemoveJob(p);
+					break;
+
 				case JobStatus.Fail:
-					RemoveJob(FindLocationFromJob(job));
+					RemoveDesignation(p);
 					break;
 
 				default:
@@ -292,40 +300,46 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		bool GetTileReachable(IntPoint3 p, DesignationType type)
+		MineActionType DesignationTypeToMineActionType(DesignationType dtype)
 		{
-			DirectionSet dirs;
+			switch (dtype)
+			{
+				case DesignationType.Mine:
+					return MineActionType.Mine;
+				case DesignationType.CreateStairs:
+					return MineActionType.Stairs;
+				case DesignationType.Channel:
+					return MineActionType.Channel;
+				default:
+					throw new Exception();
+			}
+		}
 
-			// trivial validity check to remove AStar process for totally blocked tiles
+		/// <summary>
+		/// trivial validity check to remove AStar process for totally blocked tiles
+		/// </summary>
+		bool GetTileReachableSimple(IntPoint3 p, DesignationType type)
+		{
+			DirectionSet dirs = GetDesignationPositioning(p, type);
 
+			return dirs.ToSurroundingPoints(p).Any(this.Environment.CanEnter);
+		}
+
+		DirectionSet GetDesignationPositioning(IntPoint3 p, DesignationType type)
+		{
 			switch (type)
 			{
 				case DesignationType.Mine:
-					dirs = DirectionSet.Planar;
-					// If the tile below has stairs, tile tile can be mined from below
-					if (this.Environment.CanMoveFrom(p.Down, Direction.Up))
-						dirs |= DirectionSet.Down;
-					break;
-
 				case DesignationType.CreateStairs:
-					dirs = DirectionSet.Planar | DirectionSet.Up;
-					if (this.Environment.CanMoveFrom(p.Down, Direction.Up))
-						dirs |= DirectionSet.Down;
-					break;
-
 				case DesignationType.Channel:
-					dirs = DirectionSet.Planar;
-					break;
+					return this.Environment.GetPossibleMiningPositioning(p, DesignationTypeToMineActionType(type));
 
 				case DesignationType.FellTree:
-					dirs = DirectionSet.Planar;
-					break;
+					return DirectionSet.Planar;
 
 				default:
 					throw new Exception();
 			}
-
-			return dirs.ToSurroundingPoints(p).Any(this.Environment.CanEnter);
 		}
 	}
 }
