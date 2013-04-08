@@ -10,9 +10,12 @@ namespace Dwarrowdelf
 		public const int Mask = 0x3;
 		public const int FullMask = (Mask << XShift) | (Mask << YShift) | (Mask << ZShift);
 
-		public const int DirNeg = 1;		// 1 ^ 1 == 0
-		public const int DirNone = 0;		// 0 ^ 1 == 1
-		public const int DirPos = 3;		// 3 ^ 1 == 2
+		// Note: using values 0, 1, 3 would give us much simpler conversions,
+		// but then we cannot set DirNeg and DirPos at the same time
+		// ((x ^ 1) - (x >> 1)) - 1
+		public const int DirNone = 0;			// ((0 ^ 1) - (0 >> 1)) - 1 = 0
+		public const int DirNeg = (1 << 0);		// ((1 ^ 1) - (1 >> 1)) - 1 = -1
+		public const int DirPos = (1 << 1);		// ((2 ^ 1) - (2 >> 1)) - 1 = 1
 
 		public const int XShift = 0;
 		public const int YShift = 2;
@@ -96,9 +99,9 @@ namespace Dwarrowdelf
 			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			x ^= 1;
-			y ^= 1;
-			z ^= 1;
+			x = (x ^ 1) - (x >> 1);
+			y = (y ^ 1) - (y >> 1);
+			z = (z ^ 1) - (z >> 1);
 
 			int bit = z * 9 + y * 3 + x;
 
@@ -120,9 +123,9 @@ namespace Dwarrowdelf
 
 				int d = 0;
 
-				d |= (x ^ 1) << DirectionConsts.XShift;
-				d |= (y ^ 1) << DirectionConsts.YShift;
-				d |= (z ^ 1) << DirectionConsts.ZShift;
+				d |= ((x ^ 1) - (x >> 1)) << DirectionConsts.XShift;
+				d |= ((y ^ 1) - (y >> 1)) << DirectionConsts.YShift;
+				d |= ((z ^ 1) - (z >> 1)) << DirectionConsts.ZShift;
 
 				yield return (Direction)d;
 			}
@@ -247,9 +250,9 @@ namespace Dwarrowdelf
 			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			x = (2 - (x ^ 1)) ^ 1;
-			y = (2 - (y ^ 1)) ^ 1;
-			z = (2 - (z ^ 1)) ^ 1;
+			x = (((x << 1) - (x >> 1)) ^ 1) - 1;
+			y = (((y << 1) - (y >> 1)) ^ 1) - 1;
+			z = (((z << 1) - (z >> 1)) ^ 1) - 1;
 
 			d = 0;
 
@@ -314,8 +317,8 @@ namespace Dwarrowdelf
 			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			// 0, 1, 3 are valid values
-			return x != 2 && y != 2 && z != 2;
+			// 0, 1, 2 are valid values
+			return x != 3 && y != 3 && z != 3;
 		}
 	}
 }

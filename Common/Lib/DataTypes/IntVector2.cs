@@ -31,8 +31,8 @@ namespace Dwarrowdelf
 			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
 			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 
-			m_x = (x ^ 1) - 1;
-			m_y = (y ^ 1) - 1;
+			m_x = ((x ^ 1) - (x >> 1)) - 1;
+			m_y = ((y ^ 1) - (y >> 1)) - 1;
 		}
 
 		public bool IsNull
@@ -136,8 +136,11 @@ namespace Dwarrowdelf
 
 			int d = 0;
 
-			d |= ((v.X + 1) ^ 1) << DirectionConsts.XShift;
-			d |= ((v.Y + 1) ^ 1) << DirectionConsts.YShift;
+			int x = ((v.X + 1) ^ 1) - ((v.X + 1) >> 1);
+			int y = ((v.Y + 1) ^ 1) - ((v.Y + 1) >> 1);
+
+			d |= x << DirectionConsts.XShift;
+			d |= y << DirectionConsts.YShift;
 
 			return (Direction)d;
 		}
@@ -241,8 +244,8 @@ namespace Dwarrowdelf
 			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
 			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 
-			x = (x ^ 1) - 1;
-			y = (y ^ 1) - 1;
+			x = ((x ^ 1) - (x >> 1)) - 1;
+			y = ((y ^ 1) - (y >> 1)) - 1;
 
 			IntVector2 v = new IntVector2(x, y);
 			v = v.FastRotate(rotate);

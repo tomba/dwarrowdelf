@@ -39,9 +39,9 @@ namespace Dwarrowdelf
 			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			m_x = (x ^ 1) - 1;
-			m_y = (y ^ 1) - 1;
-			m_z = (z ^ 1) - 1;
+			m_x = ((x ^ 1) - (x >> 1)) - 1;
+			m_y = ((y ^ 1) - (y >> 1)) - 1;
+			m_z = ((z ^ 1) - (z >> 1)) - 1;
 		}
 
 		public bool IsNull
@@ -158,9 +158,13 @@ namespace Dwarrowdelf
 			int y = (int)Math.Round(v.Y);
 			int z = (int)Math.Round(v.Z);
 
-			d |= ((x + 1) ^ 1) << DirectionConsts.XShift;
-			d |= ((y + 1) ^ 1) << DirectionConsts.YShift;
-			d |= ((z + 1) ^ 1) << DirectionConsts.ZShift;
+			x = ((x + 1) ^ 1) - ((x + 1) >> 1);
+			y = ((y + 1) ^ 1) - ((y + 1) >> 1);
+			z = ((z + 1) ^ 1) - ((z + 1) >> 1);
+
+			d |= x << DirectionConsts.XShift;
+			d |= y << DirectionConsts.YShift;
+			d |= z << DirectionConsts.ZShift;
 
 			return (Direction)d;
 		}
