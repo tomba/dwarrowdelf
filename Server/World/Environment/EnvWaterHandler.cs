@@ -196,7 +196,7 @@ namespace Dwarrowdelf.Server
 				m_currentSrc = src;
 				m_currentSrcLevel = srcLevel;
 
-				var astar = new AStar(new IntPoint3[] { src.Down}, this);
+				var astar = new AStar(new IntPoint3[] { src.Down }, this);
 
 				var status = astar.Find();
 
