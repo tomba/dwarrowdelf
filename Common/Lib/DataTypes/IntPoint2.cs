@@ -10,23 +10,25 @@ namespace Dwarrowdelf
 	[System.ComponentModel.TypeConverter(typeof(IntPointConverter))]
 	public struct IntPoint2 : IEquatable<IntPoint2>
 	{
-		readonly int m_x;
-		readonly int m_y;
+		// X, Y: 16 bits, from -32768 to 32767
+		// X: bits 0-15, Y: bits 16-31
+		readonly int m_value;
 
-		public int X { get { return m_x; } }
-		public int Y { get { return m_y; } }
+		public int X { get { return (((int)m_value) << 16) >> 16; } }
+		public int Y { get { return ((int)m_value) >> 16; } }
 
 		public IntPoint2(int x, int y)
 		{
-			m_x = x;
-			m_y = y;
+			m_value =
+				((x & 0xffff) << 0) |
+				((y & 0xffff) << 16);
 		}
 
 		#region IEquatable<IntPoint2> Members
 
 		public bool Equals(IntPoint2 other)
 		{
-			return ((other.X == this.X) && (other.Y == this.Y));
+			return m_value == other.m_value;
 		}
 
 		#endregion
@@ -37,7 +39,7 @@ namespace Dwarrowdelf
 				return false;
 
 			IntPoint2 l = (IntPoint2)obj;
-			return ((l.X == this.X) && (l.Y == this.Y));
+			return m_value == l.m_value;
 		}
 
 		public IntPoint2 Offset(int offsetX, int offsetY)
@@ -47,7 +49,7 @@ namespace Dwarrowdelf
 
 		public static bool operator ==(IntPoint2 left, IntPoint2 right)
 		{
-			return ((left.X == right.X) && (left.Y == right.Y));
+			return left.m_value == right.m_value;
 		}
 
 		public static bool operator !=(IntPoint2 left, IntPoint2 right)

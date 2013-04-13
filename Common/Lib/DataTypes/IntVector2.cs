@@ -10,16 +10,18 @@ namespace Dwarrowdelf
 	[Serializable]
 	public struct IntVector2 : IEquatable<IntVector2>
 	{
-		readonly int m_x;
-		readonly int m_y;
+		// X, Y: 16 bits, from -32768 to 32767
+		// X: bits 0-15, Y: bits 16-31
+		readonly int m_value;
 
-		public int X { get { return m_x; } }
-		public int Y { get { return m_y; } }
+		public int X { get { return (((int)m_value) << 16) >> 16; } }
+		public int Y { get { return ((int)m_value) >> 16; } }
 
 		public IntVector2(int x, int y)
 		{
-			m_x = x;
-			m_y = y;
+			m_value =
+				((x & 0xffff) << 0) |
+				((y & 0xffff) << 16);
 		}
 
 		public IntVector2(Direction dir)
@@ -31,23 +33,21 @@ namespace Dwarrowdelf
 			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
 			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 
-			m_x = ((x ^ 1) - (x >> 1)) - 1;
-			m_y = ((y ^ 1) - (y >> 1)) - 1;
+			x = ((x ^ 1) - (x >> 1)) - 1;
+			y = ((y ^ 1) - (y >> 1)) - 1;
+
+			m_value =
+				((x & 0xffff) << 0) |
+				((y & 0xffff) << 16);
 		}
 
-		public bool IsNull
-		{
-			get
-			{
-				return this.X == 0 && this.Y == 0;
-			}
-		}
+		public bool IsNull { get { return m_value == 0; } }
 
 		#region IEquatable<IntVector2> Members
 
 		public bool Equals(IntVector2 other)
 		{
-			return ((other.X == this.X) && (other.Y == this.Y));
+			return m_value == other.m_value;
 		}
 
 		#endregion
@@ -58,7 +58,7 @@ namespace Dwarrowdelf
 				return false;
 
 			IntVector2 l = (IntVector2)obj;
-			return ((l.X == this.X) && (l.Y == this.Y));
+			return m_value == l.m_value;
 		}
 
 		public double Length
@@ -81,7 +81,7 @@ namespace Dwarrowdelf
 
 		public static bool operator ==(IntVector2 left, IntVector2 right)
 		{
-			return ((left.X == right.X) && (left.Y == right.Y));
+			return left.m_value == right.m_value;
 		}
 
 		public static bool operator !=(IntVector2 left, IntVector2 right)

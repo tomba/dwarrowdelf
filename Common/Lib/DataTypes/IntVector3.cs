@@ -11,33 +11,20 @@ namespace Dwarrowdelf
 	[Serializable]
 	public struct IntVector3 : IEquatable<IntVector3>
 	{
+		// X, Y, Z: 16 bits, from -32768 to 32767
+		// X: bits 0-15, Y: bits 16-31, Z: bits 48-61
 		readonly long m_value;
 
-		// X: 24 bits, from -8388608 to 8388607
-		// Y: 24 bits, from -8388608 to 8388607
-		// Z: 16 bits, from -32768 to 32767
-		const int x_width = 24;
-		const int y_width = 24;
-		const int z_width = 16;
-		const int xyz_width = 64;
-		const int x_mask = (1 << x_width) - 1;
-		const int y_mask = (1 << y_width) - 1;
-		const int z_mask = (1 << z_width) - 1;
-		const int x_shift = 0;
-		const int y_shift = x_width;
-		const int z_shift = x_width + y_width;
+		public int X { get { return (((int)m_value) << 16) >> 16; } }
+		public int Y { get { return ((int)m_value) >> 16; } }
+		public int Z { get { return (int)(m_value >> 48); } }
 
-		public int X { get { return (int)((m_value << (xyz_width - x_width - x_shift)) >> (xyz_width - x_width)); } }
-		public int Y { get { return (int)((m_value << (xyz_width - y_width - y_shift)) >> (xyz_width - y_width)); } }
-		public int Z { get { return (int)((m_value << (xyz_width - z_width - z_shift)) >> (xyz_width - z_width)); } }
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public IntVector3(int x, int y, int z)
 		{
 			m_value =
-				((long)(x & x_mask) << x_shift) |
-				((long)(y & y_mask) << y_shift) |
-				((long)(z & z_mask) << z_shift);
+				((long)(x & 0xffff) << 0) |
+				((long)(y & 0xffff) << 16) |
+				((long)(z & 0xffff) << 48);
 		}
 
 		public IntVector3(IntPoint3 p)
@@ -61,9 +48,9 @@ namespace Dwarrowdelf
 			z = ((z ^ 1) - (z >> 1)) - 1;
 
 			m_value =
-				((long)(x & x_mask) << x_shift) |
-				((long)(y & y_mask) << y_shift) |
-				((long)(z & z_mask) << z_shift);
+				((long)(x & 0xffff) << 0) |
+				((long)(y & 0xffff) << 16) |
+				((long)(z & 0xffff) << 48);
 		}
 
 		#region IEquatable<IntVector3> Members
@@ -242,13 +229,7 @@ namespace Dwarrowdelf
 			return v.ToDirection();
 		}
 
-		public bool IsNull
-		{
-			get
-			{
-				return this.X == 0 && this.Y == 0 && this.Z == 0;
-			}
-		}
+		public bool IsNull { get { return m_value == 0; } }
 
 		public IntVector2 ToIntVector()
 		{
