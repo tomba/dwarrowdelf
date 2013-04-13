@@ -71,7 +71,7 @@ namespace Dwarrowdelf
 
 		public static bool operator ==(IntPoint3 left, IntPoint3 right)
 		{
-			return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));
+			return left.m_value == right.m_value;
 		}
 
 		public static bool operator !=(IntPoint3 left, IntPoint3 right)
