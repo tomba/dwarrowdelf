@@ -216,39 +216,4 @@ namespace Dwarrowdelf
 			return IntSize3.Parse(source);
 		}
 	}
-
-	public sealed class ObjectIDConverter : TypeConverter
-	{
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-		{
-			return ((destinationType == typeof(string)) || base.CanConvertTo(context, destinationType));
-		}
-
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-		{
-			return ((sourceType == typeof(string)) || base.CanConvertFrom(context, sourceType));
-		}
-
-		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-		{
-			if ((destinationType == null) || !(value is ObjectID) || destinationType != typeof(string))
-				return base.ConvertTo(context, culture, value, destinationType);
-
-			var oid = (ObjectID)value;
-			return oid.RawValue.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
-		}
-
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if (value == null)
-				throw base.GetConvertFromException(value);
-
-			string source = value as string;
-
-			if (source == null)
-				return base.ConvertFrom(context, culture, value);
-
-			return new ObjectID(Convert.ToUInt32(source, System.Globalization.NumberFormatInfo.InvariantInfo));
-		}
-	}
 }

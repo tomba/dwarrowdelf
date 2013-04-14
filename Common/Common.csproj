@@ -181,7 +181,7 @@
     <Compile Include="Lib\DataTypes\IntPoint2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\TileData.cs" />
-    <Compile Include="Game\TypeConverters.cs" />
+    <Compile Include="Lib\TypeConverters.cs" />
     <Compile Include="Game\WorkHelpers.cs" />
     <Compile Include="Lib\WrapperGenerator.cs" />
   </ItemGroup>
