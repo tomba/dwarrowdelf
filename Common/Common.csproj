@@ -51,11 +51,11 @@
     <Compile Include="Game\AI\AIHelpers.cs" />
     <Compile Include="Game\AI\CarnivoreAI.cs" />
     <Compile Include="Game\AI\MonsterAI.cs" />
-    <Compile Include="Game\AStar\AStarResult.cs" />
-    <Compile Include="Game\AStar\AStarTarget.cs" />
-    <Compile Include="Game\AStar\AStarHelpers.cs" />
-    <Compile Include="Game\AStar\AStar.cs" />
-    <Compile Include="Game\AStar\BFS.cs" />
+    <Compile Include="Lib\AStar\AStarResult.cs" />
+    <Compile Include="Lib\AStar\AStarTarget.cs" />
+    <Compile Include="Lib\AStar\AStarHelpers.cs" />
+    <Compile Include="Lib\AStar\AStar.cs" />
+    <Compile Include="Lib\AStar\BFS.cs" />
     <Compile Include="Game\LivingExtensions.cs" />
     <Compile Include="Game\Messages\ChangeDatas.cs" />
     <Compile Include="Game\TerrainGen\RiverGen.cs" />
@@ -138,7 +138,7 @@
     <Compile Include="Game\Jobs\Assignments\MineAssignment.cs" />
     <Compile Include="Game\AI\IAI.cs" />
     <Compile Include="Game\AI\AssignmentAI.cs" />
-    <Compile Include="Game\AStar\OpenList.cs" />
+    <Compile Include="Lib\AStar\OpenList.cs" />
     <Compile Include="Game\Jobs\Assignments\Assignment.cs" />
     <Compile Include="Game\Jobs\Assignments\DropItemAssignment.cs" />
     <Compile Include="Game\Jobs\IJob.cs" />
