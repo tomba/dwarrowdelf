@@ -94,7 +94,6 @@ namespace Dwarrowdelf.Client.UI
 			m_renderView = renderView;
 
 			this.TileLayoutChanged += OnTileArrangementChanged;
-			this.AboutToRender += OnAboutToRender;
 
 			m_renderer.SetTileSet(GameData.Data.TileSet);
 			GameData.Data.TileSetChanged += OnTileSetChanged;
@@ -132,15 +131,11 @@ namespace Dwarrowdelf.Client.UI
 			m_renderView.CenterPos = new IntPoint3((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
 		}
 
-		void OnAboutToRender()
-		{
-			//System.Diagnostics.Debug.Print("OnAboutToRender");
-
-			m_renderView.Resolve();
-		}
-
 		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileControl.TileRenderContext ctx)
 		{
+			if (ctx.TileDataInvalid)
+				m_renderView.Resolve();
+
 			m_renderer.Render(drawingContext, renderSize, ctx);
 		}
 

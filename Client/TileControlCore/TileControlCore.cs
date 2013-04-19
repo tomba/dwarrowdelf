@@ -28,11 +28,6 @@ namespace Dwarrowdelf.Client.TileControl
 		/// </summary>
 		public event TileLayoutChangedDelegate TileLayoutChanged;
 
-		/// <summary>
-		/// Called before render if tile data has changed
-		/// </summary>
-		public event Action AboutToRender;
-
 		public event Action<Point> CenterPosChanged;
 
 		enum DragState
@@ -187,12 +182,6 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				if (TileLayoutChanged != null)
 					TileLayoutChanged(m_gridSize, this.TileSize, this.CenterPos);
-			}
-
-			if (m_tileDataInvalid)
-			{
-				if (this.AboutToRender != null)
-					this.AboutToRender();
 			}
 
 			var ctx = new TileControl.TileRenderContext()
