@@ -70,9 +70,8 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 
-
-
-		public void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize, TileRenderContext ctx)
+		public void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize, IntSize2 gridSize,
+			float tileSize, Point renderOffset, bool tileDataInvalid)
 		{
 			if (m_disposed)
 				return;
@@ -86,23 +85,19 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				InitTextureRenderSurface(renderWidth, renderHeight);
 				// force a full update if we re-allocate the render surface
-				ctx.TileDataInvalid = true;
-				ctx.TileRenderInvalid = true;
+				tileDataInvalid = true;
 			}
 
-			if (ctx.TileDataInvalid)
+			if (tileDataInvalid)
 			{
-				if (ctx.RenderGridSize.Width != m_renderData.Width || ctx.RenderGridSize.Height != m_renderData.Height)
+				if (m_renderData.Size != gridSize)
 					throw new Exception();
 
-				m_scene.SendMapData(m_renderData.Grid, ctx.RenderGridSize.Width, ctx.RenderGridSize.Height);
+				m_scene.SendMapData(m_renderData.Grid, gridSize.Width, gridSize.Height);
 			}
 
-			if (ctx.TileRenderInvalid)
-			{
-				m_scene.Render((float)ctx.TileSize, ctx.RenderOffset);
-				m_device.ImmediateContext.Flush();
-			}
+			m_scene.Render(tileSize, renderOffset);
+			m_device.ImmediateContext.Flush();
 
 			m_interopImageSource.InvalidateD3DImage();
 

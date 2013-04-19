@@ -136,7 +136,8 @@ namespace Dwarrowdelf.Client.UI
 			if (ctx.TileDataInvalid)
 				m_renderView.Resolve();
 
-			m_renderer.Render(drawingContext, renderSize, ctx);
+			m_renderer.Render(drawingContext, renderSize, ctx.RenderGridSize, (float)ctx.TileSize, ctx.RenderOffset,
+				ctx.TileDataInvalid);
 		}
 
 		/// <summary>
