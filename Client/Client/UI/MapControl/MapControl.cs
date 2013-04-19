@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged
+	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged, IDisposable
 	{
 		RenderView m_renderView;
 		TileControl.RendererD3DSharpDX m_renderer;
@@ -50,6 +50,37 @@ namespace Dwarrowdelf.Client.UI
 				return false;
 		}
 
+				#region IDisposable
+
+		bool m_disposed;
+
+		~MapControl()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_disposed)
+				return;
+
+			if (disposing)
+			{
+				//TODO: Managed cleanup code here, while managed refs still valid
+			}
+
+			DH.Dispose(ref m_renderer);
+
+			m_disposed = true;
+		}
+		#endregion
+
 		protected override void OnInitialized(EventArgs e)
 		{
 			if (!IsD3D10Supported())
@@ -61,8 +92,6 @@ namespace Dwarrowdelf.Client.UI
 
 			m_renderer = renderer;
 			m_renderView = renderView;
-
-			SetRenderer(renderer);
 
 			this.TileLayoutChanged += OnTileArrangementChanged;
 			this.AboutToRender += OnAboutToRender;
@@ -108,6 +137,11 @@ namespace Dwarrowdelf.Client.UI
 			//System.Diagnostics.Debug.Print("OnAboutToRender");
 
 			m_renderView.Resolve();
+		}
+
+		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileControl.TileRenderContext ctx)
+		{
+			m_renderer.Render(drawingContext, renderSize, ctx);
 		}
 
 		/// <summary>

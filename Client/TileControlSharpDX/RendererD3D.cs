@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public sealed class RendererD3DSharpDX : ITileRenderer
+	public sealed class RendererD3DSharpDX : IDisposable
 	{
 		D3DImageSharpDX m_interopImageSource;
 		SingleQuad11 m_scene;

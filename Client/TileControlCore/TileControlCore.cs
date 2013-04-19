@@ -10,10 +10,8 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public delegate void TileLayoutChangedDelegate(IntSize2 gridSize, double tileSize, Point centerPos);
 
-	public abstract class TileControlCore : FrameworkElement, IDisposable
+	public abstract class TileControlCore : FrameworkElement
 	{
-		ITileRenderer m_renderer;
-
 		IntSize2 m_gridSize;
 		Point m_renderOffset;
 
@@ -58,42 +56,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 			this.MinHeight = 64;
 			this.MinWidth = 64;
-		}
-
-		#region IDisposable
-
-		bool m_disposed;
-
-		~TileControlCore()
-		{
-			Dispose(false);
-		}
-
-		public void Dispose()
-		{
-			this.Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		void Dispose(bool disposing)
-		{
-			if (m_disposed)
-				return;
-
-			if (disposing)
-			{
-				//TODO: Managed cleanup code here, while managed refs still valid
-			}
-
-			DH.Dispose(ref m_renderer);
-
-			m_disposed = true;
-		}
-		#endregion
-
-		protected void SetRenderer(ITileRenderer renderer)
-		{
-			m_renderer = renderer;
 		}
 
 		public IntSize2 GridSize
@@ -215,12 +177,9 @@ namespace Dwarrowdelf.Client.TileControl
 			base.OnRenderSizeChanged(sizeInfo);
 		}
 
-		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
+		protected override void OnRender(DrawingContext drawingContext)
 		{
 			trace.TraceVerbose("OnRender");
-
-			if (m_renderer == null)
-				return;
 
 			var renderSize = this.RenderSize;
 
@@ -245,7 +204,7 @@ namespace Dwarrowdelf.Client.TileControl
 				TileRenderInvalid = m_tileRenderInvalid,
 			};
 
-			m_renderer.Render(drawingContext, renderSize, ctx);
+			OnRenderTiles(drawingContext, renderSize, ctx);
 
 			m_tileLayoutInvalid = false;
 			m_tileDataInvalid = false;
@@ -253,6 +212,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 			trace.TraceVerbose("OnRender End");
 		}
+
+		protected abstract void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileRenderContext ctx);
 
 		/// <summary>
 		/// Forces render, without resolving the tile data
