@@ -10,7 +10,7 @@ using Dwarrowdelf;
 
 namespace AStarTest
 {
-	class Renderer : ITileRenderer
+	class Renderer
 	{
 		static Pen s_edgePen;
 

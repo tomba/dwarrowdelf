@@ -49,6 +49,7 @@ namespace AStarTest
 		public DirectionSet SrcPos { get; set; }
 		public DirectionSet DstPos { get; set; }
 
+		Renderer m_renderer;
 		RenderData m_renderData;
 
 		HashSet<IntPoint3> m_path;
@@ -84,12 +85,9 @@ namespace AStarTest
 		{
 			m_renderData = new RenderData();
 
-			var renderer = new Renderer(m_renderData);
-
-			SetRenderer(renderer);
+			m_renderer = new Renderer(m_renderData);
 
 			this.TileLayoutChanged += OnTileArrangementChanged;
-			this.AboutToRender += OnAboutToRender;
 
 			base.OnInitialized(e);
 
@@ -108,22 +106,27 @@ namespace AStarTest
 			m_renderData.SetGridSize(gridSize);
 		}
 
-		void OnAboutToRender()
+		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileRenderContext ctx)
 		{
-			var width = m_renderData.Width;
-			var height = m_renderData.Height;
-			var grid = m_renderData.Grid;
-
-			for (int y = 0; y < height; ++y)
+			if (ctx.TileDataInvalid)
 			{
-				for (int x = 0; x < width; ++x)
-				{
-					var _ml = ScreenTileToMapTile(new Point(x, y));
-					var ml = new IntPoint3(PointToIntPoint(_ml), m_z);
+				var width = m_renderData.Width;
+				var height = m_renderData.Height;
+				var grid = m_renderData.Grid;
 
-					UpdateTile(ref grid[y, x], ml);
+				for (int y = 0; y < height; ++y)
+				{
+					for (int x = 0; x < width; ++x)
+					{
+						var _ml = ScreenTileToMapTile(new Point(x, y));
+						var ml = new IntPoint3(PointToIntPoint(_ml), m_z);
+
+						UpdateTile(ref grid[y, x], ml);
+					}
 				}
 			}
+
+			m_renderer.Render(drawingContext, renderSize, ctx);
 		}
 
 		IntPoint2 PointToIntPoint(Point p)
