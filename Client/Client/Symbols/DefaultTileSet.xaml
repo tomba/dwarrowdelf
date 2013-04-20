@@ -104,31 +104,6 @@
 		<CharGfx Outline="False" Char="▲" Rotate="315" />
 	</Symbol>
 
-	<Symbol ID="SlopeDownNorth">
-		<CharGfx Outline="False" Char="▼" />
-	</Symbol>
-	<Symbol ID="SlopeDownNorthEast">
-		<CharGfx Outline="False" Char="▼" />
-	</Symbol>
-	<Symbol ID="SlopeDownEast">
-		<CharGfx Outline="False" Char="▼" />
-	</Symbol>
-	<Symbol ID="SlopeDownSouthEast">
-		<CharGfx Outline="False" Char="▼" />
-	</Symbol>
-	<Symbol ID="SlopeDownSouth">
-		<CharGfx Outline="False" Char="▼" />
-	</Symbol>
-	<Symbol ID="SlopeDownSouthWest">
-		<CharGfx Outline="False" Char="▼" />
-	</Symbol>
-	<Symbol ID="SlopeDownWest">
-		<CharGfx Outline="False" Char="▼" />
-	</Symbol>
-	<Symbol ID="SlopeDownNorthWest">
-		<CharGfx Outline="False" Char="▼" />
-	</Symbol>
-
 	<Symbol ID="Player">
 		<BitmapGfx BitmapIndex="0" />
 		<CharGfx Char="☻" Outline="True" OutlineThickness="2" />

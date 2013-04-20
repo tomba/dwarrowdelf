@@ -39,15 +39,6 @@ namespace Dwarrowdelf.Client
 		SlopeUpWest,
 		SlopeUpNorthWest,
 
-		SlopeDownNorth,
-		SlopeDownNorthEast,
-		SlopeDownEast,
-		SlopeDownSouthEast,
-		SlopeDownSouth,
-		SlopeDownSouthWest,
-		SlopeDownWest,
-		SlopeDownNorthWest,
-
 		ConiferousSapling,
 		DeciduousSapling,
 		ConiferousSapling2,
