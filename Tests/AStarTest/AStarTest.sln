@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AStarTest", "AStarTest.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\..\Common\Common.csproj", "{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Base", "..\..\Client\Base\Client.Base.csproj", "{1794F5B1-762E-40D2-A314-040487DEEFE2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMLog", "..\..\MemoryMappedLog\MMLog\MMLog.csproj", "{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlCore", "..\..\Client\TileControlCore\TileControlCore.csproj", "{2DC159B4-2248-49B1-8665-210CDC0B6B09}"
@@ -34,10 +32,6 @@ Global
 		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
