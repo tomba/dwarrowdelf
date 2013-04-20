@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Client.UI
 				return false;
 		}
 
-				#region IDisposable
+		#region IDisposable
 
 		bool m_disposed;
 
@@ -87,11 +87,8 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			var renderData = new TileControl.RenderData<TileControl.RenderTile>();
-			var renderView = new RenderView(renderData);
-			var renderer = new TileControl.RendererD3DSharpDX(renderData);
-
-			m_renderer = renderer;
-			m_renderView = renderView;
+			m_renderView = new RenderView(renderData);
+			m_renderer = new TileControl.RendererD3DSharpDX(renderData);
 
 			this.TileLayoutChanged += OnTileArrangementChanged;
 
