@@ -55,6 +55,7 @@ namespace Dwarrowdelf
 
 		bool GetTileFlags(IntPoint3 l, TileFlags flags);
 
+		bool HasContents(IntPoint3 pos);
 		IEnumerable<IMovableObject> GetContents(IntPoint3 pos);
 		IEnumerable<IMovableObject> GetContents(IntGrid2Z rect);
 	}
