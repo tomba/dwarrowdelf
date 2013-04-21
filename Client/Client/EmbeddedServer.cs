@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
 				throw new Exception();
 
-			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+			var path = Win32.SavedGamesFolder.GetSavedGamesPath();
 			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
 			if (!System.IO.Directory.Exists(path))
 				System.IO.Directory.CreateDirectory(path);
