@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						if (td.IsClear == false)
+						if (td.IsClearFloor == false)
 						{
 							SendFailReport(report, "wrong type of tile");
 							return ActionState.Fail;
@@ -170,7 +170,7 @@ namespace Dwarrowdelf.Server
 						if (env.HasContents(p))
 						{
 							SendFailReport(report, "tile contains objects");
-							return ActionState.Fail;
+							return ActionState.Abort;
 						}
 
 						var tdd = env.GetTileData(p.Down);

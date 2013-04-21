@@ -185,6 +185,15 @@ namespace Dwarrowdelf.Client
 					continue;
 				}
 
+				if (dt.Type == DesignationType.Channel)
+				{
+					if (this.Environment.HasContents(p))
+					{
+						dt.NextReacahbleCheck = tick + 10;
+						continue;
+					}
+				}
+
 				IAssignment job;
 
 				switch (dt.Type)
@@ -289,8 +298,8 @@ namespace Dwarrowdelf.Client
 					return this.Environment.GetHidden(p) || (td.IsMinable && td.InteriorID == InteriorID.NaturalWall);
 
 				case DesignationType.Channel:
-					// XXX
-					return true;
+					return this.Environment.GetHidden(p) == false && td.IsClearFloor &&
+						(this.Environment.GetHidden(p.Down) || this.Environment.GetTileData(p.Down).IsMinable);
 
 				case DesignationType.FellTree:
 					return td.InteriorID.IsFellableTree();

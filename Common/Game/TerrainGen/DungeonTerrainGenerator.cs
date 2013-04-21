@@ -71,13 +71,13 @@ namespace Dwarrowdelf.TerrainGen
 					var p1 = new IntPoint3(p, z);
 					var td1 = GetTileData(p1);
 
-					if (td1.IsClear == false)
+					if (td1.IsClearFloor == false)
 						continue;
 
 					var p2 = new IntPoint3(p, z - 1);
 					var td2 = GetTileData(p2);
 
-					if (td2.IsClear == false)
+					if (td2.IsClearFloor == false)
 						continue;
 
 					td1.TerrainID = TerrainID.StairsDown;

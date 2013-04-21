@@ -111,7 +111,7 @@ namespace Dwarrowdelf.Server
 						m_env.SetTileData(p, td);
 					}
 				}
-				else if (m_numTrees < m_targetNumTrees && td.WaterLevel == 0 && td.IsClear)
+				else if (m_numTrees < m_targetNumTrees && td.WaterLevel == 0 && td.IsClearFloor)
 				{
 					if (r.Next(100) < 60)
 					{

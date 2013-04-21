@@ -391,6 +391,15 @@ namespace Dwarrowdelf.Client
 			return obs.FirstOrDefault();
 		}
 
+		public bool HasContents(IntPoint3 l)
+		{
+			List<MovableObject> obs;
+			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
+				return false;
+
+			return obs.Count > 0;
+		}
+
 		protected override void ChildAdded(MovableObject child)
 		{
 			IntPoint3 l = child.Location;

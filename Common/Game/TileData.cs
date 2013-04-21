@@ -102,7 +102,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Is the tile a floor with empty or soft interior
 		/// </summary>
-		public bool IsClear { get { return this.TerrainID.IsFloor() && this.InteriorID.IsClear(); } }
+		public bool IsClearFloor { get { return this.TerrainID.IsFloor() && this.InteriorID.IsClear(); } }
 
 		/// <summary>
 		/// Can one see through this tile in planar directions
@@ -194,7 +194,7 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// The tile can be mined
+		/// The tile can be mined (interior is NaturalWall or terrain is Slope)
 		/// </summary>
 		public bool IsMinable
 		{
