@@ -24,18 +24,6 @@ namespace Dwarrowdelf.Client.UI
 			InitializeComponent();
 		}
 
-		private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			if (GameData.Data.User != null)
-			{
-				GameData.Data.User.Send(new SetWorldConfigMessage()
-				{
-					MinTickTime = TimeSpan.FromMilliseconds(slider.Value),
-				});
-			}
-		}
-
-
 		private void Button_Click_Step(object sender, RoutedEventArgs e)
 		{
 			if (GameData.Data.User != null)
@@ -48,6 +36,21 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var dialog = new LaborManagerDialog();
 			dialog.Show();
+		}
+
+		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var cb = (ComboBox)sender;
+			var cbi = (ComboBoxItem)cb.SelectedItem;
+			int ms = int.Parse((string)cbi.Tag);
+
+			if (GameData.Data.User != null)
+			{
+				GameData.Data.User.Send(new SetWorldConfigMessage()
+				{
+					MinTickTime = TimeSpan.FromMilliseconds(ms),
+				});
+			}
 		}
 	}
 

@@ -49,9 +49,14 @@
 		</ToolBar>
 
 		<ToolBar Band="1">
-			<Slider Name="slider" Value="50" Minimum="0" Maximum="1000" Width="100" TickFrequency="25" IsSnapToTickEnabled="True"
-						ValueChanged="slider_ValueChanged"/>
-			<TextBox Text="{Binding Path=Value, ElementName=slider}" />
+			<Label Content="Speed" />
+			<ComboBox SelectedIndex="2" SelectionChanged="ComboBox_SelectionChanged">
+				<ComboBoxItem Content="Immediate" Tag="0" />
+				<ComboBoxItem Content="Fastest" Tag="1" />
+				<ComboBoxItem Content="Fast" Tag="50" />
+				<ComboBoxItem Content="Normal" Tag="100" />
+				<ComboBoxItem Content="Slow" Tag="250" />
+			</ComboBox>
 		</ToolBar>
 
 		<ToolBar Band="1">
