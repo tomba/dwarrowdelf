@@ -12,6 +12,7 @@ namespace Dwarrowdelf
 	{
 		None = 0,
 		Installable = 1 << 0,
+		Container = 1 << 1,
 	}
 
 	public enum ItemID
@@ -33,7 +34,7 @@ namespace Dwarrowdelf
 		Door,
 		Bed,
 		Barrel,
-		Bucket,
+		Bin,
 
 		SmithsWorkbench,
 		CarpentersWorkbench,
@@ -73,6 +74,7 @@ namespace Dwarrowdelf
 		Weapon,
 		Armor,
 		Workbench,
+		Utility,
 		Other,
 	}
 
@@ -84,8 +86,10 @@ namespace Dwarrowdelf
 		public ItemFlags Flags { get; internal set; }
 		public WeaponInfo WeaponInfo { get; internal set; }
 		public ArmorInfo ArmorInfo { get; internal set; }
+		public int Capacity { get; internal set; }
 
 		public bool IsInstallable { get { return (this.Flags & ItemFlags.Installable) != 0; } }
+		public bool IsContainer { get { return (this.Flags & ItemFlags.Container) != 0; } }
 	}
 
 	public enum WeaponType

@@ -19,8 +19,9 @@
 	<ItemInfo ID="Table" Category="Furniture" Flags="Installable" />
 	<ItemInfo ID="Door" Category="Furniture" Flags="Installable" />
 	<ItemInfo ID="Bed" Category="Furniture" Flags="Installable" />
-	<ItemInfo ID="Barrel" Category="Furniture" Flags="Installable" />
-	<ItemInfo ID="Bucket" Category="Furniture" Flags="Installable" />
+
+	<ItemInfo ID="Barrel" Category="Utility" Flags="Container" Capacity="100" />
+	<ItemInfo ID="Bin" Category="Utility" Flags="Container" Capacity="100" />
 
 	<ItemInfo ID="Contraption" Category="Other" />
 

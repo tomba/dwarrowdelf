@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Client
 		DoorClosed,
 		Bed,
 		Barrel,
-		Bucket,
+		Bin,
 
 		Weapon,
 		Armor,

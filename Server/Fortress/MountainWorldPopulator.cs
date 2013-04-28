@@ -44,9 +44,11 @@ namespace Dwarrowdelf.Server.Fortress
 				CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
 				CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
 				CreateItem(env, ItemID.Table, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Barrel, GetRandomMaterial(MaterialCategory.Wood), p);
 				CreateItem(env, ItemID.Bed, GetRandomMaterial(MaterialCategory.Wood), p);
 				CreateItem(env, ItemID.Chair, GetRandomMaterial(MaterialCategory.Wood), p);
+
+				CreateItem(env, ItemID.Barrel, GetRandomMaterial(MaterialCategory.Wood), p);
+				CreateItem(env, ItemID.Bin, GetRandomMaterial(MaterialCategory.Wood), p);
 
 				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
 				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);

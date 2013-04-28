@@ -189,7 +189,7 @@
 	<Symbol ID="Barrel">
 		<CharGfx Char="÷" />
 	</Symbol>
-	<Symbol ID="Bucket">
+	<Symbol ID="Bin">
 		<CharGfx Char="û" />
 	</Symbol>
 	<Symbol ID="Block">

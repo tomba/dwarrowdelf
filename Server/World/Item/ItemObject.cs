@@ -45,11 +45,18 @@ namespace Dwarrowdelf.Server
 		public bool IsArmor { get { return this.ItemInfo.ArmorInfo != null; } }
 		public bool IsWeapon { get { return this.ItemInfo.WeaponInfo != null; } }
 
+		public override bool OkToAddChild(MovableObject ob, IntPoint3 dstLoc)
+		{
+			if (this.ItemInfo.IsContainer == false)
+				throw new Exception();
+
+			return true;
+		}
+
 		protected override bool OkToMove()
 		{
 			return !this.IsEquipped && !this.IsInstalled;
 		}
-
 		protected override void OnParentChanging()
 		{
 			// Ensure that the item is not installed when moved. This can happen when forcibly moved.
