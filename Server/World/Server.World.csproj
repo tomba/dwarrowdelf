@@ -49,6 +49,7 @@
     <Compile Include="Environment\EnvWildlifeHandler.cs" />
     <Compile Include="Environment\TileGridReaderWriter.cs" />
     <Compile Include="IPlayer.cs" />
+    <Compile Include="Item\ItemProperties.cs" />
     <Compile Include="Living\Actions\Sleep.cs" />
     <Compile Include="Living\Actions\EquipItem.cs" />
     <Compile Include="Living\Actions\UnequipItem.cs" />
@@ -67,8 +68,9 @@
     <Compile Include="Living\Actions\Haul.cs" />
     <Compile Include="Living\LivingActions.cs" />
     <Compile Include="ConcreteObject.cs" />
+    <Compile Include="Living\LivingProperties.cs" />
     <Compile Include="ProcessableList.cs" />
-    <Compile Include="ItemObject.cs" />
+    <Compile Include="Item\ItemObject.cs" />
     <Compile Include="Living\LivingObject.cs" />
     <Compile Include="Environment\EnvironmentObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

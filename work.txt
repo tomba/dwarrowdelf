@@ -1,0 +1,40 @@
+
+Raw materials:
+- Logs
+- Rocks
+- Uncut gems
+- Ore
+
+
+
+Carpenter's workshop
+- Barrel
+  * store food & drink
+- Bed
+  * sleep
+- Door
+- Chair
+- Table
+- Bin
+  * store items
+ - Block
+  * build wood constructs
+
+Mason's workshop
+- Door
+- Chair
+- Table
+- Block
+  * build stone constructs
+
+Smelter
+- Metal bars
+
+Gemcutter
+- Cut gems
+
+
+Metalsmith
+- Weapons
+- Armors
+
