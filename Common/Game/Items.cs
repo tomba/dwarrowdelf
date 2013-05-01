@@ -62,9 +62,18 @@ namespace Dwarrowdelf
 		Contraption,
 	}
 
+	[Serializable]
+	public sealed class ItemIDMask : EnumBitMask<ItemID>
+	{
+		public ItemIDMask() : base() { }
+		public ItemIDMask(ItemID itemID) : base(itemID) { }
+		public ItemIDMask(IEnumerable<ItemID> itemIDs) : base(itemIDs) { }
+	}
+
 	public enum ItemCategory
 	{
 		Undefined = 0,
+
 		Furniture,
 		Food,
 		Drink,
@@ -76,6 +85,14 @@ namespace Dwarrowdelf
 		Workbench,
 		Utility,
 		Other,
+	}
+
+	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(ItemCategoryMaskConverter))]
+	public sealed class ItemCategoryMask : EnumBitMask32<ItemCategory>
+	{
+		public ItemCategoryMask() : base() { }
+		public ItemCategoryMask(IEnumerable<ItemCategory> categories) : base(categories) { }
 	}
 
 	public sealed class ItemInfo

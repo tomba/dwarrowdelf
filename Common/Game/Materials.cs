@@ -83,6 +83,14 @@ namespace Dwarrowdelf
 		Water,
 	}
 
+	[Serializable]
+	public sealed class MaterialIDMask : EnumBitMask64<MaterialID>
+	{
+		public MaterialIDMask() : base() { }
+		public MaterialIDMask(MaterialID materialID) : base(materialID) { }
+		public MaterialIDMask(IEnumerable<MaterialID> materialIDs) : base(materialIDs) { }
+	}
+
 	public enum MaterialCategory
 	{
 		Undefined,
@@ -95,6 +103,15 @@ namespace Dwarrowdelf
 		Grass,
 		Consumable,
 		Berry,
+	}
+
+	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(MaterialCategoryMaskConverter))]
+	public sealed class MaterialCategoryMask : EnumBitMask32<MaterialCategory>
+	{
+		public MaterialCategoryMask() : base() { }
+		public MaterialCategoryMask(MaterialCategory category) : base(category) { }
+		public MaterialCategoryMask(IEnumerable<MaterialCategory> categories) : base(categories) { }
 	}
 
 	public enum WoodMaterialCategory

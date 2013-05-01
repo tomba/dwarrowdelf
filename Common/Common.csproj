@@ -51,6 +51,7 @@
     <Compile Include="Game\AI\AIHelpers.cs" />
     <Compile Include="Game\AI\CarnivoreAI.cs" />
     <Compile Include="Game\AI\MonsterAI.cs" />
+    <Compile Include="Game\TypeConverters.cs" />
     <Compile Include="Lib\AStar\AStarResult.cs" />
     <Compile Include="Lib\AStar\AStarTarget.cs" />
     <Compile Include="Lib\AStar\AStarHelpers.cs" />

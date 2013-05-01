@@ -111,34 +111,34 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class ItemFilter : IItemFilter
 	{
-		EnumBitMask<ItemID> m_itemIDMask;
-		EnumBitMask32<ItemCategory> m_itemCategoryMask;
-		EnumBitMask64<MaterialID> m_materialIDMask;
-		EnumBitMask32<MaterialCategory> m_materialCategoryMask;
+		ItemIDMask m_itemIDMask;
+		ItemCategoryMask m_itemCategoryMask;
+		MaterialIDMask m_materialIDMask;
+		MaterialCategoryMask m_materialCategoryMask;
 
 		public ItemFilter(IEnumerable<ItemID> itemIDs, IEnumerable<ItemCategory> itemCategories,
 			IEnumerable<MaterialID> materialIDs, IEnumerable<MaterialCategory> materialCategories)
 		{
-			m_itemIDMask = new EnumBitMask<ItemID>(itemIDs);
-			m_itemCategoryMask = new EnumBitMask32<ItemCategory>(itemCategories);
-			m_materialIDMask = new EnumBitMask64<MaterialID>(materialIDs);
-			m_materialCategoryMask = new EnumBitMask32<MaterialCategory>(materialCategories);
+			m_itemIDMask = new ItemIDMask(itemIDs);
+			m_itemCategoryMask = new ItemCategoryMask(itemCategories);
+			m_materialIDMask = new MaterialIDMask(materialIDs);
+			m_materialCategoryMask = new MaterialCategoryMask(materialCategories);
 		}
 
 		public ItemFilter(IEnumerable<ItemID> itemIDs, IEnumerable<MaterialID> materialIDs)
 		{
-			m_itemIDMask = new EnumBitMask<ItemID>(itemIDs);
-			m_itemCategoryMask = new EnumBitMask32<ItemCategory>();
-			m_materialIDMask = new EnumBitMask64<MaterialID>(materialIDs);
-			m_materialCategoryMask = new EnumBitMask32<MaterialCategory>();
+			m_itemIDMask = new ItemIDMask(itemIDs);
+			m_itemCategoryMask = new ItemCategoryMask();
+			m_materialIDMask = new MaterialIDMask(materialIDs);
+			m_materialCategoryMask = new MaterialCategoryMask();
 		}
 
 		public ItemFilter(ItemID itemID, MaterialCategory materialCategory)
 		{
-			m_itemIDMask = new EnumBitMask<ItemID>(itemID);
-			m_itemCategoryMask = new EnumBitMask32<ItemCategory>();
-			m_materialIDMask = new EnumBitMask64<MaterialID>();
-			m_materialCategoryMask = new EnumBitMask32<MaterialCategory>(materialCategory);
+			m_itemIDMask = new ItemIDMask(itemID);
+			m_itemCategoryMask = new ItemCategoryMask();
+			m_materialIDMask = new MaterialIDMask();
+			m_materialCategoryMask = new MaterialCategoryMask(materialCategory);
 		}
 
 		public bool Match(ItemID itemID, ItemCategory itemCategory, MaterialID materialID, MaterialCategory materialCategory)
