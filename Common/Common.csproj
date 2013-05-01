@@ -59,8 +59,10 @@
     <Compile Include="Game\LivingExtensions.cs" />
     <Compile Include="Game\Messages\ChangeDatas.cs" />
     <Compile Include="Game\TerrainGen\RiverGen.cs" />
+    <Compile Include="Lib\DataTypes\EnumBitMask.cs" />
+    <Compile Include="Lib\DataTypes\EnumBitMask64.cs" />
     <Compile Include="Lib\DataTypes\DoublePoint3.cs" />
-    <Compile Include="Lib\DataTypes\EnumBitMasks.cs" />
+    <Compile Include="Lib\DataTypes\EnumBitMask32.cs" />
     <Compile Include="Lib\DisposeHelper.cs" />
     <Compile Include="Lib\Hash.cs" />
     <Compile Include="Game\Jobs\AssignmentGroups\MoveSleepAssignment.cs" />
