@@ -38,14 +38,6 @@ namespace Dwarrowdelf
 		bool Match(IItemObject item);
 	}
 
-	public interface IItemMaterialFilter : IItemFilter
-	{
-		IEnumerable<ItemID> ItemIDs { get; }
-		IEnumerable<ItemCategory> ItemCategories { get; }
-		IEnumerable<MaterialID> MaterialIDs { get; }
-		IEnumerable<MaterialCategory> MaterialCategories { get; }
-	}
-
 	[Serializable]
 	public sealed class OrItemFilter : IItemFilter
 	{
@@ -117,7 +109,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public sealed class ItemFilter : IItemMaterialFilter
+	public sealed class ItemFilter : IItemFilter
 	{
 		EnumBitMask<ItemID> m_itemIDMask;
 		EnumBitMask32<ItemCategory> m_itemCategoryMask;

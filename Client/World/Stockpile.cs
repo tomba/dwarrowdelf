@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Client
 
 		// XXX Just one criteria for now. Could be multiple in the future.
 		[SaveGameProperty]
-		public IItemMaterialFilter Criteria { get; private set; }
+		public ItemFilter Criteria { get; private set; }
 
 		[SaveGameProperty]
 		List<StoreToStockpileJob> m_jobs;
@@ -112,7 +112,7 @@ namespace Dwarrowdelf.Client
 				item.StockpiledBy = null;
 		}
 
-		public void SetCriteria(IItemMaterialFilter itemFilter)
+		public void SetCriteria(ItemFilter itemFilter)
 		{
 			this.Criteria = itemFilter;
 

@@ -64,7 +64,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var stockpile = (Stockpile)this.DataContext;
 
-			IItemMaterialFilter itemFillter;
+			ItemFilter itemFillter;
 
 			if (this.Criteria.IsNotEmpty)
 				itemFillter = this.Criteria.ToItemFilter();
@@ -97,7 +97,7 @@ namespace Dwarrowdelf.Client.UI
 			this.MaterialCategories = new ObservableCollection<MaterialCategory>();
 		}
 
-		public StockpileCriteriaEditable(IItemMaterialFilter source)
+		public StockpileCriteriaEditable(ItemFilter source)
 		{
 			this.ItemIDs = new ObservableCollection<ItemID>(source.ItemIDs);
 			this.ItemCategories = new ObservableCollection<ItemCategory>(source.ItemCategories);
@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IItemMaterialFilter ToItemFilter()
+		public ItemFilter ToItemFilter()
 		{
 			return new ItemFilter(this.ItemIDs, this.ItemCategories, this.MaterialIDs, this.MaterialCategories);
 		}

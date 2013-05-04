@@ -111,7 +111,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IItemMaterialFilter GetItemFilter()
+		public ItemFilter GetItemFilter()
 		{
 			var materials = m_categories
 				.Where(c => c.IsSelected != false)
