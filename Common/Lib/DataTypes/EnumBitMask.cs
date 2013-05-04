@@ -40,7 +40,7 @@ namespace Dwarrowdelf
 		{
 			BitArray mask = null;
 
-			if (enumValues != null && enumValues.Any())
+			if (enumValues.Any())
 			{
 				mask = new BitArray(s_numBits);
 				foreach (TEnum e in enumValues)
@@ -52,16 +52,19 @@ namespace Dwarrowdelf
 
 		public bool Get(TEnum enumValue)
 		{
-			return m_mask == null || m_mask.Get(EnumConv.ToInt32(enumValue) - 1);
+			return m_mask != null && m_mask.Get(EnumConv.ToInt32(enumValue) - 1);
 		}
 
 		public IEnumerable<TEnum> EnumValues
 		{
 			get
 			{
+				if (m_mask == null)
+					yield break;
+
 				for (int i = 0; i < s_numBits; ++i)
 				{
-					if (m_mask == null || m_mask.Get(i))
+					if (m_mask.Get(i))
 						yield return EnumConv.ToEnum<TEnum>(i + 1);
 				}
 			}

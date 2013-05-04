@@ -38,27 +38,27 @@ namespace Dwarrowdelf
 		{
 			ulong mask = 0;
 
-			if (enumValues != null)
-			{
-				foreach (TEnum e in enumValues)
-					mask |= EnumToBit(e);
-			}
+			foreach (TEnum e in enumValues)
+				mask |= EnumToBit(e);
 
 			m_mask = mask;
 		}
 
 		public bool Get(TEnum enumValue)
 		{
-			return m_mask == 0 || (m_mask & EnumToBit(enumValue)) != 0;
+			return (m_mask & EnumToBit(enumValue)) != 0;
 		}
 
 		public IEnumerable<TEnum> EnumValues
 		{
 			get
 			{
+				if (m_mask == 0)
+					yield break;
+
 				for (int i = 0; i < s_numBits; ++i)
 				{
-					if (m_mask == 0 || (m_mask & (1UL << i)) != 0)
+					if ((m_mask & (1UL << i)) != 0)
 						yield return EnumConv.ToEnum<TEnum>(i + 1);
 				}
 			}
