@@ -93,7 +93,8 @@ namespace Dwarrowdelf
 
 	public enum MaterialCategory
 	{
-		Undefined,
+		Undefined = 0,
+
 		Wood,
 		Rock,
 		Soil,
@@ -116,7 +117,8 @@ namespace Dwarrowdelf
 
 	public enum WoodMaterialCategory
 	{
-		Undefined,
+		Undefined = 0,
+
 		Coniferous,
 		Deciduous,
 	}
@@ -208,6 +210,16 @@ namespace Dwarrowdelf
 				default:
 					throw new Exception();
 			}
+		}
+
+		public static IEnumerable<MaterialID> GetMaterialIDs()
+		{
+			return EnumHelpers.GetEnumValues<MaterialID>().Skip(1);
+		}
+
+		public static IEnumerable<MaterialCategory> GetMaterialCategories()
+		{
+			return EnumHelpers.GetEnumValues<MaterialCategory>().Skip(1);
 		}
 	}
 }

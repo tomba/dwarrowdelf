@@ -124,7 +124,15 @@ namespace Dwarrowdelf.Client.UI
 				var itemIDs = this.BuildMaterialsView[idx].ItemIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray();
 				var materialIDs = this.BuildMaterialsView[idx].MaterialIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray();
 
-				filters[idx] = new ItemFilter(itemIDs, materialIDs);
+				ItemIDMask im = null;
+				if (itemIDs.Any())
+					im = new ItemIDMask(itemIDs);
+
+				MaterialIDMask mim = null;
+				if (materialIDs.Any())
+					mim = new MaterialIDMask(materialIDs);
+
+				filters[idx] = new ItemFilter(im, null, mim, null);
 			}
 
 			var bo = new BuildOrder(this.BuildableItem, filters);

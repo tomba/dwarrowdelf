@@ -99,10 +99,25 @@ namespace Dwarrowdelf.Client.UI
 
 		public StockpileCriteriaEditable(ItemFilter source)
 		{
-			this.ItemIDs = new ObservableCollection<ItemID>(source.ItemIDs);
-			this.ItemCategories = new ObservableCollection<ItemCategory>(source.ItemCategories);
-			this.MaterialIDs = new ObservableCollection<MaterialID>(source.MaterialIDs);
-			this.MaterialCategories = new ObservableCollection<MaterialCategory>(source.MaterialCategories);
+			if (source.ItemIDMask == null)
+				this.ItemIDs = new ObservableCollection<ItemID>();
+			else
+				this.ItemIDs = new ObservableCollection<ItemID>(source.ItemIDMask.EnumValues);
+
+			if (source.ItemCategoryMask == null)
+				this.ItemCategories = new ObservableCollection<ItemCategory>();
+			else
+				this.ItemCategories = new ObservableCollection<ItemCategory>(source.ItemCategoryMask.EnumValues);
+
+			if (source.MaterialIDMask == null)
+				this.MaterialIDs = new ObservableCollection<MaterialID>();
+			else
+				this.MaterialIDs = new ObservableCollection<MaterialID>(source.MaterialIDMask.EnumValues);
+
+			if (source.MaterialCategoryMask == null)
+				this.MaterialCategories = new ObservableCollection<MaterialCategory>();
+			else
+				this.MaterialCategories = new ObservableCollection<MaterialCategory>(source.MaterialCategoryMask.EnumValues);
 		}
 
 		public ObservableCollection<ItemID> ItemIDs { get; set; }
@@ -120,8 +135,23 @@ namespace Dwarrowdelf.Client.UI
 
 		public ItemFilter ToItemFilter()
 		{
-			return new ItemFilter(this.ItemIDs, this.ItemCategories, this.MaterialIDs, this.MaterialCategories);
+			ItemIDMask im = null;
+			if (this.ItemIDs.Any())
+				im = new ItemIDMask(this.ItemIDs);
+
+			ItemCategoryMask icm = null;
+			if (this.ItemCategories.Any())
+				icm = new ItemCategoryMask(this.ItemCategories);
+
+			MaterialIDMask mim = null;
+			if (this.MaterialIDs.Any())
+				mim = new MaterialIDMask(this.MaterialIDs);
+
+			MaterialCategoryMask mcm = null;
+			if (this.MaterialCategories.Any())
+				mcm = new MaterialCategoryMask(this.MaterialCategories);
+
+			return new ItemFilter(im, icm, mim, mcm);
 		}
 	}
-
 }

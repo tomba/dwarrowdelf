@@ -116,37 +116,27 @@ namespace Dwarrowdelf
 		MaterialIDMask m_materialIDMask;
 		MaterialCategoryMask m_materialCategoryMask;
 
-		public ItemFilter(IEnumerable<ItemID> itemIDs, IEnumerable<ItemCategory> itemCategories,
-			IEnumerable<MaterialID> materialIDs, IEnumerable<MaterialCategory> materialCategories)
+		public ItemFilter(ItemIDMask itemIDMask, ItemCategoryMask itemCategoryMask,
+			MaterialIDMask materialIDMask, MaterialCategoryMask materialCategoryMask)
 		{
-			m_itemIDMask = new ItemIDMask(itemIDs);
-			m_itemCategoryMask = new ItemCategoryMask(itemCategories);
-			m_materialIDMask = new MaterialIDMask(materialIDs);
-			m_materialCategoryMask = new MaterialCategoryMask(materialCategories);
-		}
-
-		public ItemFilter(IEnumerable<ItemID> itemIDs, IEnumerable<MaterialID> materialIDs)
-		{
-			m_itemIDMask = new ItemIDMask(itemIDs);
-			m_itemCategoryMask = new ItemCategoryMask();
-			m_materialIDMask = new MaterialIDMask(materialIDs);
-			m_materialCategoryMask = new MaterialCategoryMask();
+			m_itemIDMask = itemIDMask;
+			m_itemCategoryMask = itemCategoryMask;
+			m_materialIDMask = materialIDMask;
+			m_materialCategoryMask = materialCategoryMask;
 		}
 
 		public ItemFilter(ItemID itemID, MaterialCategory materialCategory)
 		{
 			m_itemIDMask = new ItemIDMask(itemID);
-			m_itemCategoryMask = new ItemCategoryMask();
-			m_materialIDMask = new MaterialIDMask();
 			m_materialCategoryMask = new MaterialCategoryMask(materialCategory);
 		}
 
 		public bool Match(ItemID itemID, ItemCategory itemCategory, MaterialID materialID, MaterialCategory materialCategory)
 		{
-			return m_itemIDMask.Get(itemID) &&
-				m_itemCategoryMask.Get(itemCategory) &&
-				m_materialIDMask.Get(materialID) &&
-				m_materialCategoryMask.Get(materialCategory);
+			return (m_itemIDMask == null || m_itemIDMask.Get(itemID)) &&
+				(m_itemCategoryMask == null || m_itemCategoryMask.Get(itemCategory)) &&
+				(m_materialIDMask == null || m_materialIDMask.Get(materialID)) &&
+				(m_materialCategoryMask == null || m_materialCategoryMask.Get(materialCategory));
 		}
 
 		public bool Match(IItemObject item)
@@ -154,10 +144,27 @@ namespace Dwarrowdelf
 			return Match(item.ItemID, item.ItemCategory, item.MaterialID, item.MaterialCategory);
 		}
 
-		public IEnumerable<ItemID> ItemIDs { get { return m_itemIDMask.EnumValues; } }
-		public IEnumerable<ItemCategory> ItemCategories { get { return m_itemCategoryMask.EnumValues; } }
-		public IEnumerable<MaterialID> MaterialIDs { get { return m_materialIDMask.EnumValues; } }
-		public IEnumerable<MaterialCategory> MaterialCategories { get { return m_materialCategoryMask.EnumValues; } }
+		public ItemIDMask ItemIDMask { get { return m_itemIDMask; } }
+		public ItemCategoryMask ItemCategoryMask { get { return m_itemCategoryMask; } }
+		public MaterialIDMask MaterialIDMask { get { return m_materialIDMask; } }
+		public MaterialCategoryMask MaterialCategoryMask { get { return m_materialCategoryMask; } }
+
+		public IEnumerable<ItemID> ItemIDs
+		{
+			get { return m_itemIDMask != null ? m_itemIDMask.EnumValues : Items.GetItemIDs(); }
+		}
+		public IEnumerable<ItemCategory> ItemCategories
+		{
+			get { return m_itemCategoryMask != null ? m_itemCategoryMask.EnumValues : Items.GetItemCategories(); }
+		}
+		public IEnumerable<MaterialID> MaterialIDs
+		{
+			get { return m_materialIDMask != null ? m_materialIDMask.EnumValues : Materials.GetMaterialIDs(); }
+		}
+		public IEnumerable<MaterialCategory> MaterialCategories
+		{
+			get { return m_materialCategoryMask != null ? m_materialCategoryMask.EnumValues : Materials.GetMaterialCategories(); }
+		}
 
 		public override string ToString()
 		{

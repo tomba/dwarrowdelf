@@ -199,5 +199,15 @@ namespace Dwarrowdelf
 
 			return s_items.Where(ii => ii != null && ii.Category == category);
 		}
+
+		public static IEnumerable<ItemID> GetItemIDs()
+		{
+			return EnumHelpers.GetEnumValues<ItemID>().Skip(1);
+		}
+
+		public static IEnumerable<ItemCategory> GetItemCategories()
+		{
+			return EnumHelpers.GetEnumValues<ItemCategory>().Skip(1);
+		}
 	}
 }

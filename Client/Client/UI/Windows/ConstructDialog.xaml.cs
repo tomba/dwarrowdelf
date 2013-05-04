@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Client.UI
 				.SelectMany(c => c.Items.Where(m => m.IsSelected == true))
 				.Select(s => s.Value);
 
-			return new ItemFilter(null, materials);
+			return new ItemFilter(null, null, new MaterialIDMask(materials), null);
 		}
 
 
