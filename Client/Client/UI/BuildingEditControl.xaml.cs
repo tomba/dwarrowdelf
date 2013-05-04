@@ -25,7 +25,7 @@ using System.ComponentModel;
 /// 
 /// ITEMS (carpenter, wooden)
 /// barrel
-/// bucket
+/// bin
 /// bed
 /// chair
 /// table

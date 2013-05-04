@@ -25,7 +25,7 @@
 			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Bucket" SkillID="Carpentry" LaborID="Carpentry">
+		<BuildableItem ItemID="Bin" SkillID="Carpentry" LaborID="Carpentry">
 			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
