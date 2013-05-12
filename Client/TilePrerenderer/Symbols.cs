@@ -7,9 +7,9 @@ using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
 
-namespace Dwarrowdelf.Client.Symbols
+namespace Dwarrowdelf.Client
 {
-	public enum CharRenderMode
+	enum CharRenderMode
 	{
 		Free = 0,
 		Full,
@@ -90,8 +90,8 @@ namespace Dwarrowdelf.Client.Symbols
 		public double? OutlineThickness { get; set; }
 		public FontFamily FontFamily { get; set; }
 		public double? FontSize { get; set; }
-		public GameColor? Color { get; set; }
-		public GameColor? Background { get; set; }
+		public Color? Color { get; set; }
+		public Color? Background { get; set; }
 		public bool Reverse { get; set; }
 		public CharRenderMode Mode { get; set; }
 	}

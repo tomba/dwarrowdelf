@@ -7,20 +7,10 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using System.Windows;
 
-namespace Dwarrowdelf.Client.Symbols
+namespace Dwarrowdelf.Client
 {
-	public sealed class TileSet : ITileSet
+	sealed class TileSetLoader
 	{
-		static TileSet s_defaultTileSet;
-
-		static TileSet()
-		{
-			s_defaultTileSet = new TileSet("DefaultTileSet");
-			s_defaultTileSet.Load();
-		}
-
-		public static TileSet Default { get { return s_defaultTileSet; } }
-
 		SymbolSet m_symbolSet;
 		Dictionary<string, Drawing> m_drawingResources;
 		BitmapSource m_bitmap;
@@ -29,7 +19,7 @@ namespace Dwarrowdelf.Client.Symbols
 		public string Name { get; private set; }
 		public DateTime ModTime { get; private set; }
 
-		public TileSet(string symbolInfoName)
+		public TileSetLoader(string symbolInfoName)
 		{
 			this.Name = symbolInfoName;
 			m_symbolSet = LoadSymbolSet(this.Name + ".xaml");
@@ -55,14 +45,15 @@ namespace Dwarrowdelf.Client.Symbols
 			if (File.Exists(path))
 			{
 				using (var stream = File.OpenRead(path))
-					symbolSet = (Symbols.SymbolSet)System.Xaml.XamlServices.Load(stream);
+					symbolSet = (SymbolSet)System.Xaml.XamlServices.Load(
+						stream);
 
 				date = File.GetLastWriteTime(path);
 			}
 			else
 			{
-				var uri = new Uri("/Dwarrowdelf.Client;component/Symbols/" + symbolInfoName, UriKind.Relative);
-				symbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
+				var uri = new Uri("/TilePrerenderer;component/" + symbolInfoName, UriKind.Relative);
+				symbolSet = (SymbolSet)Application.LoadComponent(uri);
 
 				date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
 			}
@@ -93,7 +84,7 @@ namespace Dwarrowdelf.Client.Symbols
 			{
 				try
 				{
-					var uri = new Uri("/Dwarrowdelf.Client;component/Symbols/" + drawingsName, UriKind.Relative);
+					var uri = new Uri("/TilePrerenderer;component/" + drawingsName, UriKind.Relative);
 					drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
 
 					date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -127,7 +118,7 @@ namespace Dwarrowdelf.Client.Symbols
 
 			try
 			{
-				var uri = new Uri("/Dwarrowdelf.Client;component/Symbols/" + name, UriKind.Relative);
+				var uri = new Uri("/TilePrerenderer;component/" + name, UriKind.Relative);
 				var resStream = Application.GetResourceStream(uri);
 				stream = resStream.Stream;
 				date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -170,52 +161,6 @@ namespace Dwarrowdelf.Client.Symbols
 			return (x & (x - 1)) == 0;
 		}
 
-		public Drawing GetDetailedDrawing(SymbolID symbolID, GameColor color)
-		{
-			if (m_symbolSet.Symbols.Contains(symbolID) == false)
-				symbolID = SymbolID.Unknown;
-
-			var symbol = m_symbolSet.Symbols[symbolID];
-
-			var gfx = DecideGfx(symbol);
-
-			if (gfx is VectorGfxBase)
-			{
-				var g = (VectorGfxBase)gfx;
-
-				var drawing = GetVectorGfx(g);
-
-				if (color != GameColor.None)
-				{
-					drawing = drawing.Clone();
-					TileSetHelpers.ColorizeDrawing(drawing, color.ToWindowsColor());
-				}
-
-				drawing.Freeze();
-
-				return drawing;
-			}
-			else if (gfx is BitmapGfx)
-			{
-				var g = (BitmapGfx)gfx;
-
-				var bmp = GetBitmapGfx(g, 64);
-
-				if (color != GameColor.None)
-					bmp = TileSetHelpers.ColorizeBitmap(bmp, color.ToWindowsColor());
-
-				var drawing = TileSetHelpers.BitmapToDrawing(bmp);
-
-				drawing.Freeze();
-
-				return drawing;
-			}
-			else
-			{
-				throw new Exception();
-			}
-		}
-
 		GfxBase DecideGfx(Symbol symbol)
 		{
 			var gfxs = symbol.Graphics;
@@ -236,7 +181,7 @@ namespace Dwarrowdelf.Client.Symbols
 			throw new Exception();
 		}
 
-		public BitmapSource GetTileBitmap(SymbolID symbolID, GameColor color, int size)
+		public BitmapSource GetTileBitmap(SymbolID symbolID, int size)
 		{
 			if (m_symbolSet.Symbols.Contains(symbolID) == false)
 				symbolID = SymbolID.Unknown;
@@ -251,35 +196,17 @@ namespace Dwarrowdelf.Client.Symbols
 
 				var drawing = GetVectorGfx(g);
 
-				var bmp = TileSetHelpers.DrawingToBitmap(drawing, size);
-
-				if (color != GameColor.None)
-					bmp = TileSetHelpers.ColorizeBitmap(bmp, color.ToWindowsColor());
-
-				return bmp;
+				return TileSetLoaderHelpers.DrawingToBitmap(drawing, size);
 			}
 			else if (gfx is BitmapGfx)
 			{
 				var g = (BitmapGfx)gfx;
-				var bmp = GetBitmapGfx(g, size);
-
-				if (color != GameColor.None)
-					bmp = TileSetHelpers.ColorizeBitmap(bmp, color.ToWindowsColor());
-
-				return bmp;
+				return GetBitmapGfx(g, size);
 			}
 			else
 			{
 				throw new Exception();
 			}
-		}
-
-		public void GetTileRawBitmap(SymbolID symbolID, int size, byte[] array)
-		{
-			var bmp = GetTileBitmap(symbolID, GameColor.None, size);
-
-			const int bytesPerPixel = 4;
-			bmp.CopyPixels(array, size * bytesPerPixel, 0);
 		}
 
 		GfxBase DecideTileGfx(Symbol symbol, int size)
@@ -349,13 +276,10 @@ namespace Dwarrowdelf.Client.Symbols
 			var outline = gfx.Outline.HasValue ? gfx.Outline.Value : m_symbolSet.Outline;
 			var outlineThickness = gfx.OutlineThickness.HasValue ? gfx.OutlineThickness.Value : m_symbolSet.OutlineThickness;
 
-			var fgColor = gfx.Color.HasValue ? gfx.Color.Value : GameColor.White;
-			var bgColor = gfx.Background.HasValue ? gfx.Background.Value : GameColor.None;
-
-			var drawing = TileSetHelpers.DrawCharacter(gfx.Char, typeface, fontSize, fgColor, bgColor, outline,
+			var drawing = TileSetLoaderHelpers.DrawCharacter(gfx.Char, typeface, fontSize, gfx.Color, gfx.Background, outline,
 				outlineThickness, gfx.Reverse, gfx.Mode);
 
-			drawing = TileSetHelpers.NormalizeDrawing(drawing, new Point(gfx.X, gfx.Y), new Size(gfx.W, gfx.H),
+			drawing = TileSetLoaderHelpers.NormalizeDrawing(drawing, new Point(gfx.X, gfx.Y), new Size(gfx.W, gfx.H),
 				gfx.Rotate, !gfx.Opaque, gfx.Opacity);
 
 			drawing.Freeze();
@@ -367,7 +291,7 @@ namespace Dwarrowdelf.Client.Symbols
 		{
 			var drawing = m_drawingResources[gfx.DrawingName].Clone();
 
-			drawing = TileSetHelpers.NormalizeDrawing(drawing, new Point(gfx.X, gfx.Y), new Size(gfx.W, gfx.H),
+			drawing = TileSetLoaderHelpers.NormalizeDrawing(drawing, new Point(gfx.X, gfx.Y), new Size(gfx.W, gfx.H),
 				gfx.Rotate, !gfx.Opaque, gfx.Opacity);
 
 			RenderOptions.SetBitmapScalingMode(drawing, BitmapScalingMode.Fant);

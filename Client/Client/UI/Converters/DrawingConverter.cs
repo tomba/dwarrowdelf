@@ -26,10 +26,17 @@ namespace Dwarrowdelf.Client.UI
 			else
 				color = (GameColor)values[1];
 
-			if (targetType != typeof(Drawing))
+			if (targetType != typeof(ImageSource))
 				throw new ArgumentException();
 
-			return GameData.Data.TileSet.GetDetailedDrawing(symbolID, color);
+			int tileSize;
+
+			if (parameter == null)
+				tileSize = 64;
+			else
+				tileSize = int.Parse((string)parameter);
+
+			return GameData.Data.TileSet.GetTile(symbolID, color, tileSize);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
@@ -72,10 +79,17 @@ namespace Dwarrowdelf.Client.UI
 				}
 			}
 
-			if (targetType != typeof(Drawing))
+			if (targetType != typeof(ImageSource))
 				throw new ArgumentException();
 
-			return GameData.Data.TileSet.GetDetailedDrawing(symbolID, color);
+			int tileSize;
+
+			if (parameter == null)
+				tileSize = 64;
+			else
+				tileSize = int.Parse((string)parameter);
+
+			return GameData.Data.TileSet.GetTile(symbolID, color, tileSize);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)

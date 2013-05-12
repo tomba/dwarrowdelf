@@ -15,26 +15,6 @@
 		<ui:CapitalizeConverter x:Key="capitalizeConverter" />
 
 		<ui:SymbolAndColorToDrawingConverter x:Key="symbolAndColorDrawingConverter"/>
-
-		<DrawingImage x:Key="objectDrawingImage" x:Shared="False">
-			<DrawingImage.Drawing>
-				<MultiBinding Converter="{StaticResource symbolAndColorDrawingConverter}">
-					<Binding Path="SymbolID" />
-					<Binding Path="EffectiveColor" />
-				</MultiBinding>
-			</DrawingImage.Drawing>
-		</DrawingImage>
-
 		<ui:ItemIDAndMaterialIDToDrawingConverter x:Key="itemAndMaterialDrawingConverter"/>
-
-		<DrawingImage x:Key="buildableItemDrawingImage" x:Shared="False">
-			<DrawingImage.Drawing>
-				<MultiBinding Converter="{StaticResource itemAndMaterialDrawingConverter}">
-					<Binding Path="ItemID" />
-					<Binding Path="MaterialID" />
-				</MultiBinding>
-			</DrawingImage.Drawing>
-		</DrawingImage>
-
 	</Application.Resources>
 </Application>

@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Client
 	// Stored in render tile data, needs to be short
 	public enum SymbolID : short
 	{
-		Undefined,
+		Undefined = 0,
 
 		Unknown,
 

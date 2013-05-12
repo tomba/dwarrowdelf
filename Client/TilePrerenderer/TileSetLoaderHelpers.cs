@@ -7,22 +7,16 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace Dwarrowdelf.Client.Symbols
+namespace Dwarrowdelf.Client
 {
-	public static class TileSetHelpers
+	static class TileSetLoaderHelpers
 	{
-		public static Drawing DrawCharacter(char ch, Typeface typeFace, double fontSize, GameColor color, GameColor bgColor,
+		public static Drawing DrawCharacter(char ch, Typeface typeFace, double fontSize, Color? color, Color? bgColor,
 			bool drawOutline, double outlineThickness, bool reverse, CharRenderMode mode)
 		{
-			Color c;
-			if (color == GameColor.None)
-				c = Colors.White;
-			else
-				c = color.ToWindowsColor();
-
 			DrawingGroup dGroup = new DrawingGroup();
-			var brush = new SolidColorBrush(c);
-			var bgBrush = bgColor != GameColor.None ? new SolidColorBrush(bgColor.ToWindowsColor()) : Brushes.Transparent;
+			var brush = color.HasValue ? new SolidColorBrush(color.Value) : new SolidColorBrush(Colors.White);
+			var bgBrush = bgColor.HasValue ? new SolidColorBrush(bgColor.Value) : Brushes.Transparent;
 			using (DrawingContext dc = dGroup.Open())
 			{
 				var formattedText = new FormattedText(
@@ -144,82 +138,6 @@ namespace Dwarrowdelf.Client.Symbols
 			return t;
 		}
 
-
-		public static void ColorizeDrawing(Drawing drawing, Color tintColor)
-		{
-			if (drawing is DrawingGroup)
-			{
-				var dg = (DrawingGroup)drawing;
-				foreach (var d in dg.Children)
-				{
-					ColorizeDrawing(d, tintColor);
-				}
-			}
-			else if (drawing is GeometryDrawing)
-			{
-				var gd = (GeometryDrawing)drawing;
-				if (gd.Brush != null)
-					ColorizeBrush(gd.Brush, tintColor);
-				if (gd.Pen != null)
-					ColorizeBrush(gd.Pen.Brush, tintColor);
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		static void ColorizeBrush(Brush brush, Color tintColor)
-		{
-			if (brush is SolidColorBrush)
-			{
-				var b = (SolidColorBrush)brush;
-				b.Color = TintColor(b.Color, tintColor);
-			}
-			else if (brush is LinearGradientBrush)
-			{
-				var b = (LinearGradientBrush)brush;
-				foreach (var stop in b.GradientStops)
-					stop.Color = TintColor(stop.Color, tintColor);
-			}
-			else if (brush is RadialGradientBrush)
-			{
-				var b = (RadialGradientBrush)brush;
-				foreach (var stop in b.GradientStops)
-					stop.Color = TintColor(stop.Color, tintColor);
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		public static Color TintColor(Color c, Color tint)
-		{
-			return SimpleTint(c, tint);
-#if asd
-			double th, ts, tl;
-			HSL.RGB2HSL(tint, out th, out ts, out tl);
-
-			double ch, cs, cl;
-			HSL.RGB2HSL(c, out ch, out cs, out cl);
-
-			Color color = HSL.HSL2RGB(th, ts, cl);
-			color.A = c.A;
-
-			return color;
-#endif
-		}
-
-		static Color SimpleTint(Color c, Color tint)
-		{
-			return Color.FromScRgb(
-				c.ScA * tint.ScA,
-				c.ScR * tint.ScR,
-				c.ScG * tint.ScG,
-				c.ScB * tint.ScB);
-		}
-
 		public static BitmapSource DrawingToBitmap(Drawing drawing, int size)
 		{
 			DrawingVisual drawingVisual = new DrawingVisual();
@@ -235,43 +153,6 @@ namespace Dwarrowdelf.Client.Symbols
 			bmp.Freeze();
 
 			return bmp;
-		}
-
-		public static Drawing BitmapToDrawing(BitmapSource bitmap)
-		{
-			var dg = new DrawingGroup();
-
-			using (var dc = dg.Open())
-			{
-				dc.DrawImage(bitmap, new Rect(0, 0, 100, 100));
-			}
-
-			return dg;
-		}
-
-		public static BitmapSource ColorizeBitmap(BitmapSource bmp, Color tint)
-		{
-			var wbmp = new WriteableBitmap(bmp);
-			var arr = new uint[wbmp.PixelWidth * wbmp.PixelHeight];
-
-			wbmp.CopyPixels(arr, wbmp.PixelWidth * 4, 0);
-
-			for (int i = 0; i < arr.Length; ++i)
-			{
-				byte a = (byte)((arr[i] >> 24) & 0xff);
-				byte r = (byte)((arr[i] >> 16) & 0xff);
-				byte g = (byte)((arr[i] >> 8) & 0xff);
-				byte b = (byte)((arr[i] >> 0) & 0xff);
-
-				var c = Color.FromArgb(a, r, g, b);
-				c = TileSetHelpers.TintColor(c, tint);
-
-				arr[i] = (uint)((c.A << 24) | (c.R << 16) | (c.G << 8) | (c.B << 0));
-			}
-
-			wbmp.WritePixels(new Int32Rect(0, 0, wbmp.PixelWidth, wbmp.PixelHeight), arr, wbmp.PixelWidth * 4, 0);
-
-			return wbmp;
 		}
 	}
 }

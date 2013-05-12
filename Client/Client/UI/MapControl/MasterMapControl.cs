@@ -478,6 +478,8 @@ namespace Dwarrowdelf.Client.UI
 
 			set
 			{
+				throw new NotImplementedException();
+				/*
 				string xaml;
 
 				switch (value)
@@ -502,8 +504,8 @@ namespace Dwarrowdelf.Client.UI
 				m_tileSet = value;
 
 				Notify("TileSet");
+				 */
 			}
 		}
-
 	}
 }

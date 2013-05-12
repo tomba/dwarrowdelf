@@ -19,7 +19,14 @@
 		<UniformGrid Grid.Row="0" Columns="2">
 			<TextBlock Text="{Binding Description, Converter={StaticResource capitalizeConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
-			<Image Source="{StaticResource objectDrawingImage}" Stretch="Uniform" Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center" />
+			<Image Stretch="Uniform" Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<Image.Source>
+					<MultiBinding Converter="{StaticResource symbolAndColorDrawingConverter}" ConverterParameter="64">
+						<Binding Path="SymbolID" />
+						<Binding Path="EffectiveColor" />
+					</MultiBinding>
+				</Image.Source>
+			</Image>
 		</UniformGrid>
 
 		<Separator Grid.Row="1"/>

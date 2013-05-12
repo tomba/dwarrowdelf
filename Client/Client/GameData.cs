@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client
 
 		public GameData()
 		{
-			this.TileSet = new Dwarrowdelf.Client.Symbols.CachedTileSet(Dwarrowdelf.Client.Symbols.TileSet.Default);
+			this.TileSet = new TileSet();
 
 			m_ipMessages = new ObservableCollection<Messages.IPOutputMessage>();
 			this.IPMessages = new ReadOnlyObservableCollection<Messages.IPOutputMessage>(m_ipMessages);
@@ -66,9 +66,9 @@ namespace Dwarrowdelf.Client
 
 		public UI.MainWindow MainWindow { get { return (UI.MainWindow)Application.Current.MainWindow; } }
 
-		Dwarrowdelf.Client.ITileSet m_tileSet;
+		TileSet m_tileSet;
 
-		public Dwarrowdelf.Client.ITileSet TileSet
+		public TileSet TileSet
 		{
 			get { return m_tileSet; }
 			set { m_tileSet = value; if (this.TileSetChanged != null) this.TileSetChanged(); }

@@ -68,10 +68,11 @@ namespace Dwarrowdelf.Client.TileControl
 		/// <summary>
 		/// Create a Texture2D array which contains mipmapped versions of all symbol drawings
 		/// </summary>
-		public static Texture2D CreateTextures11(Device device, ITileSet tileSet)
+		public static Texture2D CreateTextures11(Device device, TileSet tileSet)
 		{
 			var numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
+			const int bytesPerPixel = 4;
 			int maxTileSize = 64;
 			int mipLevels = 4; // 64, 32, 16, 8
 
@@ -90,16 +91,17 @@ namespace Dwarrowdelf.Client.TileControl
 				MipLevels = mipLevels,
 			});
 
+			var bmp = tileSet.Atlas;
+
 			for (int mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
 			{
 				int tileSize = maxTileSize >> mipLevel;
 
-				const int bytesPerPixel = 4;
 				var pixelArray = new byte[tileSize * tileSize * bytesPerPixel];
 
 				for (int i = 0; i < numDistinctBitmaps; ++i)
 				{
-					tileSet.GetTileRawBitmap((SymbolID)i, tileSize, pixelArray);
+					SymbolID sid = (SymbolID)i;
 #if COLORMIPMAPS
 					byte r, g, b;
 					switch (mipLevel)
@@ -124,9 +126,7 @@ namespace Dwarrowdelf.Client.TileControl
 							pixelArray[y * tileSize * 4 + x * 4 + 3] = 255;
 						}
 					}
-#endif
-
-#if TEST
+#elif TEST
 					for (int y = 0; y < tileSize; ++y)
 					{
 						for (int x = 0; x < tileSize; ++x)
@@ -140,11 +140,18 @@ namespace Dwarrowdelf.Client.TileControl
 							}
 						}
 					}
+#else
+					int xOffset = tileSet.GetTileXOffset(tileSize);
+					int yOffset = tileSet.GetTileYOffset(sid);
+
+					var srcRect = new System.Windows.Int32Rect(xOffset, i * maxTileSize, tileSize, tileSize);
+
+					bmp.CopyPixels(srcRect, pixelArray, tileSize * bytesPerPixel, 0);
 #endif
 
 					using (var dataStream = DataStream.Create(pixelArray, true, false))
 					{
-						var box = new DataBox(dataStream.DataPointer, tileSize * 4, 0);
+						var box = new DataBox(dataStream.DataPointer, tileSize * bytesPerPixel, 0);
 						device.ImmediateContext.UpdateSubresource(box, atlasTexture, Texture2D.CalculateSubResourceIndex(mipLevel, i, mipLevels));
 					}
 				}

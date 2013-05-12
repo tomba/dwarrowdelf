@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Client.TileControl
 			drawingContext.DrawImage(m_interopImageSource, new Rect(renderSize));
 		}
 
-		public void SetTileSet(ITileSet tileSet)
+		public void SetTileSet(TileSet tileSet)
 		{
 			if (m_tileTextureArray != null)
 			{
@@ -114,48 +114,7 @@ namespace Dwarrowdelf.Client.TileControl
 				m_tileTextureArray = null;
 			}
 
-			// XXX what would be a better place for the cache?
-			var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
-			var textureName = tileSet.Name;
-
-			var texturePath = Path.Combine(cachePath, textureName + ".dds");
-			var textureInfoPath = Path.Combine(cachePath, textureName + ".dds.info");
-
-			var assDate = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-			if (File.Exists(texturePath) && File.Exists(textureInfoPath))
-			{
-				try
-				{
-					var lines = File.ReadAllLines(textureInfoPath);
-					var tileSetModTime = DateTime.FromBinary(long.Parse(lines[0]));
-					var assModTime = DateTime.FromBinary(long.Parse(lines[1]));
-
-					if (tileSetModTime == tileSet.ModTime && assModTime == assDate)
-					{
-						trace.TraceInformation("Loading textures from cache");
-						m_tileTextureArray = Texture2D.FromFile<Texture2D>(m_device, texturePath);
-					}
-				}
-				catch (Exception)
-				{
-				}
-			}
-
-			if (m_tileTextureArray == null)
-			{
-				m_tileTextureArray = Helpers11.CreateTextures11(m_device, tileSet);
-
-				// texture saving requires d3dx11.dll
-				/*
-				Texture2D.ToFile(m_device.ImmediateContext, m_tileTextureArray, ImageFileFormat.Dds, texturePath);
-
-				File.WriteAllLines(textureInfoPath, new string[] {
-					m_tileSet.ModTime.ToBinary().ToString(),
-					assDate.ToBinary().ToString(),
-				});
-				 */
-			}
+			m_tileTextureArray = Helpers11.CreateTextures11(m_device, tileSet);
 
 			if (m_scene != null)
 				m_scene.SetTileTextures(m_tileTextureArray);

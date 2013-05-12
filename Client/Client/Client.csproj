@@ -78,12 +78,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Symbols\DefaultTileSet.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Symbols\DefaultTileSetVectors.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\BaseObjectPropertiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -244,10 +238,6 @@
     <Compile Include="DebugScriptMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Selectables.cs" />
-    <Compile Include="Symbols\CachedTileSet.cs" />
-    <Compile Include="Symbols\Symbols.cs" />
-    <Compile Include="Symbols\TileSet.cs" />
-    <Compile Include="Symbols\TileSetHelpers.cs" />
     <Compile Include="UI\ClientTools.cs" />
     <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
     <Compile Include="UI\MainWindow\FocusedObjectStats.xaml.cs">
@@ -385,7 +375,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DrawingCache.cs" />
     <Compile Include="UI\LivingInfoControl.xaml.cs">
       <DependentUpon>LivingInfoControl.xaml</DependentUpon>
     </Compile>
@@ -418,9 +407,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ClientUser.cs" />
-    <None Include="Symbols\DefaultTileSetVectors.design" />
-    <Resource Include="Symbols\DefaultTileSetBitmaps.png" />
-    <None Include="Symbols\DefaultTileSetBitmaps.pdn" />
     <Resource Include="Images\splash.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -97,7 +97,7 @@
       <Name>Common %28Common\Common%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\Base\Client.Base.csproj">
-      <Project>{1794F5B1-762E-40D2-A314-040487DEEFE2}</Project>
+      <Project>{1794f5b1-762e-40d2-a314-040487deefe2}</Project>
       <Name>Client.Base</Name>
     </ProjectReference>
   </ItemGroup>
