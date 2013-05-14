@@ -16,9 +16,10 @@ namespace TilePrerenderer
 	{
 		static void Main(string[] args)
 		{
-			var ts = new TileSetLoader("DefaultTileSet");
+			var path = Path.GetDirectoryName(args[0]);
+			var tsName = Path.GetFileNameWithoutExtension(args[0]);
+			var ts = new TileSetLoader(path, tsName);
 			ts.Load();
-			var n = ts.Name;
 
 			var values = (SymbolID[])Enum.GetValues(typeof(SymbolID));
 			int numSymbols = (int)values.Max() + 1;
@@ -56,7 +57,9 @@ namespace TilePrerenderer
 
 			var p = new PngBitmapEncoder();
 			p.Frames = new BitmapFrame[] { BitmapFrame.Create(target) };
-			p.Save(File.OpenWrite("c:/temp/test.png"));
+			p.Save(File.OpenWrite(args[1]));
+
+			Console.WriteLine("Generate TileSet from {0} to {1}", args[0], args[1]);
 		}
 	}
 }

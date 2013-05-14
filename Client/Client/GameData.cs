@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client
 
 		public GameData()
 		{
-			this.TileSet = new TileSet();
+			this.TileSet = new TileSet(new Uri("/Dwarrowdelf.Client;component/TileSet/TileSet.png", UriKind.Relative));
 
 			m_ipMessages = new ObservableCollection<Messages.IPOutputMessage>();
 			this.IPMessages = new ReadOnlyObservableCollection<Messages.IPOutputMessage>(m_ipMessages);

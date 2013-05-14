@@ -6,6 +6,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Windows;
+using System.Reflection;
+using System.Xaml;
 
 namespace Dwarrowdelf.Client
 {
@@ -16,87 +18,47 @@ namespace Dwarrowdelf.Client
 		BitmapSource m_bitmap;
 		int[] m_bitmapSizes;
 
-		public string Name { get; private set; }
-		public DateTime ModTime { get; private set; }
+		string m_path;
+		string m_name;
 
-		public TileSetLoader(string symbolInfoName)
+		public TileSetLoader(string path, string symbolInfoName)
 		{
-			this.Name = symbolInfoName;
-			m_symbolSet = LoadSymbolSet(this.Name + ".xaml");
+			m_path = path;
+			m_name = symbolInfoName;
+			m_symbolSet = LoadSymbolSet(m_name + ".xaml");
 		}
 
 		public void Load()
 		{
-			m_drawingResources = LoadDrawingResource(this.Name + "Vectors.xaml");
+			m_drawingResources = LoadDrawingResource(m_name + "Vectors.xaml");
 
-			m_bitmap = LoadBitmapResource(this.Name + "Bitmaps.png");
+			m_bitmap = LoadBitmapResource(m_name + "Bitmaps.png");
 
 			m_bitmapSizes = m_symbolSet.BitmapSizes.Split(',').Select(s => int.Parse(s)).ToArray();
 		}
 
 		SymbolSet LoadSymbolSet(string symbolInfoName)
 		{
-			var asm = System.Reflection.Assembly.GetExecutingAssembly();
-			var path = Path.Combine(Path.GetDirectoryName(asm.Location), "Symbols", symbolInfoName);
+			var path = Path.Combine(m_path, symbolInfoName);
 
-			SymbolSet symbolSet;
-			DateTime date;
-
-			if (File.Exists(path))
+			var reader = new XamlXmlReader(path, new XamlXmlReaderSettings()
 			{
-				using (var stream = File.OpenRead(path))
-					symbolSet = (SymbolSet)System.Xaml.XamlServices.Load(
-						stream);
+				LocalAssembly = Assembly.GetExecutingAssembly(),
+			});
 
-				date = File.GetLastWriteTime(path);
-			}
-			else
-			{
-				var uri = new Uri("/TilePrerenderer;component/" + symbolInfoName, UriKind.Relative);
-				symbolSet = (SymbolSet)Application.LoadComponent(uri);
-
-				date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
-			}
-
-			if (date > this.ModTime)
-				this.ModTime = date;
-
-			return symbolSet;
+			return (SymbolSet)XamlServices.Load(reader);
 		}
 
 		Dictionary<string, Drawing> LoadDrawingResource(string drawingsName)
 		{
-			ResourceDictionary drawingResources;
+			var path = Path.Combine(m_path, drawingsName);
 
-			var asm = System.Reflection.Assembly.GetExecutingAssembly();
-			var path = Path.Combine(Path.GetDirectoryName(asm.Location), "Symbols", drawingsName);
-
-			DateTime date;
-
-			if (File.Exists(path))
+			var reader = new XamlXmlReader(path, new XamlXmlReaderSettings()
 			{
-				using (var stream = File.OpenRead(path))
-					drawingResources = (ResourceDictionary)System.Xaml.XamlServices.Load(stream);
+				LocalAssembly = Assembly.GetExecutingAssembly(),
+			});
 
-				date = File.GetLastWriteTime(path);
-			}
-			else
-			{
-				try
-				{
-					var uri = new Uri("/TilePrerenderer;component/" + drawingsName, UriKind.Relative);
-					drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
-
-					date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
-				}
-				catch (IOException)
-				{
-					return null;
-				}
-			}
-
-			if (date > this.ModTime)
-				this.ModTime = date;
+			ResourceDictionary drawingResources = (ResourceDictionary)XamlServices.Load(reader);
 
 			var drawingMap = new Dictionary<string, Drawing>(drawingResources.Count);
 
@@ -111,28 +73,16 @@ namespace Dwarrowdelf.Client
 			return drawingMap;
 		}
 
-		BitmapFrame LoadBitmapResource(string name)
+		BitmapSource LoadBitmapResource(string name)
 		{
-			Stream stream;
-			DateTime date;
+			var path = Path.Combine(m_path, name);
 
-			try
+			using (var stream = File.OpenRead(path))
 			{
-				var uri = new Uri("/TilePrerenderer;component/" + name, UriKind.Relative);
-				var resStream = Application.GetResourceStream(uri);
-				stream = resStream.Stream;
-				date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
+				var decoder = PngBitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.Default);
+				var frame = decoder.Frames[0];
+				return new WriteableBitmap(frame);
 			}
-			catch (IOException)
-			{
-				return null;
-			}
-
-			if (date > this.ModTime)
-				this.ModTime = date;
-
-			var decoder = PngBitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.Default);
-			return decoder.Frames[0];
 		}
 
 

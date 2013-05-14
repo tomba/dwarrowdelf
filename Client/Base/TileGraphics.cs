@@ -18,9 +18,11 @@ namespace Dwarrowdelf.Client
 
 		public BitmapSource Atlas { get { return m_atlas; } }
 
-		public TileSet()
+		public TileSet(Uri uri)
 		{
-			using (var stream = File.OpenRead("C:/temp/test.png"))
+			var resStream = Application.GetResourceStream(uri);
+
+			using (var stream = resStream.Stream)
 			{
 				var decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.None, BitmapCacheOption.None);
 				var frame = decoder.Frames[0];
