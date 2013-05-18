@@ -16,6 +16,37 @@ namespace Dwarrowdelf.Client
 		Dictionary<int, int> m_tileSizeMap;
 		int m_maxTileSize;
 
+		struct TileKey : IEquatable<TileKey>
+		{
+			public SymbolID SymbolID;
+			public GameColor Color;
+			public int Size;
+
+			public TileKey(SymbolID symbolID, GameColor color, int size)
+			{
+				this.SymbolID = symbolID;
+				this.Color = color;
+				this.Size = size;
+			}
+
+			public bool Equals(TileKey other)
+			{
+				return this.SymbolID == other.SymbolID && this.Color == other.Color && this.Size == other.Size;
+			}
+
+			public override bool Equals(object obj)
+			{
+				return (obj is TileKey) && Equals((TileKey)obj);
+			}
+
+			public override int GetHashCode()
+			{
+				return this.Size | ((int)this.Color << 8) | ((int)this.SymbolID << 16);
+			}
+		}
+
+		LRUCache<TileKey, BitmapSource> m_cache = new LRUCache<TileKey, BitmapSource>(128);
+
 		public BitmapSource Atlas { get { return m_atlas; } }
 
 		public TileSet(Uri uri)
@@ -59,15 +90,24 @@ namespace Dwarrowdelf.Client
 			if (tileSize == 24)
 				tileSize = 32;
 
+			var key = new TileKey(symbolID, color, tileSize);
+
+			BitmapSource bmp;
+
+			if (m_cache.TryGet(key, out bmp))
+				return bmp;
+
 			int xOffset = GetTileXOffset(tileSize);
 			int yOffset = GetTileYOffset(symbolID);
 
-			BitmapSource bmp = new CroppedBitmap(m_atlas, new Int32Rect(xOffset, yOffset, tileSize, tileSize));
+			bmp = new CroppedBitmap(m_atlas, new Int32Rect(xOffset, yOffset, tileSize, tileSize));
 
 			if (color != GameColor.None)
 				bmp = ColorizeBitmap(bmp, color.ToWindowsColor());
 
 			bmp.Freeze();
+
+			m_cache.Add(key, bmp);
 
 			return bmp;
 		}
