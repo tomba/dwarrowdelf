@@ -29,12 +29,10 @@ namespace Dwarrowdelf.Client.UI
 			if (targetType != typeof(ImageSource))
 				throw new ArgumentException();
 
-			int tileSize;
-
 			if (parameter == null)
-				tileSize = 64;
-			else
-				tileSize = int.Parse((string)parameter);
+				throw new Exception();
+
+			int tileSize = int.Parse((string)parameter);
 
 			return GameData.Data.TileSet.GetTile(symbolID, color, tileSize);
 		}
@@ -82,12 +80,10 @@ namespace Dwarrowdelf.Client.UI
 			if (targetType != typeof(ImageSource))
 				throw new ArgumentException();
 
-			int tileSize;
-
 			if (parameter == null)
-				tileSize = 64;
-			else
-				tileSize = int.Parse((string)parameter);
+				throw new Exception();
+
+			int tileSize = int.Parse((string)parameter);
 
 			return GameData.Data.TileSet.GetTile(symbolID, color, tileSize);
 		}

@@ -144,7 +144,7 @@ namespace Dwarrowdelf.Client.TileControl
 					int xOffset = tileSet.GetTileXOffset(tileSize);
 					int yOffset = tileSet.GetTileYOffset(sid);
 
-					var srcRect = new System.Windows.Int32Rect(xOffset, i * maxTileSize, tileSize, tileSize);
+					var srcRect = new System.Windows.Int32Rect(xOffset, yOffset, tileSize, tileSize);
 
 					bmp.CopyPixels(srcRect, pixelArray, tileSize * bytesPerPixel, 0);
 #endif

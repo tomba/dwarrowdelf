@@ -48,6 +48,10 @@ namespace Dwarrowdelf.Client.UI
 
 		KeyHandler m_keyHandler;
 
+		const double INITIALTILESIZE = 16;
+		const double MAXTILESIZE = 64;
+		const double MINTILESIZE = 2;
+
 		public MasterMapControl()
 		{
 			m_vc = new VisualCollection(this);
@@ -91,7 +95,7 @@ namespace Dwarrowdelf.Client.UI
 			this.MouseMove += OnMouseMove;
 			this.MouseLeave += OnMouseLeave;
 
-			this.TileSize = 16;
+			this.TileSize = INITIALTILESIZE;
 
 			this.HoverTileView = new TileView();
 			this.FocusedTileView = new TileView();

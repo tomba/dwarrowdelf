@@ -30,8 +30,7 @@ namespace Dwarrowdelf.Client.UI
 		public event Action<EnvironmentObject> EnvironmentChanged;
 		public event Action<int> ZChanged;
 
-		public const double MAXTILESIZE = 64;
-		public const double MINTILESIZE = 2;
+		const double MINTILESIZE = 2;
 
 		public MapControl()
 		{

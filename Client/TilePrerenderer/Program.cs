@@ -24,9 +24,16 @@ namespace TilePrerenderer
 			var values = (SymbolID[])Enum.GetValues(typeof(SymbolID));
 			int numSymbols = (int)values.Max() + 1;
 
-			int[] tileSizes = new int[] { 8, 16, 32, 64 };
+			int[] tileSizes = new int[] {
+				8, 10, 12,
+				16, 20, 24,
+				32, 40, 48,
+				64, 80, 96
+			};
 
-			WriteableBitmap target = new WriteableBitmap(tileSizes.Sum(), tileSizes.Max() * numSymbols, 96, 96,
+			int maxTileSize = tileSizes.Max();
+
+			WriteableBitmap target = new WriteableBitmap(tileSizes.Sum(), maxTileSize * numSymbols, 96, 96,
 				PixelFormats.Bgra32, null);
 
 			target.Lock();
@@ -47,7 +54,7 @@ namespace TilePrerenderer
 
 					source.CopyPixels(data, stride, 0);
 
-					target.WritePixels(new Int32Rect(xOffset, i * 64, tileSize, tileSize), data, stride, 0);
+					target.WritePixels(new Int32Rect(xOffset, i * maxTileSize, tileSize, tileSize), data, stride, 0);
 
 					xOffset += tileSize;
 				}
@@ -55,9 +62,16 @@ namespace TilePrerenderer
 
 			target.Unlock();
 
-			var p = new PngBitmapEncoder();
-			p.Frames = new BitmapFrame[] { BitmapFrame.Create(target) };
-			p.Save(File.OpenWrite(args[1]));
+			string tileSizesStr = string.Join(",", tileSizes.Select(i => i.ToString()));
+			var pngEncoder = new PngBitmapEncoder();
+			var metadata = new BitmapMetadata("png");
+			metadata.SetQuery("/tEXt/Software", "Dwarrowdelf");
+			metadata.SetQuery("/tEXt/tilesizes", tileSizesStr);
+			var frame = BitmapFrame.Create(target, null, metadata, null);
+			pngEncoder.Frames = new BitmapFrame[] { frame };
+
+			using (var stream = File.OpenWrite(args[1]))
+				pngEncoder.Save(stream);
 
 			Console.WriteLine("Generate TileSet from {0} to {1}", args[0], args[1]);
 		}

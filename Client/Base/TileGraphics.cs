@@ -12,62 +12,40 @@ namespace Dwarrowdelf.Client
 {
 	public class TileSet
 	{
-		BitmapSource m_atlas;
+		public BitmapSource Atlas { get; private set; }
+		public int MaxTileSize { get; private set; }
 		Dictionary<int, int> m_tileSizeMap;
-		int m_maxTileSize;
-
-		struct TileKey : IEquatable<TileKey>
-		{
-			public SymbolID SymbolID;
-			public GameColor Color;
-			public int Size;
-
-			public TileKey(SymbolID symbolID, GameColor color, int size)
-			{
-				this.SymbolID = symbolID;
-				this.Color = color;
-				this.Size = size;
-			}
-
-			public bool Equals(TileKey other)
-			{
-				return this.SymbolID == other.SymbolID && this.Color == other.Color && this.Size == other.Size;
-			}
-
-			public override bool Equals(object obj)
-			{
-				return (obj is TileKey) && Equals((TileKey)obj);
-			}
-
-			public override int GetHashCode()
-			{
-				return this.Size | ((int)this.Color << 8) | ((int)this.SymbolID << 16);
-			}
-		}
-
 		LRUCache<TileKey, BitmapSource> m_cache = new LRUCache<TileKey, BitmapSource>(128);
-
-		public BitmapSource Atlas { get { return m_atlas; } }
 
 		public TileSet(Uri uri)
 		{
 			var resStream = Application.GetResourceStream(uri);
 
+			string tileSizesStr;
+
 			using (var stream = resStream.Stream)
 			{
 				var decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.None, BitmapCacheOption.None);
 				var frame = decoder.Frames[0];
-				m_atlas = new WriteableBitmap(frame);
-				m_atlas.Freeze();
+				var meta = (BitmapMetadata)frame.Metadata;
+				tileSizesStr = (string)meta.GetQuery("/tEXt/tilesizes");
+
+				this.Atlas = new WriteableBitmap(frame);
+				this.Atlas.Freeze();
 			}
 
-			m_maxTileSize = 64;
+			var tileSizes = tileSizesStr.Split(',').Select(s => int.Parse(s)).ToArray();
 
-			m_tileSizeMap = new Dictionary<int, int>(4);
-			m_tileSizeMap[8] = 0;
-			m_tileSizeMap[16] = 8;
-			m_tileSizeMap[32] = 8 + 16;
-			m_tileSizeMap[64] = 8 + 16 + 32;
+			MaxTileSize = tileSizes.Max();
+
+			m_tileSizeMap = new Dictionary<int, int>(tileSizes.Length);
+
+			int xOffset = 0;
+			foreach (var tileSize in tileSizes)
+			{
+				m_tileSizeMap[tileSize] = xOffset;
+				xOffset += tileSize;
+			}
 		}
 
 		public int GetTileXOffset(int tileSize)
@@ -82,14 +60,11 @@ namespace Dwarrowdelf.Client
 
 		public int GetTileYOffset(SymbolID symbolID)
 		{
-			return (int)symbolID * m_maxTileSize;
+			return (int)symbolID * MaxTileSize;
 		}
 
 		public BitmapSource GetTile(SymbolID symbolID, GameColor color, int tileSize)
 		{
-			if (tileSize == 24)
-				tileSize = 32;
-
 			var key = new TileKey(symbolID, color, tileSize);
 
 			BitmapSource bmp;
@@ -100,7 +75,7 @@ namespace Dwarrowdelf.Client
 			int xOffset = GetTileXOffset(tileSize);
 			int yOffset = GetTileYOffset(symbolID);
 
-			bmp = new CroppedBitmap(m_atlas, new Int32Rect(xOffset, yOffset, tileSize, tileSize));
+			bmp = new CroppedBitmap(this.Atlas, new Int32Rect(xOffset, yOffset, tileSize, tileSize));
 
 			if (color != GameColor.None)
 				bmp = ColorizeBitmap(bmp, color.ToWindowsColor());
@@ -161,6 +136,35 @@ namespace Dwarrowdelf.Client
 			wbmp.WritePixels(new Int32Rect(0, 0, wbmp.PixelWidth, wbmp.PixelHeight), arr, wbmp.PixelWidth * 4, 0);
 
 			return wbmp;
+		}
+
+		struct TileKey : IEquatable<TileKey>
+		{
+			public SymbolID SymbolID;
+			public GameColor Color;
+			public int Size;
+
+			public TileKey(SymbolID symbolID, GameColor color, int size)
+			{
+				this.SymbolID = symbolID;
+				this.Color = color;
+				this.Size = size;
+			}
+
+			public bool Equals(TileKey other)
+			{
+				return this.SymbolID == other.SymbolID && this.Color == other.Color && this.Size == other.Size;
+			}
+
+			public override bool Equals(object obj)
+			{
+				return (obj is TileKey) && Equals((TileKey)obj);
+			}
+
+			public override int GetHashCode()
+			{
+				return this.Size | ((int)this.Color << 8) | ((int)this.SymbolID << 16);
+			}
 		}
 	}
 }

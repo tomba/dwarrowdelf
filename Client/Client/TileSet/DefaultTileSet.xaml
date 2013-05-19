@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SymbolSet xmlns="clr-namespace:Dwarrowdelf.Client"
 		   FontFamily="Arial" FontSize="64" Outline="True" OutlineThickness="0.5"
-		   BitmapSizes="8,10,12,16,20,24">
+		   BitmapSizes="8,10,12,16,20">
 
 	<Symbol ID="Undefined">
 		<CharGfx Char="?" />
