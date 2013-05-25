@@ -107,7 +107,7 @@
 			<TextBlock Text="{Binding Thirst}" />
 
 			<TextBlock Text="Exhaustion" />
-			<TextBlock Text="Dummy" />
+			<TextBlock Text="[unused]" />
 			<TextBlock Text="{Binding Exhaustion}" />
 			<TextBlock Text=""/>
 		</UniformGrid>
