@@ -25,9 +25,12 @@
 
 	<ItemInfo ID="Contraption" Category="Other" />
 
-	<ItemInfo ID="SmithsWorkbench" Name="smith's workbench" Category="Workbench" Flags="Installable" />
+	<ItemInfo ID="CarpentersTools" Name="carpenter's tools" Category="Tools" />
+	<ItemInfo ID="MasonsTools" Name="mason's tools" Category="Tools" />
+
 	<ItemInfo ID="CarpentersWorkbench" Name="carpenter's workbench" Category="Workbench" Flags="Installable" />
 	<ItemInfo ID="MasonsWorkbench" Name="mason's workbench" Category="Workbench" Flags="Installable" />
+	<ItemInfo ID="SmithsWorkbench" Name="smith's workbench" Category="Workbench" Flags="Installable" />
 	<ItemInfo ID="SmelterWorkbench" Name="smelter's workbench" Category="Workbench" Flags="Installable" />
 	<ItemInfo ID="GemcuttersWorkbench" Name="gem cutter's workbench" Category="Workbench" Flags="Installable" />
 

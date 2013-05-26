@@ -13,71 +13,17 @@ namespace Dwarrowdelf.Server.Fortress
 
 		public static void FinalizeEnv(EnvironmentObject env)
 		{
-			// Add items
+			// Add gems to random locs
 			for (int i = 0; i < 6; ++i)
 				CreateItem(env, ItemID.Gem, GetRandomMaterial(MaterialCategory.Gem), env.GetRandomEnterableSurfaceLocation());
 
+			// Add rocks to random locs
 			for (int i = 0; i < 6; ++i)
 				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), env.GetRandomEnterableSurfaceLocation());
 
 			CreateWorkbenches(env);
 
-			{
-				var p = env.GetSurfaceLocation(env.Width / 2 - 1, env.Height / 2 - 2);
-
-				var td = env.GetTileData(p);
-				td.InteriorID = InteriorID.Empty;
-				td.InteriorMaterialID = MaterialID.Undefined;
-				env.SetTileData(p, td);
-
-				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
-
-				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
-
-				CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Table, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Bed, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Chair, GetRandomMaterial(MaterialCategory.Wood), p);
-
-				CreateItem(env, ItemID.Barrel, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Bin, GetRandomMaterial(MaterialCategory.Wood), p);
-
-				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
-				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
-				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
-				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
-				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
-
-				CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
-				CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
-				CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
-
-				CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
-				CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
-				CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
-
-				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
-				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
-				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
-
-				p = p + new IntVector3(8, 0, 0);
-
-				td = env.GetTileData(p);
-				td.InteriorID = InteriorID.Grass;
-				td.InteriorMaterialID = MaterialID.HairGrass;
-				env.SetTileData(p, td);
-
-				var bed = CreateItem(env, ItemID.Bed, GetRandomMaterial(MaterialCategory.Wood), p);
-				bed.IsInstalled = true;
-			}
+			CreateStartItems(env);
 
 			{
 				var gen = FoodGenerator.Create(env.World);
@@ -85,6 +31,67 @@ namespace Dwarrowdelf.Server.Fortress
 			}
 
 			AddMonsters(env);
+		}
+
+		private static void CreateStartItems(EnvironmentObject env)
+		{
+			var p = env.GetSurfaceLocation(env.Width / 2 - 1, env.Height / 2 - 2);
+
+			var td = env.GetTileData(p);
+			td.InteriorID = InteriorID.Empty;
+			td.InteriorMaterialID = MaterialID.Undefined;
+			env.SetTileData(p, td);
+
+			CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
+			CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
+			CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
+			CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
+			CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
+			CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
+
+			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+
+			CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Table, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Bed, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Chair, GetRandomMaterial(MaterialCategory.Wood), p);
+
+			CreateItem(env, ItemID.Barrel, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Bin, GetRandomMaterial(MaterialCategory.Wood), p);
+
+			CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+			CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+			CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+			CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+			CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+
+			CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
+			CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
+			CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
+
+			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+
+			CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
+			CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
+			CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
+
+			CreateItem(env, ItemID.CarpentersTools, MaterialID.Steel, p);
+			CreateItem(env, ItemID.MasonsTools, MaterialID.Steel, p);
+
+			p = p + new IntVector3(8, 0, 0);
+
+			td = env.GetTileData(p);
+			td.InteriorID = InteriorID.Grass;
+			td.InteriorMaterialID = MaterialID.HairGrass;
+			env.SetTileData(p, td);
+
+			var bed = CreateItem(env, ItemID.Bed, GetRandomMaterial(MaterialCategory.Wood), p);
+			bed.IsInstalled = true;
 		}
 
 		static void CreateWorkbenches(EnvironmentObject env)

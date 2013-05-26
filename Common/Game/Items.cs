@@ -36,6 +36,9 @@ namespace Dwarrowdelf
 		Barrel,
 		Bin,
 
+		CarpentersTools,
+		MasonsTools,
+
 		SmithsWorkbench,
 		CarpentersWorkbench,
 		MasonsWorkbench,
@@ -84,6 +87,7 @@ namespace Dwarrowdelf
 		Armor,
 		Workbench,
 		Utility,
+		Tools,
 		Other,
 	}
 
