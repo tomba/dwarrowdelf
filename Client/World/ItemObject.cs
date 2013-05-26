@@ -118,6 +118,10 @@ namespace Dwarrowdelf.Client
 						this.Description = matInfo.Adjective + " " + this.Name;
 					else
 						this.Description = matInfo.Adjective + " " + this.ItemInfo.Name;
+
+					if (this.ItemInfo.IsInstallable && this.IsInstalled == false)
+						this.Description = "uninstalled " + this.Description;
+
 					break;
 			}
 		}
@@ -257,6 +261,7 @@ namespace Dwarrowdelf.Client
 			private set
 			{
 				m_isInstalled = value;
+				CreateItemDescription();
 				Notify("IsInstalled");
 				if (ItemObject.IsInstalledChanged != null)
 					ItemObject.IsInstalledChanged(this);
