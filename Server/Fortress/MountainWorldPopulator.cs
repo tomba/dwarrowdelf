@@ -24,6 +24,7 @@ namespace Dwarrowdelf.Server.Fortress
 			CreateWorkbenches(env);
 
 			CreateStartItems(env);
+			CreateDebugItems(env);
 
 			{
 				var gen = FoodGenerator.Create(env.World);
@@ -33,14 +34,48 @@ namespace Dwarrowdelf.Server.Fortress
 			AddMonsters(env);
 		}
 
+		static void ClearFloor(EnvironmentObject env, IntPoint3 p)
+		{
+			var td = env.GetTileData(p);
+
+			if (td.TerrainID.IsFloor() == false)
+				throw new Exception();
+
+			if (td.IsGreen)
+			{
+				td.InteriorID = InteriorID.Grass;
+				td.InteriorMaterialID = GetRandomMaterial(MaterialCategory.Grass);
+			}
+
+			if (!td.IsClearFloor)
+				throw new Exception();
+
+			env.SetTileData(p, td);
+		}
+
 		private static void CreateStartItems(EnvironmentObject env)
+		{
+			var p = env.GetSurfaceLocation(env.Width / 2 - 1, env.Height / 2 - 4);
+
+			ClearFloor(env, p);
+
+			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+
+			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+
+			CreateItem(env, ItemID.CarpentersWorkbench, GetRandomMaterial(MaterialCategory.Wood), p);
+			CreateItem(env, ItemID.MasonsWorkbench, GetRandomMaterial(MaterialCategory.Wood), p);
+		}
+
+		private static void CreateDebugItems(EnvironmentObject env)
 		{
 			var p = env.GetSurfaceLocation(env.Width / 2 - 1, env.Height / 2 - 2);
 
-			var td = env.GetTileData(p);
-			td.InteriorID = InteriorID.Empty;
-			td.InteriorMaterialID = MaterialID.Undefined;
-			env.SetTileData(p, td);
+			ClearFloor(env, p);
 
 			CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
 			CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
@@ -48,10 +83,6 @@ namespace Dwarrowdelf.Server.Fortress
 			CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
 			CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
 			CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
-
-			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
-			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
-			CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
 
 			CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
 			CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
@@ -72,23 +103,13 @@ namespace Dwarrowdelf.Server.Fortress
 			CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
 			CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
 
-			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
-			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
-			CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
-
 			CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
 			CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
 			CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
-
-			CreateItem(env, ItemID.CarpentersTools, MaterialID.Steel, p);
-			CreateItem(env, ItemID.MasonsTools, MaterialID.Steel, p);
 
 			p = p + new IntVector3(8, 0, 0);
 
-			td = env.GetTileData(p);
-			td.InteriorID = InteriorID.Grass;
-			td.InteriorMaterialID = MaterialID.HairGrass;
-			env.SetTileData(p, td);
+			ClearFloor(env, p);
 
 			var bed = CreateItem(env, ItemID.Bed, GetRandomMaterial(MaterialCategory.Wood), p);
 			bed.IsInstalled = true;
@@ -103,17 +124,9 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var surface = env.GetSurfaceLevel(new IntPoint2(posx, posy));
 
-			var floorTile = new TileData()
-			{
-				TerrainID = TerrainID.NaturalFloor,
-				TerrainMaterialID = MaterialID.Granite,
-				InteriorID = InteriorID.Empty,
-				InteriorMaterialID = MaterialID.Undefined,
-			};
-
 			{
 				var p = new IntPoint3(posx, posy, surface);
-				env.SetTileData(p, floorTile);
+				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.SmithsWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
 			}
@@ -122,7 +135,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			{
 				var p = new IntPoint3(posx, posy, surface);
-				env.SetTileData(p, floorTile);
+				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.CarpentersWorkbench, MaterialID.Oak, p);
 				item.IsInstalled = true;
 			}
@@ -131,7 +144,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			{
 				var p = new IntPoint3(posx, posy, surface);
-				env.SetTileData(p, floorTile);
+				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.MasonsWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
 			}
@@ -142,7 +155,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			{
 				var p = new IntPoint3(posx, posy, surface);
-				env.SetTileData(p, floorTile);
+				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.SmelterWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
 			}
@@ -151,7 +164,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			{
 				var p = new IntPoint3(posx, posy, surface);
-				env.SetTileData(p, floorTile);
+				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.GemcuttersWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
 			}

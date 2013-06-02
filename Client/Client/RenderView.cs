@@ -205,7 +205,7 @@ namespace Dwarrowdelf.Client
 					tile.BgColor = GetTerrainBackgroundColor(matInfo);
 
 					// If the interior is "green", override the color to make the terrain greenish
-					if (InteriorIsGreen(td.InteriorID))
+					if (td.IsGreen)
 					{
 						tile.SymbolID = SymbolID.Empty;
 						tile.BgColor = GameColor.Green;
@@ -261,7 +261,7 @@ namespace Dwarrowdelf.Client
 					}
 
 					// If the interior is "green", override the color to make the terrain greenish
-					if (InteriorIsGreen(td.InteriorID))
+					if (td.IsGreen)
 					{
 						// override the material color
 						tile.Color = GameColor.DarkGreen;
@@ -287,22 +287,6 @@ namespace Dwarrowdelf.Client
 				return GameColor.Sienna;
 			else
 				throw new Exception();
-		}
-
-		static bool InteriorIsGreen(InteriorID id)
-		{
-			switch (id)
-			{
-				case InteriorID.Grass:
-				case InteriorID.Tree:
-				case InteriorID.DeadTree:
-				case InteriorID.Sapling:
-				case InteriorID.Shrub:
-					return true;
-
-				default:
-					return false;
-			}
 		}
 
 		static void GetInteriorTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)

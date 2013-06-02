@@ -204,5 +204,27 @@ namespace Dwarrowdelf
 					this.TerrainID.IsSlope();
 			}
 		}
+
+		/// <summary>
+		/// Tile interior is a plant
+		/// </summary>
+		public bool IsGreen
+		{
+			get
+			{
+				switch (this.InteriorID)
+				{
+					case InteriorID.Grass:
+					case InteriorID.Tree:
+					case InteriorID.DeadTree:
+					case InteriorID.Sapling:
+					case InteriorID.Shrub:
+						return true;
+
+					default:
+						return false;
+				}
+			}
+		}
 	}
 }
