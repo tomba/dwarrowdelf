@@ -67,7 +67,7 @@ namespace Dwarrowdelf
 
 		public const int SizeOf = 8;
 
-		static readonly TileData EmptyTileData = new TileData()
+		public static readonly TileData EmptyTileData = new TileData()
 		{
 			TerrainID = TerrainID.Empty,
 			TerrainMaterialID = MaterialID.Undefined,
