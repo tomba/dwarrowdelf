@@ -112,6 +112,7 @@ namespace TileControlD3DWinFormsTest
 				int offsetY = (renderSize.Height - renderData.Size.Height * tilesize) / 2;
 
 				renderer.Render(renderSize, renderData.Size, tilesize, new IntPoint2(offsetX, offsetY), tileDataInvalid);
+				tileDataInvalid = false;
 			});
 
 			renderer.Dispose();
