@@ -14,57 +14,6 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	static class Helpers11
 	{
-		public static Device CreateDevice()
-		{
-			return new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
-		}
-
-		/// <summary>
-		/// Create the texture that is used to render the scene
-		/// </summary>
-		public static Texture2D CreateTextureRenderSurface(Device device, int width, int height)
-		{
-			var texDesc = new Texture2DDescription()
-			{
-				BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
-				Format = DXGI.Format.B8G8R8A8_UNorm,
-				Width = width,
-				Height = height,
-				MipLevels = 1,
-				SampleDescription = new DXGI.SampleDescription(1, 0),
-				Usage = ResourceUsage.Default,
-				OptionFlags = ResourceOptionFlags.Shared,
-				CpuAccessFlags = CpuAccessFlags.None,
-				ArraySize = 1,
-			};
-
-			return new Texture2D(device, texDesc);
-		}
-
-		// For WinForms tests
-		public static void CreateHwndRenderSurface(IntPtr windowHandle, Device device, int width, int height, out Texture2D renderTexture, out SwapChain swapChain)
-		{
-			var swapChainDesc = new SwapChainDescription()
-			{
-				BufferCount = 1,
-				ModeDescription = new ModeDescription(width, height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
-				IsWindowed = true,
-				OutputHandle = windowHandle,
-				SampleDescription = new SampleDescription(1, 0),
-				SwapEffect = SwapEffect.Discard,
-				Usage = Usage.RenderTargetOutput
-			};
-
-			using (var dxgiDevice = new SharpDX.DXGI.Device1(device.NativePointer))
-			using (var adapter = dxgiDevice.GetParent<SharpDX.DXGI.Adapter1>())
-			using (var factory = adapter.GetParent<Factory>())
-			{
-				swapChain = new SwapChain(factory, device, swapChainDesc);
-			}
-
-			renderTexture = Texture2D.FromSwapChain<Texture2D>(swapChain, 0);
-		}
-
 		/// <summary>
 		/// Create a Texture2D array which contains mipmapped versions of all symbol drawings
 		/// </summary>

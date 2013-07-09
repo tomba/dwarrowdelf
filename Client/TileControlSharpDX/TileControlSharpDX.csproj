@@ -70,6 +70,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RendererD3DHwnd.cs" />
     <Compile Include="RenderData.cs" />
     <Compile Include="RenderTile.cs" />
     <Compile Include="SingleQuad11PS.cs" />

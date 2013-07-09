@@ -4,6 +4,7 @@ using System.Windows;
 using SharpDX.Direct3D11;
 using System.IO;
 using SharpDX;
+using SharpDX.Direct3D;
 
 namespace Dwarrowdelf.Client.TileControl
 {
@@ -20,6 +21,7 @@ namespace Dwarrowdelf.Client.TileControl
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
 		RenderData<RenderTile> m_renderData;
+		SharpDX.DXGI.Factory m_factory;
 
 		public RendererD3DSharpDX(RenderData<RenderTile> renderData)
 		{
@@ -28,7 +30,11 @@ namespace Dwarrowdelf.Client.TileControl
 			m_interopImageSource = new D3DImageSharpDX();
 			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
-			m_device = Helpers11.CreateDevice();
+			m_factory = new SharpDX.DXGI.Factory();
+
+			using (var adapter = m_factory.GetAdapter(0))
+				m_device = new Device(adapter, DeviceCreationFlags.Debug, FeatureLevel.Level_10_0);
+
 			m_scene = new SingleQuad11(m_device);
 		}
 
@@ -65,7 +71,23 @@ namespace Dwarrowdelf.Client.TileControl
 				throw new Exception();
 
 			trace.TraceInformation("CreateTextureRenderSurface {0}x{1}", width, height);
-			m_renderTexture = Helpers11.CreateTextureRenderSurface(m_device, width, height);
+
+			var texDesc = new Texture2DDescription()
+			{
+				BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
+				Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
+				Width = width,
+				Height = height,
+				MipLevels = 1,
+				SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0),
+				Usage = ResourceUsage.Default,
+				OptionFlags = ResourceOptionFlags.Shared,
+				CpuAccessFlags = CpuAccessFlags.None,
+				ArraySize = 1,
+			};
+
+			m_renderTexture = new Texture2D(m_device, texDesc);
+
 			m_scene.SetRenderTarget(m_renderTexture);
 			m_interopImageSource.SetBackBufferDX11(m_renderTexture);
 		}
@@ -152,6 +174,7 @@ namespace Dwarrowdelf.Client.TileControl
 			DH.Dispose(ref m_renderTexture);
 			DH.Dispose(ref m_tileTextureArray);
 			DH.Dispose(ref m_device);
+			DH.Dispose(ref m_factory);
 
 			m_disposed = true;
 		}
