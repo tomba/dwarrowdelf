@@ -3,6 +3,7 @@ using System.Windows;
 
 using SharpDX.Direct3D11;
 using System.IO;
+using SharpDX;
 
 namespace Dwarrowdelf.Client.TileControl
 {
@@ -96,7 +97,7 @@ namespace Dwarrowdelf.Client.TileControl
 				m_scene.SendMapData(m_renderData.Grid, gridSize.Width, gridSize.Height);
 			}
 
-			m_scene.Render(tileSize, renderOffset);
+			m_scene.Render(tileSize, new Vector2((float)renderOffset.X, (float)renderOffset.Y));
 			m_device.ImmediateContext.Flush();
 
 			m_interopImageSource.InvalidateD3DImage();

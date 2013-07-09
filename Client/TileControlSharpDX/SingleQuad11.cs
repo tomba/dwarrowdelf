@@ -9,7 +9,6 @@ using SharpDX.D3DCompiler;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
-using SharpDX.Windows;
 using Device = SharpDX.Direct3D11.Device;
 
 namespace Dwarrowdelf.Client.TileControl
@@ -123,7 +122,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_pixelShader.SendMapData(mapData, columns, rows);
 		}
 
-		public void Render(float tileSize, System.Windows.Point renderOffset)
+		public void Render(float tileSize, Vector2 renderOffset)
 		{
 			if (m_renderTargetView == null)
 				return;

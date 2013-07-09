@@ -3,7 +3,6 @@ using SharpDX.D3DCompiler;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
-using SharpDX.Windows;
 using Device = SharpDX.Direct3D11.Device;
 using System.Runtime.InteropServices;
 
@@ -177,12 +176,12 @@ namespace Dwarrowdelf.Client.TileControl
 			stream.Dispose();
 		}
 
-		public void Setup(float tileSize, System.Windows.Point renderOffset)
+		public void Setup(float tileSize, Vector2 renderOffset)
 		{
 			var context = m_device.ImmediateContext;
 
 			m_shaderDataPerFrame.TileSize = tileSize;
-			m_shaderDataPerFrame.RenderOffset = new Vector2((float)renderOffset.X, (float)renderOffset.Y);
+			m_shaderDataPerFrame.RenderOffset = renderOffset;
 
 			context.UpdateSubresource(ref m_shaderDataPerFrame, m_shaderDataBufferPerFrame);
 		}
