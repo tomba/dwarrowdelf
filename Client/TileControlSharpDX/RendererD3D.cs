@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_factory = new SharpDX.DXGI.Factory();
 
 			using (var adapter = m_factory.GetAdapter(0))
-				m_device = new Device(adapter, DeviceCreationFlags.Debug, FeatureLevel.Level_10_0);
+				m_device = new Device(adapter, DeviceCreationFlags.None, FeatureLevel.Level_10_0);
 
 			m_scene = new SingleQuad11(m_device);
 		}
