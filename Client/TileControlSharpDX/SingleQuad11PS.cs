@@ -96,16 +96,16 @@ namespace Dwarrowdelf.Client.TileControl
 			/* Texture sampler */
 			var sampler = ToDispose(new SamplerState(m_device, new SamplerStateDescription()
 			{
-				Filter = Filter.MinMagMipLinear,
+				/* Use point filtering as linear filtering causes artifacts */
+				Filter = Filter.MinMagMipPoint,
 				AddressU = TextureAddressMode.Wrap,
 				AddressV = TextureAddressMode.Wrap,
 				AddressW = TextureAddressMode.Wrap,
 				BorderColor = new Color4(0),
 				ComparisonFunction = Comparison.Never,
-				MaximumAnisotropy = 16,
 				MipLodBias = 0,
 				MinimumLod = 0,
-				MaximumLod = 16,
+				MaximumLod = float.MaxValue,
 			}));
 
 			context.PixelShader.SetSampler(0, sampler);
