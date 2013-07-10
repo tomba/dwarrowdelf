@@ -29,7 +29,7 @@ namespace TileControlD3DWinFormsTest
 			var tileset = new TileSet(new Uri("/TileControlD3DWinFormsTest;component/TileSet.png", UriKind.Relative));
 			renderer.SetTileSet(tileset);
 
-			int tilesize = 64;
+			float tilesize = 64;
 			IntSize2 renderSize = new IntSize2();
 			int columns = 0;
 			int rows = 0;
@@ -37,12 +37,44 @@ namespace TileControlD3DWinFormsTest
 
 			form.MouseWheel += (s, e) =>
 			{
-				int ts = tilesize;
+				float ts = tilesize;
 
 				if (e.Delta > 0)
 					ts *= 2;
 				else
 					ts /= 2;
+
+				if (ts < 2)
+					ts = 2;
+
+				if (ts > 512)
+					ts = 512;
+
+				if (tilesize == ts)
+					return;
+
+				tilesize = ts;
+
+				var size = new IntSize2(form.ClientSize.Width, form.ClientSize.Height);
+
+				columns = (int)Math.Ceiling((double)size.Width / tilesize + 1) | 1;
+				rows = (int)Math.Ceiling((double)size.Height / tilesize + 1) | 1;
+
+				renderData.SetSize(new IntSize2(columns, rows));
+
+				RecreateMap(renderData);
+
+				tileDataInvalid = true;
+			};
+
+			form.KeyPress += (s, e) =>
+			{
+				float ts = tilesize;
+
+				if (e.KeyChar == '+')
+					ts += 2;
+				else if (e.KeyChar == '-')
+					ts -= 2;
 
 				if (ts < 2)
 					ts = 2;
@@ -108,8 +140,8 @@ namespace TileControlD3DWinFormsTest
 				if (renderSize == new IntSize2())
 					return;
 
-				int offsetX = (renderSize.Width - renderData.Size.Width * tilesize) / 2;
-				int offsetY = (renderSize.Height - renderData.Size.Height * tilesize) / 2;
+				int offsetX = (int)Math.Ceiling((renderSize.Width - renderData.Size.Width * tilesize) / 2);
+				int offsetY = (int)Math.Ceiling((renderSize.Height - renderData.Size.Height * tilesize) / 2);
 
 				renderer.Render(renderSize, renderData.Size, tilesize, new IntPoint2(offsetX, offsetY), tileDataInvalid);
 				tileDataInvalid = false;
@@ -118,13 +150,7 @@ namespace TileControlD3DWinFormsTest
 			renderer.Dispose();
 		}
 
-		static Random s_random = new Random();
 		static SymbolID[] s_symbols = (SymbolID[])Enum.GetValues(typeof(SymbolID));
-
-		static SymbolID GetRandomSymbol()
-		{
-			return s_symbols[s_random.Next(1, s_symbols.Length - 1)];
-		}
 
 		static void RecreateMap(RenderData<RenderTile> renderData)
 		{
@@ -134,11 +160,13 @@ namespace TileControlD3DWinFormsTest
 				{
 					int idx = renderData.GetIdx(x, y);
 
+					var r = new MWCRandom(new IntPoint2(x, y), 123);
+
 					renderData.Grid[idx] = new RenderTile()
 					{
 						Terrain = new RenderTileLayer()
 						{
-							SymbolID = GetRandomSymbol(),
+							SymbolID = s_symbols[r.Next(s_symbols.Length - 2) + 1],
 							Color = GameColor.White,
 						},
 
