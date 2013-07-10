@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			// fxc /T ps_4_0 /E PS /Fo SingleQuad11.pso SingleQuad11.ps
 
-			using (var stream = ass.GetManifestResourceStream("Dwarrowdelf.Client.TileControl.SingleQuad11.pso"))
+			using (var stream = ass.GetManifestResourceStream("Dwarrowdelf.Client.TileControl.SingleQuad11PS.hlslo"))
 			{
 				var bytecode = ShaderBytecode.FromStream(stream);
 				Create(bytecode);

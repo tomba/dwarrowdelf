@@ -82,13 +82,13 @@
     <Compile Include="SingleQuad11.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SingleQuad11.ps" />
-    <EmbeddedResource Include="SingleQuad11.pso">
-      <DependentUpon>SingleQuad11.ps</DependentUpon>
+    <None Include="SingleQuad11PS.hlsl" />
+    <EmbeddedResource Include="SingleQuad11PS.hlslo">
+      <DependentUpon>SingleQuad11PS.hlsl</DependentUpon>
     </EmbeddedResource>
-    <None Include="SingleQuad11.vs" />
-    <EmbeddedResource Include="SingleQuad11.vso">
-      <DependentUpon>SingleQuad11.vs</DependentUpon>
+    <None Include="SingleQuad11VS.hlsl" />
+    <EmbeddedResource Include="SingleQuad11VS.hlslo">
+      <DependentUpon>SingleQuad11VS.hlsl</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>
@@ -111,14 +111,14 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target AfterTargets="BeforeBuild" Name="Shaders" Inputs="SingleQuad11.ps;SingleQuad11.vs" Outputs="SingleQuad11.pso;SingleQuad11.vso">
+  <Target AfterTargets="BeforeBuild" Name="Shaders" Inputs="SingleQuad11PS.hlsl;SingleQuad11VS.hlsl" Outputs="SingleQuad11PS.hlslo;SingleQuad11VS.hlslo">
     <PropertyGroup>
       <FxcPath>$(MSBuildExtensionsPath32)/../Windows Kits/8.0/bin/x86</FxcPath>
     </PropertyGroup>
-    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T ps_4_0 /E PS /Fo SingleQuad11.pso SingleQuad11.ps" Outputs="SingleQuad11.pso" />
-    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T vs_4_0 /E VS /Fo SingleQuad11.vso SingleQuad11.vs" />
+    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T ps_4_0 /E PS /Fo SingleQuad11PS.hlslo SingleQuad11PS.hlsl" Outputs="SingleQuad11PS.hlslo" />
+    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T vs_4_0 /E VS /Fo SingleQuad11VS.hlslo SingleQuad11VS.hlsl" />
   </Target>
   <Target AfterTargets="Clean" Name="CleanShaders">
-    <Delete Files="SingleQuad11.pso;SingleQuad11.vso" />
+    <Delete Files="SingleQuad11PS.hlslo;SingleQuad11VS.hlslo" />
   </Target>
 </Project>
