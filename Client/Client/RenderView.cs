@@ -222,43 +222,8 @@ namespace Dwarrowdelf.Client
 					tile.SymbolID = SymbolID.StairsDown;
 					break;
 
-				case TerrainID.SlopeNorth:
-				case TerrainID.SlopeNorthEast:
-				case TerrainID.SlopeEast:
-				case TerrainID.SlopeSouthEast:
-				case TerrainID.SlopeSouth:
-				case TerrainID.SlopeSouthWest:
-				case TerrainID.SlopeWest:
-				case TerrainID.SlopeNorthWest:
-					switch (td.TerrainID.ToDir())
-					{
-						case Direction.North:
-							tile.SymbolID = SymbolID.SlopeUpNorth;
-							break;
-						case Direction.NorthEast:
-							tile.SymbolID = SymbolID.SlopeUpNorthEast;
-							break;
-						case Direction.East:
-							tile.SymbolID = SymbolID.SlopeUpEast;
-							break;
-						case Direction.SouthEast:
-							tile.SymbolID = SymbolID.SlopeUpSouthEast;
-							break;
-						case Direction.South:
-							tile.SymbolID = SymbolID.SlopeUpSouth;
-							break;
-						case Direction.SouthWest:
-							tile.SymbolID = SymbolID.SlopeUpSouthWest;
-							break;
-						case Direction.West:
-							tile.SymbolID = SymbolID.SlopeUpWest;
-							break;
-						case Direction.NorthWest:
-							tile.SymbolID = SymbolID.SlopeUpNorthWest;
-							break;
-						default:
-							throw new Exception();
-					}
+				case TerrainID.Slope:
+					tile.SymbolID = SymbolID.SlopeUp;
 
 					// If the interior is "green", override the color to make the terrain greenish
 					if (td.IsGreen)

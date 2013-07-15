@@ -12,15 +12,7 @@ namespace Dwarrowdelf
 		NaturalFloor,
 		BuiltFloor,
 		StairsDown,
-
-		SlopeNorth,
-		SlopeNorthEast,
-		SlopeEast,
-		SlopeSouthEast,
-		SlopeSouth,
-		SlopeSouthWest,
-		SlopeWest,
-		SlopeNorthWest,
+		Slope,
 	}
 
 	[Flags]
@@ -106,70 +98,7 @@ namespace Dwarrowdelf
 
 		public static bool IsSlope(this TerrainID id)
 		{
-			switch (id)
-			{
-				case TerrainID.SlopeNorth:
-				case TerrainID.SlopeNorthEast:
-				case TerrainID.SlopeEast:
-				case TerrainID.SlopeSouthEast:
-				case TerrainID.SlopeSouth:
-				case TerrainID.SlopeSouthWest:
-				case TerrainID.SlopeWest:
-				case TerrainID.SlopeNorthWest:
-					return true;
-			}
-
-			return false;
-		}
-
-		public static TerrainID ToSlope(this Direction dir)
-		{
-			switch (dir)
-			{
-				case Direction.North:
-					return TerrainID.SlopeNorth;
-				case Direction.NorthEast:
-					return TerrainID.SlopeNorthEast;
-				case Direction.East:
-					return TerrainID.SlopeEast;
-				case Direction.SouthEast:
-					return TerrainID.SlopeSouthEast;
-				case Direction.South:
-					return TerrainID.SlopeSouth;
-				case Direction.SouthWest:
-					return TerrainID.SlopeSouthWest;
-				case Direction.West:
-					return TerrainID.SlopeWest;
-				case Direction.NorthWest:
-					return TerrainID.SlopeNorthWest;
-				default:
-					throw new Exception();
-			}
-		}
-
-		public static Direction ToDir(this TerrainID id)
-		{
-			switch (id)
-			{
-				case TerrainID.SlopeNorth:
-					return Direction.North;
-				case TerrainID.SlopeNorthEast:
-					return Direction.NorthEast;
-				case TerrainID.SlopeEast:
-					return Direction.East;
-				case TerrainID.SlopeSouthEast:
-					return Direction.SouthEast;
-				case TerrainID.SlopeSouth:
-					return Direction.South;
-				case TerrainID.SlopeSouthWest:
-					return Direction.SouthWest;
-				case TerrainID.SlopeWest:
-					return Direction.West;
-				case TerrainID.SlopeNorthWest:
-					return Direction.NorthWest;
-				default:
-					throw new Exception();
-			}
+			return id == TerrainID.Slope;
 		}
 
 		public static bool IsFloor(this TerrainID id)

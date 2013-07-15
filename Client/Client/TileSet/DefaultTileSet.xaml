@@ -79,29 +79,8 @@
 		<CharGfx Char="X" />
 	</Symbol>
 
-	<Symbol ID="SlopeUpNorth">
+	<Symbol ID="SlopeUp">
 		<CharGfx Outline="False" Char="▲" Rotate="0" />
-	</Symbol>
-	<Symbol ID="SlopeUpNorthEast">
-		<CharGfx Outline="False" Char="▲" Rotate="45" />
-	</Symbol>
-	<Symbol ID="SlopeUpEast">
-		<CharGfx Outline="False" Char="▲" Rotate="90" />
-	</Symbol>
-	<Symbol ID="SlopeUpSouthEast">
-		<CharGfx Outline="False" Char="▲" Rotate="135" />
-	</Symbol>
-	<Symbol ID="SlopeUpSouth">
-		<CharGfx Outline="False" Char="▲" Rotate="180" />
-	</Symbol>
-	<Symbol ID="SlopeUpSouthWest">
-		<CharGfx Outline="False" Char="▲" Rotate="225" />
-	</Symbol>
-	<Symbol ID="SlopeUpWest">
-		<CharGfx Outline="False" Char="▲" Rotate="270" />
-	</Symbol>
-	<Symbol ID="SlopeUpNorthWest">
-		<CharGfx Outline="False" Char="▲" Rotate="315" />
 	</Symbol>
 
 	<Symbol ID="Player">

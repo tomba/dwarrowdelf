@@ -85,22 +85,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			var env = this.Worker.Environment;
 
-			var flr = env.GetTerrainID(this.Worker.Location);
-
-			if (flr.IsSlope() && flr.ToDir() == dir)
-			{
-				dir |= Direction.Up;
-			}
-			else
-			{
-				var p = this.Worker.Location + dir + Direction.Down;
-				if (env.Contains(p))
-				{
-					flr = env.GetTerrainID(p);
-					if (flr.IsSlope() && flr.ToDir().Reverse() == dir)
-						dir |= Direction.Down;
-				}
-			}
+			dir = env.AdjustMoveDir(this.Worker.Location, dir);
 
 			return new MoveAction(dir);
 		}

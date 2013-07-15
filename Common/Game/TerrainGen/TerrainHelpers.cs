@@ -46,49 +46,15 @@ namespace Dwarrowdelf.TerrainGen
 			{
 				int z = data.GetSurfaceLevel(p);
 
-				int count = 0;
-				Direction dir = Direction.None;
+				bool create = DirectionSet.Planar.ToSurroundingPoints(p)
+					.Any(pp => plane.Contains(pp) && data.GetSurfaceLevel(pp) > z);
 
-				var r = new MWCRandom(p, baseSeed);
-
-				int offset = r.Next(8);
-
-				// Count the tiles around this tile which are higher. Create slope to a random direction, but skip
-				// the slope if all 8 tiles are higher.
-				// Count to 10. If 3 successive slopes, create one in the middle
-				int successive = 0;
-				for (int i = 0; i < 10; ++i)
-				{
-					var d = DirectionExtensions.PlanarDirections[(i + offset) % 8];
-
-					var t = p + d;
-
-					if (plane.Contains(t) && data.GetSurfaceLevel(t) > z)
-					{
-						count++;
-						successive++;
-
-						if (successive == 3)
-						{
-							dir = DirectionExtensions.PlanarDirections[((i - 1) + offset) % 8];
-						}
-						else if (dir == Direction.None)
-						{
-							dir = d;
-						}
-					}
-					else
-					{
-						successive = 0;
-					}
-				}
-
-				if (count > 0 && count < 8)
+				if (create)
 				{
 					var p3d = new IntPoint3(p, z);
 
 					var td = data.GetTileData(p3d);
-					td.TerrainID = dir.ToSlope();
+					td.TerrainID = TerrainID.Slope;
 					data.SetTileDataNoHeight(p3d, td);
 				}
 			});
