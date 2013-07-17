@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client
 {
-	public class TileSet
+	public class TileSet : Dwarrowdelf.Client.TileControl.ITileSet
 	{
 		public BitmapSource Atlas { get; private set; }
 		public int MaxTileSize { get; private set; }
@@ -47,6 +47,16 @@ namespace Dwarrowdelf.Client
 				xOffset += tileSize;
 			}
 		}
+
+		public byte[] GetRawBitmap()
+		{
+			int stride = this.Atlas.PixelWidth * 4;
+			var arr = new byte[this.Atlas.PixelHeight * stride];
+			this.Atlas.CopyPixels(arr, stride, 0);
+			return arr;
+		}
+
+		public int RawBitmapWidth { get { return this.Atlas.PixelWidth; } }
 
 		public int GetTileXOffset(int tileSize)
 		{

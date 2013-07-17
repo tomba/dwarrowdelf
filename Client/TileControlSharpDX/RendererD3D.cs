@@ -129,7 +129,7 @@ namespace Dwarrowdelf.Client.TileControl
 			drawingContext.DrawImage(m_interopImageSource, new Rect(renderSize));
 		}
 
-		public void SetTileSet(TileSet tileSet)
+		public void SetTileSet(ITileSet tileSet)
 		{
 			if (m_tileTextureArray != null)
 			{

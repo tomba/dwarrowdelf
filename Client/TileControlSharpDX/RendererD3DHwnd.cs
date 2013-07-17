@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_swapChain.Present(0, SharpDX.DXGI.PresentFlags.None);
 		}
 
-		public void SetTileSet(TileSet tileSet)
+		public void SetTileSet(ITileSet tileSet)
 		{
 			RemoveAndDispose(ref m_tileTextureArray);
 

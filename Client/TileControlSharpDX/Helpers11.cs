@@ -12,12 +12,21 @@ using DXGI = SharpDX.DXGI;
 
 namespace Dwarrowdelf.Client.TileControl
 {
+	public interface ITileSet
+	{
+		byte[] GetRawBitmap();
+		int RawBitmapWidth { get; }
+
+		int GetTileXOffset(int tileSize);
+		int GetTileYOffset(SymbolID symbolID);
+	}
+
 	static class Helpers11
 	{
 		/// <summary>
 		/// Create a Texture2D array which contains mipmapped versions of all symbol drawings
 		/// </summary>
-		public static Texture2D CreateTextures11(Device device, TileSet tileSet)
+		public static Texture2D CreateTextures11(Device device, ITileSet tileSet)
 		{
 			var numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
@@ -40,14 +49,11 @@ namespace Dwarrowdelf.Client.TileControl
 				MipLevels = mipLevels,
 			});
 
-			var bmp = tileSet.Atlas;
+			var bmpRaw = tileSet.GetRawBitmap();
+			int bmpWidth = tileSet.RawBitmapWidth;
 
-			var pixelArray = new byte[maxTileSize * maxTileSize * bytesPerPixel];
-
-			using (var dataStream = DataStream.Create(pixelArray, true, false))
+			using (var dataStream = DataStream.Create(bmpRaw, true, false))
 			{
-				IntPtr dataPtr = dataStream.DataPointer;
-
 				for (int mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
 				{
 					int tileSize = maxTileSize >> mipLevel;
@@ -55,53 +61,13 @@ namespace Dwarrowdelf.Client.TileControl
 					for (int i = 0; i < numDistinctBitmaps; ++i)
 					{
 						SymbolID sid = (SymbolID)i;
-#if COLORMIPMAPS
-					byte r, g, b;
-					switch (mipLevel)
-					{
-						case 0: r = 255; g = 0; b = 0; break;
-						case 1: r = 0; g = 255; b = 0; break;
-						case 2: r = 0; g = 0; b = 255; break;
-						case 3: r = 255; g = 255; b = 0; break;
-						case 4: r = 255; g = 0; b = 255; break;
-						case 5: r = 0; g = 255; b = 255; break;
 
-						default: throw new Exception();
-					}
-
-					for (int y = 0; y < tileSize; ++y)
-					{
-						for (int x = 0; x < tileSize; ++x)
-						{
-							pixelArray[y * tileSize * 4 + x * 4 + 0] = b;
-							pixelArray[y * tileSize * 4 + x * 4 + 1] = g;
-							pixelArray[y * tileSize * 4 + x * 4 + 2] = r;
-							pixelArray[y * tileSize * 4 + x * 4 + 3] = 255;
-						}
-					}
-#elif TEST
-					for (int y = 0; y < tileSize; ++y)
-					{
-						for (int x = 0; x < tileSize; ++x)
-						{
-							if (x == y)
-							{
-								pixelArray[y * tileSize * 4 + x * 4 + 0] = 255;
-								pixelArray[y * tileSize * 4 + x * 4 + 1] = (byte)y;
-								pixelArray[y * tileSize * 4 + x * 4 + 2] = (byte)(x + y);
-								pixelArray[y * tileSize * 4 + x * 4 + 3] = 255;
-							}
-						}
-					}
-#else
 						int xOffset = tileSet.GetTileXOffset(tileSize);
 						int yOffset = tileSet.GetTileYOffset(sid);
 
-						var srcRect = new System.Windows.Int32Rect(xOffset, yOffset, tileSize, tileSize);
+						dataStream.Position = yOffset * bmpWidth * bytesPerPixel + xOffset * bytesPerPixel;
 
-						bmp.CopyPixels(srcRect, pixelArray, tileSize * bytesPerPixel, 0);
-#endif
-						var box = new DataBox(dataPtr, tileSize * bytesPerPixel, 0);
+						var box = new DataBox(dataStream.PositionPointer, bmpWidth * bytesPerPixel, 0);
 
 						device.ImmediateContext.UpdateSubresource(box, atlasTexture,
 							Texture2D.CalculateSubResourceIndex(mipLevel, i, mipLevels));
