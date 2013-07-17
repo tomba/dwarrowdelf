@@ -242,14 +242,7 @@ namespace TerrainGenTest
 					break;
 
 				case TerrainID.Empty:
-				case TerrainID.SlopeNorth:
-				case TerrainID.SlopeNorthEast:
-				case TerrainID.SlopeEast:
-				case TerrainID.SlopeSouthEast:
-				case TerrainID.SlopeSouth:
-				case TerrainID.SlopeSouthWest:
-				case TerrainID.SlopeWest:
-				case TerrainID.SlopeNorthWest:
+				case TerrainID.Slope:
 					r = 0;
 					g = 0;
 					b = 0;
