@@ -79,6 +79,7 @@ namespace Dwarrowdelf
 		Planar = North | NorthEast | East | SouthEast | South | SouthWest | West | NorthWest,
 		CardinalUpDown = Cardinal | Up | Down,
 		PlanarUpDown = Planar | Up | Down,
+		Intercardinal = NorthEast | SouthEast | SouthWest | NorthWest,
 
 		All = ((1 << 27) - 1),
 	}
