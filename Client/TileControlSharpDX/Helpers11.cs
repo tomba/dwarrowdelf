@@ -42,15 +42,19 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var bmp = tileSet.Atlas;
 
-			for (int mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
+			var pixelArray = new byte[maxTileSize * maxTileSize * bytesPerPixel];
+
+			using (var dataStream = DataStream.Create(pixelArray, true, false))
 			{
-				int tileSize = maxTileSize >> mipLevel;
+				IntPtr dataPtr = dataStream.DataPointer;
 
-				var pixelArray = new byte[tileSize * tileSize * bytesPerPixel];
-
-				for (int i = 0; i < numDistinctBitmaps; ++i)
+				for (int mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
 				{
-					SymbolID sid = (SymbolID)i;
+					int tileSize = maxTileSize >> mipLevel;
+
+					for (int i = 0; i < numDistinctBitmaps; ++i)
+					{
+						SymbolID sid = (SymbolID)i;
 #if COLORMIPMAPS
 					byte r, g, b;
 					switch (mipLevel)
@@ -90,18 +94,17 @@ namespace Dwarrowdelf.Client.TileControl
 						}
 					}
 #else
-					int xOffset = tileSet.GetTileXOffset(tileSize);
-					int yOffset = tileSet.GetTileYOffset(sid);
+						int xOffset = tileSet.GetTileXOffset(tileSize);
+						int yOffset = tileSet.GetTileYOffset(sid);
 
-					var srcRect = new System.Windows.Int32Rect(xOffset, yOffset, tileSize, tileSize);
+						var srcRect = new System.Windows.Int32Rect(xOffset, yOffset, tileSize, tileSize);
 
-					bmp.CopyPixels(srcRect, pixelArray, tileSize * bytesPerPixel, 0);
+						bmp.CopyPixels(srcRect, pixelArray, tileSize * bytesPerPixel, 0);
 #endif
+						var box = new DataBox(dataPtr, tileSize * bytesPerPixel, 0);
 
-					using (var dataStream = DataStream.Create(pixelArray, true, false))
-					{
-						var box = new DataBox(dataStream.DataPointer, tileSize * bytesPerPixel, 0);
-						device.ImmediateContext.UpdateSubresource(box, atlasTexture, Texture2D.CalculateSubResourceIndex(mipLevel, i, mipLevels));
+						device.ImmediateContext.UpdateSubresource(box, atlasTexture,
+							Texture2D.CalculateSubResourceIndex(mipLevel, i, mipLevels));
 					}
 				}
 			}
