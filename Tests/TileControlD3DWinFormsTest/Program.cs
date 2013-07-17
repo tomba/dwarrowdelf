@@ -26,7 +26,7 @@ namespace TileControlD3DWinFormsTest
 
 			RendererD3DSharpDXHwnd renderer = new RendererD3DSharpDXHwnd(renderData, form.Handle);
 
-			var tileset = new TileSet(new Uri("/TileControlD3DWinFormsTest;component/TileSet.png", UriKind.Relative));
+			var tileset = new TileSet("TileSet.png");
 			renderer.SetTileSet(tileset);
 
 			float tilesize = 64;
