@@ -88,7 +88,11 @@ namespace Dwarrowdelf.Client
 			bmp = new CroppedBitmap(this.Atlas, new Int32Rect(xOffset, yOffset, tileSize, tileSize));
 
 			if (color != GameColor.None)
-				bmp = ColorizeBitmap(bmp, color.ToWindowsColor());
+			{
+				var rgb = color.ToGameColorRGB();
+				var wcolor = Color.FromRgb(rgb.R, rgb.G, rgb.B);
+				bmp = ColorizeBitmap(bmp, wcolor);
+			}
 
 			bmp.Freeze();
 
