@@ -75,14 +75,17 @@ namespace Dwarrowdelf.TerrainGen
 
 			CreateOreClusters();
 
-			var riverGen = new RiverGen(m_data, m_random);
-			if (riverGen.CreateRiverPath())
+			if (m_data.Width > 128)
 			{
-				riverGen.AdjustRiver();
-			}
-			else
-			{
-				Trace.TraceError("Failed to create river");
+				var riverGen = new RiverGen(m_data, m_random);
+				if (riverGen.CreateRiverPath())
+				{
+					riverGen.AdjustRiver();
+				}
+				else
+				{
+					Trace.TraceError("Failed to create river");
+				}
 			}
 
 			int soilLimit = m_size.Depth * 4 / 5;
