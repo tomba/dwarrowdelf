@@ -123,6 +123,21 @@ namespace Dwarrowdelf
 			return new IntPoint3(x, y, z);
 		}
 
+		public IntPoint3 SetX(int x)
+		{
+			return new IntPoint3(x, this.Y, this.Z);
+		}
+
+		public IntPoint3 SetY(int y)
+		{
+			return new IntPoint3(this.X, y, this.Z);
+		}
+
+		public IntPoint3 SetZ(int z)
+		{
+			return new IntPoint3(this.X, this.Y, z);
+		}
+
 		public static IntPoint3 Center(IEnumerable<IntPoint3> points)
 		{
 			int x, y, z;
