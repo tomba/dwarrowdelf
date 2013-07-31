@@ -7,7 +7,7 @@ struct TileData
 	uint darkness;
 };
 
-cbuffer Constants
+cbuffer Constants : register(b0)
 {
 	bool g_simpleTint;
 };
@@ -15,7 +15,7 @@ cbuffer Constants
 Texture2DArray g_tileTextures;
 Buffer<uint> g_colorBuffer;		// GameColor -> RGB
 
-cbuffer PerFrame
+cbuffer PerFrame : register(b1)
 {
 	float2 g_colrow;	/* columns, rows */
 	float2 g_renderOffset;
@@ -136,22 +136,19 @@ float3 tint(in float3 input, in uint coloridx)
 {
 	float3 tint = load_color(coloridx);
 
-	if (g_simpleTint)
-	{
-		return tint * input;
-	}
-	else
-	{
-		input = RGBToHSL(input);
-		tint = RGBToHSL(tint);
+#if USE_COMPLEX_TINT
+	input = RGBToHSL(input);
+	tint = RGBToHSL(tint);
 
-		input.r = tint.r;
-		input.g = tint.g;
+	input.r = tint.r;
+	input.g = tint.g;
 	
-		input = HSLToRGB(input);
+	input = HSLToRGB(input);
 
-		return input;
-	}
+	return input;
+#else
+	return tint * input;
+#endif
 }
 
 float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkness, in float2 texpos)
