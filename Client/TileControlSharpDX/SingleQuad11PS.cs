@@ -82,7 +82,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var colorBufferView = ToDispose(new ShaderResourceView(m_device, colorBuffer, new ShaderResourceViewDescription()
 			{
-				Format = SharpDX.DXGI.Format.R32_UInt,
+				Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
 				Dimension = ShaderResourceViewDimension.Buffer,
 				Buffer = new ShaderResourceViewDescription.BufferResource()
 				{

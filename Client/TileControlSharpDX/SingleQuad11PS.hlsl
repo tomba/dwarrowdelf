@@ -13,7 +13,7 @@ cbuffer Constants : register(b0)
 };
 
 Texture2DArray g_tileTextures;
-Buffer<uint> g_colorBuffer;		// GameColor -> RGB
+Buffer<float4> g_colorBuffer;		// GameColor -> RGB
 
 cbuffer PerFrame : register(b1)
 {
@@ -33,16 +33,7 @@ struct PS_IN
 
 float3 load_color(in uint coloridx)
 {
-	uint c = g_colorBuffer.Load(coloridx);
-	
-	float3 color;
-
-	color.r = (c >> 16) & 0xff;
-	color.g = (c >> 8) & 0xff;
-	color.b = (c >> 0) & 0xff;
-	color /= 255.0f;
-
-	return color;
+	return g_colorBuffer.Load(coloridx).rgb;
 }
 
 float3 RGBToHSL(in float3 color)

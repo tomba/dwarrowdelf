@@ -89,7 +89,8 @@ namespace Dwarrowdelf.Client.TileControl
 			for (int i = 0; i < numcolors; ++i)
 			{
 				var gc = (GameColor)i;
-				arr[i] = GameColorRGB.FromGameColor(gc).ToInt32();
+				var rgb = GameColorRGB.FromGameColor(gc);
+				arr[i] = rgb.R | (rgb.G << 8) | (rgb.B << 16);
 			}
 
 			SharpDX.Direct3D11.Buffer colorBuffer;
