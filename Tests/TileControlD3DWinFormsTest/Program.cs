@@ -150,7 +150,18 @@ namespace TileControlD3DWinFormsTest
 			renderer.Dispose();
 		}
 
-		static SymbolID[] s_symbols = (SymbolID[])Enum.GetValues(typeof(SymbolID));
+		static GameColor[] s_colors = (GameColor[])Enum.GetValues(typeof(GameColor));
+
+		static SymbolID[] s_terrainSymbols = new SymbolID[]
+		{
+			SymbolID.Floor, SymbolID.SlopeUp, SymbolID.Grass, SymbolID.Grass2, SymbolID.Grass3,SymbolID.Grass4
+		};
+		static SymbolID[] s_interiorSymbols = new SymbolID[]
+		{
+			SymbolID.Empty, SymbolID.ConiferousTree, SymbolID.ConiferousTree2, SymbolID.DeciduousTree
+		};
+		static SymbolID[] s_objectSymbols = new SymbolID[] { SymbolID.Player, SymbolID.Wolf, SymbolID.Sheep, SymbolID.Orc };
+		static SymbolID[] s_topSymbols = new SymbolID[] { SymbolID.Empty, SymbolID.Water };
 
 		static void RecreateMap(RenderData<RenderTile> renderData)
 		{
@@ -166,8 +177,27 @@ namespace TileControlD3DWinFormsTest
 					{
 						Terrain = new RenderTileLayer()
 						{
-							SymbolID = s_symbols[r.Next(s_symbols.Length - 2) + 1],
-							Color = GameColor.White,
+							SymbolID = s_terrainSymbols[r.Next(s_terrainSymbols.Length)],
+							Color = s_colors[r.Next(s_colors.Length)],
+							BgColor = s_colors[r.Next(s_colors.Length)],
+						},
+
+						Interior = new RenderTileLayer()
+						{
+							SymbolID = s_interiorSymbols[r.Next(s_interiorSymbols.Length)],
+							Color = s_colors[r.Next(s_colors.Length)],
+						},
+
+						Object = new RenderTileLayer()
+						{
+							SymbolID = s_objectSymbols[r.Next(s_objectSymbols.Length)],
+							Color = s_colors[r.Next(s_colors.Length)],
+						},
+
+						Top = new RenderTileLayer()
+						{
+							SymbolID = s_topSymbols[r.Next(s_topSymbols.Length)],
+							Color = s_colors[r.Next(s_colors.Length)],
 						},
 
 						IsValid = true,
