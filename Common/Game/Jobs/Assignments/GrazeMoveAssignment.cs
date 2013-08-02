@@ -57,6 +57,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			var center = m_group.GetCenter();
 
 			var centerVector = center - this.Worker.Location;
+			centerVector = new IntVector3(centerVector.X, centerVector.Y, 0);
 
 			var r = this.Worker.World.Random;
 			int moveStrength = m_group.GroupSize + 1;
@@ -74,6 +75,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 			var v = centerVector + moveVector;
 
 			var dir = v.ToDirection();
+
+			if (dir == Direction.None)
+			{
+				progress = JobStatus.Ok;
+				return new WaitAction(r.Next(4) + 1);
+			}
 
 			var action = DoMove(dir);
 
