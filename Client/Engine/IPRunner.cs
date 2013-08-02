@@ -7,7 +7,7 @@ using Microsoft.Scripting.Hosting;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class IPRunner
+	public sealed class IPRunner
 	{
 		ScriptEngine m_scriptEngine;
 		ScriptScope m_scriptScope;

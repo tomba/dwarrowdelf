@@ -57,9 +57,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -238,7 +236,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="ChangeHandler.cs" />
     <Compile Include="ClientConfig.cs" />
     <Compile Include="ConnectManager.cs" />
     <Compile Include="DebugScriptMessages.cs" />
@@ -262,8 +259,6 @@
       <DependentUpon>TileToolTipControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Converters\UIElementToDescConverter.cs" />
-    <Compile Include="IPRunner.cs" />
-    <Compile Include="ReportHandler.cs" />
     <Compile Include="UI\BaseObjectPropertiesControl.xaml.cs">
       <DependentUpon>BaseObjectPropertiesControl.xaml</DependentUpon>
     </Compile>

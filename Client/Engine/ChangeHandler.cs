@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class ChangeHandler
+	public sealed class ChangeHandler
 	{
 		static Dictionary<Type, Action<ChangeHandler, ChangeData>> s_changeHandlerMap;
 
