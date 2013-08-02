@@ -94,7 +94,10 @@ namespace Dwarrowdelf.Client
 
 			SetLogOnText("Starting server", 0);
 
-			await server.StartAsync();
+			var path = Win32.SavedGamesFolder.GetSavedGamesPath();
+			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
+
+			await server.StartAsync(ClientConfig.EmbeddedServer, path, ClientConfig.CleanSaveDir, ClientConfig.NewGameMode);
 
 			m_server = server;
 		}

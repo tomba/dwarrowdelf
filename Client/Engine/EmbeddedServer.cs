@@ -7,8 +7,18 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class EmbeddedServer
+	public enum EmbeddedServerMode
 	{
+		None,
+		SameAppDomain,
+		SeparateAppDomain,
+	}
+
+	public sealed class EmbeddedServer
+	{
+		EmbeddedServerMode m_serverMode;
+		GameMode m_gameMode;
+
 		SaveManager m_saveManager;
 
 		public event Action<string> StatusChanged;
@@ -21,21 +31,17 @@ namespace Dwarrowdelf.Client
 
 		public IGame Game { get { return m_game; } }
 
-		public Task StartAsync()
+		public Task StartAsync(EmbeddedServerMode serverMode, string gameDir, bool cleanSaves, GameMode gameMode)
 		{
-			System.Windows.Threading.Dispatcher.CurrentDispatcher.VerifyAccess();
-
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
+			if (serverMode == EmbeddedServerMode.None)
 				throw new Exception();
 
-			var path = Win32.SavedGamesFolder.GetSavedGamesPath();
-			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
-			if (!System.IO.Directory.Exists(path))
-				System.IO.Directory.CreateDirectory(path);
+			m_serverMode = serverMode;
+			m_gameMode = gameMode;
 
-			var gameDir = path;
+			if (!System.IO.Directory.Exists(gameDir))
+				System.IO.Directory.CreateDirectory(gameDir);
 
-			bool cleanSaves = ClientConfig.CleanSaveDir;
 			Guid save = Guid.Empty;
 
 			m_saveManager = new SaveManager(gameDir);
@@ -105,23 +111,30 @@ namespace Dwarrowdelf.Client
 
 			AppDomain appDomain;
 
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.SeparateAppDomain)
+			switch (m_serverMode)
 			{
-				var di = AppDomain.CurrentDomain.SetupInformation;
+				case EmbeddedServerMode.SeparateAppDomain:
+					{
+						var di = AppDomain.CurrentDomain.SetupInformation;
 
-				var domainSetup = new AppDomainSetup()
-				{
-					ApplicationBase = di.ApplicationBase,
-					ConfigurationFile = di.ApplicationBase + "Dwarrowdelf.Server.exe.config",
-				};
+						var domainSetup = new AppDomainSetup()
+						{
+							ApplicationBase = di.ApplicationBase,
+							ConfigurationFile = di.ApplicationBase + "Dwarrowdelf.Server.exe.config",
+						};
 
-				m_serverDomain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
+						m_serverDomain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
 
-				appDomain = m_serverDomain;
-			}
-			else
-			{
-				appDomain = AppDomain.CurrentDomain;
+						appDomain = m_serverDomain;
+					}
+					break;
+
+				case EmbeddedServerMode.SameAppDomain:
+					appDomain = AppDomain.CurrentDomain;
+					break;
+
+				default:
+					throw new Exception();
 			}
 
 			m_gameFactory = (IGameFactory)appDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
@@ -141,7 +154,7 @@ namespace Dwarrowdelf.Client
 				GameMode gameMode;
 				GameMap gameMap;
 
-				switch (ClientConfig.NewGameMode)
+				switch (m_gameMode)
 				{
 					case GameMode.Fortress:
 						gameMode = GameMode.Fortress;

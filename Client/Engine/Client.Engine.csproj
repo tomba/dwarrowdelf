@@ -39,7 +39,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionType.cs" />
+    <Compile Include="EmbeddedServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{37d55ac1-bdae-4c0c-8856-8867fe772b2b}</Project>
+      <Name>Common %28Common\Common%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Base\Client.Base.csproj">
+      <Project>{1794f5b1-762e-40d2-a314-040487deefe2}</Project>
+      <Name>Client.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\World\Client.World.csproj">
+      <Project>{1f2d0cae-43a7-49cd-8a03-69a67c1a68fd}</Project>
+      <Name>Client.World</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

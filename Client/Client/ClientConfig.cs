@@ -5,21 +5,6 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	enum EmbeddedServerMode
-	{
-		None,
-		SameAppDomain,
-		SeparateAppDomain,
-	}
-
-	enum ConnectionType
-	{
-		None,
-		Tcp,
-		Pipe,
-		Direct,
-	}
-
 	static class ClientConfig
 	{
 		public static EmbeddedServerMode EmbeddedServer = EmbeddedServerMode.SameAppDomain;
