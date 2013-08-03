@@ -12,8 +12,9 @@ using System.ComponentModel;
 
 using Dwarrowdelf;
 using System.Diagnostics;
-using System.Windows.Threading;
 using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
@@ -28,8 +29,6 @@ namespace Dwarrowdelf.Client
 		public int SentBytes { get { return m_sentBytes; } set { m_sentBytes = value; Refresh(); } }
 		public int ReceivedMessages { get { return m_receivedMessages; } set { m_receivedMessages = value; Refresh(); } }
 		public int ReceivedBytes { get { return m_receivedBytes; } set { m_receivedBytes = value; Refresh(); } }
-
-		DispatcherTimer m_timer;
 
 		public sealed class MessageCountStore : INotifyPropertyChanged
 		{
@@ -59,11 +58,11 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<MessageCountStore> m_sentMessageCounts = new ObservableCollection<MessageCountStore>();
 		public ObservableCollection<MessageCountStore> SentMessageCounts { get { return m_sentMessageCounts; } }
 
+		SynchronizationContext m_syncCtx;
+
 		public ClientNetStatistics()
 		{
-			m_timer = new DispatcherTimer();
-			m_timer.Interval = TimeSpan.FromMilliseconds(250);
-			m_timer.Tick += RefreshTick;
+			m_syncCtx = SynchronizationContext.Current;
 		}
 
 		public void Reset()
@@ -84,10 +83,8 @@ namespace Dwarrowdelf.Client
 			m_sentMessageCounts.Clear();
 		}
 
-		void RefreshTick(object sender, EventArgs e)
+		void DoRefresh()
 		{
-			m_timer.Stop();
-
 			Notify("SentMessages");
 			Notify("SentBytes");
 			Notify("ReceivedMessages");
@@ -128,12 +125,16 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		bool m_refreshQueued;
+
+		// not quite correct, but good enough for this...
 		void Refresh()
 		{
-			if (m_timer.IsEnabled)
+			if (m_refreshQueued)
 				return;
 
-			m_timer.Start();
+			m_refreshQueued = true;
+			m_syncCtx.Post(async o => { await Task.Delay(250); m_refreshQueued = false; DoRefresh(); }, null);
 		}
 
 		public void AddReceivedMessages(ClientMessage msg)
