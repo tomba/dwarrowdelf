@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Dwarrowdelf.Messages;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Threading;
+using System.Threading.Tasks;
+using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Client
 {
@@ -72,6 +71,8 @@ namespace Dwarrowdelf.Client
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ClientUser");
 
+		SynchronizationContext m_syncCtx;
+
 		public ClientUser()
 		{
 			this.State = ClientUserState.None;
@@ -108,6 +109,8 @@ namespace Dwarrowdelf.Client
 			}
 
 			this.State = ClientUserState.LoggingIn;
+
+			m_syncCtx = SynchronizationContext.Current;
 
 			m_connection.NewMessageEvent += _OnNewMessages;
 			m_opEvent = new ManualResetEvent(false);
@@ -173,7 +176,7 @@ namespace Dwarrowdelf.Client
 
 			m_onNewMessagesInvoked = true;
 
-			Application.Current.Dispatcher.BeginInvoke(new Action(OnNewMessages));
+			m_syncCtx.Post((o) => OnNewMessages(), null);
 		}
 
 		void OnNewMessages()
