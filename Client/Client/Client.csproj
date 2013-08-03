@@ -389,7 +389,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientNetStatistics.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="UI\ItemInfoControl.xaml.cs">
       <DependentUpon>ItemInfoControl.xaml</DependentUpon>

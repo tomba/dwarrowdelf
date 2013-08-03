@@ -1,24 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using System.Net;
-using Dwarrowdelf.Messages;
-using System.Runtime.Serialization;
-using System.IO;
-using System.ComponentModel;
-
-using Dwarrowdelf;
-using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Dwarrowdelf.Messages;
+
 namespace Dwarrowdelf.Client
 {
-	class ClientNetStatistics : INotifyPropertyChanged
+	public class ClientNetStatistics : INotifyPropertyChanged
 	{
 		int m_sentMessages;
 		int m_sentBytes;
