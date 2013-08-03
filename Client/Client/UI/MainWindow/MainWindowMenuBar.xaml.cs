@@ -36,50 +36,70 @@ namespace Dwarrowdelf.Client.UI
 
 		async void StartServer_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
+			var dlg = App.MainWindow.OpenLogOnDialog();
+
 			try
 			{
-				await GameData.Data.ConnectManager.StartServerAsync();
+				var prog = new Progress<string>(str => dlg.AppendText(str));
+				await GameData.Data.ConnectManager.StartServerAsync(prog);
 			}
 			catch (Exception exc)
 			{
 				MessageBox.Show(Window.GetWindow(this), exc.ToString(), "Start Server Failed");
 			}
+
+			dlg.Close();
 		}
 
 		async void StopServer_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
+			var dlg = App.MainWindow.OpenLogOnDialog();
+
 			try
 			{
-				await GameData.Data.ConnectManager.StopServerAsync();
+				var prog = new Progress<string>(str => dlg.AppendText(str));
+				await GameData.Data.ConnectManager.StopServerAsync(prog);
 			}
 			catch (Exception exc)
 			{
 				MessageBox.Show(Window.GetWindow(this), exc.ToString(), "Stop Server Failed");
 			}
+
+			dlg.Close();
 		}
 
 		async void Connect_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
+			var dlg = App.MainWindow.OpenLogOnDialog();
+
 			try
 			{
-				await GameData.Data.ConnectManager.ConnectPlayerAsync();
+				var prog = new Progress<string>(str => dlg.AppendText(str));
+				await GameData.Data.ConnectManager.ConnectPlayerAsync(prog);
 			}
 			catch (Exception exc)
 			{
 				MessageBox.Show(Window.GetWindow(this), exc.ToString(), "Connect Player Failed");
 			}
+
+			dlg.Close();
 		}
 
 		async void Disconnect_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
+			var dlg = App.MainWindow.OpenLogOnDialog();
+
 			try
 			{
-				await GameData.Data.ConnectManager.DisconnectAsync();
+				var prog = new Progress<string>(str => dlg.AppendText(str));
+				await GameData.Data.ConnectManager.DisconnectAsync(prog);
 			}
 			catch (Exception exc)
 			{
 				MessageBox.Show(Window.GetWindow(this), exc.ToString(), "Disconnect Failed");
 			}
+
+			dlg.Close();
 		}
 
 		private void Save_MenuItem_Click(object sender, RoutedEventArgs e)

@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client
 			m_timer.Interval = TimeSpan.FromMilliseconds(500);
 			m_timer.Tick += delegate { if (_Blink != null) _Blink(); MainWindow.MapControl.InvalidateTileData(); };
 
-			this.ConnectManager = new ConnectManager(this.Dispatcher);
+			this.ConnectManager = new ConnectManager();
 
 			this.NetStats = new ClientNetStatistics();
 		}

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Windows.Threading;
-using System.Threading.Tasks;
-using Dwarrowdelf.Client.UI;
-using System.Diagnostics;
-using Dwarrowdelf.Messages;
 using System.Threading;
+using System.Threading.Tasks;
+using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Client
 {
@@ -16,83 +14,42 @@ namespace Dwarrowdelf.Client
 		EmbeddedServer m_server;
 		public EmbeddedServer Server { get { return m_server; } }
 
-		LogOnDialog m_logOnDialog;
-
-		Dispatcher m_dispatcher;
-
-		public ConnectManager(Dispatcher dispatcher)
+		public ConnectManager()
 		{
-			m_dispatcher = dispatcher;
 		}
 
-		void SetLogOnText(string text, int idx)
+		public async Task StartServerAndConnectAsync(IProgress<string> prog)
 		{
-			if (m_dispatcher.CheckAccess() == false)
-			{
-				m_dispatcher.Invoke(new Action<string, int>(SetLogOnText), text, idx);
-				return;
-			}
+			await StartServerAsync(prog);
 
-			if (m_logOnDialog == null)
-			{
-				App.MainWindow.IsEnabled = false;
+			Exception connectException = null;
 
-				m_logOnDialog = new LogOnDialog();
-				m_logOnDialog.Owner = App.MainWindow;
-				if (idx == 0)
-					m_logOnDialog.SetText1(text);
-				else
-					m_logOnDialog.SetText2(text);
-				m_logOnDialog.Show();
-			}
-			else
-			{
-				if (idx == 0)
-					m_logOnDialog.SetText1(text);
-				else
-					m_logOnDialog.SetText2(text);
-			}
-		}
-
-		void CloseLoginDialog()
-		{
-			if (m_dispatcher.CheckAccess() == false)
-			{
-				m_dispatcher.Invoke(new Action(CloseLoginDialog));
-				return;
-			}
-
-			if (m_logOnDialog != null)
-			{
-				m_logOnDialog.Close();
-				m_logOnDialog = null;
-
-				App.MainWindow.IsEnabled = true;
-				App.MainWindow.Focus();
-			}
-		}
-
-		public async Task StartServerAsync()
-		{
 			try
 			{
-				await StartServerAsyncInt();
+				await ConnectPlayerAsync(prog);
 			}
-			finally
+			catch (Exception exc)
 			{
-				CloseLoginDialog();
+				connectException = exc;
+			}
+
+			if (connectException != null)
+			{
+				await StopServerAsync(prog);
+
+				throw new Exception("Failed to connect", connectException);
 			}
 		}
 
-		async Task StartServerAsyncInt()
+		public async Task StartServerAsync(IProgress<string> prog)
 		{
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
 				return;
 
 			var server = new EmbeddedServer();
-			server.StatusChanged += (str) => SetLogOnText(str, 1);
+			server.StatusChanged += prog.Report;
 
-			SetLogOnText("Starting server", 0);
+			prog.Report("Starting Server");
 
 			var path = Win32.SavedGamesFolder.GetSavedGamesPath();
 			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
@@ -102,26 +59,14 @@ namespace Dwarrowdelf.Client
 			m_server = server;
 		}
 
-		public async Task ConnectPlayerAsync()
+		public async Task ConnectPlayerAsync(IProgress<string> prog)
 		{
 			if (GameData.Data.User != null)
 				return;
 
-			try
-			{
-				await ConnectPlayerAsyncInt();
-			}
-			finally
-			{
-				CloseLoginDialog();
-			}
-		}
-
-		async Task ConnectPlayerAsyncInt()
-		{
 			var player = new ClientUser();
 			player.DisconnectEvent += OnDisconnected;
-			player.StateChangedEvent += (state) => SetLogOnText(state.ToString(), 0);
+			player.StateChangedEvent += (state) => prog.Report(state.ToString());
 
 			await player.LogOn("tomba");
 
@@ -148,43 +93,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-
-		public async Task StopServerAsync()
+		public async Task StopServerAsync(IProgress<string> prog)
 		{
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server == null)
 				return;
 
-			try
-			{
-				await StopServerAsyncInt();
-			}
-			finally
-			{
-				CloseLoginDialog();
-			}
-		}
-
-		public async Task DisconnectAsync()
-		{
-			if (GameData.Data.User == null)
-				return;
-
-			try
-			{
-				await DisconnectAsyncInt();
-			}
-			finally
-			{
-				CloseLoginDialog();
-			}
-		}
-
-		async Task StopServerAsyncInt()
-		{
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server == null)
-				return;
-
-			SetLogOnText("Stopping server", 0);
+			prog.Report("Stopping Server");
 
 			await m_server.StopAsync();
 
@@ -193,24 +107,24 @@ namespace Dwarrowdelf.Client
 
 		AutoResetEvent m_disconnectEvent;
 
-		async Task DisconnectAsyncInt()
+		public async Task DisconnectAsync(IProgress<string> prog)
 		{
-			App.MainWindow.MapControl.Environment = null;
-
 			var player = GameData.Data.User;
 			if (player == null)
 				return;
 
+			App.MainWindow.MapControl.Environment = null;
+
 			m_disconnectEvent = new AutoResetEvent(false);
 
-			SetLogOnText("Saving", 0);
+			prog.Report("Saving");
 			ClientSaveManager.SaveEvent += OnGameSaved;
 			GameData.Data.User.Send(new SaveRequestMessage());
 
 			await Task.Run(() => m_disconnectEvent.WaitOne());
 
 			ClientSaveManager.SaveEvent -= OnGameSaved;
-			SetLogOnText("Logging Out", 0);
+			prog.Report("Logging Out");
 			GameData.Data.User.SendLogOut();
 
 			await Task.Run(() => m_disconnectEvent.WaitOne());
@@ -219,8 +133,6 @@ namespace Dwarrowdelf.Client
 			m_disconnectEvent = null;
 
 			player.DisconnectEvent -= OnDisconnected;
-
-			CloseLoginDialog();
 		}
 
 		void OnGameSaved()

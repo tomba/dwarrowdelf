@@ -351,6 +351,18 @@ namespace Dwarrowdelf.Client.UI
 			dlg.Show();
 		}
 
+		public LogOnDialog OpenLogOnDialog()
+		{
+			this.IsEnabled = false;
+
+			var logOnDialog = new LogOnDialog();
+			logOnDialog.Owner = this;
+			logOnDialog.Closed += (s, e) => this.IsEnabled = true;
+			logOnDialog.Show();
+
+			return logOnDialog;
+		}
+
 		protected override async void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
@@ -361,30 +373,20 @@ namespace Dwarrowdelf.Client.UI
 
 			if (ClientConfig.AutoConnect)
 			{
-				try
-				{
-					await GameData.Data.ConnectManager.StartServerAsync();
-				}
-				catch (Exception exc)
-				{
-					MessageBox.Show(this, exc.ToString(), "Failed to start server");
-					return;
-				}
-
-				bool stopServer = false;
+				var dlg = OpenLogOnDialog();
 
 				try
 				{
-					await GameData.Data.ConnectManager.ConnectPlayerAsync();
+					var prog = new Progress<string>(str => dlg.AppendText(str));
+
+					await GameData.Data.ConnectManager.StartServerAndConnectAsync(prog);
 				}
 				catch (Exception exc)
 				{
-					MessageBox.Show(this, exc.ToString(), "Connect failed");
-					stopServer = true;
+					MessageBox.Show(this, exc.ToString(), "Failed to autoconnect");
 				}
 
-				if (stopServer)
-					await GameData.Data.ConnectManager.StopServerAsync();
+				dlg.Close();
 			}
 		}
 
@@ -407,15 +409,20 @@ namespace Dwarrowdelf.Client.UI
 					Properties.Settings.Default.MainWindowPlacement = p;
 					Properties.Settings.Default.Save();
 
+					var dlg = OpenLogOnDialog();
+
 					try
 					{
-						await GameData.Data.ConnectManager.DisconnectAsync();
-						await GameData.Data.ConnectManager.StopServerAsync();
+						var prog = new Progress<string>(str => dlg.AppendText(str));
+						await GameData.Data.ConnectManager.DisconnectAsync(prog);
+						await GameData.Data.ConnectManager.StopServerAsync(prog);
 					}
 					catch (Exception exc)
 					{
 						MessageBox.Show(exc.ToString(), "Error closing down");
 					}
+
+					dlg.Close();
 
 					m_closeStatus = CloseStatus.Ready;
 					await this.Dispatcher.InvokeAsync(Close);

@@ -13,26 +13,17 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	/// <summary>
-	/// Interaction logic for LogOnDialog.xaml
-	/// </summary>
 	sealed partial class LogOnDialog : Window
 	{
 		public LogOnDialog()
 		{
 			InitializeComponent();
-			label1.Content = "";
-			label2.Content = "";
 		}
 
-		public void SetText1(string text)
+		public void AppendText(string text)
 		{
-			label1.Content = text;
-		}
-
-		public void SetText2(string text)
-		{
-			label2.Content = text;
+			textBox.AppendText(text);
+			textBox.AppendText(Environment.NewLine);
 		}
 	}
 }

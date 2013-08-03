@@ -21,9 +21,7 @@
 			</RadialGradientBrush>
 		</Border.Background>
 
-		<StackPanel Orientation="Vertical" VerticalAlignment="Center">
-			<Label Name="label1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Test"/>
-			<Label Name="label2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Test"/>
-		</StackPanel>
+		<TextBox Name="textBox" TextAlignment="Center" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
+
 	</Border>
 </Window>
