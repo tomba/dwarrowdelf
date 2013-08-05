@@ -7,15 +7,10 @@ struct TileData
 	uint darkness;
 };
 
-cbuffer Constants : register(b0)
-{
-	bool g_simpleTint;
-};
-
 Texture2DArray g_tileTextures;
 Buffer<float4> g_colorBuffer;		// GameColor -> RGB
 
-cbuffer PerFrame : register(b1)
+cbuffer PerFrame : register(b0)
 {
 	float2 g_colrow;	/* columns, rows */
 	float2 g_renderOffset;
@@ -25,11 +20,6 @@ cbuffer PerFrame : register(b1)
 StructuredBuffer<TileData> g_tileBuffer;
 
 SamplerState linearSampler;
-
-struct PS_IN
-{
-	float4 pos : SV_POSITION;
-};
 
 float3 load_color(in uint coloridx)
 {
@@ -168,14 +158,14 @@ float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkn
 	return c;
 }
 
-float4 PS( PS_IN input ) : SV_Target
+float3 PS( float4 pin : SV_POSITION ) : SV_Target
 {
-	float2 pos = input.pos.xy;
+	float2 pos = pin.xy;
 
 	float2 xy = pos - g_renderOffset;
 
 	if (xy.x < 0 || xy.y < 0 || xy.x >= g_colrow.x * g_tileSize || xy.y >= g_colrow.y * g_tileSize)
-		return float4(1.0f, 0, 0, 1.0f);
+		return float3(1.0f, 0, 0);
 
 	float2 tilepos = floor(xy / g_tileSize);
 	
@@ -217,5 +207,5 @@ float4 PS( PS_IN input ) : SV_Target
 	c = c3.rgb + (1.0f - c3.a) * c.rgb;
 	c = c4.rgb + (1.0f - c4.a) * c.rgb;
 
-	return float4(c, 1.0f);
+	return c;
 }

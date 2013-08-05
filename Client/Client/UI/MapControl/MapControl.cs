@@ -80,8 +80,10 @@ namespace Dwarrowdelf.Client.UI
 		}
 		#endregion
 
-		TileControl.SingleQuad11 m_scene;
+		TileControl.TileMapScene m_scene;
 		TileControl.RenderData<TileControl.RenderTile> m_renderData;
+
+		Dwarrowdelf.Client.TileControl.TestScene m_testScene;
 
 		protected override void OnInitialized(EventArgs e)
 		{
@@ -92,9 +94,9 @@ namespace Dwarrowdelf.Client.UI
 			m_renderView = new RenderView(m_renderData);
 			m_renderer = new TileControl.RendererD3DSharpDX();
 			//m_renderer.Scene = new Dwarrowdelf.Client.TileControl.TestScene();
-			m_scene = new TileControl.SingleQuad11();
-			var testScene = new Dwarrowdelf.Client.TileControl.TestScene();
-			var twoScene = new Dwarrowdelf.Client.TileControl.TwoScene(m_scene, testScene);
+			m_scene = new TileControl.TileMapScene();
+			m_testScene = new Dwarrowdelf.Client.TileControl.TestScene();
+			var twoScene = new Dwarrowdelf.Client.TileControl.TwoScene(m_scene, m_testScene);
 
 			m_renderer.Scene = twoScene;
 
@@ -125,6 +127,8 @@ namespace Dwarrowdelf.Client.UI
 					m_renderView.SetMaxSize(bufferSize);
 					m_scene.SetupTileBuffer(bufferSize);
 					m_renderer.SetRenderRectangle(new Rect(arrangeBounds));
+
+					m_testScene.SetRenderSize((float)renderSize.Width, (float)renderSize.Height);
 				}
 			}
 

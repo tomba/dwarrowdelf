@@ -68,17 +68,17 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 		}
 
+		public void SetRenderSize(float width, float height)
+		{
+			var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
+			float aspect = (float)width / height;
+			var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, aspect, 0.1f, 100.0f);
+			m_viewProj = Matrix.Multiply(view, proj);
+		}
+
 		public void Render()
 		{
 			var context = m_device.ImmediateContext;
-
-			int renderWidth = 100;
-			int renderHeight = 100;
-
-			var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
-			float aspect = (float)renderWidth / renderHeight;
-			var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, aspect, 0.1f, 100.0f);
-			m_viewProj = Matrix.Multiply(view, proj);
 
 			context.InputAssembler.InputLayout = m_inputLayout;
 			context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;

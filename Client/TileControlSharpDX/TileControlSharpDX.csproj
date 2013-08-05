@@ -72,24 +72,22 @@
     <Compile Include="RendererD3DHwnd.cs" />
     <Compile Include="RenderData.cs" />
     <Compile Include="RenderTile.cs" />
-    <Compile Include="SingleQuad11PS.cs" />
     <Compile Include="D3DImageSharpDX.cs" />
     <Compile Include="Helpers11.cs" />
-    <Compile Include="SingleQuad11VS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RendererD3D.cs" />
-    <Compile Include="SingleQuad11.cs" />
+    <Compile Include="TileMapScene.cs" />
     <Compile Include="TestScene.cs" />
     <Compile Include="TwoScene.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SingleQuad11PS.hlsl" />
-    <EmbeddedResource Include="SingleQuad11PS.hlslo">
-      <DependentUpon>SingleQuad11PS.hlsl</DependentUpon>
+    <None Include="TileMapPS.hlsl" />
+    <EmbeddedResource Include="TileMapPS.hlslo">
+      <DependentUpon>TileMapPS.hlsl</DependentUpon>
     </EmbeddedResource>
-    <None Include="SingleQuad11VS.hlsl" />
-    <EmbeddedResource Include="SingleQuad11VS.hlslo">
-      <DependentUpon>SingleQuad11VS.hlsl</DependentUpon>
+    <None Include="TileMapVS.hlsl" />
+    <EmbeddedResource Include="TileMapVS.hlslo">
+      <DependentUpon>TileMapVS.hlsl</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>
@@ -112,14 +110,14 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target AfterTargets="BeforeBuild" Name="Shaders" Inputs="SingleQuad11PS.hlsl;SingleQuad11VS.hlsl" Outputs="SingleQuad11PS.hlslo;SingleQuad11VS.hlslo">
+  <Target AfterTargets="BeforeBuild" Name="Shaders" Inputs="TileMapPS.hlsl;TileMapVS.hlsl" Outputs="TileMapPS.hlslo;TileMapVS.hlslo">
     <PropertyGroup>
       <FxcPath>$(MSBuildExtensionsPath32)/../Windows Kits/8.0/bin/x86</FxcPath>
     </PropertyGroup>
-    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T ps_4_0 /E PS /Fo SingleQuad11PS.hlslo SingleQuad11PS.hlsl" Outputs="SingleQuad11PS.hlslo" />
-    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T vs_4_0 /E VS /Fo SingleQuad11VS.hlslo SingleQuad11VS.hlsl" />
+    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T ps_4_0 /E PS /Fo TileMapPS.hlslo TileMapPS.hlsl" Outputs="TileMapPS.hlslo" />
+    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T vs_4_0 /E VS /Fo TileMapVS.hlslo TileMapVS.hlsl" />
   </Target>
   <Target AfterTargets="Clean" Name="CleanShaders">
-    <Delete Files="SingleQuad11PS.hlslo;SingleQuad11VS.hlslo" />
+    <Delete Files="TileMapPS.hlslo;TileMapVS.hlslo" />
   </Target>
 </Project>
