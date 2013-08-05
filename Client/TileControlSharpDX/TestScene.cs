@@ -29,11 +29,6 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 		}
 
-		public void Dispose()
-		{
-			// XXX
-		}
-
 		public void Attach(ISceneHost host)
 		{
 			var device = host.Device;
@@ -61,7 +56,12 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void Detach()
 		{
-			m_stopwatch.Stop();
+			DH.Dispose(ref m_constantBuffer);
+			DH.Dispose(ref m_pixelShader);
+
+			DH.Dispose(ref m_vertexBuffer);
+			DH.Dispose(ref m_inputLayout);
+			DH.Dispose(ref m_vertexShader);
 		}
 
 		public void Update(TimeSpan timeSpan)
@@ -80,17 +80,17 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			var context = m_device.ImmediateContext;
 
+			float time = (float)m_stopwatch.Elapsed.TotalSeconds;
+			var worldViewProj = Matrix.RotationX(time) * Matrix.RotationY(time * 2) * Matrix.RotationZ(time * .7f) * m_viewProj;
+			worldViewProj.Transpose();
+			context.UpdateSubresource(ref worldViewProj, m_constantBuffer);
+
 			context.InputAssembler.InputLayout = m_inputLayout;
 			context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
 			context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(m_vertexBuffer, Utilities.SizeOf<Vector4>() * 2, 0));
 			context.VertexShader.SetConstantBuffer(0, m_constantBuffer);
 			context.VertexShader.Set(m_vertexShader);
 			context.PixelShader.Set(m_pixelShader);
-
-			float time = (float)m_stopwatch.Elapsed.TotalSeconds;
-			var worldViewProj = Matrix.RotationX(time) * Matrix.RotationY(time * 2) * Matrix.RotationZ(time * .7f) * m_viewProj;
-			worldViewProj.Transpose();
-			context.UpdateSubresource(ref worldViewProj, m_constantBuffer);
 
 			context.Draw(36, 0);
 		}

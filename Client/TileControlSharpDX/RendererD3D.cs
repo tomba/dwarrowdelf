@@ -8,7 +8,7 @@ using SharpDX.Direct3D11;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public sealed class RendererD3DSharpDX : ISceneHost
+	public sealed class RendererD3DSharpDX : ISceneHost, IDisposable
 	{
 		D3DImageSharpDX m_interopImageSource;
 		SharpDX.DXGI.Factory m_factory;
@@ -19,6 +19,8 @@ namespace Dwarrowdelf.Client.TileControl
 		RenderTargetView m_renderTargetView;
 
 		IScene m_scene;
+
+		Rect m_renderRect;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
@@ -53,12 +55,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 		void InitTextureRenderSurface(int width, int height)
 		{
-			if (m_renderTexture != null)
-			{
-				m_interopImageSource.SetBackBufferDX11(null);
-				m_renderTexture.Dispose();
-				m_renderTexture = null;
-			}
+			m_interopImageSource.SetBackBufferDX11(null);
+			DH.Dispose(ref m_renderTexture);
 
 			if (width == 0 || height == 0)
 				throw new Exception();
@@ -102,8 +100,6 @@ namespace Dwarrowdelf.Client.TileControl
 					m_scene.Attach(this);
 			}
 		}
-
-		Rect m_renderRect;
 
 		public void SetRenderRectangle(Rect renderRect)
 		{
@@ -168,12 +164,15 @@ namespace Dwarrowdelf.Client.TileControl
 			if (disposing)
 			{
 				// Dispose managed resources.
+
+				// Detach the scene
+				this.Scene = null;
 			}
 
 			// Dispose unmanaged resources
 
-			DH.Dispose(ref m_scene);
 			DH.Dispose(ref m_interopImageSource);
+			DH.Dispose(ref m_renderTargetView);
 			DH.Dispose(ref m_renderTexture);
 			DH.Dispose(ref m_device);
 			DH.Dispose(ref m_factory);

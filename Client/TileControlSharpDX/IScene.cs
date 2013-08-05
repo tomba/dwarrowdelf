@@ -3,7 +3,7 @@ using SharpDX.Direct3D11;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public interface IScene : IDisposable
+	public interface IScene
 	{
 		void Attach(ISceneHost host);
 		void Detach();
@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Client.TileControl
 		void Render();
 	}
 
-	public interface ISceneHost : IDisposable
+	public interface ISceneHost
 	{
 		Device Device { get; }
 	}

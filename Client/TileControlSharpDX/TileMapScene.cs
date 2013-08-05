@@ -21,8 +21,6 @@ namespace Dwarrowdelf.Client.TileControl
 		VertexShader m_vertexShader;
 		PixelShader m_pixelShader;
 
-		Texture2D m_tileTextureArray;
-
 		Buffer m_vertexBuffer;
 		VertexBufferBinding m_vertexBufferBinding;
 		InputLayout m_layout;
@@ -38,24 +36,17 @@ namespace Dwarrowdelf.Client.TileControl
 		ShaderDataPerFrame m_shaderDataPerFrame;
 		Buffer m_shaderDataBufferPerFrame;
 
+		Buffer m_colorBuffer;
 		ShaderResourceView m_colorBufferView;
-		SamplerState m_sampler;
 
 		Buffer m_tileBuffer;
 		ShaderResourceView m_tileBufferView;
 
+		Texture2D m_tileTextureArray;
 		ShaderResourceView m_tileTextureView;
+		SamplerState m_sampler;
 
 		public TileMapScene()
-		{
-		}
-
-		T ToDispose<T>(T ob)
-		{
-			return ob;
-		}
-
-		public void Dispose()
 		{
 		}
 
@@ -84,9 +75,9 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			m_vertexShader = new VertexShader(m_device, bytecode);
 
-			m_layout = ToDispose(new InputLayout(m_device, bytecode, new[] {
+			m_layout = new InputLayout(m_device, bytecode, new[] {
 					new InputElement("POSITION", 0, Format.R32G32_Float, 0, 0),
-				}));
+				});
 
 			var vertexData = new Vector2[] {
 				new Vector2(0.0f, 0.0f),
@@ -102,28 +93,28 @@ namespace Dwarrowdelf.Client.TileControl
 
 		void CreatePS(ShaderBytecode bytecode)
 		{
-			m_pixelShader = ToDispose(new PixelShader(m_device, bytecode));
+			m_pixelShader = new PixelShader(m_device, bytecode);
 
 			/* Constant buffer per frame */
-			m_shaderDataBufferPerFrame = ToDispose(new Buffer(m_device, Utilities.SizeOf<ShaderDataPerFrame>(),
-				ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0));
+			m_shaderDataBufferPerFrame = new Buffer(m_device, Utilities.SizeOf<ShaderDataPerFrame>(),
+				ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
 
 			/* color buffer */
-			var colorBuffer = ToDispose(Helpers11.CreateGameColorBuffer(m_device));
+			m_colorBuffer = Helpers11.CreateGameColorBuffer(m_device);
 
-			m_colorBufferView = ToDispose(new ShaderResourceView(m_device, colorBuffer, new ShaderResourceViewDescription()
+			m_colorBufferView = new ShaderResourceView(m_device, m_colorBuffer, new ShaderResourceViewDescription()
 			{
 				Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
 				Dimension = ShaderResourceViewDimension.Buffer,
 				Buffer = new ShaderResourceViewDescription.BufferResource()
 				{
-					ElementWidth = colorBuffer.Description.SizeInBytes / sizeof(uint),
+					ElementWidth = m_colorBuffer.Description.SizeInBytes / sizeof(uint),
 					ElementOffset = 0,
 				},
-			}));
+			});
 
 			/* Texture sampler */
-			m_sampler = ToDispose(new SamplerState(m_device, new SamplerStateDescription()
+			m_sampler = new SamplerState(m_device, new SamplerStateDescription()
 			{
 				/* Use point filtering as linear filtering causes artifacts */
 				Filter = Filter.MinMagMipPoint,
@@ -135,11 +126,26 @@ namespace Dwarrowdelf.Client.TileControl
 				MipLodBias = 0,
 				MinimumLod = 0,
 				MaximumLod = float.MaxValue,
-			}));
+			});
 		}
 
 		public void Detach()
 		{
+			DH.Dispose(ref m_tileBufferView);
+			DH.Dispose(ref m_tileBuffer);
+
+			DH.Dispose(ref m_tileTextureView);
+			DH.Dispose(ref m_tileTextureArray);
+
+			DH.Dispose(ref m_sampler);
+			DH.Dispose(ref m_colorBufferView);
+			DH.Dispose(ref m_colorBuffer);
+			DH.Dispose(ref m_shaderDataBufferPerFrame);
+			DH.Dispose(ref m_pixelShader);
+
+			DH.Dispose(ref m_vertexBuffer);
+			DH.Dispose(ref m_layout);
+			DH.Dispose(ref m_vertexShader);
 		}
 
 		public void Update(TimeSpan timeSpan)
@@ -148,19 +154,19 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void SetTileSet(ITileSet tileSet)
 		{
+			DH.Dispose(ref m_tileTextureView);
+			DH.Dispose(ref m_tileTextureArray);
+
 			m_tileTextureArray = Helpers11.CreateTextures11(m_device, tileSet);
-
-			//RemoveAndDispose(ref m_tileTextureView);
-
-			m_tileTextureView = ToDispose(new ShaderResourceView(m_device, m_tileTextureArray));
+			m_tileTextureView = new ShaderResourceView(m_device, m_tileTextureArray);
 		}
 
 		public void SetupTileBuffer(IntSize2 gridSize)
 		{
-			//RemoveAndDispose(ref m_tileBuffer);
-			//RemoveAndDispose(ref m_tileBufferView);
+			DH.Dispose(ref m_tileBufferView);
+			DH.Dispose(ref m_tileBuffer);
 
-			m_tileBuffer = ToDispose(new SharpDX.Direct3D11.Buffer(m_device, new BufferDescription()
+			m_tileBuffer = new SharpDX.Direct3D11.Buffer(m_device, new BufferDescription()
 			{
 				BindFlags = BindFlags.ShaderResource,
 				CpuAccessFlags = CpuAccessFlags.Write,
@@ -168,9 +174,9 @@ namespace Dwarrowdelf.Client.TileControl
 				SizeInBytes = gridSize.Area * Marshal.SizeOf(typeof(RenderTile)),
 				StructureByteStride = Marshal.SizeOf(typeof(RenderTile)),
 				Usage = ResourceUsage.Dynamic,
-			}));
+			});
 
-			m_tileBufferView = ToDispose(new ShaderResourceView(m_device, m_tileBuffer));
+			m_tileBufferView = new ShaderResourceView(m_device, m_tileBuffer);
 		}
 
 		public void SendMapData(RenderTile[] mapData, int columns, int rows)

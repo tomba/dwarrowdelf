@@ -27,7 +27,7 @@ namespace TileControlD3DWinFormsTest
 			var tileset = new TileSet("TileSet.png");
 
 			RendererD3DSharpDXHwnd renderer = new RendererD3DSharpDXHwnd(form.Handle);
-			var scene = new SingleQuad11();
+			var scene = new TileMapScene();
 			renderer.Scene = scene;
 
 			scene.SetTileSet(tileset);
