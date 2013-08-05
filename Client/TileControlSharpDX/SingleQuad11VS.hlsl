@@ -1,8 +1,3 @@
-cbuffer Constants
-{
-	matrix g_world;
-};
-
 struct VS_IN
 {
 	float4 pos : POSITION;
@@ -17,7 +12,7 @@ PS_IN VS( VS_IN input )
 {
 	PS_IN output = (PS_IN)0;
 
-	output.pos = mul(input.pos, g_world);
+	output.pos = input.pos * 2 - 1;
 
 	return output;
 }

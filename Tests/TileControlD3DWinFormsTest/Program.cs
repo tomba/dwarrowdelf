@@ -24,16 +24,21 @@ namespace TileControlD3DWinFormsTest
 
 			var form = new RenderForm();
 
-			RendererD3DSharpDXHwnd renderer = new RendererD3DSharpDXHwnd(renderData, form.Handle);
-
 			var tileset = new TileSet("TileSet.png");
-			renderer.SetTileSet(tileset);
+
+			RendererD3DSharpDXHwnd renderer = new RendererD3DSharpDXHwnd(form.Handle);
+			var scene = new SingleQuad11();
+			renderer.Scene = scene;
+
+			scene.SetTileSet(tileset);
 
 			float tilesize = 64;
 			IntSize2 renderSize = new IntSize2();
 			int columns = 0;
 			int rows = 0;
 			bool tileDataInvalid = true;
+
+			scene.SetTileSize(tilesize);
 
 			form.MouseWheel += (s, e) =>
 			{
@@ -63,6 +68,8 @@ namespace TileControlD3DWinFormsTest
 				renderData.SetSize(new IntSize2(columns, rows));
 
 				RecreateMap(renderData);
+
+				scene.SetTileSize(tilesize);
 
 				tileDataInvalid = true;
 			};
@@ -96,17 +103,22 @@ namespace TileControlD3DWinFormsTest
 
 				RecreateMap(renderData);
 
+				scene.SetTileSize(tilesize);
+
 				tileDataInvalid = true;
 			};
 
-			form.Resize += (s, e) =>
+			form.UserResized += (s, e) =>
 			{
 				var size = new IntSize2(form.ClientSize.Width, form.ClientSize.Height);
+
+				renderer.SetRenderSize(size);
 
 				int maxColumns = (int)Math.Ceiling((double)size.Width / MINTILESIZE + 1) | 1;
 				int maxRows = (int)Math.Ceiling((double)size.Height / MINTILESIZE + 1) | 1;
 
 				renderData.SetMaxSize(new IntSize2(maxColumns, maxRows));
+				scene.SetupTileBuffer(new IntSize2(maxColumns, maxRows));
 
 				columns = (int)Math.Ceiling((double)size.Width / tilesize + 1) | 1;
 				rows = (int)Math.Ceiling((double)size.Height / tilesize + 1) | 1;
@@ -143,7 +155,15 @@ namespace TileControlD3DWinFormsTest
 				int offsetX = (int)Math.Ceiling((renderSize.Width - renderData.Size.Width * tilesize) / 2);
 				int offsetY = (int)Math.Ceiling((renderSize.Height - renderData.Size.Height * tilesize) / 2);
 
-				renderer.Render(renderSize, renderData.Size, tilesize, new IntPoint2(offsetX, offsetY), tileDataInvalid);
+				scene.SetRenderOffset(offsetX, offsetY);
+
+				if (tileDataInvalid)
+				{
+					scene.SendMapData(renderData.Grid, renderData.Width, renderData.Height);
+				}
+
+				renderer.Render();
+
 				tileDataInvalid = false;
 			});
 

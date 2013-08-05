@@ -36,6 +36,11 @@ namespace Dwarrowdelf
 			get { return new IntPoint2((this.Width - 1) / 2, (this.Height - 1) / 2); }
 		}
 
+		public int Area
+		{
+			get { return m_width * m_height; }
+		}
+
 		public IEnumerable<IntPoint2> Range()
 		{
 			for (int y = 0; y < this.Height; ++y)

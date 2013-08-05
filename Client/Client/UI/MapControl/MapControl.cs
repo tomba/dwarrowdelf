@@ -80,22 +80,33 @@ namespace Dwarrowdelf.Client.UI
 		}
 		#endregion
 
+		TileControl.SingleQuad11 m_scene;
+		TileControl.RenderData<TileControl.RenderTile> m_renderData;
+
 		protected override void OnInitialized(EventArgs e)
 		{
 			if (!IsD3D10Supported())
 				return;
 
-			var renderData = new TileControl.RenderData<TileControl.RenderTile>();
-			m_renderView = new RenderView(renderData);
-			m_renderer = new TileControl.RendererD3DSharpDX(renderData);
+			m_renderData = new TileControl.RenderData<TileControl.RenderTile>();
+			m_renderView = new RenderView(m_renderData);
+			m_renderer = new TileControl.RendererD3DSharpDX();
+			//m_renderer.Scene = new Dwarrowdelf.Client.TileControl.TestScene();
+			m_scene = new TileControl.SingleQuad11();
+			var testScene = new Dwarrowdelf.Client.TileControl.TestScene();
+			var twoScene = new Dwarrowdelf.Client.TileControl.TwoScene(m_scene, testScene);
 
-			this.TileLayoutChanged += OnTileArrangementChanged;
+			m_renderer.Scene = twoScene;
 
-			m_renderer.SetTileSet(GameData.Data.TileSet);
+			this.TileLayoutChanged += OnTileLayoutChanged;
+
+			m_scene.SetTileSet(GameData.Data.TileSet);
 			GameData.Data.TileSetChanged += OnTileSetChanged;
 
 			base.OnInitialized(e);
 		}
+
+		IntSize2 m_bufferSize;
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
@@ -106,7 +117,15 @@ namespace Dwarrowdelf.Client.UI
 				var columns = (int)Math.Ceiling(renderSize.Width / MINTILESIZE + 1) | 1;
 				var rows = (int)Math.Ceiling(renderSize.Height / MINTILESIZE + 1) | 1;
 
-				m_renderView.SetMaxSize(new IntSize2(columns, rows));
+				var bufferSize = new IntSize2(columns, rows);
+
+				if (bufferSize != m_bufferSize)
+				{
+					m_bufferSize = bufferSize;
+					m_renderView.SetMaxSize(bufferSize);
+					m_scene.SetupTileBuffer(bufferSize);
+					m_renderer.SetRenderRectangle(new Rect(arrangeBounds));
+				}
 			}
 
 			return base.ArrangeOverride(arrangeBounds);
@@ -114,26 +133,38 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnTileSetChanged()
 		{
-			m_renderer.SetTileSet(GameData.Data.TileSet);
+			m_scene.SetTileSet(GameData.Data.TileSet);
 			InvalidateTileRender();
 		}
 
-		void OnTileArrangementChanged(IntSize2 gridSize, double tileSize, Point centerPos)
+		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
 			//System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
 
 			m_renderView.SetSize(gridSize);
 
 			m_renderView.CenterPos = new IntPoint3((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
+
+			m_scene.SetTileSize((float)tileSize);
+			m_scene.SetRenderOffset((float)this.RenderOffset.X, (float)this.RenderOffset.Y);
 		}
 
 		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileControl.TileRenderContext ctx)
 		{
 			if (ctx.TileDataInvalid)
+			{
 				m_renderView.Resolve();
 
-			m_renderer.Render(drawingContext, renderSize, ctx.RenderGridSize, (float)ctx.TileSize, ctx.RenderOffset,
-				ctx.TileDataInvalid);
+				if (m_renderData.Size != ctx.RenderGridSize)
+					throw new Exception();
+
+				m_scene.SendMapData(m_renderData.Grid, m_renderData.Width, m_renderData.Height);
+			}
+
+			m_renderer.Render(drawingContext);
+
+			//, ctx.RenderGridSize, (float)ctx.TileSize, ctx.RenderOffset,
+			//	ctx.TileDataInvalid);
 		}
 
 		/// <summary>

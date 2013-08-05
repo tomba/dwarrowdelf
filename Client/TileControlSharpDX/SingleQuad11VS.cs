@@ -15,15 +15,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public ShaderBytecode Bytecode { get; private set; }
 
-		[StructLayout(LayoutKind.Sequential)]
-		struct ShaderData
-		{
-			public Matrix WorldMatrix;
-		}
-
-		ShaderData m_shaderData;
-		Buffer m_shaderDataBuffer;
-
 		public SingleQuad11VS(Device device)
 		{
 			m_device = device;
@@ -42,23 +33,14 @@ namespace Dwarrowdelf.Client.TileControl
 
 		void Create(ShaderBytecode bytecode)
 		{
+			m_vertexShader = ToDispose(new VertexShader(m_device, bytecode));
+		}
+
+		public void Update()
+		{
 			var context = m_device.ImmediateContext;
 
-			m_vertexShader = ToDispose(new VertexShader(m_device, bytecode));
 			context.VertexShader.Set(m_vertexShader);
-
-			m_shaderDataBuffer = ToDispose(new Buffer(m_device, Utilities.SizeOf<ShaderData>(),
-				ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0));
-
-			//create world matrix
-			Matrix w = Matrix.Identity;
-			w *= Matrix.Scaling(2.0f, 2.0f, 0);
-			w *= Matrix.Translation(-1.0f, -1.0f, 0);
-			w.Transpose();
-			m_shaderData.WorldMatrix = w;
-
-			context.UpdateSubresource(ref m_shaderData, m_shaderDataBuffer);
-			context.VertexShader.SetConstantBuffer(0, m_shaderDataBuffer);
 		}
 	}
 }

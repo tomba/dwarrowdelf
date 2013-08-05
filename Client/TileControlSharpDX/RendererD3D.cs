@@ -1,32 +1,29 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 
-using SharpDX.Direct3D11;
-using System.IO;
 using SharpDX;
 using SharpDX.Direct3D;
+using SharpDX.Direct3D11;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public sealed class RendererD3DSharpDX : IDisposable
+	public sealed class RendererD3DSharpDX : ISceneHost
 	{
 		D3DImageSharpDX m_interopImageSource;
-		SingleQuad11 m_scene;
+		SharpDX.DXGI.Factory m_factory;
 
+		Device ISceneHost.Device { get { return m_device; } }
 		Device m_device;
 		Texture2D m_renderTexture;
+		RenderTargetView m_renderTargetView;
 
-		Texture2D m_tileTextureArray;
+		IScene m_scene;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
-		RenderData<RenderTile> m_renderData;
-		SharpDX.DXGI.Factory m_factory;
-
-		public RendererD3DSharpDX(RenderData<RenderTile> renderData)
+		public RendererD3DSharpDX()
 		{
-			m_renderData = renderData;
-
 			m_interopImageSource = new D3DImageSharpDX();
 			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
@@ -34,8 +31,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 			using (var adapter = m_factory.GetAdapter(0))
 				m_device = new Device(adapter, DeviceCreationFlags.None, FeatureLevel.Level_10_0);
-
-			m_scene = new SingleQuad11(m_device);
 		}
 
 		void OnIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -55,8 +50,6 @@ namespace Dwarrowdelf.Client.TileControl
 				trace.TraceInformation("Frontbuffer not available");
 			}
 		}
-
-
 
 		void InitTextureRenderSurface(int width, int height)
 		{
@@ -87,60 +80,70 @@ namespace Dwarrowdelf.Client.TileControl
 			};
 
 			m_renderTexture = new Texture2D(m_device, texDesc);
+			m_renderTargetView = new RenderTargetView(m_device, m_renderTexture);
 
-			m_scene.SetRenderTarget(m_renderTexture);
 			m_interopImageSource.SetBackBufferDX11(m_renderTexture);
 		}
 
+		public IScene Scene
+		{
+			get { return m_scene; }
+			set
+			{
+				if (m_scene == value)
+					return;
 
-		public void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize, IntSize2 gridSize,
-			float tileSize, Point renderOffset, bool tileDataInvalid)
+				if (m_scene != null)
+					m_scene.Detach();
+
+				m_scene = value;
+
+				if (m_scene != null)
+					m_scene.Attach(this);
+			}
+		}
+
+		Rect m_renderRect;
+
+		public void SetRenderRectangle(Rect renderRect)
+		{
+			m_renderRect = renderRect;
+
+			var renderWidth = (int)Math.Ceiling(renderRect.Width);
+			var renderHeight = (int)Math.Ceiling(renderRect.Height);
+
+			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
+				InitTextureRenderSurface(renderWidth, renderHeight);
+		}
+
+		public void Render(System.Windows.Media.DrawingContext drawingContext)
 		{
 			if (m_disposed)
 				return;
 
-			var renderWidth = (int)Math.Ceiling(renderSize.Width);
-			var renderHeight = (int)Math.Ceiling(renderSize.Height);
+			if (this.Scene == null)
+				return;
+
+			var context = m_device.ImmediateContext;
+
+			context.OutputMerger.SetTargets(m_renderTargetView);
+			context.Rasterizer.SetViewports(new Viewport(0, 0, (int)Math.Ceiling(m_renderRect.Width), (int)Math.Ceiling(m_renderRect.Height), 0.0f, 1.0f));
+
+			context.ClearRenderTargetView(m_renderTargetView, Color.DarkGoldenrod);
+
+			this.Scene.Update(TimeSpan.FromSeconds(1)); // XXX this.RenderTimer.Elapsed);
 
 			m_interopImageSource.Lock();
 
-			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
-			{
-				InitTextureRenderSurface(renderWidth, renderHeight);
-				// force a full update if we re-allocate the render surface
-				tileDataInvalid = true;
-			}
+			this.Scene.Render();
 
-			if (tileDataInvalid)
-			{
-				if (m_renderData.Size != gridSize)
-					throw new Exception();
-
-				m_scene.SendMapData(m_renderData.Grid, gridSize.Width, gridSize.Height);
-			}
-
-			m_scene.Render(tileSize, new Vector2((float)renderOffset.X, (float)renderOffset.Y));
-			m_device.ImmediateContext.Flush();
+			context.Flush();
 
 			m_interopImageSource.InvalidateD3DImage();
 
 			m_interopImageSource.Unlock();
 
-			drawingContext.DrawImage(m_interopImageSource, new Rect(renderSize));
-		}
-
-		public void SetTileSet(ITileSet tileSet)
-		{
-			if (m_tileTextureArray != null)
-			{
-				m_tileTextureArray.Dispose();
-				m_tileTextureArray = null;
-			}
-
-			m_tileTextureArray = Helpers11.CreateTextures11(m_device, tileSet);
-
-			if (m_scene != null)
-				m_scene.SetTileTextures(m_tileTextureArray);
+			drawingContext.DrawImage(m_interopImageSource, m_renderRect);
 		}
 
 		#region IDisposable
@@ -172,7 +175,6 @@ namespace Dwarrowdelf.Client.TileControl
 			DH.Dispose(ref m_scene);
 			DH.Dispose(ref m_interopImageSource);
 			DH.Dispose(ref m_renderTexture);
-			DH.Dispose(ref m_tileTextureArray);
 			DH.Dispose(ref m_device);
 			DH.Dispose(ref m_factory);
 

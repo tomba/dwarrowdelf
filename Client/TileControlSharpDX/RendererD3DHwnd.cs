@@ -1,41 +1,37 @@
-﻿using SharpDX;
+﻿using System;
+using System.IO;
+
+using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
-using System;
-using System.IO;
 using Device = SharpDX.Direct3D11.Device;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public sealed class RendererD3DSharpDXHwnd : Component
+	public sealed class RendererD3DSharpDXHwnd : Component, ISceneHost
 	{
-		SingleQuad11 m_scene;
+		SharpDX.DXGI.Factory m_factory;
+		IntPtr m_windowHandle;
+		SharpDX.DXGI.SwapChain m_swapChain;
 
+		Device ISceneHost.Device { get { return m_device; } }
 		Device m_device;
 		Texture2D m_renderTexture;
+		RenderTargetView m_renderTargetView;
 
-		Texture2D m_tileTextureArray;
+		IScene m_scene;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
-		RenderData<RenderTile> m_renderData;
-
-		IntPtr m_windowHandle;
-		SharpDX.DXGI.SwapChain m_swapChain;
-		SharpDX.DXGI.Factory m_factory;
-
-		public RendererD3DSharpDXHwnd(RenderData<RenderTile> renderData, IntPtr windowHandle)
+		public RendererD3DSharpDXHwnd(IntPtr windowHandle)
 		{
-			m_renderData = renderData;
 			m_windowHandle = windowHandle;
 
 			m_factory = ToDispose(new SharpDX.DXGI.Factory());
 
 			using (var adapter = m_factory.GetAdapter(0))
 				m_device = ToDispose(new Device(adapter, DeviceCreationFlags.None, FeatureLevel.Level_10_0));
-
-			m_scene = ToDispose(new SingleQuad11(m_device));
 		}
 
 		void InitTextureRenderSurface(int width, int height)
@@ -61,46 +57,57 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_swapChain = ToDispose(new SwapChain(m_factory, m_device, swapChainDesc));
 			m_renderTexture = ToDispose(Texture2D.FromSwapChain<Texture2D>(m_swapChain, 0));
-
-			m_scene.SetRenderTarget(m_renderTexture);
+			m_renderTargetView = new RenderTargetView(m_device, m_renderTexture);
 		}
 
-		public void Render(IntSize2 renderSize, IntSize2 gridSize, float tileSize, IntPoint2 renderOffset, bool tileDataInvalid)
+		public IScene Scene
 		{
-			if (this.IsDisposed)
-				return;
+			get { return m_scene; }
+			set
+			{
+				if (m_scene == value)
+					return;
 
+				if (m_scene != null)
+					m_scene.Detach();
+
+				m_scene = value;
+
+				if (m_scene != null)
+					m_scene.Attach(this);
+			}
+		}
+
+		public void SetRenderSize(IntSize2 renderSize)
+		{
 			var renderWidth = renderSize.Width;
 			var renderHeight = renderSize.Height;
 
 			if (m_renderTexture == null || m_renderTexture.Description.Width != renderWidth || m_renderTexture.Description.Height != renderHeight)
-			{
 				InitTextureRenderSurface(renderWidth, renderHeight);
-				// force a full update if we re-allocate the render surface
-				tileDataInvalid = true;
-			}
 
-			if (tileDataInvalid)
-			{
-				if (m_renderData.Size != gridSize)
-					throw new Exception();
+			var context = m_device.ImmediateContext;
 
-				m_scene.SendMapData(m_renderData.Grid, gridSize.Width, gridSize.Height);
-			}
-
-			m_scene.Render(tileSize, new Vector2(renderOffset.X, renderOffset.Y));
-
-			m_swapChain.Present(0, SharpDX.DXGI.PresentFlags.None);
+			context.OutputMerger.SetTargets(m_renderTargetView);
+			context.Rasterizer.SetViewports(new Viewport(0, 0, renderWidth, renderHeight, 0.0f, 1.0f));
 		}
 
-		public void SetTileSet(ITileSet tileSet)
+		public void Render()
 		{
-			RemoveAndDispose(ref m_tileTextureArray);
+			if (this.IsDisposed)
+				return;
 
-			m_tileTextureArray = ToDispose(Helpers11.CreateTextures11(m_device, tileSet));
+			if (this.Scene == null)
+				return;
 
-			if (m_scene != null)
-				m_scene.SetTileTextures(m_tileTextureArray);
+			var context = m_device.ImmediateContext;
+
+			context.ClearRenderTargetView(m_renderTargetView, Color.DarkGoldenrod);
+
+			this.Scene.Update(TimeSpan.FromSeconds(1)); // XXX this.RenderTimer.Elapsed);
+			m_scene.Render();
+
+			m_swapChain.Present(0, SharpDX.DXGI.PresentFlags.None);
 		}
 	}
 }

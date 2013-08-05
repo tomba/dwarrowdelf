@@ -12,8 +12,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 	public abstract class TileControlCore : FrameworkElement
 	{
-		IntSize2 m_gridSize;
-		Point m_renderOffset;
+		public IntSize2 GridSize { get; private set; }
+		public Point RenderOffset { get; private set; }
 
 		Size m_oldRenderSize;
 
@@ -51,11 +51,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 			this.MinHeight = 64;
 			this.MinWidth = 64;
-		}
-
-		public IntSize2 GridSize
-		{
-			get { return m_gridSize; }
 		}
 
 		public double TileSize
@@ -125,23 +120,23 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var gridSize = new IntSize2(columns, rows);
 
-			if (gridSize != m_gridSize)
+			if (gridSize != this.GridSize)
 				InvalidateTileData();
 
-			m_gridSize = gridSize;
+			this.GridSize = gridSize;
 
-			var renderOffsetX = (renderWidth - tileSize * m_gridSize.Width) / 2;
-			var renderOffsetY = (renderHeight - tileSize * m_gridSize.Height) / 2;
+			var renderOffsetX = (renderWidth - tileSize * this.GridSize.Width) / 2;
+			var renderOffsetY = (renderHeight - tileSize * this.GridSize.Height) / 2;
 
 			var cx = -(this.CenterPos.X - Math.Round(this.CenterPos.X)) * this.TileSize;
 			var cy = -(this.CenterPos.Y - Math.Round(this.CenterPos.Y)) * this.TileSize;
 
-			m_renderOffset = new Point(Math.Round(renderOffsetX + cx), Math.Round(renderOffsetY + cy));
+			this.RenderOffset = new Point(Math.Round(renderOffsetX + cx), Math.Round(renderOffsetY + cy));
 
 			m_tileLayoutInvalid = true;
 
-			trace.TraceVerbose("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, m_gridSize, tileSize,
-				m_renderOffset, m_gridSize);
+			trace.TraceVerbose("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, this.GridSize, tileSize,
+				this.RenderOffset, this.GridSize);
 
 			InvalidateTileRender();
 		}
@@ -181,14 +176,14 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_tileLayoutInvalid)
 			{
 				if (TileLayoutChanged != null)
-					TileLayoutChanged(m_gridSize, this.TileSize, this.CenterPos);
+					TileLayoutChanged(this.GridSize, this.TileSize, this.CenterPos);
 			}
 
 			var ctx = new TileControl.TileRenderContext()
 			{
 				TileSize = this.TileSize,
 				RenderGridSize = this.GridSize,
-				RenderOffset = m_renderOffset,
+				RenderOffset = this.RenderOffset,
 				TileDataInvalid = m_tileDataInvalid,
 				TileRenderInvalid = m_tileRenderInvalid,
 			};
@@ -343,14 +338,14 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public Point ScreenPointToScreenTile(Point p)
 		{
-			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
+			p -= new Vector(this.RenderOffset.X, this.RenderOffset.Y);
 			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
 		}
 
 		public Point ScreenTileToScreenPoint(Point t)
 		{
 			var p = new Point((t.X + 0.5) * this.TileSize, (t.Y + 0.5) * this.TileSize);
-			return p + new Vector(m_renderOffset.X, m_renderOffset.Y);
+			return p + new Vector(this.RenderOffset.X, this.RenderOffset.Y);
 		}
 
 		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
@@ -389,7 +384,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public IntPoint2 ScreenPointToIntScreenTile(Point p)
 		{
-			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
+			p -= new Vector(this.RenderOffset.X, this.RenderOffset.Y);
 			return new IntPoint2((int)Math.Round(p.X / this.TileSize - 0.5), (int)Math.Round(p.Y / this.TileSize - 0.5));
 		}
 	}
