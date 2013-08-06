@@ -78,7 +78,7 @@
     <Compile Include="RendererD3D.cs" />
     <Compile Include="TileMapScene.cs" />
     <Compile Include="TestScene.cs" />
-    <Compile Include="TwoScene.cs" />
+    <Compile Include="SceneList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TileMapPS.hlsl" />

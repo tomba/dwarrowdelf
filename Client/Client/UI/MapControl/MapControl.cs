@@ -83,8 +83,6 @@ namespace Dwarrowdelf.Client.UI
 		TileControl.TileMapScene m_scene;
 		TileControl.RenderData<TileControl.RenderTile> m_renderData;
 
-		Dwarrowdelf.Client.TileControl.TestScene m_testScene;
-
 		protected override void OnInitialized(EventArgs e)
 		{
 			if (!IsD3D10Supported())
@@ -95,10 +93,10 @@ namespace Dwarrowdelf.Client.UI
 			m_renderer = new TileControl.RendererD3DSharpDX();
 			//m_renderer.Scene = new Dwarrowdelf.Client.TileControl.TestScene();
 			m_scene = new TileControl.TileMapScene();
-			m_testScene = new Dwarrowdelf.Client.TileControl.TestScene();
-			var twoScene = new Dwarrowdelf.Client.TileControl.TwoScene(m_scene, m_testScene);
+			var testScene = new Dwarrowdelf.Client.TileControl.TestScene();
+			var sceneList = new Dwarrowdelf.Client.TileControl.SceneList(new Dwarrowdelf.Client.TileControl.IScene[] { m_scene, testScene });
 
-			m_renderer.Scene = twoScene;
+			m_renderer.Scene = sceneList;
 
 			this.TileLayoutChanged += OnTileLayoutChanged;
 
@@ -126,9 +124,7 @@ namespace Dwarrowdelf.Client.UI
 					m_bufferSize = bufferSize;
 					m_renderView.SetMaxSize(bufferSize);
 					m_scene.SetupTileBuffer(bufferSize);
-					m_renderer.SetRenderRectangle(new Rect(arrangeBounds));
-
-					m_testScene.SetRenderSize((float)renderSize.Width, (float)renderSize.Height);
+					m_renderer.SetRenderSize(new IntSize2((int)Math.Ceiling(arrangeBounds.Width), (int)Math.Ceiling(arrangeBounds.Height)));
 				}
 			}
 

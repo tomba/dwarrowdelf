@@ -28,7 +28,9 @@ namespace TileControlD3DWinFormsTest
 
 			RendererD3DSharpDXHwnd renderer = new RendererD3DSharpDXHwnd(form.Handle);
 			var scene = new TileMapScene();
-			renderer.Scene = scene;
+			var cube = new TestScene();
+			var slist = new SceneList(new IScene[] { scene, cube });
+			renderer.Scene = slist;
 
 			scene.SetTileSet(tileset);
 

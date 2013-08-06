@@ -7,6 +7,7 @@ namespace Dwarrowdelf.Client.TileControl
 	{
 		void Attach(ISceneHost host);
 		void Detach();
+		void OnRenderSizeChanged(IntSize2 renderSize);
 		void Update(TimeSpan timeSpan);
 		void Render();
 	}

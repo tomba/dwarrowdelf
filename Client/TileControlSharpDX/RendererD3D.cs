@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		IScene m_scene;
 
-		Rect m_renderRect;
+		IntSize2 m_renderSize;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
@@ -53,22 +53,23 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		void InitTextureRenderSurface(int width, int height)
+		void InitTextureRenderSurface(IntSize2 renderSize)
 		{
 			m_interopImageSource.SetBackBufferDX11(null);
+			DH.Dispose(ref m_renderTargetView);
 			DH.Dispose(ref m_renderTexture);
 
-			if (width == 0 || height == 0)
+			if (renderSize.Width == 0 || renderSize.Height == 0)
 				throw new Exception();
 
-			trace.TraceInformation("CreateTextureRenderSurface {0}x{1}", width, height);
+			trace.TraceInformation("CreateTextureRenderSurface {0}", renderSize);
 
 			var texDesc = new Texture2DDescription()
 			{
 				BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
 				Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
-				Width = width,
-				Height = height,
+				Width = renderSize.Width,
+				Height = renderSize.Height,
 				MipLevels = 1,
 				SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0),
 				Usage = ResourceUsage.Default,
@@ -97,19 +98,31 @@ namespace Dwarrowdelf.Client.TileControl
 				m_scene = value;
 
 				if (m_scene != null)
+				{
 					m_scene.Attach(this);
+
+					if (m_renderTexture != null)
+						m_scene.OnRenderSizeChanged(m_renderSize);
+				}
 			}
 		}
 
-		public void SetRenderRectangle(Rect renderRect)
+		public void SetRenderSize(IntSize2 renderSize)
 		{
-			m_renderRect = renderRect;
+			if (renderSize == m_renderSize)
+				return;
 
-			var renderWidth = (int)Math.Ceiling(renderRect.Width);
-			var renderHeight = (int)Math.Ceiling(renderRect.Height);
+			InitTextureRenderSurface(renderSize);
 
-			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
-				InitTextureRenderSurface(renderWidth, renderHeight);
+			if (this.Scene != null)
+				this.Scene.OnRenderSizeChanged(renderSize);
+
+			var context = m_device.ImmediateContext;
+
+			context.OutputMerger.SetTargets(m_renderTargetView);
+			context.Rasterizer.SetViewports(new Viewport(0, 0, renderSize.Width, renderSize.Height, 0.0f, 1.0f));
+
+			m_renderSize = renderSize;
 		}
 
 		public void Render(System.Windows.Media.DrawingContext drawingContext)
@@ -121,9 +134,6 @@ namespace Dwarrowdelf.Client.TileControl
 				return;
 
 			var context = m_device.ImmediateContext;
-
-			context.OutputMerger.SetTargets(m_renderTargetView);
-			context.Rasterizer.SetViewports(new Viewport(0, 0, (int)Math.Ceiling(m_renderRect.Width), (int)Math.Ceiling(m_renderRect.Height), 0.0f, 1.0f));
 
 			context.ClearRenderTargetView(m_renderTargetView, Color.DarkGoldenrod);
 
@@ -139,7 +149,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_interopImageSource.Unlock();
 
-			drawingContext.DrawImage(m_interopImageSource, m_renderRect);
+			drawingContext.DrawImage(m_interopImageSource, new Rect(0, 0, m_renderSize.Width, m_renderSize.Height));
 		}
 
 		#region IDisposable

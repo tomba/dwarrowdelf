@@ -20,6 +20,8 @@ namespace Dwarrowdelf.Client.TileControl
 		Texture2D m_renderTexture;
 		RenderTargetView m_renderTargetView;
 
+		IntSize2 m_renderSize;
+
 		IScene m_scene;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
@@ -34,17 +36,17 @@ namespace Dwarrowdelf.Client.TileControl
 				m_device = ToDispose(new Device(adapter, DeviceCreationFlags.None, FeatureLevel.Level_10_0));
 		}
 
-		void InitTextureRenderSurface(int width, int height)
+		void InitTextureRenderSurface(IntSize2 renderSize)
 		{
-			if (width == 0 || height == 0)
+			if (renderSize.Width == 0 || renderSize.Height == 0)
 				throw new Exception();
 
-			trace.TraceInformation("CreateTextureRenderSurface {0}x{1}", width, height);
+			trace.TraceInformation("CreateTextureRenderSurface {0}", renderSize);
 
 			var swapChainDesc = new SwapChainDescription()
 			{
 				BufferCount = 1,
-				ModeDescription = new ModeDescription(width, height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
+				ModeDescription = new ModeDescription(renderSize.Width, renderSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
 				IsWindowed = true,
 				OutputHandle = m_windowHandle,
 				SampleDescription = new SampleDescription(1, 0),
@@ -74,22 +76,33 @@ namespace Dwarrowdelf.Client.TileControl
 				m_scene = value;
 
 				if (m_scene != null)
+				{
 					m_scene.Attach(this);
+
+					if (m_renderTexture != null)
+					{
+						m_scene.OnRenderSizeChanged(m_renderSize);
+					}
+				}
 			}
 		}
 
 		public void SetRenderSize(IntSize2 renderSize)
 		{
-			var renderWidth = renderSize.Width;
-			var renderHeight = renderSize.Height;
+			if (renderSize == m_renderSize)
+				return;
 
-			if (m_renderTexture == null || m_renderTexture.Description.Width != renderWidth || m_renderTexture.Description.Height != renderHeight)
-				InitTextureRenderSurface(renderWidth, renderHeight);
+			InitTextureRenderSurface(renderSize);
+
+			if (this.Scene != null)
+				this.Scene.OnRenderSizeChanged(renderSize);
 
 			var context = m_device.ImmediateContext;
 
 			context.OutputMerger.SetTargets(m_renderTargetView);
-			context.Rasterizer.SetViewports(new Viewport(0, 0, renderWidth, renderHeight, 0.0f, 1.0f));
+			context.Rasterizer.SetViewports(new Viewport(0, 0, renderSize.Width, renderSize.Height, 0.0f, 1.0f));
+
+			m_renderSize = renderSize;
 		}
 
 		public void Render()

@@ -64,16 +64,16 @@ namespace Dwarrowdelf.Client.TileControl
 			DH.Dispose(ref m_vertexShader);
 		}
 
-		public void Update(TimeSpan timeSpan)
-		{
-		}
-
-		public void SetRenderSize(float width, float height)
+		public void OnRenderSizeChanged(IntSize2 renderSize)
 		{
 			var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
-			float aspect = (float)width / height;
+			float aspect = (float)renderSize.Width / renderSize.Height;
 			var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, aspect, 0.1f, 100.0f);
 			m_viewProj = Matrix.Multiply(view, proj);
+		}
+
+		public void Update(TimeSpan timeSpan)
+		{
 		}
 
 		public void Render()

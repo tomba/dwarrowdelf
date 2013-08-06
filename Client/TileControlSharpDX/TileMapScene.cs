@@ -148,6 +148,10 @@ namespace Dwarrowdelf.Client.TileControl
 			DH.Dispose(ref m_vertexShader);
 		}
 
+		public void OnRenderSizeChanged(IntSize2 renderSize)
+		{
+		}
+
 		public void Update(TimeSpan timeSpan)
 		{
 		}
