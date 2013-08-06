@@ -8,7 +8,7 @@ using SharpDX.Direct3D11;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	sealed class D3DImageSharpDX : D3DImage, IDisposable
+	sealed class D3DImage11 : D3DImage, IDisposable
 	{
 		[DllImport("user32.dll", SetLastError = false)]
 		static extern IntPtr GetDesktopWindow();
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		D3D9.Texture m_sharedTexture;
 
-		public D3DImageSharpDX()
+		public D3DImage11()
 		{
 			InitD3D9();
 		}

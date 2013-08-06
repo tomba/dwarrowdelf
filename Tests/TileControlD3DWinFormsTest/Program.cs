@@ -26,7 +26,7 @@ namespace TileControlD3DWinFormsTest
 
 			var tileset = new TileSet("TileSet.png");
 
-			RendererD3DSharpDXHwnd renderer = new RendererD3DSharpDXHwnd(form.Handle);
+			SceneHostHwnd renderer = new SceneHostHwnd(form.Handle);
 			var scene = new TileMapScene();
 			var cube = new TestScene();
 			var slist = new SceneList(new IScene[] { scene, cube });

@@ -1,33 +1,34 @@
 ﻿using System;
 using System.IO;
-using System.Windows;
 
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
+using SharpDX.DXGI;
+using Device = SharpDX.Direct3D11.Device;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public sealed class RendererD3DSharpDX : ISceneHost, IDisposable
+	public sealed class SceneHostHwnd : ISceneHost
 	{
-		D3DImageSharpDX m_interopImageSource;
 		SharpDX.DXGI.Factory m_factory;
+		IntPtr m_windowHandle;
+		SharpDX.DXGI.SwapChain m_swapChain;
 
 		Device ISceneHost.Device { get { return m_device; } }
 		Device m_device;
 		Texture2D m_renderTexture;
 		RenderTargetView m_renderTargetView;
 
-		IScene m_scene;
-
 		IntSize2 m_renderSize;
+
+		IScene m_scene;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
-		public RendererD3DSharpDX()
+		public SceneHostHwnd(IntPtr windowHandle)
 		{
-			m_interopImageSource = new D3DImageSharpDX();
-			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
+			m_windowHandle = windowHandle;
 
 			m_factory = new SharpDX.DXGI.Factory();
 
@@ -35,53 +36,31 @@ namespace Dwarrowdelf.Client.TileControl
 				m_device = new Device(adapter, DeviceCreationFlags.None, FeatureLevel.Level_10_0);
 		}
 
-		void OnIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			// This fires when the screensaver kicks in, the machine goes into sleep or hibernate
-			// and any other catastrophic losses of the d3d device from WPF's point of view
-
-			if (m_interopImageSource.IsFrontBufferAvailable)
-			{
-				trace.TraceInformation("Frontbuffer available");
-
-				m_interopImageSource.SetBackBufferDX11(m_renderTexture);
-				m_interopImageSource.InvalidateD3DImage();
-			}
-			else
-			{
-				trace.TraceInformation("Frontbuffer not available");
-			}
-		}
-
 		void InitTextureRenderSurface(IntSize2 renderSize)
 		{
-			m_interopImageSource.SetBackBufferDX11(null);
-			DH.Dispose(ref m_renderTargetView);
-			DH.Dispose(ref m_renderTexture);
-
 			if (renderSize.Width == 0 || renderSize.Height == 0)
 				throw new Exception();
 
 			trace.TraceInformation("CreateTextureRenderSurface {0}", renderSize);
 
-			var texDesc = new Texture2DDescription()
+			var swapChainDesc = new SwapChainDescription()
 			{
-				BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
-				Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
-				Width = renderSize.Width,
-				Height = renderSize.Height,
-				MipLevels = 1,
-				SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0),
-				Usage = ResourceUsage.Default,
-				OptionFlags = ResourceOptionFlags.Shared,
-				CpuAccessFlags = CpuAccessFlags.None,
-				ArraySize = 1,
+				BufferCount = 1,
+				ModeDescription = new ModeDescription(renderSize.Width, renderSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
+				IsWindowed = true,
+				OutputHandle = m_windowHandle,
+				SampleDescription = new SampleDescription(1, 0),
+				SwapEffect = SwapEffect.Discard,
+				Usage = Usage.RenderTargetOutput,
 			};
 
-			m_renderTexture = new Texture2D(m_device, texDesc);
-			m_renderTargetView = new RenderTargetView(m_device, m_renderTexture);
+			DH.Dispose(ref m_renderTargetView);
+			DH.Dispose(ref m_renderTexture);
+			DH.Dispose(ref m_swapChain);
 
-			m_interopImageSource.SetBackBufferDX11(m_renderTexture);
+			m_swapChain = new SwapChain(m_factory, m_device, swapChainDesc);
+			m_renderTexture = Texture2D.FromSwapChain<Texture2D>(m_swapChain, 0);
+			m_renderTargetView = new RenderTargetView(m_device, m_renderTexture);
 		}
 
 		public IScene Scene
@@ -102,7 +81,9 @@ namespace Dwarrowdelf.Client.TileControl
 					m_scene.Attach(this);
 
 					if (m_renderTexture != null)
+					{
 						m_scene.OnRenderSizeChanged(m_renderSize);
+					}
 				}
 			}
 		}
@@ -125,7 +106,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_renderSize = renderSize;
 		}
 
-		public void Render(System.Windows.Media.DrawingContext drawingContext)
+		public void Render()
 		{
 			if (m_disposed)
 				return;
@@ -138,24 +119,15 @@ namespace Dwarrowdelf.Client.TileControl
 			context.ClearRenderTargetView(m_renderTargetView, Color.DarkGoldenrod);
 
 			this.Scene.Update(TimeSpan.FromSeconds(1)); // XXX this.RenderTimer.Elapsed);
+			m_scene.Render();
 
-			m_interopImageSource.Lock();
-
-			this.Scene.Render();
-
-			context.Flush();
-
-			m_interopImageSource.InvalidateD3DImage();
-
-			m_interopImageSource.Unlock();
-
-			drawingContext.DrawImage(m_interopImageSource, new Rect(0, 0, m_renderSize.Width, m_renderSize.Height));
+			m_swapChain.Present(0, SharpDX.DXGI.PresentFlags.None);
 		}
 
 		#region IDisposable
 		bool m_disposed;
 
-		~RendererD3DSharpDX()
+		~SceneHostHwnd()
 		{
 			Dispose(false);
 		}
@@ -181,9 +153,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 			// Dispose unmanaged resources
 
-			DH.Dispose(ref m_interopImageSource);
 			DH.Dispose(ref m_renderTargetView);
 			DH.Dispose(ref m_renderTexture);
+			DH.Dispose(ref m_swapChain);
 			DH.Dispose(ref m_device);
 			DH.Dispose(ref m_factory);
 

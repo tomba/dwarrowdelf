@@ -24,7 +24,9 @@ namespace Dwarrowdelf.Client.UI
 	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged, IDisposable
 	{
 		RenderView m_renderView;
-		TileControl.RendererD3DSharpDX m_renderer;
+		TileControl.RenderData<TileControl.RenderTile> m_renderData;
+		TileControl.SceneHostWPF m_renderer;
+		TileControl.TileMapScene m_scene;
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;
@@ -80,9 +82,6 @@ namespace Dwarrowdelf.Client.UI
 		}
 		#endregion
 
-		TileControl.TileMapScene m_scene;
-		TileControl.RenderData<TileControl.RenderTile> m_renderData;
-
 		protected override void OnInitialized(EventArgs e)
 		{
 			if (!IsD3D10Supported())
@@ -90,13 +89,9 @@ namespace Dwarrowdelf.Client.UI
 
 			m_renderData = new TileControl.RenderData<TileControl.RenderTile>();
 			m_renderView = new RenderView(m_renderData);
-			m_renderer = new TileControl.RendererD3DSharpDX();
-			//m_renderer.Scene = new Dwarrowdelf.Client.TileControl.TestScene();
+			m_renderer = new TileControl.SceneHostWPF();
 			m_scene = new TileControl.TileMapScene();
-			var testScene = new Dwarrowdelf.Client.TileControl.TestScene();
-			var sceneList = new Dwarrowdelf.Client.TileControl.SceneList(new Dwarrowdelf.Client.TileControl.IScene[] { m_scene, testScene });
-
-			m_renderer.Scene = sceneList;
+			m_renderer.Scene = m_scene;
 
 			this.TileLayoutChanged += OnTileLayoutChanged;
 

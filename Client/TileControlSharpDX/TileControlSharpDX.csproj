@@ -69,13 +69,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IScene.cs" />
-    <Compile Include="RendererD3DHwnd.cs" />
+    <Compile Include="SceneHostHwnd.cs" />
     <Compile Include="RenderData.cs" />
     <Compile Include="RenderTile.cs" />
-    <Compile Include="D3DImageSharpDX.cs" />
+    <Compile Include="D3DImage11.cs" />
     <Compile Include="Helpers11.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RendererD3D.cs" />
+    <Compile Include="SceneHostWPF.cs" />
     <Compile Include="TileMapScene.cs" />
     <Compile Include="TestScene.cs" />
     <Compile Include="SceneList.cs" />
