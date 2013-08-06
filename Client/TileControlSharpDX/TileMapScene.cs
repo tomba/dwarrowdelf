@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 		}
 
-		public void Attach(ISceneHost host)
+		void IScene.Attach(ISceneHost host)
 		{
 			var device = host.Device;
 
@@ -129,7 +129,7 @@ namespace Dwarrowdelf.Client.TileControl
 			});
 		}
 
-		public void Detach()
+		void IScene.Detach()
 		{
 			DH.Dispose(ref m_tileBufferView);
 			DH.Dispose(ref m_tileBuffer);
@@ -148,11 +148,11 @@ namespace Dwarrowdelf.Client.TileControl
 			DH.Dispose(ref m_vertexShader);
 		}
 
-		public void OnRenderSizeChanged(IntSize2 renderSize)
+		void IScene.OnRenderSizeChanged(IntSize2 renderSize)
 		{
 		}
 
-		public void Update(TimeSpan timeSpan)
+		void IScene.Update(TimeSpan timeSpan)
 		{
 		}
 
@@ -204,7 +204,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_shaderDataPerFrame.RenderOffset = new Vector2(offsetX, offsetY);
 		}
 
-		public void Render()
+		void IScene.Render()
 		{
 			var context = m_device.ImmediateContext;
 
