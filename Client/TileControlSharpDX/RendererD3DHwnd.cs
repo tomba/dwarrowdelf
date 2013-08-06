@@ -9,7 +9,7 @@ using Device = SharpDX.Direct3D11.Device;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public sealed class RendererD3DSharpDXHwnd : Component, ISceneHost
+	public sealed class RendererD3DSharpDXHwnd : ISceneHost
 	{
 		SharpDX.DXGI.Factory m_factory;
 		IntPtr m_windowHandle;
@@ -30,10 +30,10 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			m_windowHandle = windowHandle;
 
-			m_factory = ToDispose(new SharpDX.DXGI.Factory());
+			m_factory = new SharpDX.DXGI.Factory();
 
 			using (var adapter = m_factory.GetAdapter(0))
-				m_device = ToDispose(new Device(adapter, DeviceCreationFlags.None, FeatureLevel.Level_10_0));
+				m_device = new Device(adapter, DeviceCreationFlags.None, FeatureLevel.Level_10_0);
 		}
 
 		void InitTextureRenderSurface(IntSize2 renderSize)
@@ -54,11 +54,12 @@ namespace Dwarrowdelf.Client.TileControl
 				Usage = Usage.RenderTargetOutput,
 			};
 
-			RemoveAndDispose(ref m_renderTexture);
-			RemoveAndDispose(ref m_swapChain);
+			DH.Dispose(ref m_renderTargetView);
+			DH.Dispose(ref m_renderTexture);
+			DH.Dispose(ref m_swapChain);
 
-			m_swapChain = ToDispose(new SwapChain(m_factory, m_device, swapChainDesc));
-			m_renderTexture = ToDispose(Texture2D.FromSwapChain<Texture2D>(m_swapChain, 0));
+			m_swapChain = new SwapChain(m_factory, m_device, swapChainDesc);
+			m_renderTexture = Texture2D.FromSwapChain<Texture2D>(m_swapChain, 0);
 			m_renderTargetView = new RenderTargetView(m_device, m_renderTexture);
 		}
 
@@ -107,7 +108,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void Render()
 		{
-			if (this.IsDisposed)
+			if (m_disposed)
 				return;
 
 			if (this.Scene == null)
@@ -122,5 +123,44 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_swapChain.Present(0, SharpDX.DXGI.PresentFlags.None);
 		}
+
+		#region IDisposable
+		bool m_disposed;
+
+		~RendererD3DSharpDXHwnd()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_disposed)
+				return;
+
+			if (disposing)
+			{
+				// Dispose managed resources.
+
+				// Detach the scene
+				this.Scene = null;
+			}
+
+			// Dispose unmanaged resources
+
+			DH.Dispose(ref m_renderTargetView);
+			DH.Dispose(ref m_renderTexture);
+			DH.Dispose(ref m_swapChain);
+			DH.Dispose(ref m_device);
+			DH.Dispose(ref m_factory);
+
+			m_disposed = true;
+		}
+		#endregion
 	}
 }
