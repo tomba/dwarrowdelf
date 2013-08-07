@@ -42,9 +42,29 @@ namespace Dwarrowdelf.Client.UI
 
 		public ClientTools ClientTools { get; private set; }
 
+		public MasterMapControl MapControl { get { return map; } }
+
+		public GameData Data { get { return GameData.Data; } }
+
 		public MainWindow()
 		{
+			this.Initialized += MainWindow_Initialized;
+			this.SourceInitialized += MainWindow_SourceInitialized;
+			this.Loaded += MainWindow_Loaded;
+			this.Closing += MainWindow_Closing;
+			this.Closed += MainWindow_Closed;
+
 			InitializeComponent();
+		}
+
+		void MainWindow_Initialized(object sender, EventArgs e)
+		{
+			m_cmdHandler = new MainWindowCommandHandler(this);
+
+			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
+
+			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.WorldProperty, typeof(GameData));
+			dpd.AddValueChanged(GameData.Data, OnWorldChanged);
 
 			this.ClientTools = new ClientTools();
 			this.ClientTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
@@ -56,6 +76,81 @@ namespace Dwarrowdelf.Client.UI
 			KeyboardNavigation.SetDirectionalNavigation(this, KeyboardNavigationMode.Once);
 
 			mainWindowTools.SetClientTools(this.ClientTools);
+		}
+
+		void MainWindow_SourceInitialized(object sender, EventArgs e)
+		{
+			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
+			if (p != null)
+				Win32.Helpers.LoadWindowPlacement(this, p);
+		}
+
+		async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ClientConfig.AutoConnect)
+			{
+				var dlg = OpenLogOnDialog();
+
+				try
+				{
+					var prog = new Progress<string>(str => dlg.AppendText(str));
+
+					await GameData.Data.ConnectManager.StartServerAndConnectAsync(prog);
+				}
+				catch (Exception exc)
+				{
+					MessageBox.Show(this, exc.ToString(), "Failed to autoconnect");
+				}
+
+				dlg.Close();
+			}
+		}
+
+		async void MainWindow_Closing(object sender, CancelEventArgs e)
+		{
+			switch (m_closeStatus)
+			{
+				case CloseStatus.None:
+					m_closeStatus = CloseStatus.ShuttingDown;
+
+					e.Cancel = true;
+
+					var p = Win32.Helpers.SaveWindowPlacement(this);
+					Properties.Settings.Default.MainWindowPlacement = p;
+					Properties.Settings.Default.Save();
+
+					var dlg = OpenLogOnDialog();
+
+					try
+					{
+						var prog = new Progress<string>(str => dlg.AppendText(str));
+						await GameData.Data.ConnectManager.DisconnectAsync(prog);
+						await GameData.Data.ConnectManager.StopServerAsync(prog);
+					}
+					catch (Exception exc)
+					{
+						MessageBox.Show(exc.ToString(), "Error closing down");
+					}
+
+					dlg.Close();
+
+					m_closeStatus = CloseStatus.Ready;
+					await this.Dispatcher.InvokeAsync(Close);
+
+					break;
+
+				case CloseStatus.ShuttingDown:
+					e.Cancel = true;
+					break;
+
+				case CloseStatus.Ready:
+					break;
+			}
+		}
+
+		void MainWindow_Closed(object sender, EventArgs e)
+		{
+			map.Dispose();
 		}
 
 		void MainWindowTools_ToolModeChanged(ClientToolMode toolMode)
@@ -271,18 +366,6 @@ namespace Dwarrowdelf.Client.UI
 			this.MapControl.Selection = new MapSelection();
 		}
 
-		protected override void OnInitialized(EventArgs e)
-		{
-			base.OnInitialized(e);
-
-			m_cmdHandler = new MainWindowCommandHandler(this);
-
-			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
-
-			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.WorldProperty, typeof(GameData));
-			dpd.AddValueChanged(GameData.Data, OnWorldChanged);
-		}
-
 		void OnWorldChanged(object sender, EventArgs ev)
 		{
 			var world = GameData.Data.World;
@@ -357,92 +440,12 @@ namespace Dwarrowdelf.Client.UI
 
 			var logOnDialog = new LogOnDialog();
 			logOnDialog.Owner = this;
-			logOnDialog.Closed += (s, e) => this.IsEnabled = true;
+			logOnDialog.Closed += (s, e) => { this.IsEnabled = true; Focus(); };
+			logOnDialog.Focusable = false;
+			logOnDialog.ShowActivated = false;
 			logOnDialog.Show();
 
 			return logOnDialog;
-		}
-
-		protected override async void OnSourceInitialized(EventArgs e)
-		{
-			base.OnSourceInitialized(e);
-
-			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
-			if (p != null)
-				Win32.Helpers.LoadWindowPlacement(this, p);
-
-			if (ClientConfig.AutoConnect)
-			{
-				var dlg = OpenLogOnDialog();
-
-				try
-				{
-					var prog = new Progress<string>(str => dlg.AppendText(str));
-
-					await GameData.Data.ConnectManager.StartServerAndConnectAsync(prog);
-				}
-				catch (Exception exc)
-				{
-					MessageBox.Show(this, exc.ToString(), "Failed to autoconnect");
-				}
-
-				dlg.Close();
-			}
-		}
-
-		public MasterMapControl MapControl { get { return map; } }
-
-		public GameData Data { get { return GameData.Data; } }
-
-		protected override async void OnClosing(CancelEventArgs e)
-		{
-			base.OnClosing(e);
-
-			switch (m_closeStatus)
-			{
-				case CloseStatus.None:
-					m_closeStatus = CloseStatus.ShuttingDown;
-
-					e.Cancel = true;
-
-					var p = Win32.Helpers.SaveWindowPlacement(this);
-					Properties.Settings.Default.MainWindowPlacement = p;
-					Properties.Settings.Default.Save();
-
-					var dlg = OpenLogOnDialog();
-
-					try
-					{
-						var prog = new Progress<string>(str => dlg.AppendText(str));
-						await GameData.Data.ConnectManager.DisconnectAsync(prog);
-						await GameData.Data.ConnectManager.StopServerAsync(prog);
-					}
-					catch (Exception exc)
-					{
-						MessageBox.Show(exc.ToString(), "Error closing down");
-					}
-
-					dlg.Close();
-
-					m_closeStatus = CloseStatus.Ready;
-					await this.Dispatcher.InvokeAsync(Close);
-
-					break;
-
-				case CloseStatus.ShuttingDown:
-					e.Cancel = true;
-					break;
-
-				case CloseStatus.Ready:
-					break;
-			}
-		}
-
-		protected override void OnClosed(EventArgs e)
-		{
-			map.Dispose();
-
-			base.OnClosed(e);
 		}
 
 		private void FilterItems(object sender, FilterEventArgs e)
@@ -493,7 +496,6 @@ namespace Dwarrowdelf.Client.UI
 		{
 			this.MapControl.FocusedTileView.SetTarget(ob.Environment, ob.Location);
 		}
-
 
 		public MovableObject FollowObject
 		{
