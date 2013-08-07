@@ -137,6 +137,12 @@ namespace Dwarrowdelf.Client.UI
 			netWnd.Show();
 		}
 
+		private void GCDebug_MenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var wnd = new UI.GCDebugWindow();
+			wnd.Owner = App.MainWindow;
+			wnd.Show();
+		}
 
 		/* Window */
 

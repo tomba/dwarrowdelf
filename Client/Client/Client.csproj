@@ -162,6 +162,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Windows\GCDebugWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\ItemSelectorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -330,6 +334,9 @@
     </Compile>
     <Compile Include="UI\Windows\ConstructDialog.xaml.cs">
       <DependentUpon>ConstructDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\GCDebugWindow.xaml.cs">
+      <DependentUpon>GCDebugWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\ItemSelectorDialog.xaml.cs">
       <DependentUpon>ItemSelectorDialog.xaml</DependentUpon>
