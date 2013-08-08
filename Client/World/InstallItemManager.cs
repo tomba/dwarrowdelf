@@ -70,10 +70,13 @@ namespace Dwarrowdelf.Client
 
 		public ItemObject ContainsPoint(IntPoint3 p)
 		{
-			var data = m_jobDataList.Where(d => d.Mode == InstallMode.Install && d.Location == p).FirstOrDefault();
-			if (data == null)
-				return null;
-			return data.Item;
+			foreach (var data in m_jobDataList)
+			{
+				if (data.Mode == InstallMode.Install && data.Location == p)
+					return data.Item;
+			}
+
+			return null;
 		}
 
 		#region IJobSource Members
