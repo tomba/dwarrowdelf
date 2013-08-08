@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="ChangeHandler.cs" />
     <Compile Include="ClientNetStatistics.cs" />
+    <Compile Include="ClientSaveHelper.cs" />
     <Compile Include="ConnectionType.cs" />
     <Compile Include="EmbeddedServer.cs" />
     <Compile Include="IPRunner.cs" />

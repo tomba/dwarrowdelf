@@ -311,7 +311,6 @@
     <Compile Include="UI\ListBoxExtenders.cs" />
     <Compile Include="RenderView.cs" />
     <Compile Include="RenderViewBase.cs" />
-    <Compile Include="ClientSaveManager.cs" />
     <Compile Include="UI\MainWindow\SingleTileInfoControl.xaml.cs">
       <DependentUpon>SingleTileInfoControl.xaml</DependentUpon>
     </Compile>

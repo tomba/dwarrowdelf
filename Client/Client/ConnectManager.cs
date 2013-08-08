@@ -118,12 +118,12 @@ namespace Dwarrowdelf.Client
 			m_disconnectEvent = new AutoResetEvent(false);
 
 			prog.Report("Saving");
-			ClientSaveManager.SaveEvent += OnGameSaved;
+			player.SaveEvent += OnGameSaved;
 			GameData.Data.User.Send(new SaveRequestMessage());
 
 			await Task.Run(() => m_disconnectEvent.WaitOne());
 
-			ClientSaveManager.SaveEvent -= OnGameSaved;
+			player.SaveEvent -= OnGameSaved;
 			prog.Report("Logging Out");
 			GameData.Data.User.SendLogOut();
 

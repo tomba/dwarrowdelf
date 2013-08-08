@@ -13,11 +13,9 @@ namespace Dwarrowdelf.Client
 		public BaseObject[] Objects;
 	}
 
-	static class ClientSaveManager
+	public static class ClientSaveHelper
 	{
-		public static Action SaveEvent;
-
-		public static void Save(World world, Guid id)
+		public static string SerializeClientObjects(World world)
 		{
 			var saveData = new ClientSaveData()
 			{
@@ -45,11 +43,7 @@ namespace Dwarrowdelf.Client
 			watch.Stop();
 			Trace.TraceInformation("Saving client data took {0}", watch.Elapsed);
 
-			var msg = new Messages.SaveClientDataReplyMessage() { ID = id, Data = data };
-			GameData.Data.User.Send(msg);
-
-			if (SaveEvent != null)
-				SaveEvent();
+			return data;
 		}
 
 		public static void Load(World world, string dataStr)

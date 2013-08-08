@@ -59,6 +59,8 @@ namespace Dwarrowdelf.Client
 
 		public event Action DisconnectEvent;
 
+		public event Action SaveEvent;
+
 		ReportHandler m_reportHandler;
 		ChangeHandler m_changeHandler;
 
@@ -244,7 +246,7 @@ namespace Dwarrowdelf.Client
 		void HandleMessage(ClientDataMessage msg)
 		{
 			if (msg.ClientData != null)
-				ClientSaveManager.Load(m_world, msg.ClientData);
+				ClientSaveHelper.Load(m_world, msg.ClientData);
 		}
 
 		void HandleMessage(LogOnReplyEndMessage msg)
@@ -286,7 +288,13 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(SaveClientDataRequestMessage msg)
 		{
-			ClientSaveManager.Save(m_world, msg.ID);
+			string data = ClientSaveHelper.SerializeClientObjects(m_world);
+
+			var reply = new Messages.SaveClientDataReplyMessage() { ID = msg.ID, Data = data };
+			Send(reply);
+
+			if (SaveEvent != null)
+				SaveEvent();
 		}
 
 		void HandleMessage(ObjectDataMessage msg)
