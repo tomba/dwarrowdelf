@@ -386,9 +386,9 @@ namespace Dwarrowdelf
 			return (m_r << 16) | (m_g << 8) | m_b;
 		}
 
-		public int ToInt32()
+		public int ToRGBA()
 		{
-			return (m_r << 16) | (m_g << 8) | m_b;
+			return (255 << 24) | (m_b << 16) | (m_g << 8) | m_r;
 		}
 
 		public static bool operator ==(GameColorRGB left, GameColorRGB right)
