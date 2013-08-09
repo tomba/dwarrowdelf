@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Client
 	sealed class ConnectManager
 	{
 		EmbeddedServer m_server;
-		public EmbeddedServer Server { get { return m_server; } }
+		public IGame Game { get { return m_server != null ? m_server.Game : null; } }
 
 		public ConnectManager()
 		{

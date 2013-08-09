@@ -98,8 +98,8 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case ConnectionType.Direct:
-					var server = GameData.Data.ConnectManager.Server;
-					m_connection = DirectConnection.Connect(server.Game);
+					var game = GameData.Data.ConnectManager.Game;
+					m_connection = DirectConnection.Connect(game);
 					break;
 
 				case ConnectionType.Pipe:
