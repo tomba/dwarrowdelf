@@ -11,8 +11,12 @@ namespace Dwarrowdelf.Client
 {
 	sealed class ConnectManager
 	{
-		EmbeddedServer m_server;
 		public IGame Game { get { return m_server != null ? m_server.Game : null; } }
+
+		public event Action<ClientUser> UserConnected;
+
+		EmbeddedServer m_server;
+		ClientUser m_user;
 
 		public ConnectManager()
 		{
@@ -61,7 +65,7 @@ namespace Dwarrowdelf.Client
 
 		public async Task ConnectPlayerAsync(IProgress<string> prog)
 		{
-			if (GameData.Data.User != null)
+			if (m_user != null)
 				return;
 
 			var player = new ClientUser();
@@ -70,27 +74,10 @@ namespace Dwarrowdelf.Client
 
 			await player.LogOn("tomba");
 
-			GameData.Data.User = player;
+			m_user = player;
 
-			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
-			if (controllable != null && controllable.Environment != null)
-			{
-				var mapControl = App.MainWindow.MapControl;
-				mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
-				mapControl.Environment = controllable.Environment;
-				mapControl.CenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
-				mapControl.Z = controllable.Location.Z;
-
-				if (GameData.Data.World.GameMode == GameMode.Adventure)
-					App.MainWindow.FocusedObject = controllable;
-			}
-
-			if (Program.StartupStopwatch != null)
-			{
-				Program.StartupStopwatch.Stop();
-				Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
-				Program.StartupStopwatch = null;
-			}
+			if (this.UserConnected != null)
+				this.UserConnected(player);
 		}
 
 		public async Task StopServerAsync(IProgress<string> prog)
@@ -109,30 +96,25 @@ namespace Dwarrowdelf.Client
 
 		public async Task DisconnectAsync(IProgress<string> prog)
 		{
-			var player = GameData.Data.User;
-			if (player == null)
+			if (m_user == null)
 				return;
-
-			App.MainWindow.MapControl.Environment = null;
 
 			m_disconnectEvent = new AutoResetEvent(false);
 
 			prog.Report("Saving");
-			player.SaveEvent += OnGameSaved;
-			GameData.Data.User.Send(new SaveRequestMessage());
+			m_user.SaveEvent += OnGameSaved;
+			m_user.Send(new SaveRequestMessage());
 
 			await Task.Run(() => m_disconnectEvent.WaitOne());
 
-			player.SaveEvent -= OnGameSaved;
+			m_user.SaveEvent -= OnGameSaved;
 			prog.Report("Logging Out");
-			GameData.Data.User.SendLogOut();
+			m_user.SendLogOut();
 
 			await Task.Run(() => m_disconnectEvent.WaitOne());
 
 			m_disconnectEvent.Dispose();
 			m_disconnectEvent = null;
-
-			player.DisconnectEvent -= OnDisconnected;
 		}
 
 		void OnGameSaved()
@@ -142,10 +124,8 @@ namespace Dwarrowdelf.Client
 
 		void OnDisconnected()
 		{
-			App.MainWindow.MapControl.Environment = null;
-
-			GameData.Data.User.DisconnectEvent -= OnDisconnected;
-			GameData.Data.User = null;
+			m_user.DisconnectEvent -= OnDisconnected;
+			m_user = null;
 
 			if (m_disconnectEvent != null)
 				m_disconnectEvent.Set();

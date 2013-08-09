@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Client
@@ -47,10 +48,10 @@ namespace Dwarrowdelf.Client
 
 				if (this.StateChangedEvent != null)
 				{
-					if (App.Current.Dispatcher.CheckAccess())
+					if (Application.Current.Dispatcher.CheckAccess())
 						this.StateChangedEvent(m_state);
 					else
-						App.Current.Dispatcher.BeginInvoke(this.StateChangedEvent, m_state);
+						Application.Current.Dispatcher.BeginInvoke(this.StateChangedEvent, m_state);
 				}
 			}
 		}
@@ -70,6 +71,7 @@ namespace Dwarrowdelf.Client
 		public bool IsSeeAll { get; private set; }
 
 		World m_world;
+		public World World { get { return m_world; } }
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ClientUser");
 
@@ -203,7 +205,6 @@ namespace Dwarrowdelf.Client
 
 			LivingObject.LivingRequestsAction -= OnLivingRequestsAction;
 
-			m_world.Jobs.Clear();
 			m_world = null;
 
 			if (DisconnectEvent != null)
@@ -251,8 +252,6 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(LogOnReplyEndMessage msg)
 		{
-			GameData.Data.World = m_world;
-
 			if (m_opEvent != null)
 				m_opEvent.Set();
 		}
@@ -359,7 +358,7 @@ namespace Dwarrowdelf.Client
 
 			if (GameData.Data.IsAutoAdvanceTurn)
 			{
-				if (App.MainWindow.FocusedObject == null || App.MainWindow.FocusedObject.HasAction)
+				if (App.GameWindow.FocusedObject == null || App.GameWindow.FocusedObject.HasAction)
 					SendProceedTurn();
 			}
 		}
@@ -419,7 +418,7 @@ namespace Dwarrowdelf.Client
 				livings = new LivingObject[] { living };
 			}
 
-			var focusedObject = App.MainWindow.FocusedObject;
+			var focusedObject = App.GameWindow.FocusedObject;
 
 			foreach (var living in livings)
 			{

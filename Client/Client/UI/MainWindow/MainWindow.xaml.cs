@@ -50,7 +50,6 @@ namespace Dwarrowdelf.Client.UI
 		{
 			this.Initialized += MainWindow_Initialized;
 			this.SourceInitialized += MainWindow_SourceInitialized;
-			this.Loaded += MainWindow_Loaded;
 			this.Closing += MainWindow_Closing;
 			this.Closed += MainWindow_Closed;
 
@@ -83,28 +82,6 @@ namespace Dwarrowdelf.Client.UI
 			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
 			if (p != null)
 				Win32.Helpers.LoadWindowPlacement(this, p);
-		}
-
-		async void MainWindow_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ClientConfig.AutoConnect)
-			{
-				var dlg = OpenLogOnDialog();
-
-				try
-				{
-					var prog = new Progress<string>(str => dlg.AppendText(str));
-
-					await GameData.Data.ConnectManager.StartServerAndConnectAsync(ClientConfig.EmbeddedServerMode,
-						ClientConfig.NewGameMode, ClientConfig.CleanSaveDir, prog);
-				}
-				catch (Exception exc)
-				{
-					MessageBox.Show(this, exc.ToString(), "Failed to autoconnect");
-				}
-
-				dlg.Close();
-			}
 		}
 
 		async void MainWindow_Closing(object sender, CancelEventArgs e)

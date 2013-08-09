@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Client
 {
 	sealed class GameData : DependencyObject
 	{
-		public static readonly GameData Data = new GameData();
+		public static GameData Data;
 
 		public GameData()
 		{
@@ -122,7 +122,7 @@ namespace Dwarrowdelf.Client
 		{
 			if (GameData.Data.User != null && (bool)e.NewValue == true)
 			{
-				if (App.MainWindow.FocusedObject == null || App.MainWindow.FocusedObject.HasAction)
+				if (App.GameWindow.FocusedObject == null || App.GameWindow.FocusedObject.HasAction)
 					GameData.Data.User.SendProceedTurn();
 			}
 		}

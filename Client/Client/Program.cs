@@ -17,17 +17,12 @@ namespace Dwarrowdelf.Client
 		//[LoaderOptimization(LoaderOptimization.MultiDomain)]
 		public static void Main(string[] args)
 		{
+			Program.StartupStopwatch = Stopwatch.StartNew();
+
 			Thread.CurrentThread.Name = "CMain";
 			MyTraceContext.ThreadTraceContext = new MyTraceContext("Client");
 
 			Trace.TraceInformation("Start");
-
-			if (args.Contains("adventure"))
-				ClientConfig.NewGameMode = GameMode.Adventure;
-			else if (args.Contains("fortress"))
-				ClientConfig.NewGameMode = GameMode.Fortress;
-
-			StartupStopwatch = Stopwatch.StartNew();
 
 			if (Debugger.IsAttached == false)
 			{

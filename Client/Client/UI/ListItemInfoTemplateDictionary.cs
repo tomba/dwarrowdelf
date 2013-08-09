@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client.UI
 						var movable = baseObject as MovableObject;
 						if (movable != null && movable.Environment != null)
 						{
-							App.MainWindow.MapControl.ScrollTo(movable.Environment, movable.Location);
+							App.GameWindow.MapControl.ScrollTo(movable.Environment, movable.Location);
 							return;
 						}
 					}
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client.UI
 					{
 						var dlg = new ObjectEditDialog();
 						dlg.DataContext = baseObject;
-						dlg.Owner = App.MainWindow;
+						dlg.Owner = App.GameWindow;
 						dlg.Show();
 
 					}
@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client.UI
 
 						var wnd = new LivingControlWindow();
 						wnd.DataContext = living;
-						wnd.Owner = App.MainWindow;
+						wnd.Owner = App.GameWindow;
 						wnd.Show();
 					}
 					break;

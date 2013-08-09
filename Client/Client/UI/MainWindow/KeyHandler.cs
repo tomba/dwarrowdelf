@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Client.UI
 
 		bool HandleKeyDownLiving(KeyEventArgs e)
 		{
-			var ob = App.MainWindow.FocusedObject;
+			var ob = App.GameWindow.FocusedObject;
 
 			if (ob == null)
 				return false;
@@ -149,7 +149,7 @@ namespace Dwarrowdelf.Client.UI
 
 		bool HandleKeyUpLiving(KeyEventArgs e)
 		{
-			var ob = App.MainWindow.FocusedObject;
+			var ob = App.GameWindow.FocusedObject;
 
 			if (ob == null)
 				return false;
@@ -159,7 +159,7 @@ namespace Dwarrowdelf.Client.UI
 
 		bool HandleTextInputLiving(TextCompositionEventArgs e)
 		{
-			var ob = App.MainWindow.FocusedObject;
+			var ob = App.GameWindow.FocusedObject;
 
 			if (ob == null)
 				return false;

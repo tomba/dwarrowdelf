@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client.UI
 
 		private void Quit_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			App.MainWindow.Close();
+			App.GameWindow.Close();
 		}
 
 
@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client.UI
 
 		async void StartServer_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var dlg = App.MainWindow.OpenLogOnDialog();
+			var dlg = App.GameWindow.OpenLogOnDialog();
 
 			try
 			{
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client.UI
 
 		async void StopServer_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var dlg = App.MainWindow.OpenLogOnDialog();
+			var dlg = App.GameWindow.OpenLogOnDialog();
 
 			try
 			{
@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Client.UI
 
 		async void Connect_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var dlg = App.MainWindow.OpenLogOnDialog();
+			var dlg = App.GameWindow.OpenLogOnDialog();
 
 			try
 			{
@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Client.UI
 
 		async void Disconnect_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var dlg = App.MainWindow.OpenLogOnDialog();
+			var dlg = App.GameWindow.OpenLogOnDialog();
 
 			try
 			{
@@ -134,14 +134,14 @@ namespace Dwarrowdelf.Client.UI
 		private void NetStats_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			var netWnd = new UI.NetStatWindow();
-			netWnd.Owner = App.MainWindow;
+			netWnd.Owner = App.GameWindow;
 			netWnd.Show();
 		}
 
 		private void GCDebug_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			var wnd = new UI.GCDebugWindow();
-			wnd.Owner = App.MainWindow;
+			wnd.Owner = App.GameWindow;
 			wnd.Show();
 		}
 
@@ -151,7 +151,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
 
-			var wnd = App.MainWindow;
+			var wnd = App.GameWindow;
 
 			if (button.IsChecked.Value)
 			{

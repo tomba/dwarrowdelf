@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Client.UI
 
 		private void Uninstall_Button_Click(object sender, RoutedEventArgs e)
 		{
-			var env = App.MainWindow.Map;
+			var env = App.GameWindow.Map;
 			var ob = (ItemObject)this.DataContext;
 
 			env.InstallItemManager.AddUninstallJob(ob);
