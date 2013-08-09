@@ -7,7 +7,7 @@ namespace Dwarrowdelf.Client
 {
 	static class ClientConfig
 	{
-		public static EmbeddedServerMode EmbeddedServer = EmbeddedServerMode.SameAppDomain;
+		public static EmbeddedServerMode EmbeddedServerMode = EmbeddedServerMode.SameAppDomain;
 		public static ConnectionType ConnectionType = ConnectionType.Tcp;
 		public static bool AutoConnect = true;
 

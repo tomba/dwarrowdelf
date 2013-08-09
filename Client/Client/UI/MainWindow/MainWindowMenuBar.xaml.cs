@@ -41,7 +41,8 @@ namespace Dwarrowdelf.Client.UI
 			try
 			{
 				var prog = new Progress<string>(str => dlg.AppendText(str));
-				await GameData.Data.ConnectManager.StartServerAsync(prog);
+				await GameData.Data.ConnectManager.StartServerAsync(ClientConfig.EmbeddedServerMode, ClientConfig.NewGameMode,
+					ClientConfig.CleanSaveDir, prog);
 			}
 			catch (Exception exc)
 			{

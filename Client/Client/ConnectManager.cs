@@ -18,9 +18,9 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		public async Task StartServerAndConnectAsync(IProgress<string> prog)
+		public async Task StartServerAndConnectAsync(EmbeddedServerMode mode, GameMode newGameMode, bool cleanSaveDir, IProgress<string> prog)
 		{
-			await StartServerAsync(prog);
+			await StartServerAsync(mode, newGameMode, cleanSaveDir, prog);
 
 			Exception connectException = null;
 
@@ -41,9 +41,9 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public async Task StartServerAsync(IProgress<string> prog)
+		public async Task StartServerAsync(EmbeddedServerMode mode, GameMode newGameMode, bool cleanSaveDir, IProgress<string> prog)
 		{
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
+			if (mode == EmbeddedServerMode.None || m_server != null)
 				return;
 
 			var server = new EmbeddedServer();
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 			var path = Win32.SavedGamesFolder.GetSavedGamesPath();
 			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
 
-			await server.StartAsync(ClientConfig.EmbeddedServer, path, ClientConfig.CleanSaveDir, ClientConfig.NewGameMode);
+			await server.StartAsync(mode, path, cleanSaveDir, newGameMode);
 
 			m_server = server;
 		}
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Client
 
 		public async Task StopServerAsync(IProgress<string> prog)
 		{
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server == null)
+			if (m_server == null)
 				return;
 
 			prog.Report("Stopping Server");
