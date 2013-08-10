@@ -10,17 +10,15 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Client
 {
-	public class ClientNetStatistics : INotifyPropertyChanged
+	public class ClientNetStatistics : INotifyPropertyChanged, INetStatCollector
 	{
-		int m_sentMessages;
-		int m_sentBytes;
-		int m_receivedMessages;
-		int m_receivedBytes;
+		public int SentMessages { get; private set; }
+		public int SentBytes { get; private set; }
+		Dictionary<Type, int> m_sentCountMap = new Dictionary<Type, int>();
 
-		public int SentMessages { get { return m_sentMessages; } set { m_sentMessages = value; Refresh(); } }
-		public int SentBytes { get { return m_sentBytes; } set { m_sentBytes = value; Refresh(); } }
-		public int ReceivedMessages { get { return m_receivedMessages; } set { m_receivedMessages = value; Refresh(); } }
-		public int ReceivedBytes { get { return m_receivedBytes; } set { m_receivedBytes = value; Refresh(); } }
+		public int ReceivedMessages { get; private set; }
+		public int ReceivedBytes { get; private set; }
+		Dictionary<Type, int> m_receivedCountMap = new Dictionary<Type, int>();
 
 		public sealed class MessageCountStore : INotifyPropertyChanged
 		{
@@ -42,77 +40,108 @@ namespace Dwarrowdelf.Client
 			#endregion
 		}
 
-		Dictionary<Type, int> m_receivedCountMap = new Dictionary<Type, int>();
 		ObservableCollection<MessageCountStore> m_receivedMessageCounts = new ObservableCollection<MessageCountStore>();
 		public ObservableCollection<MessageCountStore> ReceivedMessageCounts { get { return m_receivedMessageCounts; } }
 
-		Dictionary<Type, int> m_sentCountMap = new Dictionary<Type, int>();
 		ObservableCollection<MessageCountStore> m_sentMessageCounts = new ObservableCollection<MessageCountStore>();
 		public ObservableCollection<MessageCountStore> SentMessageCounts { get { return m_sentMessageCounts; } }
 
 		SynchronizationContext m_syncCtx;
+		int m_messageReportingEnableCount;
 
 		public ClientNetStatistics()
 		{
 			m_syncCtx = SynchronizationContext.Current;
 		}
 
+		public void EnableMessageReporting()
+		{
+			int v = Interlocked.Increment(ref m_messageReportingEnableCount);
+
+			if (v == 1)
+				Refresh();
+		}
+
+		public void DisableMessageReporting()
+		{
+			Interlocked.Decrement(ref m_messageReportingEnableCount);
+		}
+
 		public void Reset()
 		{
-			m_sentMessages = 0;
-			m_sentBytes = 0;
-			m_receivedMessages = 0;
-			m_receivedBytes = 0;
+			lock (m_sentCountMap)
+			{
+				this.SentMessages = 0;
+				this.SentBytes = 0;
+				m_sentCountMap.Clear();
+			}
+
+			lock (m_receivedCountMap)
+			{
+				this.ReceivedMessages = 0;
+				this.ReceivedBytes = 0;
+				m_receivedCountMap.Clear();
+			}
+
+			m_receivedMessageCounts.Clear();
+			m_sentMessageCounts.Clear();
 
 			Notify("SentMessages");
 			Notify("SentBytes");
 			Notify("ReceivedMessages");
 			Notify("ReceivedBytes");
-
-			m_receivedCountMap.Clear();
-			m_receivedMessageCounts.Clear();
-			m_sentCountMap.Clear();
-			m_sentMessageCounts.Clear();
 		}
 
 		void DoRefresh()
 		{
-			Notify("SentMessages");
-			Notify("SentBytes");
 			Notify("ReceivedMessages");
 			Notify("ReceivedBytes");
 
-			foreach (var kvp in m_receivedCountMap)
+			Notify("SentMessages");
+			Notify("SentBytes");
+
+			if (m_messageReportingEnableCount > 0)
 			{
-				var t = kvp.Key;
-				var c = kvp.Value;
+				KeyValuePair<Type, int>[] sent;
+				lock (m_sentCountMap)
+					sent = m_sentCountMap.ToArray();
 
-				var entry = m_receivedMessageCounts.SingleOrDefault(i => i.Type == t);
-				if (entry == null)
-				{
-					entry = new MessageCountStore() { Type = t, Count = c };
-					m_receivedMessageCounts.Add(entry);
-				}
-				else
-				{
-					entry.Count = c;
-				}
-			}
+				KeyValuePair<Type, int>[] received;
+				lock (m_receivedCountMap)
+					received = m_receivedCountMap.ToArray();
 
-			foreach (var kvp in m_sentCountMap)
-			{
-				var t = kvp.Key;
-				var c = kvp.Value;
+				foreach (var kvp in received)
+				{
+					var t = kvp.Key;
+					var c = kvp.Value;
 
-				var entry = m_sentMessageCounts.SingleOrDefault(i => i.Type == t);
-				if (entry == null)
-				{
-					entry = new MessageCountStore() { Type = t, Count = c };
-					m_sentMessageCounts.Add(entry);
+					var entry = m_receivedMessageCounts.SingleOrDefault(i => i.Type == t);
+					if (entry == null)
+					{
+						entry = new MessageCountStore() { Type = t, Count = c };
+						m_receivedMessageCounts.Add(entry);
+					}
+					else
+					{
+						entry.Count = c;
+					}
 				}
-				else
+
+				foreach (var kvp in sent)
 				{
-					entry.Count = c;
+					var t = kvp.Key;
+					var c = kvp.Value;
+
+					var entry = m_sentMessageCounts.SingleOrDefault(i => i.Type == t);
+					if (entry == null)
+					{
+						entry = new MessageCountStore() { Type = t, Count = c };
+						m_sentMessageCounts.Add(entry);
+					}
+					else
+					{
+						entry.Count = c;
+					}
 				}
 			}
 		}
@@ -129,30 +158,6 @@ namespace Dwarrowdelf.Client
 			m_syncCtx.Post(async o => { await Task.Delay(250); m_refreshQueued = false; DoRefresh(); }, null);
 		}
 
-		public void AddReceivedMessages(ClientMessage msg)
-		{
-			int c = 0;
-
-			m_receivedCountMap.TryGetValue(msg.GetType(), out c);
-
-			c++;
-			m_receivedCountMap[msg.GetType()] = c;
-
-			Refresh();
-		}
-
-		public void AddSentMessages(ServerMessage msg)
-		{
-			int c = 0;
-
-			m_sentCountMap.TryGetValue(msg.GetType(), out c);
-
-			c++;
-			m_sentCountMap[msg.GetType()] = c;
-
-			Refresh();
-		}
-
 		void Notify(string property)
 		{
 			if (this.PropertyChanged != null)
@@ -164,5 +169,41 @@ namespace Dwarrowdelf.Client
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
+
+		void INetStatCollector.OnMessageReceived(Type msgType, int bytes)
+		{
+			lock (m_receivedCountMap)
+			{
+				this.ReceivedMessages++;
+				this.ReceivedBytes += bytes;
+
+				int c = 0;
+
+				m_receivedCountMap.TryGetValue(msgType, out c);
+
+				c++;
+				m_receivedCountMap[msgType] = c;
+			}
+
+			Refresh();
+		}
+
+		void INetStatCollector.OnMessageSent(Type msgType, int bytes)
+		{
+			lock (m_sentCountMap)
+			{
+				this.SentMessages++;
+				this.SentBytes += bytes;
+
+				int c = 0;
+
+				m_sentCountMap.TryGetValue(msgType, out c);
+
+				c++;
+				m_sentCountMap[msgType] = c;
+			}
+
+			Refresh();
+		}
 	}
 }

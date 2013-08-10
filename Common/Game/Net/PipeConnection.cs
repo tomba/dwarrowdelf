@@ -68,20 +68,7 @@ namespace Dwarrowdelf
 		}
 		#endregion
 
-		public int SentMessages { get; private set; }
-		public int SentBytes { get; private set; }
-		public int ReceivedMessages { get; private set; }
-		public int ReceivedBytes { get; private set; }
-
 		public bool IsConnected { get { return m_pipeStream.IsConnected; } }
-
-		public void ResetStats()
-		{
-			this.SentBytes = 0;
-			this.SentMessages = 0;
-			this.ReceivedBytes = 0;
-			this.ReceivedMessages = 0;
-		}
 
 		public bool TryGetMessage(out Message msg)
 		{
@@ -95,7 +82,6 @@ namespace Dwarrowdelf
 				while (true)
 				{
 					var msg = Serializer.Deserialize(m_stream);
-					this.ReceivedMessages++;
 
 					m_msgQueue.Add(msg);
 
@@ -121,8 +107,6 @@ namespace Dwarrowdelf
 
 		public void Send(Message msg)
 		{
-			this.SentMessages++;
-
 			Serializer.Serialize(m_stream, msg);
 
 			m_stream.Flush();

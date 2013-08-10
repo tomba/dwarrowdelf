@@ -56,23 +56,10 @@ namespace Dwarrowdelf
 		}
 		#endregion
 
-		public void ResetStats()
-		{
-			this.SentBytes = 0;
-			this.SentMessages = 0;
-			this.ReceivedBytes = 0;
-			this.ReceivedMessages = 0;
-		}
-
 		void SetRemote(DirectConnection remote)
 		{
 			m_remoteConnection = remote;
 		}
-
-		public int SentMessages { get; private set; }
-		public int SentBytes { get; private set; }
-		public int ReceivedMessages { get; private set; }
-		public int ReceivedBytes { get; private set; }
 
 		public bool IsConnected
 		{
@@ -86,8 +73,6 @@ namespace Dwarrowdelf
 
 		void Enqueue(Message msg)
 		{
-			this.ReceivedMessages++;
-
 			m_msgQueue.Add(msg);
 
 			var ev = this.NewMessageEvent;
@@ -97,8 +82,6 @@ namespace Dwarrowdelf
 
 		public void Send(Message msg)
 		{
-			this.SentMessages++;
-
 			m_remoteConnection.Enqueue(msg);
 		}
 

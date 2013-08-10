@@ -21,10 +21,7 @@ namespace Dwarrowdelf
 
 		public bool IsConnected { get { return m_socket.Connected; } }
 
-		public int SentMessages { get; private set; }
-		public int SentBytes { get; private set; }
-		public int ReceivedMessages { get; private set; }
-		public int ReceivedBytes { get; private set; }
+		INetStatCollector m_netStatCollector;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
@@ -40,9 +37,10 @@ namespace Dwarrowdelf
 
 		public event Action NewMessageEvent;
 
-		public TcpConnection(Socket socket)
+		public TcpConnection(Socket socket, INetStatCollector netStatCollector = null)
 		{
 			trace.Header = socket.RemoteEndPoint.ToString();
+			m_netStatCollector = netStatCollector;
 
 			trace.TraceInformation("New Connection");
 
@@ -86,14 +84,6 @@ namespace Dwarrowdelf
 			m_disposed = true;
 		}
 		#endregion
-
-		public void ResetStats()
-		{
-			this.SentBytes = 0;
-			this.SentMessages = 0;
-			this.ReceivedBytes = 0;
-			this.ReceivedMessages = 0;
-		}
 
 		public bool TryGetMessage(out Message msg)
 		{
@@ -153,8 +143,8 @@ namespace Dwarrowdelf
 
 			trace.TraceVerbose("[RX] Deserialized {0} bytes, {1}", len, msg.GetType().Name);
 
-			this.ReceivedMessages++;
-			this.ReceivedBytes += len;
+			if (m_netStatCollector != null)
+				m_netStatCollector.OnMessageReceived(msg.GetType(), len);
 
 			return msg;
 		}
@@ -209,8 +199,8 @@ namespace Dwarrowdelf
 
 					trace.TraceVerbose("[TX] sent {0} bytes", len);
 
-					this.SentMessages++;
-					this.SentBytes += len;
+					if (m_netStatCollector != null)
+						m_netStatCollector.OnMessageSent(msg.GetType(), len);
 				}
 			}
 			catch (SocketException e)
@@ -221,7 +211,7 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public async static Task<TcpConnection> ConnectAsync()
+		public async static Task<TcpConnection> ConnectAsync(INetStatCollector netStatCollector = null)
 		{
 			var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -234,7 +224,7 @@ namespace Dwarrowdelf
 
 			await Task.Factory.FromAsync(socket.BeginConnect, socket.EndConnect, remoteEndPoint, null);
 
-			return new TcpConnection(socket);
+			return new TcpConnection(socket, netStatCollector);
 		}
 	}
 }

@@ -8,12 +8,6 @@ namespace Dwarrowdelf
 {
 	public interface IConnection : IDisposable
 	{
-		int SentMessages { get; }
-		int SentBytes { get; }
-		int ReceivedMessages { get; }
-		int ReceivedBytes { get; }
-		void ResetStats();
-
 		bool IsConnected { get; }
 
 		bool TryGetMessage(out Message msg);
@@ -23,5 +17,11 @@ namespace Dwarrowdelf
 		void Disconnect();
 
 		event Action NewMessageEvent;
+	}
+
+	public interface INetStatCollector
+	{
+		void OnMessageReceived(Type msgType, int bytes);
+		void OnMessageSent(Type msgType, int bytes);
 	}
 }

@@ -82,12 +82,6 @@ namespace Dwarrowdelf.Client
 			this.State = ClientUserState.None;
 		}
 
-		public void ResetNetStats()
-		{
-			GameData.Data.NetStats.Reset();
-			m_connection.ResetStats();
-		}
-
 		// XXX add cancellationtoken
 		public async Task LogOn(string name)
 		{
@@ -96,7 +90,7 @@ namespace Dwarrowdelf.Client
 			switch (ClientConfig.ConnectionType)
 			{
 				case ConnectionType.Tcp:
-					m_connection = await TcpConnection.ConnectAsync();
+					m_connection = await TcpConnection.ConnectAsync(GameData.Data.NetStats);
 					break;
 
 				case ConnectionType.Direct:
@@ -160,10 +154,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			m_connection.Send(msg);
-
-			GameData.Data.NetStats.SentBytes = m_connection.SentBytes;
-			GameData.Data.NetStats.SentMessages = m_connection.SentMessages;
-			GameData.Data.NetStats.AddSentMessages(msg);
 		}
 
 		public void SendLogOut()
@@ -216,10 +206,6 @@ namespace Dwarrowdelf.Client
 		public void OnReceiveMessage(ClientMessage msg)
 		{
 			//trace.TraceVerbose("Received Message {0}", msg);
-
-			GameData.Data.NetStats.ReceivedBytes = m_connection.ReceivedBytes;
-			GameData.Data.NetStats.ReceivedMessages = m_connection.ReceivedMessages;
-			GameData.Data.NetStats.AddReceivedMessages(msg);
 
 			var method = s_handlerMap[msg.GetType()];
 			method(this, msg);

@@ -15,16 +15,29 @@ namespace Dwarrowdelf.Client.UI
 {
 	sealed partial class NetStatWindow : Window
 	{
+		public GameData Data { get { return GameData.Data; } }
+
 		public NetStatWindow()
 		{
 			InitializeComponent();
+
+			this.Loaded += NetStatWindow_Loaded;
+			this.Closed += NetStatWindow_Closed;
 		}
 
-		public GameData Data { get { return GameData.Data; } }
+		void NetStatWindow_Closed(object sender, EventArgs e)
+		{
+			this.Data.NetStats.DisableMessageReporting();
+		}
+
+		void NetStatWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			this.Data.NetStats.EnableMessageReporting();
+		}
 
 		private void Button_Click_1(object sender, RoutedEventArgs e)
 		{
-			this.Data.User.ResetNetStats();
+			this.Data.NetStats.Reset();
 		}
 	}
 
@@ -32,15 +45,6 @@ namespace Dwarrowdelf.Client.UI
 	{
 		public NetStatWindowSample()
 		{
-			base.SentBytes = 1;
-			base.SentMessages = 2;
-
-			AddReceivedMessages(new Messages.ChangeMessage());
-			AddReceivedMessages(new Messages.ChangeMessage());
-			AddReceivedMessages(new Messages.ChangeMessage());
-
-			AddSentMessages(new Messages.ProceedTurnReplyMessage());
-			AddSentMessages(new Messages.ProceedTurnReplyMessage());
 		}
 	}
 }
