@@ -31,7 +31,6 @@ namespace Dwarrowdelf.Client
 		public enum ClientUserState
 		{
 			None,
-			Connecting,
 			LoggingIn,
 			ReceivingLoginData,
 			LoggedIn,
@@ -77,35 +76,15 @@ namespace Dwarrowdelf.Client
 
 		SynchronizationContext m_syncCtx;
 
-		public ClientUser()
+		public ClientUser(IConnection connection)
 		{
 			this.State = ClientUserState.None;
+			m_connection = connection;
 		}
 
 		// XXX add cancellationtoken
 		public async Task LogOn(string name)
 		{
-			this.State = ClientUserState.Connecting;
-
-			switch (ClientConfig.ConnectionType)
-			{
-				case ConnectionType.Tcp:
-					m_connection = await TcpConnection.ConnectAsync(GameData.Data.NetStats);
-					break;
-
-				case ConnectionType.Direct:
-					var game = GameData.Data.ConnectManager.Game;
-					m_connection = DirectConnection.Connect(game);
-					break;
-
-				case ConnectionType.Pipe:
-					m_connection = PipeConnection.Connect();
-					break;
-
-				default:
-					throw new Exception();
-			}
-
 			this.State = ClientUserState.LoggingIn;
 
 			m_syncCtx = SynchronizationContext.Current;

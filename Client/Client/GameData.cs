@@ -27,13 +27,11 @@ namespace Dwarrowdelf.Client
 			m_timer.Tick += delegate { if (_Blink != null) _Blink(); MainWindow.MapControl.InvalidateTileData(); };
 
 			this.ConnectManager = new ConnectManager();
-
-			this.NetStats = new ClientNetStatistics();
 		}
 
 		public ConnectManager ConnectManager { get; private set; }
 
-		public ClientNetStatistics NetStats { get; private set; }
+		public ClientNetStatistics NetStats { get { return this.ConnectManager.NetStats; } }
 
 		event Action _Blink;
 

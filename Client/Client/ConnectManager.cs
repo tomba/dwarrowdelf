@@ -11,18 +11,20 @@ namespace Dwarrowdelf.Client
 {
 	sealed class ConnectManager
 	{
-		public IGame Game { get { return m_server != null ? m_server.Game : null; } }
-
 		public event Action<ClientUser> UserConnected;
 
 		EmbeddedServer m_server;
 		ClientUser m_user;
 
+		public ClientNetStatistics NetStats { get; private set; }
+
 		public ConnectManager()
 		{
+			this.NetStats = new ClientNetStatistics();
 		}
 
-		public async Task StartServerAndConnectAsync(EmbeddedServerMode mode, GameMode newGameMode, bool cleanSaveDir, IProgress<string> prog)
+		public async Task StartServerAndConnectAsync(EmbeddedServerMode mode, GameMode newGameMode, bool cleanSaveDir,
+			ConnectionType connectionType, IProgress<string> prog)
 		{
 			await StartServerAsync(mode, newGameMode, cleanSaveDir, prog);
 
@@ -30,7 +32,7 @@ namespace Dwarrowdelf.Client
 
 			try
 			{
-				await ConnectPlayerAsync(prog);
+				await ConnectPlayerAsync(connectionType, prog);
 			}
 			catch (Exception exc)
 			{
@@ -63,12 +65,32 @@ namespace Dwarrowdelf.Client
 			m_server = server;
 		}
 
-		public async Task ConnectPlayerAsync(IProgress<string> prog)
+		public async Task ConnectPlayerAsync(ConnectionType connectionType, IProgress<string> prog)
 		{
 			if (m_user != null)
 				return;
 
-			var player = new ClientUser();
+			IConnection connection;
+
+			switch (connectionType)
+			{
+				case ConnectionType.Tcp:
+					connection = await TcpConnection.ConnectAsync(this.NetStats);
+					break;
+
+				case ConnectionType.Direct:
+					connection = DirectConnection.Connect(m_server.Game);
+					break;
+
+				case ConnectionType.Pipe:
+					connection = PipeConnection.Connect();
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			var player = new ClientUser(connection);
 			player.DisconnectEvent += OnDisconnected;
 			player.StateChangedEvent += (state) => prog.Report(state.ToString());
 
