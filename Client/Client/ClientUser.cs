@@ -82,6 +82,8 @@ namespace Dwarrowdelf.Client
 			m_connection = connection;
 		}
 
+		TaskCompletionSource<bool> m_logonTcs;
+
 		// XXX add cancellationtoken
 		public async Task LogOn(string name)
 		{
@@ -90,33 +92,24 @@ namespace Dwarrowdelf.Client
 			m_syncCtx = SynchronizationContext.Current;
 
 			m_connection.NewMessageEvent += _OnNewMessages;
-			m_opEvent = new ManualResetEvent(false);
 
-			var tcs = new TaskCompletionSource<object>();
-
-			ThreadPool.RegisterWaitForSingleObject(m_opEvent,
-				(o, tout) =>
-				{
-					if (tout)
-						tcs.SetException(new Exception("timeout"));
-					else
-						tcs.SetResult(null);
-				},
-				null, TimeSpan.FromSeconds(60), true);
+			m_logonTcs = new TaskCompletionSource<bool>();
+			var delayCts = new CancellationTokenSource();
 
 			Send(new Messages.LogOnRequestMessage() { Name = name });
 
-			await tcs.Task;
+			var completedTask = await Task.WhenAny(m_logonTcs.Task, Task.Delay(TimeSpan.FromSeconds(60), delayCts.Token));
 
-			m_opEvent.Dispose();
-			m_opEvent = null;
+			if (completedTask != m_logonTcs.Task)
+				throw new TimeoutException("logon timeout");
+
+			delayCts.Cancel();
+			m_logonTcs = null;
 
 			LivingObject.LivingRequestsAction += OnLivingRequestsAction;
 
 			this.State = ClientUserState.LoggedIn;
 		}
-
-		ManualResetEvent m_opEvent;
 
 		public void Send(ServerMessage msg)
 		{
@@ -217,8 +210,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(LogOnReplyEndMessage msg)
 		{
-			if (m_opEvent != null)
-				m_opEvent.Set();
+			m_logonTcs.SetResult(true);
 		}
 
 		void HandleMessage(LogOutReplyMessage msg)
