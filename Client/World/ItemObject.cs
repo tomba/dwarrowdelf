@@ -22,8 +22,6 @@ namespace Dwarrowdelf.Client
 		public ItemObject()
 			: base(null, new ObjectID(ObjectType.Item, 123456))
 		{
-			var r = new Random();
-
 			var props = new Tuple<PropertyID, object>[]
 			{
 				new Tuple<PropertyID, object>(PropertyID.MaterialID, MaterialID.Bronze),
@@ -31,7 +29,7 @@ namespace Dwarrowdelf.Client
 
 			var data = new ItemData()
 			{
-				ObjectID = new ObjectID(ObjectType.Item, (uint)r.Next(5000)),
+				ObjectID = new ObjectID(ObjectType.Item, 123456),
 				ItemID = Dwarrowdelf.ItemID.ChainMail,
 				CreationTick = 123,
 				CreationTime = DateTime.Now,

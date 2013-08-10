@@ -40,8 +40,6 @@ namespace Dwarrowdelf.Client
 		public LivingObject()
 			: this(null, new ObjectID(ObjectType.Living, 1234))
 		{
-			var r = new Random();
-
 			var props = new Tuple<PropertyID, object>[]
 			{
 				new Tuple<PropertyID, object>(PropertyID.Name, "Testname"),
@@ -51,9 +49,9 @@ namespace Dwarrowdelf.Client
 
 			var data = new LivingData()
 			{
-				ObjectID = new ObjectID(ObjectType.Living, (uint)r.Next(5000)),
+				ObjectID = new ObjectID(ObjectType.Living, 1234),
 				LivingID = Dwarrowdelf.LivingID.Dwarf,
-				CreationTick = r.Next(),
+				CreationTick = 123,
 				CreationTime = DateTime.Now,
 				Properties = props,
 			};

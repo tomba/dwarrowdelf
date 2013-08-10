@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Server
 
 			m_objectMap = new Dictionary<ObjectID, BaseObject>();
 			m_livings = new ProcessableList<LivingObject>();
-			m_random = new Random();
+			m_random = new Random(1);	// XXX fixed random for now
 
 			m_objectIDcounterArray = new uint[EnumHelpers.GetEnumMax<ObjectType>() + 1];
 
