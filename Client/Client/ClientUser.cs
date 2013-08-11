@@ -43,15 +43,13 @@ namespace Dwarrowdelf.Client
 
 			private set
 			{
+				if (value == m_state)
+					return;
+
 				m_state = value;
 
 				if (this.StateChangedEvent != null)
-				{
-					if (Application.Current.Dispatcher.CheckAccess())
-						this.StateChangedEvent(m_state);
-					else
-						Application.Current.Dispatcher.BeginInvoke(this.StateChangedEvent, m_state);
-				}
+					this.StateChangedEvent(m_state);
 			}
 		}
 
