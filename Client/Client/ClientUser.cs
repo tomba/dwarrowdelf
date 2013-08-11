@@ -74,6 +74,8 @@ namespace Dwarrowdelf.Client
 
 		SynchronizationContext m_syncCtx;
 
+		public event Action<string> IPMessageReceived;
+
 		public ClientUser(IConnection connection)
 		{
 			this.State = ClientUserState.None;
@@ -280,7 +282,8 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(IPOutputMessage msg)
 		{
-			GameData.Data.AddIPMessage(msg);
+			if (this.IPMessageReceived != null)
+				this.IPMessageReceived(msg.Text);
 		}
 
 		void HandleMessage(ReportMessage msg)

@@ -19,9 +19,6 @@ namespace Dwarrowdelf.Client
 		{
 			this.TileSet = new TileSet(new Uri("/Dwarrowdelf.Client;component/TileSet/TileSet.png", UriKind.Relative));
 
-			m_ipMessages = new ObservableCollection<Messages.IPOutputMessage>();
-			this.IPMessages = new ReadOnlyObservableCollection<Messages.IPOutputMessage>(m_ipMessages);
-
 			m_timer = new DispatcherTimer(DispatcherPriority.Background);
 			m_timer.Interval = TimeSpan.FromMilliseconds(500);
 			m_timer.Tick += delegate { if (_Blink != null) _Blink(); MainWindow.MapControl.InvalidateTileData(); };
@@ -74,17 +71,6 @@ namespace Dwarrowdelf.Client
 
 		public event Action TileSetChanged;
 
-
-		public void AddIPMessage(Dwarrowdelf.Messages.IPOutputMessage msg)
-		{
-			if (m_ipMessages.Count > 100)
-				m_ipMessages.RemoveAt(0);
-
-			m_ipMessages.Add(msg);
-		}
-
-		ObservableCollection<Dwarrowdelf.Messages.IPOutputMessage> m_ipMessages;
-		public ReadOnlyObservableCollection<Dwarrowdelf.Messages.IPOutputMessage> IPMessages { get; private set; }
 
 		public ClientUser User
 		{

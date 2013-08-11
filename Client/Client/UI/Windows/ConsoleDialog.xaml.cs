@@ -21,6 +21,17 @@ namespace Dwarrowdelf.Client.UI
 		public ConsoleDialog()
 		{
 			InitializeComponent();
+
+			if (GameData.Data.User != null)
+				GameData.Data.User.IPMessageReceived += Writer;
+
+			this.Closed += ConsoleDialog_Closed;
+		}
+
+		void ConsoleDialog_Closed(object sender, EventArgs e)
+		{
+			if (GameData.Data.User != null)
+				GameData.Data.User.IPMessageReceived -= Writer;
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -44,8 +55,11 @@ namespace Dwarrowdelf.Client.UI
 
 			if (this.serverButton.IsChecked == true)
 			{
-				var msg = new IPExpressionMessage(str);
-				GameData.Data.User.Send(msg);
+				if (GameData.Data.User != null)
+				{
+					var msg = new IPExpressionMessage(str);
+					GameData.Data.User.Send(msg);
+				}
 			}
 			else if (this.clientButton.IsChecked == true)
 			{
@@ -62,7 +76,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void Writer(string txt)
 		{
-			GameData.Data.AddIPMessage(new IPOutputMessage() { Text = txt });
+			textListBox.Items.Add(txt);
 		}
 	}
 }
