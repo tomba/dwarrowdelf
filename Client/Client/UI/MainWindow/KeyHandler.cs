@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Client.UI
 					throw new Exception();
 			});
 
-			this.Mode = KeyHandlerMode.LivingControl;
+			this.Mode = KeyHandlerMode.None;
 		}
 
 		public KeyHandlerMode Mode { get; set; }
@@ -51,12 +51,19 @@ namespace Dwarrowdelf.Client.UI
 		{
 			bool handled;
 
-			if (this.Mode == KeyHandlerMode.MapControl)
-				handled = HandleKeyDownMap(e);
-			else if (this.Mode == KeyHandlerMode.LivingControl)
-				handled = HandleKeyDownLiving(e);
-			else
-				throw new Exception();
+			switch (this.Mode)
+			{
+				case KeyHandlerMode.MapControl:
+					handled = HandleKeyDownMap(e);
+					break;
+
+				case KeyHandlerMode.LivingControl:
+					handled = HandleKeyDownLiving(e);
+					break;
+
+				default:
+					return;
+			}
 
 			e.Handled = handled;
 		}
@@ -65,12 +72,19 @@ namespace Dwarrowdelf.Client.UI
 		{
 			bool handled;
 
-			if (this.Mode == KeyHandlerMode.MapControl)
-				handled = HandleKeyUpMap(e);
-			else if (this.Mode == KeyHandlerMode.LivingControl)
-				handled = HandleKeyUpLiving(e);
-			else
-				throw new Exception();
+			switch (this.Mode)
+			{
+				case KeyHandlerMode.MapControl:
+					handled = HandleKeyUpMap(e);
+					break;
+
+				case KeyHandlerMode.LivingControl:
+					handled = HandleKeyUpLiving(e);
+					break;
+
+				default:
+					return;
+			}
 
 			e.Handled = handled;
 		}
@@ -79,12 +93,19 @@ namespace Dwarrowdelf.Client.UI
 		{
 			bool handled;
 
-			if (this.Mode == KeyHandlerMode.MapControl)
-				handled = HandleTextInputMap(e);
-			else if (this.Mode == KeyHandlerMode.LivingControl)
-				handled = HandleTextInputLiving(e);
-			else
-				throw new Exception();
+			switch (this.Mode)
+			{
+				case KeyHandlerMode.MapControl:
+					handled = HandleTextInputMap(e);
+					break;
+
+				case KeyHandlerMode.LivingControl:
+					handled = HandleTextInputLiving(e);
+					break;
+
+				default:
+					return;
+			}
 
 			e.Handled = handled;
 		}
