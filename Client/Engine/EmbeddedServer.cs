@@ -14,6 +14,14 @@ namespace Dwarrowdelf.Client
 		SeparateAppDomain,
 	}
 
+	public class EmbeddedServerOptions
+	{
+		public EmbeddedServerMode ServerMode;
+		public GameMode NewGameMode;
+		public string SaveGamePath;
+		public bool CleanSaveDir;
+	}
+
 	public sealed class EmbeddedServer
 	{
 		EmbeddedServerMode m_serverMode;
@@ -31,27 +39,27 @@ namespace Dwarrowdelf.Client
 
 		public IGame Game { get { return m_game; } }
 
-		public Task StartAsync(EmbeddedServerMode serverMode, string gameDir, bool cleanSaves, GameMode gameMode)
+		public Task StartAsync(EmbeddedServerOptions options)
 		{
-			if (serverMode == EmbeddedServerMode.None)
+			if (options.ServerMode == EmbeddedServerMode.None)
 				throw new Exception();
 
-			m_serverMode = serverMode;
-			m_gameMode = gameMode;
+			m_serverMode = options.ServerMode;
+			m_gameMode = options.NewGameMode;
 
-			if (!System.IO.Directory.Exists(gameDir))
-				System.IO.Directory.CreateDirectory(gameDir);
+			if (!System.IO.Directory.Exists(options.SaveGamePath))
+				System.IO.Directory.CreateDirectory(options.SaveGamePath);
 
 			Guid save = Guid.Empty;
 
-			m_saveManager = new SaveManager(gameDir);
+			m_saveManager = new SaveManager(options.SaveGamePath);
 
-			if (cleanSaves)
+			if (options.CleanSaveDir)
 				m_saveManager.DeleteAll();
 			else
 				save = m_saveManager.GetLatestSaveFile();
 
-			CreateEmbeddedServer(gameDir, save);
+			CreateEmbeddedServer(options.SaveGamePath, save);
 
 			var tcs = new TaskCompletionSource<object>();
 

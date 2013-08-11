@@ -41,8 +41,19 @@ namespace Dwarrowdelf.Client.UI
 			try
 			{
 				var prog = new Progress<string>(str => dlg.AppendText(str));
-				await GameData.Data.ConnectManager.StartServerAsync(ClientConfig.EmbeddedServerMode, ClientConfig.NewGameMode,
-					ClientConfig.CleanSaveDir, prog);
+
+				var path = Win32.SavedGamesFolder.GetSavedGamesPath();
+				path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
+
+				var options = new EmbeddedServerOptions()
+				{
+					ServerMode = ClientConfig.EmbeddedServerMode,
+					NewGameMode = ClientConfig.NewGameMode,
+					SaveGamePath = path,
+					CleanSaveDir = ClientConfig.CleanSaveDir,
+				};
+
+				await GameData.Data.ConnectManager.StartServerAsync(options, prog);
 			}
 			catch (Exception exc)
 			{
