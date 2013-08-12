@@ -140,38 +140,35 @@ namespace Dwarrowdelf.Client
 
 			m_onNewMessagesInvoked = true;
 
-			m_syncCtx.Post((o) => OnNewMessages(), null);
+			m_syncCtx.Post(OnNewMessages, null);
 		}
 
-		void OnNewMessages()
+		void OnNewMessages(object state)
 		{
 			Message msg;
 
 			while (m_connection.TryGetMessage(out msg))
-				OnReceiveMessage((ClientMessage)msg);
+				InvokeMessageHandler((ClientMessage)msg);
 
 			m_onNewMessagesInvoked = false;
 
 			while (m_connection.TryGetMessage(out msg))
-				OnReceiveMessage((ClientMessage)msg);
+				InvokeMessageHandler((ClientMessage)msg);
 
 			if (m_connection.IsConnected == false)
-				OnDisconnected();
+			{
+				trace.TraceInformation("OnDisconnect");
+
+				m_world = null;
+
+				if (DisconnectEvent != null)
+					DisconnectEvent();
+
+				DH.Dispose(ref m_connection);
+			}
 		}
 
-		void OnDisconnected()
-		{
-			trace.TraceInformation("OnDisconnect");
-
-			m_world = null;
-
-			if (DisconnectEvent != null)
-				DisconnectEvent();
-
-			DH.Dispose(ref m_connection);
-		}
-
-		public void OnReceiveMessage(ClientMessage msg)
+		void InvokeMessageHandler(ClientMessage msg)
 		{
 			//trace.TraceVerbose("Received Message {0}", msg);
 
