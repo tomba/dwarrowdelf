@@ -62,8 +62,7 @@ namespace Dwarrowdelf.Client.UI
 
 			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
 
-			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.WorldProperty, typeof(GameData));
-			dpd.AddValueChanged(GameData.Data, OnWorldChanged);
+			GameData.Data.WorldChanged += OnWorldChanged;
 
 			this.ClientTools = new ClientTools();
 			this.ClientTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
@@ -344,10 +343,8 @@ namespace Dwarrowdelf.Client.UI
 			this.MapControl.Selection = new MapSelection();
 		}
 
-		void OnWorldChanged(object sender, EventArgs ev)
+		void OnWorldChanged(World world)
 		{
-			var world = GameData.Data.World;
-
 			this.CommandBindings.Clear();
 
 			if (world == null)

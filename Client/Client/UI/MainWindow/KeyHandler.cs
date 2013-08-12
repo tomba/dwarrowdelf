@@ -27,11 +27,8 @@ namespace Dwarrowdelf.Client.UI
 			mapControl.KeyUp += OnKeyUp;
 			mapControl.TextInput += OnTextInput;
 
-			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.WorldProperty, typeof(GameData));
-			dpd.AddValueChanged(GameData.Data, (s, e) =>
+			GameData.Data.WorldChanged += (world) =>
 			{
-				var world = GameData.Data.World;
-
 				if (world == null || world.GameMode == GameMode.Undefined)
 					this.Mode = KeyHandlerMode.None;
 				else if (world.GameMode == GameMode.Adventure)
@@ -40,7 +37,7 @@ namespace Dwarrowdelf.Client.UI
 					this.Mode = KeyHandlerMode.MapControl;
 				else
 					throw new Exception();
-			});
+			};
 
 			this.Mode = KeyHandlerMode.None;
 		}

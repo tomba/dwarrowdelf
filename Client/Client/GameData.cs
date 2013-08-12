@@ -11,7 +11,7 @@ using System.Windows.Threading;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class GameData : DependencyObject
+	sealed class GameData : INotifyPropertyChanged
 	{
 		public static GameData Data;
 
@@ -30,16 +30,16 @@ namespace Dwarrowdelf.Client
 
 		public ClientNetStatistics NetStats { get { return this.ConnectManager.NetStats; } }
 
-		event Action _Blink;
-
 		DispatcherTimer m_timer;
+
+		event Action _Blink;
 
 		public event Action Blink
 		{
 			add
 			{
-				if (DesignerProperties.GetIsInDesignMode(this))
-					return;
+				//if (DesignerProperties.GetIsInDesignMode(this))
+				//	return;
 
 				if (_Blink == null)
 					m_timer.IsEnabled = true;
@@ -49,8 +49,8 @@ namespace Dwarrowdelf.Client
 
 			remove
 			{
-				if (DesignerProperties.GetIsInDesignMode(this))
-					return;
+				//if (DesignerProperties.GetIsInDesignMode(this))
+				//	return;
 
 				_Blink = (Action)Delegate.Remove(_Blink, value);
 
@@ -61,54 +61,57 @@ namespace Dwarrowdelf.Client
 
 		public UI.MainWindow MainWindow { get { return (UI.MainWindow)Application.Current.MainWindow; } }
 
-		TileSet m_tileSet;
+		public event Action TileSetChanged;
 
+		TileSet m_tileSet;
 		public TileSet TileSet
 		{
 			get { return m_tileSet; }
 			set { m_tileSet = value; if (this.TileSetChanged != null) this.TileSetChanged(); }
 		}
 
-		public event Action TileSetChanged;
-
-
+		ClientUser m_user;
 		public ClientUser User
 		{
-			get { return (ClientUser)GetValue(UserProperty); }
-			set { SetValue(UserProperty, value); }
+			get { return m_user; }
+			set { m_user = value; Notify("User"); }
 		}
 
-		public static readonly DependencyProperty UserProperty =
-			DependencyProperty.Register("User", typeof(ClientUser), typeof(GameData), new UIPropertyMetadata(null));
+		public event Action<World> WorldChanged;
 
-
+		World m_world;
 		public World World
 		{
-			get { return (World)GetValue(WorldProperty); }
-			set { SetValue(WorldProperty, value); }
+			get { return m_world; }
+			set { m_world = value; Notify("World"); if (this.WorldChanged != null) this.WorldChanged(value); }
 		}
 
-		public static readonly DependencyProperty WorldProperty =
-			DependencyProperty.Register("World", typeof(World), typeof(GameData), new UIPropertyMetadata(null));
-
-
-
+		bool m_autoAdvanceTurnEnabled;
 		public bool IsAutoAdvanceTurn
 		{
-			get { return (bool)GetValue(IsAutoAdvanceTurnProperty); }
-			set { SetValue(IsAutoAdvanceTurnProperty, value); }
+			get { return m_autoAdvanceTurnEnabled; }
+			set
+			{
+				m_autoAdvanceTurnEnabled = value;
+
+				if (m_user != null && value == true)
+				{
+					if (App.GameWindow.FocusedObject == null || App.GameWindow.FocusedObject.HasAction)
+						m_user.SendProceedTurn();
+				}
+
+				Notify("IsAutoAdvanceTurn");
+			}
 		}
 
-		public static readonly DependencyProperty IsAutoAdvanceTurnProperty =
-			DependencyProperty.Register("IsAutoAdvanceTurn", typeof(bool), typeof(GameData), new UIPropertyMetadata(false, IsAutoAdvanceTurnChanged));
+		#region INotifyPropertyChanged Members
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
 
-		static void IsAutoAdvanceTurnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		void Notify(string propertyName)
 		{
-			if (GameData.Data.User != null && (bool)e.NewValue == true)
-			{
-				if (App.GameWindow.FocusedObject == null || App.GameWindow.FocusedObject.HasAction)
-					GameData.Data.User.SendProceedTurn();
-			}
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }
