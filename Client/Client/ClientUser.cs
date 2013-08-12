@@ -34,26 +34,10 @@ namespace Dwarrowdelf.Client
 			LoggingIn,
 			ReceivingLoginData,
 			LoggedIn,
+			Disconnected,
 		}
 
 		ClientUserState m_state;
-		public ClientUserState State
-		{
-			get { return m_state; }
-
-			private set
-			{
-				if (value == m_state)
-					return;
-
-				m_state = value;
-
-				if (this.StateChangedEvent != null)
-					this.StateChangedEvent(m_state);
-			}
-		}
-
-		public event Action<ClientUserState> StateChangedEvent;
 
 		public event Action DisconnectEvent;
 
@@ -78,16 +62,21 @@ namespace Dwarrowdelf.Client
 
 		public ClientUser(IConnection connection)
 		{
-			this.State = ClientUserState.None;
+			m_state = ClientUserState.None;
 			m_connection = connection;
 		}
 
 		TaskCompletionSource<bool> m_logonTcs;
 
 		// XXX add cancellationtoken
-		public async Task LogOn(string name)
+		public async Task LogOn(string name, IProgress<string> prog)
 		{
-			this.State = ClientUserState.LoggingIn;
+			if (m_state != ClientUserState.None)
+				throw new Exception();
+
+			m_state = ClientUserState.LoggingIn;
+
+			prog.Report("Logging in");
 
 			m_syncCtx = SynchronizationContext.Current;
 
@@ -100,13 +89,17 @@ namespace Dwarrowdelf.Client
 
 			var completedTask = await Task.WhenAny(m_logonTcs.Task, Task.Delay(TimeSpan.FromSeconds(60), delayCts.Token));
 
+			prog.Report("Waiting for logon reply");
+
 			if (completedTask != m_logonTcs.Task)
 				throw new TimeoutException("logon timeout");
 
 			delayCts.Cancel();
 			m_logonTcs = null;
 
-			this.State = ClientUserState.LoggedIn;
+			m_state = ClientUserState.LoggedIn;
+
+			prog.Report("Logged in");
 		}
 
 		public void Send(ServerMessage msg)
@@ -161,6 +154,8 @@ namespace Dwarrowdelf.Client
 
 				m_world = null;
 
+				m_state = ClientUserState.Disconnected;
+
 				if (DisconnectEvent != null)
 					DisconnectEvent();
 
@@ -178,7 +173,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(LogOnReplyBeginMessage msg)
 		{
-			this.State = ClientUserState.ReceivingLoginData;
+			m_state = ClientUserState.ReceivingLoginData;
 
 			this.PlayerID = msg.PlayerID;
 			this.IsSeeAll = msg.IsSeeAll;

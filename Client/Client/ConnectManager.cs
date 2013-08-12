@@ -86,16 +86,15 @@ namespace Dwarrowdelf.Client
 					throw new Exception();
 			}
 
-			var player = new ClientUser(connection);
-			player.DisconnectEvent += OnDisconnected;
-			player.StateChangedEvent += (state) => prog.Report(state.ToString());
+			var user = new ClientUser(connection);
+			user.DisconnectEvent += OnDisconnected;
 
-			await player.LogOn("tomba");
+			await user.LogOn("tomba", prog);
 
-			m_user = player;
+			m_user = user;
 
 			if (this.UserConnected != null)
-				this.UserConnected(player);
+				this.UserConnected(user);
 		}
 
 		public async Task StopServerAsync(IProgress<string> prog)
