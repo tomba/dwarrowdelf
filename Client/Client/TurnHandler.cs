@@ -17,6 +17,9 @@ namespace Dwarrowdelf.Client
 		Dictionary<LivingObject, GameAction> m_actionMap = new Dictionary<LivingObject, GameAction>();
 		bool m_proceedTurnSent;
 
+		public bool IsAutoAdvanceTurnEnabled { get; set; }
+		public LivingObject FocusedObject { get; set; }
+
 		public TurnHandler(World world, ClientUser user)
 		{
 			m_world = world;
@@ -42,9 +45,9 @@ namespace Dwarrowdelf.Client
 			if (m_world.IsOurTurn == false)
 				return;
 
-			if (GameData.Data.IsAutoAdvanceTurn)
+			if (this.IsAutoAdvanceTurnEnabled)
 			{
-				if (GameData.Data.FocusedObject == null || GameData.Data.FocusedObject.HasAction)
+				if (this.FocusedObject == null || this.FocusedObject.HasAction)
 					SendProceedTurn();
 			}
 		}
@@ -104,7 +107,7 @@ namespace Dwarrowdelf.Client
 				livings = new LivingObject[] { living };
 			}
 
-			var focusedObject = GameData.Data.FocusedObject;
+			var focusedObject = this.FocusedObject;
 
 			foreach (var living in livings)
 			{

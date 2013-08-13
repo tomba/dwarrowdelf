@@ -40,6 +40,8 @@ namespace Dwarrowdelf.Client
 
 		public ClientNetStatistics NetStats { get { return this.ConnectManager.NetStats; } }
 
+		TurnHandler m_turnHandler;
+
 		DispatcherTimer m_timer;
 
 		event Action _Blink;
@@ -104,10 +106,12 @@ namespace Dwarrowdelf.Client
 			{
 				m_autoAdvanceTurnEnabled = value;
 
-				if (m_user != null && value == true)
+				if (m_turnHandler != null)
 				{
-					if (this.FocusedObject == null || this.FocusedObject.HasAction)
-						m_user.SendProceedTurn();
+					m_turnHandler.IsAutoAdvanceTurnEnabled = value;
+
+					if (value == true && (this.FocusedObject == null || this.FocusedObject.HasAction))
+						m_turnHandler.SendProceedTurn();
 				}
 
 				Notify("IsAutoAdvanceTurn");
@@ -143,6 +147,12 @@ namespace Dwarrowdelf.Client
 			dlg.Close();
 		}
 
+		public void SendProceedTurn()
+		{
+			if (m_turnHandler != null)
+				m_turnHandler.SendProceedTurn();
+		}
+
 		void ConnectManager_UserConnected(ClientUser user)
 		{
 			if (this.User != null)
@@ -152,6 +162,8 @@ namespace Dwarrowdelf.Client
 			this.World = user.World;
 
 			user.DisconnectEvent += user_DisconnectEvent;
+
+			m_turnHandler = new TurnHandler(this.World, this.User);
 
 			var controllable = this.World.Controllables.FirstOrDefault();
 			if (controllable != null && controllable.Environment != null)
@@ -182,6 +194,7 @@ namespace Dwarrowdelf.Client
 			App.GameWindow.MapControl.Environment = null;
 			this.User = null;
 			this.World = null;
+			m_turnHandler = null;
 		}
 
 
@@ -199,6 +212,9 @@ namespace Dwarrowdelf.Client
 
 				var old = m_focusedObject;
 				m_focusedObject = value;
+
+				if (m_turnHandler != null)
+					m_turnHandler.FocusedObject = value;
 
 				if (this.FocusedObjectChanged != null)
 					this.FocusedObjectChanged(old, value);

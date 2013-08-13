@@ -140,8 +140,7 @@ namespace Dwarrowdelf.Client.UI
 			switch (e.Key)
 			{
 				case Key.OemPeriod:
-					if (GameData.Data.User != null)
-						GameData.Data.User.SendProceedTurn();
+					GameData.Data.SendProceedTurn();
 					return true;
 
 				case Key.Add:
@@ -221,8 +220,7 @@ namespace Dwarrowdelf.Client.UI
 			switch (e.Key)
 			{
 				case Key.OemPeriod:
-					if (GameData.Data.User != null)
-						GameData.Data.User.SendProceedTurn();
+					GameData.Data.SendProceedTurn();
 					return true;
 
 				case Key.Add:

@@ -194,15 +194,12 @@ namespace Dwarrowdelf.Client
 			this.IsSeeAll = msg.IsSeeAll;
 		}
 
-		TurnHandler m_turnHandler;
-
 		void HandleMessage(WorldDataMessage msg)
 		{
 			m_world = new World(msg.WorldData, this.PlayerID);
 
 			m_reportHandler = new ReportHandler(m_world);
 			m_changeHandler = new ChangeHandler(m_world);
-			m_turnHandler = new TurnHandler(m_world, this);
 		}
 
 		void HandleMessage(ClientDataMessage msg)
@@ -300,11 +297,6 @@ namespace Dwarrowdelf.Client
 		void HandleMessage(ChangeMessage msg)
 		{
 			m_changeHandler.HandleChangeMessage(msg);
-		}
-
-		public void SendProceedTurn()
-		{
-			m_turnHandler.SendProceedTurn();
 		}
 	}
 }

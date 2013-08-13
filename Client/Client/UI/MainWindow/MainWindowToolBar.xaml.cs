@@ -26,8 +26,7 @@ namespace Dwarrowdelf.Client.UI
 
 		private void Button_Click_Step(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.User != null)
-				GameData.Data.User.SendProceedTurn();
+			GameData.Data.SendProceedTurn();
 		}
 
 
