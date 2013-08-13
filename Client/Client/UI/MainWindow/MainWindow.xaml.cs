@@ -24,7 +24,6 @@ namespace Dwarrowdelf.Client.UI
 	sealed partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		MovableObject m_followObject;
-		LivingObject m_focusedObject;
 
 		enum CloseStatus
 		{
@@ -63,6 +62,7 @@ namespace Dwarrowdelf.Client.UI
 			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
 
 			GameData.Data.WorldChanged += OnWorldChanged;
+			GameData.Data.FocusedObjectChanged += OnFocusedObjectChanged;
 
 			this.ClientTools = new ClientTools();
 			this.ClientTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
@@ -439,32 +439,23 @@ namespace Dwarrowdelf.Client.UI
 				e.Accepted = false;
 		}
 
-		public LivingObject FocusedObject
+		void OnFocusedObjectChanged(LivingObject oldOb, LivingObject newOb)
 		{
-			get { return m_focusedObject; }
+			if (oldOb != null)
+				oldOb.ObjectMoved -= OnFocusedControllableMoved;
 
-			set
+			if (newOb != null)
 			{
-				if (m_focusedObject == value)
-					return;
-
-				m_focusedObject = value;
-
-				if (value != null)
-				{
-					value.ObjectMoved += OnFocusedControllableMoved;
-					this.MapControl.FocusedTileView.SetTarget(value.Environment, value.Location);
-				}
-				else
-				{
-					this.MapControl.FocusedTileView.ClearTarget();
-				}
-
-				// always follow the focused ob for now
-				this.FollowObject = value;
-
-				Notify("FocusedObject");
+				newOb.ObjectMoved += OnFocusedControllableMoved;
+				this.MapControl.FocusedTileView.SetTarget(newOb.Environment, newOb.Location);
 			}
+			else
+			{
+				this.MapControl.FocusedTileView.ClearTarget();
+			}
+
+			// always follow the focused ob for now
+			this.FollowObject = newOb;
 		}
 
 		void OnFocusedControllableMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)

@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client
 
 			if (GameData.Data.IsAutoAdvanceTurn)
 			{
-				if (App.GameWindow.FocusedObject == null || App.GameWindow.FocusedObject.HasAction)
+				if (GameData.Data.FocusedObject == null || GameData.Data.FocusedObject.HasAction)
 					SendProceedTurn();
 			}
 		}
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Client
 				livings = new LivingObject[] { living };
 			}
 
-			var focusedObject = App.GameWindow.FocusedObject;
+			var focusedObject = GameData.Data.FocusedObject;
 
 			foreach (var living in livings)
 			{

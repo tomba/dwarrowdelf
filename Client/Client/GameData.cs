@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Client
 
 				if (m_user != null && value == true)
 				{
-					if (App.GameWindow.FocusedObject == null || App.GameWindow.FocusedObject.HasAction)
+					if (this.FocusedObject == null || this.FocusedObject.HasAction)
 						m_user.SendProceedTurn();
 				}
 
@@ -163,7 +163,7 @@ namespace Dwarrowdelf.Client
 				mapControl.Z = controllable.Location.Z;
 
 				if (this.World.GameMode == GameMode.Adventure)
-					App.GameWindow.FocusedObject = controllable;
+					this.FocusedObject = controllable;
 			}
 
 			if (Program.StartupStopwatch != null)
@@ -178,10 +178,33 @@ namespace Dwarrowdelf.Client
 		{
 			this.User.DisconnectEvent -= user_DisconnectEvent;
 
-			App.GameWindow.FocusedObject = null;
+			this.FocusedObject = null;
 			App.GameWindow.MapControl.Environment = null;
 			this.User = null;
 			this.World = null;
+		}
+
+
+		public event Action<LivingObject, LivingObject> FocusedObjectChanged;
+
+		LivingObject m_focusedObject;
+		public LivingObject FocusedObject
+		{
+			get { return m_focusedObject; }
+
+			set
+			{
+				if (m_focusedObject == value)
+					return;
+
+				var old = m_focusedObject;
+				m_focusedObject = value;
+
+				if (this.FocusedObjectChanged != null)
+					this.FocusedObjectChanged(old, value);
+
+				Notify("FocusedObject");
+			}
 		}
 
 

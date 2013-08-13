@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void DropItemHandler(object sender, ExecutedRoutedEventArgs e)
 		{
-			var living = m_mainWindow.FocusedObject;
+			var living = GameData.Data.FocusedObject;
 
 			if (living == null)
 				return;
@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void GetItemHandler(object sender, ExecutedRoutedEventArgs e)
 		{
-			var living = m_mainWindow.FocusedObject;
+			var living = GameData.Data.FocusedObject;
 
 			if (living == null)
 				return;
@@ -107,7 +107,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void RemoveItemHandler(object sender, ExecutedRoutedEventArgs e)
 		{
-			var living = m_mainWindow.FocusedObject;
+			var living = GameData.Data.FocusedObject;
 
 			if (living == null)
 				return;
@@ -142,7 +142,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void WearItemHandler(object sender, ExecutedRoutedEventArgs e)
 		{
-			var living = m_mainWindow.FocusedObject;
+			var living = GameData.Data.FocusedObject;
 
 			if (living == null)
 				return;
@@ -178,7 +178,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void InventoryHandler(object sender, ExecutedRoutedEventArgs e)
 		{
-			var living = m_mainWindow.FocusedObject;
+			var living = GameData.Data.FocusedObject;
 
 			if (living == null)
 				return;

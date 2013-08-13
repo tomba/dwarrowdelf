@@ -26,7 +26,7 @@
 			<Separator />
 
 			<Label Content="Focus" />
-			<ComboBox MinWidth="100" SelectedItem="{Binding FocusedObject, Converter={StaticResource nullConverter}}" >
+			<ComboBox MinWidth="100" SelectedItem="{Binding Source={x:Static local:GameData.Data}, Path=FocusedObject, Converter={StaticResource nullConverter}}" >
 				<ComboBox.ItemsSource>
 					<CompositeCollection xmlns:sys="clr-namespace:System;assembly=mscorlib">
 						<sys:String>None</sys:String>

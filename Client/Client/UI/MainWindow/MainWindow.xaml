@@ -108,7 +108,7 @@
 			<ui:MasterMapControl UseLayoutRounding="True" x:Name="map" Grid.Column="2" Grid.Row="0" />
 			<ui:MapToolBar x:Name="mainWindowTools" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 			<ui:FocusedObjectStats Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top"
-								   DataContext="{Binding FocusedObject}"
+								   DataContext="{Binding Data.FocusedObject}"
 								   Visibility="{Binding Converter={StaticResource nullToVisConverter}}" />
 
 			<!-- Events -->
