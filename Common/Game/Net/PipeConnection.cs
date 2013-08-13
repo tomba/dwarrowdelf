@@ -7,6 +7,7 @@ using Dwarrowdelf.Messages;
 using System.Threading;
 using System.IO;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf
 {
@@ -73,6 +74,11 @@ namespace Dwarrowdelf
 		public bool TryGetMessage(out Message msg)
 		{
 			return m_msgQueue.TryTake(out msg);
+		}
+
+		public Task<Message> GetMessageAsync()
+		{
+			throw new NotImplementedException();
 		}
 
 		void DeserializerMain()

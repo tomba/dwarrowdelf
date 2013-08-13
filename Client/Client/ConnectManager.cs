@@ -95,6 +95,8 @@ namespace Dwarrowdelf.Client
 
 			if (this.UserConnected != null)
 				this.UserConnected(user);
+
+			user.StartProcessingMessages();
 		}
 
 		public async Task StopServerAsync(IProgress<string> prog)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf
@@ -11,6 +12,7 @@ namespace Dwarrowdelf
 		bool IsConnected { get; }
 
 		bool TryGetMessage(out Message msg);
+		Task<Message> GetMessageAsync();
 
 		void Send(Message msg);
 

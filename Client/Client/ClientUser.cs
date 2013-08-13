@@ -66,8 +66,6 @@ namespace Dwarrowdelf.Client
 			m_connection = connection;
 		}
 
-		TaskCompletionSource<bool> m_logonTcs;
-
 		// XXX add cancellationtoken
 		public async Task LogOn(string name, IProgress<string> prog)
 		{
@@ -78,28 +76,45 @@ namespace Dwarrowdelf.Client
 
 			prog.Report("Logging in");
 
-			m_syncCtx = SynchronizationContext.Current;
-
-			m_connection.NewMessageEvent += _OnNewMessages;
-
-			m_logonTcs = new TaskCompletionSource<bool>();
-			var delayCts = new CancellationTokenSource();
-
 			Send(new Messages.LogOnRequestMessage() { Name = name });
-
-			var completedTask = await Task.WhenAny(m_logonTcs.Task, Task.Delay(TimeSpan.FromSeconds(60), delayCts.Token));
 
 			prog.Report("Waiting for logon reply");
 
-			if (completedTask != m_logonTcs.Task)
-				throw new TimeoutException("logon timeout");
+			bool ok = false;
 
-			delayCts.Cancel();
-			m_logonTcs = null;
+			while (true)
+			{
+				var msg = await m_connection.GetMessageAsync();
+
+				if (msg == null)
+					break;
+
+				InvokeMessageHandler((ClientMessage)msg);
+
+				if (msg is LogOnReplyEndMessage)
+				{
+					ok = true;
+					break;
+				}
+			}
+
+			if (m_connection.IsConnected == false)
+				throw new Exception("Disconnected");
+
+			if (!ok)
+				throw new Exception("No LogOnReplyEnd");
 
 			m_state = ClientUserState.LoggedIn;
 
 			prog.Report("Logged in");
+		}
+
+		public void StartProcessingMessages()
+		{
+			m_syncCtx = SynchronizationContext.Current;
+
+			m_connection.NewMessageEvent += _OnNewMessages;
+			m_syncCtx.Post(OnNewMessages, null);
 		}
 
 		public void Send(ServerMessage msg)
@@ -198,7 +213,6 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(LogOnReplyEndMessage msg)
 		{
-			m_logonTcs.SetResult(true);
 		}
 
 		void HandleMessage(LogOutReplyMessage msg)

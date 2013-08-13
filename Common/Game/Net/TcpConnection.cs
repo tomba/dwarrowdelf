@@ -90,6 +90,40 @@ namespace Dwarrowdelf
 			return m_msgQueue.TryDequeue(out msg);
 		}
 
+		public async Task<Message> GetMessageAsync()
+		{
+			Message msg;
+
+			if (TryGetMessage(out msg))
+				return msg;
+
+			TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+
+			Action handler = () =>
+			{
+				tcs.TrySetResult(true);
+			};
+
+			this.NewMessageEvent += handler;
+
+			if (TryGetMessage(out msg) == false)
+			{
+				await tcs.Task;
+
+				if (TryGetMessage(out msg) == false)
+				{
+					if (this.IsConnected == false)
+						return null;
+
+					throw new Exception();
+				}
+			}
+
+			this.NewMessageEvent -= handler;
+
+			return msg;
+		}
+
 		void DeserializerMain()
 		{
 			try
