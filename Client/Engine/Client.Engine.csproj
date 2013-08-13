@@ -44,11 +44,14 @@
     <Compile Include="ChangeHandler.cs" />
     <Compile Include="ClientNetStatistics.cs" />
     <Compile Include="ClientSaveHelper.cs" />
+    <Compile Include="ClientUser.cs" />
     <Compile Include="ConnectionType.cs" />
+    <Compile Include="ConnectManager.cs" />
     <Compile Include="EmbeddedServer.cs" />
     <Compile Include="IPRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportHandler.cs" />
+    <Compile Include="TurnHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">

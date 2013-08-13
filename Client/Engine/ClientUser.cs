@@ -10,7 +10,7 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class ClientUser
+	public sealed class ClientUser
 	{
 		static Dictionary<Type, Action<ClientUser, ClientMessage>> s_handlerMap;
 

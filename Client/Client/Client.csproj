@@ -241,12 +241,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="ClientConfig.cs" />
-    <Compile Include="ConnectManager.cs" />
     <Compile Include="DebugScriptMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Selectables.cs" />
     <Compile Include="TileGraphics.cs" />
-    <Compile Include="TurnHandler.cs" />
     <Compile Include="UI\ClientTools.cs" />
     <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
     <Compile Include="UI\MainWindow\FocusedObjectStats.xaml.cs">
@@ -413,7 +411,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="ClientUser.cs" />
     <Resource Include="TileSet\TileSet.png" />
     <None Include="TileSet\DefaultTileSetVectors.design" />
     <None Include="TileSet\DefaultTileSetBitmaps.png" />

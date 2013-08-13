@@ -9,7 +9,7 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class ConnectManager
+	public sealed class ConnectManager
 	{
 		public event Action<ClientUser> UserConnected;
 

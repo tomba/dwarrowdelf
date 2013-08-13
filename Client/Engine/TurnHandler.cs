@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	class TurnHandler
+	public sealed class TurnHandler
 	{
 		World m_world;
 		ClientUser m_user;
