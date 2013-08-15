@@ -13,8 +13,7 @@ namespace Dwarrowdelf
 {
 	public class PipeConnection : IConnection
 	{
-		PipeStream m_pipeStream;
-		BufferedStream m_stream;
+		PipeStream m_stream;
 
 		Thread m_deserializerThread;
 
@@ -22,7 +21,9 @@ namespace Dwarrowdelf
 
 		public event Action NewMessageEvent;
 
-		BlockingCollection<Message> m_msgQueue = new BlockingCollection<Message>();
+		ConcurrentQueue<Message> m_msgQueue = new ConcurrentQueue<Message>();
+
+		volatile bool m_isConnected;
 
 		public PipeConnection(PipeStream stream)
 		{
@@ -30,8 +31,9 @@ namespace Dwarrowdelf
 
 			trace.TraceInformation("New Connection");
 
-			m_pipeStream = stream;
-			m_stream = new BufferedStream(m_pipeStream);
+			m_isConnected = true;
+
+			m_stream = stream;
 
 			m_deserializerThread = new Thread(DeserializerMain);
 			m_deserializerThread.Start();
@@ -60,25 +62,54 @@ namespace Dwarrowdelf
 			if (disposing)
 			{
 				// Managed cleanup code here, while managed refs still valid
-				DH.Dispose(ref m_pipeStream);
 				DH.Dispose(ref m_stream);
-				DH.Dispose(ref m_msgQueue);
 			}
 
 			m_disposed = true;
 		}
 		#endregion
 
-		public bool IsConnected { get { return m_pipeStream.IsConnected; } }
+		public bool IsConnected { get { return m_isConnected; } }
 
 		public bool TryGetMessage(out Message msg)
 		{
-			return m_msgQueue.TryTake(out msg);
+			return m_msgQueue.TryDequeue(out msg);
 		}
 
-		public Task<Message> GetMessageAsync()
+		public async Task<Message> GetMessageAsync()
 		{
-			throw new NotImplementedException();
+			Message msg;
+
+			if (TryGetMessage(out msg))
+				return msg;
+
+			TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+
+			Action handler = () =>
+			{
+				tcs.TrySetResult(true);
+			};
+
+			this.NewMessageEvent += handler;
+
+			if (TryGetMessage(out msg) == false)
+			{
+				await tcs.Task;
+
+				if (TryGetMessage(out msg) == false)
+				{
+					Thread.MemoryBarrier();
+
+					if (this.IsConnected == false)
+						return null;
+
+					throw new Exception();
+				}
+			}
+
+			this.NewMessageEvent -= handler;
+
+			return msg;
 		}
 
 		void DeserializerMain()
@@ -89,7 +120,7 @@ namespace Dwarrowdelf
 				{
 					var msg = Serializer.Deserialize(m_stream);
 
-					m_msgQueue.Add(msg);
+					m_msgQueue.Enqueue(msg);
 
 					var ev = this.NewMessageEvent;
 					if (ev != null)
@@ -98,13 +129,15 @@ namespace Dwarrowdelf
 			}
 			catch (Exception e)
 			{
+				m_isConnected = false;
+
+				m_stream.Close();
+
 				trace.TraceInformation("[RX]: error {0}", e.Message);
 
 				var ev = this.NewMessageEvent;
 				if (ev != null)
 					ev();
-
-				m_msgQueue.CompleteAdding();
 			}
 
 			trace.TraceVerbose("Deserializer thread ending");
@@ -122,7 +155,10 @@ namespace Dwarrowdelf
 		{
 			trace.TraceInformation("Disconnect");
 
+			m_isConnected = false;
+
 			m_stream.Close();
+
 			m_deserializerThread.Join();
 
 			trace.TraceInformation("Disconnect done");

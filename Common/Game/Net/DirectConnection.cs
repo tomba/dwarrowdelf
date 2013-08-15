@@ -12,7 +12,7 @@ namespace Dwarrowdelf
 	{
 		DirectConnection m_remoteConnection;
 
-		BlockingCollection<Message> m_msgQueue = new BlockingCollection<Message>();
+		ConcurrentQueue<Message> m_msgQueue = new ConcurrentQueue<Message>();
 
 		public event Action NewMessageEvent;
 
@@ -50,7 +50,6 @@ namespace Dwarrowdelf
 			if (disposing)
 			{
 				// Managed cleanup code here, while managed refs still valid
-				DH.Dispose(ref m_msgQueue);
 			}
 
 			m_disposed = true;
@@ -69,17 +68,46 @@ namespace Dwarrowdelf
 
 		public bool TryGetMessage(out Message msg)
 		{
-			return m_msgQueue.TryTake(out msg);
+			return m_msgQueue.TryDequeue(out msg);
 		}
 
-		public Task<Message> GetMessageAsync()
+		public async Task<Message> GetMessageAsync()
 		{
-			throw new NotImplementedException();
+			Message msg;
+
+			if (TryGetMessage(out msg))
+				return msg;
+
+			TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+
+			Action handler = () =>
+			{
+				tcs.TrySetResult(true);
+			};
+
+			this.NewMessageEvent += handler;
+
+			if (TryGetMessage(out msg) == false)
+			{
+				await tcs.Task;
+
+				if (TryGetMessage(out msg) == false)
+				{
+					if (this.IsConnected == false)
+						return null;
+
+					throw new Exception();
+				}
+			}
+
+			this.NewMessageEvent -= handler;
+
+			return msg;
 		}
 
 		void Enqueue(Message msg)
 		{
-			m_msgQueue.Add(msg);
+			m_msgQueue.Enqueue(msg);
 
 			var ev = this.NewMessageEvent;
 			if (ev != null)

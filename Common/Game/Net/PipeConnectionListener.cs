@@ -23,7 +23,8 @@ namespace Dwarrowdelf
 
 		static void NewAccept()
 		{
-			var stream = new NamedPipeServerStream("Dwarrowdelf.Pipe", PipeDirection.InOut, 4, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+			var stream = new NamedPipeServerStream("Dwarrowdelf.Pipe", PipeDirection.InOut, 4, PipeTransmissionMode.Byte,
+				PipeOptions.Asynchronous);
 
 			stream.BeginWaitForConnection(AcceptCallback, stream);
 		}
