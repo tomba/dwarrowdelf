@@ -120,7 +120,7 @@ namespace Dwarrowdelf.Client.TileControl
 			var context = m_device.ImmediateContext;
 
 			context.OutputMerger.SetTargets(m_renderTargetView);
-			context.Rasterizer.SetViewports(new Viewport(0, 0, renderSize.Width, renderSize.Height, 0.0f, 1.0f));
+			context.Rasterizer.SetViewport(new ViewportF(0, 0, renderSize.Width, renderSize.Height, 0.0f, 1.0f));
 
 			m_renderSize = renderSize;
 		}
