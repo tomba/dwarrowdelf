@@ -104,7 +104,12 @@ namespace PerfTest
 
 			var lps = loops / (sw.ElapsedMilliseconds / 1000.0);
 
-			return (int)(lps * time.TotalSeconds);
+			var totalLoops = (int)(lps * time.TotalSeconds);
+
+			if (totalLoops == 0)
+				totalLoops = 1;
+
+			return totalLoops;
 		}
 	}
 }
