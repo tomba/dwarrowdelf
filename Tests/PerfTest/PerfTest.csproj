@@ -87,7 +87,11 @@
     <Compile Include="ArrayAccess.cs" />
     <Compile Include="GenericIFaceAccess.cs" />
     <Compile Include="EnumConv.cs" />
-    <Compile Include="IntPointTest.cs" />
+    <Compile Include="IntPointTest.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IntPointTest.tt</DependentUpon>
+    </Compile>
     <Compile Include="IntPointTestDataTypes.cs" />
     <Compile Include="StructAccess.cs" />
     <Compile Include="SkillMap.cs" />
@@ -98,6 +102,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="IntPointTest.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IntPointTest.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

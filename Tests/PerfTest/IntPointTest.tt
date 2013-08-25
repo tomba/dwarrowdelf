@@ -1,0 +1,89 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var classes = new string [] {"Int", "Short", "Long", "Int2"}; #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
+namespace PerfTest
+{
+	class IntPointTestSuite : TestSuite
+	{
+		public override void DoTests()
+		{
+			var tests = new ITest[] {
+<# foreach (string c in classes) { #>
+				new IntPoint<#= c #>ForTest(),
+<# } #>
+<# foreach (string c in classes) { #>
+				new IntPoint<#= c #>ForEachTest(),
+<# } #>
+			};
+
+			foreach (var test in tests)
+				RunTest(test);
+		}
+
+<# foreach (string c in classes) { #>
+		class IntPoint<#= c #>ForTest : IntPoint<#= c #>TestBase, ITest
+		{
+			public IntPoint3D m_p;
+
+			public void DoTest(int loops)
+			{
+				while (loops-- > 0)
+				{
+					IntPoint3D r = new IntPoint3D();
+
+					for (int z = 0; z < ZLOOPS; ++z)
+						for (int y = 0; y < YLOOPS; ++y)
+							for (int x = 0; x < XLOOPS; ++x)
+							{
+								var p = new IntPoint3D(x, y, z);
+								var q = new IntPoint3D(p.X, -1, -1);
+								if (r != q)
+									r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+								r = Add(r, p);
+							}
+
+					m_p = r;
+				}
+			}
+		}
+
+<# } #>
+
+<# foreach (string c in classes) { #>
+		class IntPoint<#= c #>ForEachTest : IntPoint<#= c #>TestBase, ITest
+		{
+			public IntPoint3D m_p;
+
+			public void DoTest(int loops)
+			{
+				while (loops-- > 0)
+				{
+					IntPoint3D r = new IntPoint3D();
+
+					foreach (var p in IntPoint3D.Range(XLOOPS, YLOOPS, ZLOOPS))
+					{
+						var q = new IntPoint3D(p.X, -1, -1);
+						if (r != q)
+							r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+						r = Add(r, p);
+					}
+
+					m_p = r;
+				}
+			}
+		}
+
+<# } #>
+	}
+}
