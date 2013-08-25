@@ -57,8 +57,8 @@ namespace Dwarrowdelf.Client.UI
 			var d2 = c2 - m_c2;
 
 			tb1.Text = String.Format("GC0 {0}, {1}/s", c0, d0);
-			tb2.Text = String.Format("GC1 {0}, {1}/s", c1, d2);
-			tb3.Text = String.Format("GC2 {0}, {1}/s", c2, d1);
+			tb2.Text = String.Format("GC1 {0}, {1}/s", c1, d1);
+			tb3.Text = String.Format("GC2 {0}, {1}/s", c2, d2);
 
 			m_c0 = c0;
 			m_c1 = c1;
