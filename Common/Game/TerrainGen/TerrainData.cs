@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.IO;
 
 namespace Dwarrowdelf.TerrainGen
 {
@@ -127,6 +128,67 @@ namespace Dwarrowdelf.TerrainGen
 		public void SetTileDataNoHeight(IntPoint3 p, TileData data)
 		{
 			this.TileGrid[p.Z, p.Y, p.X] = data;
+		}
+
+		public void SaveTerrain(string path)
+		{
+			using (var stream = File.Create(path))
+			using (var bw = new BinaryWriter(stream))
+			{
+				bw.Write(this.Size.Width);
+				bw.Write(this.Size.Height);
+				bw.Write(this.Size.Depth);
+
+				int w = this.Width;
+				int h = this.Height;
+				int d = this.Depth;
+
+				for (int z = 0; z < d; ++z)
+					for (int y = 0; y < h; ++y)
+						for (int x = 0; x < w; ++x)
+							bw.Write(this.TileGrid[z, y, x].Raw);
+
+				for (int y = 0; y < h; ++y)
+					for (int x = 0; x < w; ++x)
+						bw.Write(this.LevelMap[y, x]);
+			}
+		}
+
+		public static TerrainData LoadTerrain(string path, IntSize3 expectedSize)
+		{
+			using (var stream = File.OpenRead(path))
+			using (var br = new BinaryReader(stream))
+			{
+				int w = br.ReadInt32();
+				int h = br.ReadInt32();
+				int d = br.ReadInt32();
+
+				var size = new IntSize3(w, h, d);
+
+				if (size != expectedSize)
+					return null;
+
+				var terrain = new TerrainData(size);
+
+				var grid = terrain.TileGrid;
+				for (int z = 0; z < d; ++z)
+				{
+					for (int y = 0; y < h; ++y)
+					{
+						for (int x = 0; x < w; ++x)
+						{
+							grid[z, y, x].Raw = br.ReadUInt64();
+						}
+					}
+				}
+
+				var lm = terrain.LevelMap;
+				for (int y = 0; y < h; ++y)
+					for (int x = 0; x < w; ++x)
+						lm[y, x] = br.ReadByte();
+
+				return terrain;
+			}
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define CACHE_TERRAIN
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +11,7 @@ using Dwarrowdelf.Server;
 using Dwarrowdelf.TerrainGen;
 using System.Threading.Tasks;
 using System.Threading;
+using System.IO;
 
 namespace Dwarrowdelf.Server.Fortress
 {
@@ -19,7 +22,14 @@ namespace Dwarrowdelf.Server.Fortress
 
 		public static void InitializeWorld(World world)
 		{
-			var terrain = CreateTerrain();
+			int side = MyMath.Pow2(MAP_SIZE);
+			var size = new IntSize3(side, side, MAP_DEPTH);
+
+#if CACHE_TERRAIN
+			var terrain = CreateOrLoadTerrain(size);
+#else
+			var terrain = CreateTerrain(size);
+#endif
 
 			// XXX this is where WorldPopulator creates some buildings
 			var p2 = new IntPoint2(terrain.Width / 2, terrain.Height / 2);
@@ -33,13 +43,35 @@ namespace Dwarrowdelf.Server.Fortress
 			MountainWorldPopulator.FinalizeEnv(env);
 		}
 
-		static TerrainData CreateTerrain()
+		static TerrainData CreateOrLoadTerrain(IntSize3 size)
+		{
+			string file = Path.Combine(Directory.GetCurrentDirectory(), "terrain.dat");
+
+			TerrainData terrain = null;
+
+			if (File.Exists(file))
+			{
+				try
+				{
+					terrain = TerrainData.LoadTerrain(file, size);
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			if (terrain == null)
+			{
+				terrain = CreateTerrain(size);
+				terrain.SaveTerrain(file);
+			}
+			return terrain;
+		}
+
+		static TerrainData CreateTerrain(IntSize3 size)
 		{
 			//var random = Helpers.Random;
 			var random = new Random(1);
-
-			int side = MyMath.Pow2(MAP_SIZE);
-			var size = new IntSize3(side, side, MAP_DEPTH);
 
 			var terrain = new TerrainData(size);
 
