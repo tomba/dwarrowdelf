@@ -17,7 +17,7 @@ namespace PerfTest
 	abstract class IntPointIntTestBase : IntPointTestBase
 	{
 		[MethodImpl(MethodImplOptions.NoInlining)]
-		protected IntPoint3D Add(IntPoint3D a, IntPoint3D b)
+		protected static IntPoint3D Add(IntPoint3D a, IntPoint3D b)
 		{
 			return new IntPoint3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}
@@ -117,7 +117,7 @@ namespace PerfTest
 	abstract class IntPointShortTestBase : IntPointTestBase
 	{
 		[MethodImpl(MethodImplOptions.NoInlining)]
-		protected IntPoint3D Add(IntPoint3D a, IntPoint3D b)
+		protected static IntPoint3D Add(IntPoint3D a, IntPoint3D b)
 		{
 			return new IntPoint3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}
@@ -217,7 +217,7 @@ namespace PerfTest
 	abstract class IntPointLongTestBase : IntPointTestBase
 	{
 		[MethodImpl(MethodImplOptions.NoInlining)]
-		protected IntPoint3D Add(IntPoint3D a, IntPoint3D b)
+		protected static IntPoint3D Add(IntPoint3D a, IntPoint3D b)
 		{
 			return new IntPoint3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}
@@ -330,7 +330,7 @@ namespace PerfTest
 	abstract class IntPointInt2TestBase : IntPointTestBase
 	{
 		[MethodImpl(MethodImplOptions.NoInlining)]
-		protected IntPoint3D Add(IntPoint3D a, IntPoint3D b)
+		protected static IntPoint3D Add(IntPoint3D a, IntPoint3D b)
 		{
 			return new IntPoint3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}
