@@ -7,14 +7,7 @@ using System.Threading.Tasks;
 
 namespace PerfTest
 {
-	abstract class IntPointTestBase
-	{
-		public int XLOOPS = 128;
-		public int YLOOPS = 128;
-		public int ZLOOPS = 16;
-	}
-
-	abstract class IntPointIntTestBase : IntPointTestBase
+	abstract class IntPointIntTestBase
 	{
 		[MethodImpl(MethodImplOptions.NoInlining)]
 		protected static IntPoint3D Add(IntPoint3D a, IntPoint3D b)
@@ -114,7 +107,7 @@ namespace PerfTest
 		#endregion
 	}
 
-	abstract class IntPointShortTestBase : IntPointTestBase
+	abstract class IntPointShortTestBase
 	{
 		[MethodImpl(MethodImplOptions.NoInlining)]
 		protected static IntPoint3D Add(IntPoint3D a, IntPoint3D b)
@@ -214,7 +207,7 @@ namespace PerfTest
 		#endregion
 	}
 
-	abstract class IntPointLongTestBase : IntPointTestBase
+	abstract class IntPointLongTestBase
 	{
 		[MethodImpl(MethodImplOptions.NoInlining)]
 		protected static IntPoint3D Add(IntPoint3D a, IntPoint3D b)
@@ -315,7 +308,7 @@ namespace PerfTest
 		#endregion
 	}
 
-	abstract class IntPointInt2TestBase : IntPointTestBase
+	abstract class IntPointInt2TestBase
 	{
 		[MethodImpl(MethodImplOptions.NoInlining)]
 		protected static IntPoint3D Add(IntPoint3D a, IntPoint3D b)

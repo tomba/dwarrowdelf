@@ -16,6 +16,10 @@ namespace PerfTest
 {
 	class IntPointTestSuite : TestSuite
 	{
+		const int XLOOPS = 128;
+		const int YLOOPS = 128;
+		const int ZLOOPS = 16;
+
 		public override void DoTests()
 		{
 			var tests = new ITest[] {
