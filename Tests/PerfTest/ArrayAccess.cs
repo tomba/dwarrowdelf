@@ -17,9 +17,9 @@ namespace PerfTest
 		public override void DoTests()
 		{
 			RunTest(new Safe1DimArrayAccessTest());
-			RunTest(new Safe2DimArrayAccessTest());
+			RunTest(new Safe3DimArrayAccessTest());
 			RunTest(new Unsafe1DimArrayAccessTest());
-			RunTest(new Unsafe2DimArrayAccessTest());
+			RunTest(new Unsafe3DimArrayAccessTest());
 		}
 
 		class Safe1DimArrayAccessTest : ITest
@@ -54,7 +54,7 @@ namespace PerfTest
 			}
 		}
 
-		class Safe2DimArrayAccessTest : ITest
+		class Safe3DimArrayAccessTest : ITest
 		{
 			int[, ,] m_array = new int[c_depth, c_height, c_width];
 
@@ -112,7 +112,7 @@ namespace PerfTest
 			}
 		}
 
-		class Unsafe2DimArrayAccessTest : ITest
+		class Unsafe3DimArrayAccessTest : ITest
 		{
 			int[, ,] m_array = new int[c_depth, c_height, c_width];
 
