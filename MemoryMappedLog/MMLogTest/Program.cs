@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -45,7 +46,8 @@ namespace MemoryMappedLog
 		{
 			for (int i = 0; i < 1000; ++i)
 			{
-				MMLog.Append(i, "Client", "CMain", "Foo", String.Format("qwe {0}", i));
+				MMLog.Append(TraceEventType.Information, i, LogComponent.Client,
+					"CMain", "Foo", String.Format("qwe {0}", i));
 			}
 
 			s_exit = true;
