@@ -13,9 +13,10 @@ namespace PerfTest
 		{
 			var tests = new TestSuite[] 
 			{
+				new MapDataTestSuite(),
 				//new GenericIFaceAccessTestSuite(),
 				//new EnumConvTestSuite(),
-				new IntPointTestSuite(),
+				//new IntPointTestSuite(),
 				//new ArrayAccessTestSuite(),
 				//new StructAccessTestSuite(),
 				//new SkillMapTestSuite(),
