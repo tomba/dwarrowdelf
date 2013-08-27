@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Server
 			{
 				for (int z = this.Size.Depth - 1; z >= 0; --z)
 				{
-					if (m_tileGrid[z, p.Y, p.X].IsEmpty == false)
+					if (GetTileData(p.X, p.Y, z).IsEmpty == false)
 					{
 						levelMap[p.Y, p.X] = (byte)z;
 						break;
@@ -252,22 +252,22 @@ namespace Dwarrowdelf.Server
 
 		public TerrainID GetTerrainID(IntPoint3 p)
 		{
-			return m_tileGrid[p.Z, p.Y, p.X].TerrainID;
+			return GetTileData(p).TerrainID;
 		}
 
 		public MaterialID GetTerrainMaterialID(IntPoint3 p)
 		{
-			return m_tileGrid[p.Z, p.Y, p.X].TerrainMaterialID;
+			return GetTileData(p).TerrainMaterialID;
 		}
 
 		public InteriorID GetInteriorID(IntPoint3 p)
 		{
-			return m_tileGrid[p.Z, p.Y, p.X].InteriorID;
+			return GetTileData(p).InteriorID;
 		}
 
 		public MaterialID GetInteriorMaterialID(IntPoint3 p)
 		{
-			return m_tileGrid[p.Z, p.Y, p.X].InteriorMaterialID;
+			return GetTileData(p).InteriorMaterialID;
 		}
 
 		public TerrainInfo GetTerrain(IntPoint3 p)
@@ -295,14 +295,19 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid[p.Z, p.Y, p.X];
 		}
 
+		public TileData GetTileData(int x, int y, int z)
+		{
+			return m_tileGrid[x, y, z];
+		}
+
 		public byte GetWaterLevel(IntPoint3 p)
 		{
-			return m_tileGrid[p.Z, p.Y, p.X].WaterLevel;
+			return GetTileData(p).WaterLevel;
 		}
 
 		public bool GetTileFlags(IntPoint3 p, TileFlags flags)
 		{
-			return (m_tileGrid[p.Z, p.Y, p.X].Flags & flags) != 0;
+			return (GetTileData(p).Flags & flags) != 0;
 		}
 
 		/// <summary>

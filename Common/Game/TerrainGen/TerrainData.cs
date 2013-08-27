@@ -51,22 +51,22 @@ namespace Dwarrowdelf.TerrainGen
 
 		public TerrainID GetTerrainID(IntPoint3 p)
 		{
-			return this.TileGrid[p.Z, p.Y, p.X].TerrainID;
+			return GetTileData(p).TerrainID;
 		}
 
 		public MaterialID GetTerrainMaterialID(IntPoint3 p)
 		{
-			return this.TileGrid[p.Z, p.Y, p.X].TerrainMaterialID;
+			return GetTileData(p).TerrainMaterialID;
 		}
 
 		public InteriorID GetInteriorID(IntPoint3 p)
 		{
-			return this.TileGrid[p.Z, p.Y, p.X].InteriorID;
+			return GetTileData(p).InteriorID;
 		}
 
 		public MaterialID GetInteriorMaterialID(IntPoint3 p)
 		{
-			return this.TileGrid[p.Z, p.Y, p.X].InteriorMaterialID;
+			return GetTileData(p).InteriorMaterialID;
 		}
 
 		public TerrainInfo GetTerrain(IntPoint3 p)
@@ -96,7 +96,7 @@ namespace Dwarrowdelf.TerrainGen
 
 		public byte GetWaterLevel(IntPoint3 p)
 		{
-			return this.TileGrid[p.Z, p.Y, p.X].WaterLevel;
+			return GetTileData(p).WaterLevel;
 		}
 
 		public void SetTileData(IntPoint3 p, TileData data)
@@ -122,7 +122,7 @@ namespace Dwarrowdelf.TerrainGen
 				}
 			}
 
-			this.TileGrid[p.Z, p.Y, p.X] = data;
+			SetTileDataNoHeight(p, data);
 		}
 
 		public void SetTileDataNoHeight(IntPoint3 p, TileData data)
