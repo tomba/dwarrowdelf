@@ -168,7 +168,7 @@ namespace Dwarrowdelf.TerrainGen
 
 				for (int y = 0; y < h; ++y)
 					for (int x = 0; x < w; ++x)
-						bw.Write(GetSurfaceLevel(x, y));
+						bw.Write((byte)GetSurfaceLevel(x, y));
 			}
 		}
 
