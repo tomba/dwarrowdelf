@@ -62,9 +62,6 @@ namespace Dwarrowdelf.TerrainGen
 
 		public static void CreateVegetation(TerrainData terrain, Random random, int vegetationLimit)
 		{
-			var grid = terrain.TileGrid;
-			var heightMap = terrain.LevelMap;
-
 			int w = terrain.Width;
 			int h = terrain.Height;
 
@@ -78,14 +75,14 @@ namespace Dwarrowdelf.TerrainGen
 
 			terrain.Size.Plane.Range().AsParallel().ForAll(p2d =>
 			{
-				int z = heightMap[p2d.Y, p2d.X];
+				int z = terrain.GetSurfaceLevel(p2d);
 
 				var p = new IntPoint3(p2d, z);
 
 				if (z >= vegetationLimit)
 					return;
 
-				var td = grid[p.Z, p.Y, p.X];
+				var td = terrain.GetTileData(p);
 
 				if (td.WaterLevel > 0)
 					return;
@@ -121,7 +118,7 @@ namespace Dwarrowdelf.TerrainGen
 					td.InteriorMaterialID = grassMaterials[r.Next(grassMaterials.Length)].ID;
 				}
 
-				grid[p.Z, p.Y, p.X] = td;
+				terrain.SetTileDataNoHeight(p, td);
 			});
 		}
 	}

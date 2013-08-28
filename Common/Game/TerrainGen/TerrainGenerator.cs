@@ -42,8 +42,6 @@ namespace Dwarrowdelf.TerrainGen
 
 			DiamondSquare.Render(heightMap, corners, range, h, m_random, out min, out max);
 
-			var levelMap = m_data.LevelMap;
-
 			Parallel.For(0, m_size.Height, y =>
 				{
 					double d = max - min;
@@ -62,7 +60,7 @@ namespace Dwarrowdelf.TerrainGen
 						v *= m_size.Depth / 2;
 						v += m_size.Depth / 2 - 1;
 
-						levelMap[y, x] = (byte)Math.Round(v);
+						m_data.SetSurfaceLevel(x, y, (int)Math.Round(v));
 					}
 				});
 		}

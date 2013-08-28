@@ -71,8 +71,7 @@ namespace Dwarrowdelf.Server
 			this.Version = 1;
 			this.VisibilityMode = visMode;
 
-			m_tileGrid = terrain.TileGrid;
-			m_levelMap = terrain.LevelMap;
+			terrain.GetData(out m_tileGrid, out m_levelMap);
 
 			var size = terrain.Size;
 			this.Width = size.Width;
