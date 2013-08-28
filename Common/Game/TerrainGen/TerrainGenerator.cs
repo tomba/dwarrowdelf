@@ -147,15 +147,15 @@ namespace Dwarrowdelf.TerrainGen
 
 							td.TerrainMaterialID = td.InteriorMaterialID = layers[_z];
 
-							SetTileDataNoHeight(p, td);
+							m_data.SetTileDataNoHeight(p, td);
 						}
 						else if (z == surface)
 						{
 							td.TerrainID = TerrainID.NaturalFloor;
-							td.TerrainMaterialID = GetTileData(new IntPoint3(x, y, z - 1)).TerrainMaterialID;
+							td.TerrainMaterialID = m_data.GetTileData(new IntPoint3(x, y, z - 1)).TerrainMaterialID;
 							td.InteriorID = InteriorID.Empty;
 							td.InteriorMaterialID = MaterialID.Undefined;
-							SetTileData(p, td);
+							m_data.SetTileData(p, td);
 						}
 						else
 						{
@@ -163,7 +163,7 @@ namespace Dwarrowdelf.TerrainGen
 							td.TerrainMaterialID = MaterialID.Undefined;
 							td.InteriorID = InteriorID.Empty;
 							td.InteriorMaterialID = MaterialID.Undefined;
-							SetTileDataNoHeight(p, td);
+							m_data.SetTileDataNoHeight(p, td);
 						}
 					}
 				}
@@ -252,13 +252,13 @@ namespace Dwarrowdelf.TerrainGen
 			if (!m_size.Contains(p))
 				return;
 
-			var td = GetTileData(p);
+			var td = m_data.GetTileData(p);
 
 			if (td.InteriorID != InteriorID.NaturalWall)
 				return;
 
 			td.InteriorMaterialID = oreMaterialID;
-			SetTileDataNoHeight(p, td);
+			m_data.SetTileDataNoHeight(p, td);
 		}
 
 		int GetRandomInt(int max)
@@ -271,21 +271,6 @@ namespace Dwarrowdelf.TerrainGen
 			return m_random.NextDouble();
 		}
 
-		void SetTileData(IntPoint3 p, TileData td)
-		{
-			m_data.SetTileData(p, td);
-		}
-
-		void SetTileDataNoHeight(IntPoint3 p, TileData td)
-		{
-			m_data.SetTileDataNoHeight(p, td);
-		}
-
-		TileData GetTileData(IntPoint3 p)
-		{
-			return m_data.GetTileData(p);
-		}
-
 		void CreateOreCluster(IntPoint3 p, MaterialID oreMaterialID)
 		{
 			CreateOreCluster(p, oreMaterialID, GetRandomInt(6) + 1);
@@ -296,7 +281,7 @@ namespace Dwarrowdelf.TerrainGen
 			if (!m_size.Contains(p))
 				return;
 
-			var td = GetTileData(p);
+			var td = m_data.GetTileData(p);
 
 			if (td.InteriorID != InteriorID.NaturalWall)
 				return;
@@ -305,7 +290,7 @@ namespace Dwarrowdelf.TerrainGen
 				return;
 
 			td.InteriorMaterialID = oreMaterialID;
-			SetTileDataNoHeight(p, td);
+			m_data.SetTileDataNoHeight(p, td);
 
 			if (count > 0)
 			{
