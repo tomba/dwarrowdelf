@@ -100,6 +100,11 @@ namespace Dwarrowdelf.TerrainGen
 			return Materials.GetMaterial(GetInteriorMaterialID(p));
 		}
 
+		public TileData GetTileData(int x, int y, int z)
+		{
+			return m_tileGrid[z, y, x];
+		}
+
 		public TileData GetTileData(IntPoint3 p)
 		{
 			return m_tileGrid[p.Z, p.Y, p.X];
@@ -112,12 +117,14 @@ namespace Dwarrowdelf.TerrainGen
 
 		public void SetTileData(IntPoint3 p, TileData data)
 		{
-			if (data.IsEmpty == false && m_levelMap[p.Y, p.X] < p.Z)
+			int oldLevel = GetSurfaceLevel(p.X, p.Y);
+
+			if (data.IsEmpty == false && oldLevel < p.Z)
 			{
 				Debug.Assert(p.Z >= 0 && p.Z < 256);
-				m_levelMap[p.Y, p.X] = (byte)p.Z;
+				SetSurfaceLevel(p.X, p.Y, p.Z);
 			}
-			else if (data.IsEmpty && m_levelMap[p.Y, p.X] == p.Z)
+			else if (data.IsEmpty && oldLevel == p.Z)
 			{
 				if (p.Z == 0)
 					throw new Exception();
@@ -127,7 +134,7 @@ namespace Dwarrowdelf.TerrainGen
 					if (GetTileData(new IntPoint3(p.X, p.Y, z)).IsEmpty == false)
 					{
 						Debug.Assert(z >= 0 && z < 256);
-						m_levelMap[p.Y, p.X] = (byte)z;
+						SetSurfaceLevel(p.X, p.Y, z);
 						break;
 					}
 				}
@@ -157,11 +164,11 @@ namespace Dwarrowdelf.TerrainGen
 				for (int z = 0; z < d; ++z)
 					for (int y = 0; y < h; ++y)
 						for (int x = 0; x < w; ++x)
-							bw.Write(m_tileGrid[z, y, x].Raw);
+							bw.Write(GetTileData(x, y, z).Raw);
 
 				for (int y = 0; y < h; ++y)
 					for (int x = 0; x < w; ++x)
-						bw.Write(m_levelMap[y, x]);
+						bw.Write(GetSurfaceLevel(x, y));
 			}
 		}
 
