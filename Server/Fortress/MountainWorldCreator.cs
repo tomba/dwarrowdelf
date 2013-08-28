@@ -12,6 +12,7 @@ using Dwarrowdelf.TerrainGen;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Server.Fortress
 {
@@ -53,7 +54,10 @@ namespace Dwarrowdelf.Server.Fortress
 			{
 				try
 				{
+					var sw = Stopwatch.StartNew();
 					terrain = TerrainData.LoadTerrain(file, size);
+					sw.Stop();
+					Trace.TraceInformation("Load cached terrain {0} ms", sw.ElapsedMilliseconds);
 				}
 				catch (Exception)
 				{
@@ -63,7 +67,10 @@ namespace Dwarrowdelf.Server.Fortress
 			if (terrain == null)
 			{
 				terrain = CreateTerrain(size);
+				var sw = Stopwatch.StartNew();
 				terrain.SaveTerrain(file);
+				sw.Stop();
+				Trace.TraceInformation("Save cached terrain {0} ms", sw.ElapsedMilliseconds);
 			}
 			return terrain;
 		}
