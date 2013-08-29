@@ -31,9 +31,6 @@ namespace Dwarrowdelf.Server
 
 		public event Action WorkEnded;
 
-		// XXX hackish
-		public event Action HandleMessagesEvent;
-
 		[SaveGameProperty]
 		public int TickNumber { get; private set; }
 
@@ -91,9 +88,6 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 
 			this.IsWritable = true;
-
-			if (HandleMessagesEvent != null)
-				HandleMessagesEvent();
 
 			bool again = true;
 

@@ -229,7 +229,6 @@ namespace Dwarrowdelf.Server
 		{
 			this.World.TurnStarting += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
-			this.World.HandleMessagesEvent += OnHandleMessagesEvent;
 
 			PipeConnectionListener.StartListening(_OnNewConnection);
 			TcpConnectionListener.StartListening(_OnNewConnection);
@@ -242,7 +241,7 @@ namespace Dwarrowdelf.Server
 
 			// Enter the main loop
 
-			m_dispatcher.Run(this.World.Work);
+			m_dispatcher.Run(MainWork);
 
 			trace.TraceInformation("Server exiting");
 
@@ -250,7 +249,6 @@ namespace Dwarrowdelf.Server
 			TcpConnectionListener.StopListening();
 			PipeConnectionListener.StopListening();
 
-			this.World.HandleMessagesEvent -= OnHandleMessagesEvent;
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStarting -= OnTurnStart;
 
@@ -262,6 +260,19 @@ namespace Dwarrowdelf.Server
 			}
 
 			trace.TraceInformation("Server exit");
+		}
+
+		bool MainWork()
+		{
+			CheckNewConnections();
+
+			foreach (var player in m_players)
+			{
+				if (player.IsConnected)
+					player.HandleNewMessages();
+			}
+
+			return this.World.Work();
 		}
 
 		public void Stop()
@@ -310,17 +321,6 @@ namespace Dwarrowdelf.Server
 
 					HandleNewConnection(conn, request);
 				}
-			}
-		}
-
-		void OnHandleMessagesEvent()
-		{
-			CheckNewConnections();
-
-			foreach (var player in m_players)
-			{
-				if (player.IsConnected)
-					player.HandleNewMessages();
 			}
 		}
 
