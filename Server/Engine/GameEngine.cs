@@ -12,14 +12,20 @@ namespace Dwarrowdelf.Server
 	[Serializable]
 	sealed class GameConfig
 	{
-		// Require a player to be connected for ticks to proceed
+		/// <summary>
+		/// Require a player to be connected for ticks to proceed
+		/// </summary>
 		public bool RequirePlayer;
 
-		// Maximum time for one living to make its move. After this time has passed, the living
-		// will be skipped
+		/// <summary>
+		/// Maximum time for one living to make its move. After this time has passed, the living
+		/// will be skipped
+		/// </summary>
 		public TimeSpan MaxMoveTime;
 
-		// Minimum time between ticks. Ticks will never proceed faster than this.
+		/// <summary>
+		/// Minimum time between ticks. Ticks will never proceed faster than this.
+		/// </summary>
 		public TimeSpan MinTickTime;
 	}
 
