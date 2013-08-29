@@ -160,11 +160,9 @@ namespace Dwarrowdelf
 
 			int len = recvStream.ReadBytes;
 
-			uint magic =
-				(uint)recvStream.ReadByte() |
-				(uint)recvStream.ReadByte() << 8 |
-				(uint)recvStream.ReadByte() << 16 |
-				(uint)recvStream.ReadByte() << 24;
+			uint magic;
+
+			NetSerializer.Primitives.ReadPrimitive(recvStream, out magic);
 
 			if (magic != MAGIC)
 				throw new Exception();
@@ -220,10 +218,7 @@ namespace Dwarrowdelf
 
 					int len = stream.SentBytes;
 
-					stream.WriteByte((byte)((MAGIC >> 0) & 0xff));
-					stream.WriteByte((byte)((MAGIC >> 8) & 0xff));
-					stream.WriteByte((byte)((MAGIC >> 16) & 0xff));
-					stream.WriteByte((byte)((MAGIC >> 24) & 0xff));
+					NetSerializer.Primitives.WritePrimitive(stream, MAGIC);
 
 					Serializer.Serialize(stream, msg);
 
