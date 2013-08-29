@@ -77,7 +77,6 @@
     <Compile Include="MovableObject.cs" />
     <Compile Include="World\WorldObjects.cs" />
     <Compile Include="World\World.cs" />
-    <Compile Include="World\WorldInvoke.cs" />
     <Compile Include="World\WorldIronPython.cs" />
     <Compile Include="World\WorldLivings.cs" />
     <Compile Include="World\WorldLogger.cs" />

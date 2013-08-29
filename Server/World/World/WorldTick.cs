@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("State")]
 		WorldState m_state;
 
-		public bool IsTickOnGoing { get { return m_state == WorldState.TickOngoing; } }
+		public bool IsTickOnGoing { get { return m_state != WorldState.Idle; } }
 
 		bool m_okToStartTick = false;
 		bool m_proceedTurn = false;
@@ -93,7 +93,6 @@ namespace Dwarrowdelf.Server
 
 			if (m_state == WorldState.Idle)
 			{
-				m_preTickInvokeList.ProcessInvokeList();
 				m_livings.Process();
 
 				if (m_okToStartTick)
@@ -115,7 +114,8 @@ namespace Dwarrowdelf.Server
 			if (m_state == WorldState.TickDone)
 				EndTick();
 
-			this.IsWritable = false;
+			// XXX keep world writable for now
+			//this.IsWritable = false;
 
 			// no point in entering read lock here, as this thread is the only one that can get a write lock
 

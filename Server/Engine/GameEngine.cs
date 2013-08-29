@@ -324,6 +324,8 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		List<Tuple<IConnection, Messages.LogOnRequestMessage>> m_newPlayerList;
+
 		void HandleNewConnection(IConnection connection, Messages.LogOnRequestMessage request)
 		{
 			VerifyAccess();
@@ -337,10 +339,18 @@ namespace Dwarrowdelf.Server
 
 			if (player == null)
 			{
-				// This needs to be done at the start of new tick. Maybe add a list of new players,
-				// and handle the list in the start of each tick. And remove this invoke system.
-				m_world.BeginInvoke(new Action<IConnection, Messages.LogOnRequestMessage>(HandleNewPlayer), connection, request);
-				SignalWorld();
+				if (this.World.IsTickOnGoing)
+				{
+					if (m_newPlayerList == null)
+						m_newPlayerList = new List<Tuple<IConnection, Messages.LogOnRequestMessage>>();
+
+					// this will be handled in TickEnded callback
+					m_newPlayerList.Add(new Tuple<IConnection, Messages.LogOnRequestMessage>(connection, request));
+				}
+				else
+				{
+					HandleNewPlayer(connection, request);
+				}
 			}
 			else
 			{
@@ -445,6 +455,14 @@ namespace Dwarrowdelf.Server
 
 		void OnTickEnded()
 		{
+			if (m_newPlayerList != null && m_newPlayerList.Count > 0)
+			{
+				foreach (var tuple in m_newPlayerList)
+					HandleNewPlayer(tuple.Item1, tuple.Item2);
+
+				m_newPlayerList.Clear();
+			}
+
 			if (this.UseMinTickTime)
 			{
 				m_minTickTimer.Change(m_config.MinTickTime, TimeSpan.FromMilliseconds(-1));
