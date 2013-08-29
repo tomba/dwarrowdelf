@@ -348,34 +348,17 @@ namespace Dwarrowdelf.Server
 			if (player == null)
 			{
 				// new player needs to be created between ticks
-				// XXX needs cancellation support
 
 				if (this.World.IsTickOnGoing)
-					await this.World.WaitTickEnded();
+					await this.World.WaitTickEnded();	// XXX needs cancellation support
 
-				HandleNewPlayer(connection, request);
+				trace.TraceInformation("New player {0}", name);
+
+				player = CreatePlayer(userID);
+
+				var controllables = this.GameManager.SetupWorldForNewPlayer(player);
+				player.SetupControllablesForNewPlayer(controllables);
 			}
-			else
-			{
-				player.Connect(connection);
-				m_playersConnected++;
-
-				CheckForStartTick();
-			}
-		}
-
-		void HandleNewPlayer(IConnection connection, Messages.LogOnRequestMessage request)
-		{
-			var name = request.Name;
-
-			trace.TraceInformation("New player {0}", name);
-
-			int userID = GetUserID(name);
-
-			var player = CreatePlayer(userID);
-
-			var controllables = this.GameManager.SetupWorldForNewPlayer(player);
-			player.SetupControllablesForNewPlayer(controllables);
 
 			player.Connect(connection);
 			m_playersConnected++;
