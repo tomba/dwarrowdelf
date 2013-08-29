@@ -334,9 +334,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		List<Tuple<IConnection, Messages.LogOnRequestMessage>> m_newPlayerList;
-
-		void HandleNewConnection(IConnection connection, Messages.LogOnRequestMessage request)
+		async void HandleNewConnection(IConnection connection, Messages.LogOnRequestMessage request)
 		{
 			VerifyAccess();
 
@@ -349,18 +347,13 @@ namespace Dwarrowdelf.Server
 
 			if (player == null)
 			{
-				if (this.World.IsTickOnGoing)
-				{
-					if (m_newPlayerList == null)
-						m_newPlayerList = new List<Tuple<IConnection, Messages.LogOnRequestMessage>>();
+				// new player needs to be created between ticks
+				// XXX needs cancellation support
 
-					// this will be handled in TickEnded callback
-					m_newPlayerList.Add(new Tuple<IConnection, Messages.LogOnRequestMessage>(connection, request));
-				}
-				else
-				{
-					HandleNewPlayer(connection, request);
-				}
+				if (this.World.IsTickOnGoing)
+					await this.World.WaitTickEnded();
+
+				HandleNewPlayer(connection, request);
 			}
 			else
 			{
@@ -472,14 +465,6 @@ namespace Dwarrowdelf.Server
 
 		void OnTickEnded()
 		{
-			if (m_newPlayerList != null && m_newPlayerList.Count > 0)
-			{
-				foreach (var tuple in m_newPlayerList)
-					HandleNewPlayer(tuple.Item1, tuple.Item2);
-
-				m_newPlayerList.Clear();
-			}
-
 			if (this.UseMinTickTime)
 			{
 				m_minTickTimer.Change(m_config.MinTickTime, TimeSpan.FromMilliseconds(-1));
