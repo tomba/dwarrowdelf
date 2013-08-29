@@ -274,8 +274,6 @@ namespace Dwarrowdelf.Server
 
 		bool MainWork()
 		{
-			CheckNewConnections();
-
 			foreach (var player in m_players)
 			{
 				if (player.IsConnected)
@@ -295,8 +293,6 @@ namespace Dwarrowdelf.Server
 			DirectConnectionListener.NewConnection(clientConnection);
 		}
 
-		List<IConnection> m_newConns = new List<IConnection>();
-
 		// called in worker thread context
 		void _OnNewConnection(IConnection connection)
 		{
@@ -304,39 +300,19 @@ namespace Dwarrowdelf.Server
 			m_dispatcher.BeginInvoke(OnNewConnection, connection);
 		}
 
-		void OnNewConnection(object state)
-		{
-			IConnection connection = (IConnection)state;
-
-			m_newConns.Add(connection);
-			connection.NewMessageEvent += SignalWorld;
-			CheckNewConnections();
-		}
-
-		void CheckNewConnections()
-		{
-			for (int i = m_newConns.Count - 1; i >= 0; --i)
-			{
-				var conn = m_newConns[i];
-
-				Messages.Message msg;
-
-				if (conn.TryGetMessage(out msg))
-				{
-					m_newConns.RemoveAt(i);
-
-					var request = msg as Messages.LogOnRequestMessage;
-					if (request == null)
-						throw new Exception("bad initial message received");
-
-					HandleNewConnection(conn, request);
-				}
-			}
-		}
-
-		async void HandleNewConnection(IConnection connection, Messages.LogOnRequestMessage request)
+		async void OnNewConnection(object state)
 		{
 			VerifyAccess();
+
+			IConnection connection = (IConnection)state;
+
+			var msg = await connection.GetMessageAsync();
+			if (msg == null)
+				return;
+
+			var request = msg as Messages.LogOnRequestMessage;
+			if (request == null)
+				throw new Exception("bad initial message received");
 
 			var name = request.Name;
 
@@ -359,6 +335,8 @@ namespace Dwarrowdelf.Server
 				var controllables = this.GameManager.SetupWorldForNewPlayer(player);
 				player.SetupControllablesForNewPlayer(controllables);
 			}
+
+			connection.NewMessageEvent += SignalWorld;
 
 			player.Connect(connection);
 			m_playersConnected++;
