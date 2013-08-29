@@ -9,19 +9,11 @@ namespace Dwarrowdelf.Server
 	public sealed partial class World
 	{
 		InvokeList m_preTickInvokeList;
-		InvokeList m_instantInvokeList;
 
 		// Threadsafe
 		public void BeginInvoke(Delegate callback, params object[] args)
 		{
 			m_preTickInvokeList.BeginInvoke(callback, args);
-			//SignalWorld(); // XXX
-		}
-
-		// Threadsafe
-		public void BeginInvokeInstant(Delegate callback, params object[] args)
-		{
-			m_instantInvokeList.BeginInvoke(callback, args);
 			//SignalWorld(); // XXX
 		}
 

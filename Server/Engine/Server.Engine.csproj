@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeHandler.cs" />
+    <Compile Include="GameDispatcher.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="IGameManager.cs" />
     <Compile Include="IPRunner.cs" />

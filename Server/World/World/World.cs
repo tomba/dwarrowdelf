@@ -43,7 +43,6 @@ namespace Dwarrowdelf.Server
 		World()
 		{
 			m_preTickInvokeList = new InvokeList(this);
-			m_instantInvokeList = new InvokeList(this);
 		}
 
 		World(SaveGameContext ctx)

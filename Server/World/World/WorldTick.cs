@@ -92,8 +92,6 @@ namespace Dwarrowdelf.Server
 
 			this.IsWritable = true;
 
-			m_instantInvokeList.ProcessInvokeList();
-
 			if (HandleMessagesEvent != null)
 				HandleMessagesEvent();
 

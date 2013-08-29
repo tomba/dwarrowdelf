@@ -50,8 +50,7 @@ namespace Dwarrowdelf.Server
 
 		int m_playersConnected;
 
-		volatile bool m_exit = false;
-		AutoResetEvent m_gameSignal = new AutoResetEvent(true);
+		GameDispatcher m_dispatcher;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "Engine");
 
@@ -69,16 +68,13 @@ namespace Dwarrowdelf.Server
 		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
 		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
 
-		/// <summary>
-		/// Used for VerifyAccess
-		/// </summary>
-		Thread m_gameThread;
-
 		public IGameManager GameManager { get; private set; }
 
 
 		public GameEngine(World world, GameMode mode)
 		{
+			m_dispatcher = new GameDispatcher();
+
 			m_world = world;
 
 			this.GameMode = mode;
@@ -103,6 +99,8 @@ namespace Dwarrowdelf.Server
 
 		GameEngine(SaveGameContext ctx)
 		{
+			m_dispatcher = new GameDispatcher();
+
 			m_minTickTimer = new Timer(this._MinTickTimerCallback);
 			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
 		}
@@ -224,14 +222,11 @@ namespace Dwarrowdelf.Server
 
 		void VerifyAccess()
 		{
-			if (m_gameThread != null && Thread.CurrentThread != m_gameThread)
-				throw new Exception();
+			m_dispatcher.VerifyAccess();
 		}
 
 		public void Run(EventWaitHandle serverStartWaitHandle)
 		{
-			m_gameThread = Thread.CurrentThread;
-
 			this.World.TurnStarting += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
 			this.World.HandleMessagesEvent += OnHandleMessagesEvent;
@@ -245,15 +240,9 @@ namespace Dwarrowdelf.Server
 			if (serverStartWaitHandle != null)
 				serverStartWaitHandle.Set();
 
-			bool again = true;
+			// Enter the main loop
 
-			while (m_exit == false)
-			{
-				if (!again)
-					m_gameSignal.WaitOne();
-
-				again = this.World.Work();
-			}
+			m_dispatcher.Run(this.World.Work);
 
 			trace.TraceInformation("Server exiting");
 
@@ -277,9 +266,7 @@ namespace Dwarrowdelf.Server
 
 		public void Stop()
 		{
-			m_exit = true;
-			Thread.MemoryBarrier();
-			SignalWorld();
+			m_dispatcher.Shutdown();
 		}
 
 		public void Connect(DirectConnection clientConnection)
@@ -293,12 +280,13 @@ namespace Dwarrowdelf.Server
 		void _OnNewConnection(IConnection connection)
 		{
 			trace.TraceInformation("New connection");
-			m_world.BeginInvokeInstant(new Action<IConnection>(OnNewConnection), connection);
-			SignalWorld();
+			m_dispatcher.BeginInvoke(OnNewConnection, connection);
 		}
 
-		void OnNewConnection(IConnection connection)
+		void OnNewConnection(object state)
 		{
+			IConnection connection = (IConnection)state;
+
 			m_newConns.Add(connection);
 			connection.NewMessageEvent += SignalWorld;
 			CheckNewConnections();
@@ -349,6 +337,8 @@ namespace Dwarrowdelf.Server
 
 			if (player == null)
 			{
+				// This needs to be done at the start of new tick. Maybe add a list of new players,
+				// and handle the list in the start of each tick. And remove this invoke system.
 				m_world.BeginInvoke(new Action<IConnection, Messages.LogOnRequestMessage>(HandleNewPlayer), connection, request);
 				SignalWorld();
 			}
@@ -468,8 +458,7 @@ namespace Dwarrowdelf.Server
 		void _MinTickTimerCallback(object stateInfo)
 		{
 			trace.TraceVerbose("MinTickTimerCallback");
-			this.World.BeginInvokeInstant(new Action(CheckForStartTick));
-			SignalWorld();
+			m_dispatcher.BeginInvoke(_ => CheckForStartTick(), null);
 		}
 
 		void OnTurnStart(LivingObject living)
@@ -483,8 +472,7 @@ namespace Dwarrowdelf.Server
 		void _MaxMoveTimerCallback(object stateInfo)
 		{
 			trace.TraceVerbose("MaxMoveTimerCallback");
-			this.World.BeginInvokeInstant(new Action(MaxMoveTimerCallback));
-			SignalWorld();
+			m_dispatcher.BeginInvoke(_ => MaxMoveTimerCallback(), null);
 		}
 
 		void MaxMoveTimerCallback()
@@ -494,7 +482,7 @@ namespace Dwarrowdelf.Server
 
 		public void SignalWorld()
 		{
-			m_gameSignal.Set();
+			m_dispatcher.Signal();
 		}
 
 		public void SetMinTickTime(TimeSpan minTickTime)
