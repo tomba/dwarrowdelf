@@ -227,8 +227,9 @@ namespace Dwarrowdelf.Server
 
 		public void Run(EventWaitHandle serverStartWaitHandle)
 		{
-			this.World.TurnStarting += OnTurnStart;
+			this.World.TickStarted += OnTickStarted;
 			this.World.TickEnded += OnTickEnded;
+			this.World.TurnStarting += OnTurnStart;
 
 			PipeConnectionListener.StartListening(_OnNewConnection);
 			TcpConnectionListener.StartListening(_OnNewConnection);
@@ -238,6 +239,8 @@ namespace Dwarrowdelf.Server
 
 			if (serverStartWaitHandle != null)
 				serverStartWaitHandle.Set();
+
+			CheckForStartTick();
 
 			// Enter the main loop
 
@@ -249,8 +252,9 @@ namespace Dwarrowdelf.Server
 			TcpConnectionListener.StopListening();
 			PipeConnectionListener.StopListening();
 
-			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStarting -= OnTurnStart;
+			this.World.TickEnded -= OnTickEnded;
+			this.World.TickStarted -= OnTickStarted;
 
 			// Need to disconnect the sockets
 			foreach (var player in m_players)
@@ -451,6 +455,13 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 			if (IsTimeToStartTick())
 				this.World.SetOkToStartTick();
+		}
+
+		void OnTickStarted()
+		{
+			// If tick has started, but there are no players, proceed with the turn
+			if (m_playersConnected == 0)
+				this.World.SetProceedTurn();
 		}
 
 		void OnTickEnded()
