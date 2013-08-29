@@ -40,6 +40,8 @@ namespace Dwarrowdelf.Server
 					if (!again)
 						m_signal.WaitOne();
 
+					again = false;
+
 					KeyValuePair<SendOrPostCallback, object> entry;
 					if (m_queue.TryDequeue(out entry))
 					{
