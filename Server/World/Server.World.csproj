@@ -80,6 +80,7 @@
     <Compile Include="World\WorldIronPython.cs" />
     <Compile Include="World\WorldLivings.cs" />
     <Compile Include="World\WorldLogger.cs" />
+    <Compile Include="World\WorldTaskHelpers.cs" />
     <Compile Include="World\WorldTick.cs" />
   </ItemGroup>
   <ItemGroup>
