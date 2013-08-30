@@ -7,7 +7,7 @@ using Dwarrowdelf.Server;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	static class MountainWorldPopulator
+	static class FortressWorldPopulator
 	{
 		const int NUM_ORCS = 3;
 

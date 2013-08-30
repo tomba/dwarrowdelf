@@ -16,7 +16,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	public static class MountainWorldCreator
+	public static class FortressWorldCreator
 	{
 		const int MAP_SIZE = 8;	// 2^AREA_SIZE
 		const int MAP_DEPTH = 20;
@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Server.Fortress
 			//CreateWaterTest(env);
 			//CreateWaterRiverTest(env);
 
-			MountainWorldPopulator.FinalizeEnv(env);
+			FortressWorldPopulator.FinalizeEnv(env);
 		}
 
 		static TerrainData CreateOrLoadTerrain(IntSize3 size)

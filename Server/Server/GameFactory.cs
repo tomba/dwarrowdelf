@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Server
 			switch (map)
 			{
 				case GameMap.Fortress:
-					worldCreator = Fortress.MountainWorldCreator.InitializeWorld;
+					worldCreator = Fortress.FortressWorldCreator.InitializeWorld;
 					break;
 
 				case GameMap.Adventure:
