@@ -37,6 +37,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		World m_world;
 
+		// Connected users
+		List<User> m_users;
+
 		[SaveGameProperty]
 		List<Player> m_players;
 
@@ -85,6 +88,7 @@ namespace Dwarrowdelf.Server
 
 			this.GameMode = mode;
 
+			m_users = new List<User>();
 			m_players = new List<Player>();
 
 			m_playerIDCounter = 2;
@@ -263,10 +267,10 @@ namespace Dwarrowdelf.Server
 			this.World.TickStarted -= OnTickStarted;
 
 			// Need to disconnect the sockets
-			foreach (var player in m_players)
+			foreach (var user in m_users)
 			{
-				if (player.IsConnected)
-					player.Disconnect();
+				if (user.IsConnected)
+					user.Disconnect();
 			}
 
 			trace.TraceInformation("Server exit");
@@ -274,10 +278,10 @@ namespace Dwarrowdelf.Server
 
 		bool MainWork()
 		{
-			foreach (var player in m_players)
+			foreach (var user in m_users)
 			{
-				if (player.IsConnected)
-					player.HandleNewMessages();
+				if (user.IsConnected)
+					user.PollNewMessages();
 			}
 
 			return this.World.Work();
@@ -319,7 +323,18 @@ namespace Dwarrowdelf.Server
 			// from universal user object
 			int userID = GetUserID(name);
 
-			var player = FindPlayer(userID);
+			if (m_users.Any(u => u.UserID == userID))
+				throw new Exception("User already connected");
+
+			connection.NewMessageEvent += SignalWorld;
+
+			var user = new User(connection, userID, name);
+			user.DisconnectEvent += OnUserDisconnected;
+			m_users.Add(user);
+
+			trace.TraceInformation("User {0} connected", user);
+
+			var player = m_players.SingleOrDefault(u => u.UserID == userID);
 
 			if (player == null)
 			{
@@ -328,20 +343,24 @@ namespace Dwarrowdelf.Server
 				if (this.World.IsTickOnGoing)
 					await this.World.WaitTickEnded();	// XXX needs cancellation support
 
-				trace.TraceInformation("New player {0}", name);
+				player = CreatePlayer();
 
-				player = CreatePlayer(userID);
+				trace.TraceInformation("New player {0}", player);
 
 				var controllables = this.GameManager.SetupWorldForNewPlayer(player);
 				player.SetupControllablesForNewPlayer(controllables);
 			}
 
-			connection.NewMessageEvent += SignalWorld;
+			user.SetPlayer(player);
 
-			player.Connect(connection);
 			m_playersConnected++;
 
 			CheckForStartTick();
+		}
+
+		void OnUserDisconnected(User user)
+		{
+			trace.TraceInformation("User {0} disconnected", user);
 		}
 
 		int GetUserID(string name)
@@ -369,22 +388,12 @@ namespace Dwarrowdelf.Server
 			player.DisconnectEvent -= OnPlayerDisconnected;
 		}
 
-		Player FindPlayer(int userID)
+		Player CreatePlayer()
 		{
-			return m_players.SingleOrDefault(u => u.UserID == userID);
-		}
-
-		Player CreatePlayer(int userID)
-		{
-			var player = FindPlayer(userID);
-
-			if (player != null)
-				throw new Exception();
-
 			var playerID = m_playerIDCounter++;
 
-			trace.TraceInformation("Creating new player, uid {0}, pid {1}", userID, playerID);
-			player = new Player(userID, playerID, this);
+			trace.TraceInformation("Creating new player, pid {0}", playerID);
+			var player = new Player(playerID, this);
 
 			m_players.Add(player);
 			InitPlayer(player);

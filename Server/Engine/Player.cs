@@ -32,6 +32,8 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public int UserID { get; private set; }
 
+		public User User { get; private set; }
+
 		[SaveGameProperty]
 		public int PlayerID { get; private set; }
 
@@ -45,11 +47,10 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		World m_world;
 
-		IConnection m_connection;
-		public bool IsConnected { get { return m_connection != null; } }
-
 		[SaveGameProperty("Controllables")]
 		List<LivingObject> m_controllables;
+
+		public bool IsConnected { get { return this.User != null && this.User.IsConnected; } }
 
 		public bool IsController(BaseObject living) { return m_controllables.Contains(living); }
 
@@ -64,13 +65,12 @@ namespace Dwarrowdelf.Server
 
 		public event Action<Player> DisconnectEvent;
 
-		public Player(int userID, int playerID, GameEngine engine)
+		public Player(int playerID, GameEngine engine)
 		{
 			// player ID 0 is invalid, 1 is reserved for server
 			if (playerID == 0 || playerID == 1)
 				throw new Exception();
 
-			this.UserID = userID;
 			this.PlayerID = playerID;
 
 			m_engine = engine;
@@ -90,6 +90,11 @@ namespace Dwarrowdelf.Server
 			Construct();
 		}
 
+		public override string ToString()
+		{
+			return String.Format("Player({0})", this.PlayerID);
+		}
+
 		void Construct()
 		{
 			trace.Header = String.Format("Player({0})", this.PlayerID);
@@ -106,26 +111,34 @@ namespace Dwarrowdelf.Server
 				m_changeHandler = new PlayerChangeHandler(this);
 		}
 
-		public void Connect(IConnection connection)
+		// Called from User
+		internal void ConnectUser(User user)
 		{
-			OnConnected(connection);
+			if (this.User != null)
+				throw new Exception();
+
+			this.User = user;
+
+			OnConnected();
 		}
 
-		public void Disconnect()
+		// Called from User
+		internal void DisconnectUser()
 		{
-			m_connection.Disconnect();
+			if (this.User == null)
+				throw new Exception();
+
+			this.User = null;
+
+			OnDisconnected();
 		}
 
-		void OnConnected(IConnection connection)
+		void OnConnected()
 		{
 			trace.TraceInformation("OnConnected");
 
-			Debug.Assert(m_connection == null);
-
 			m_world.WorldChanged += HandleWorldChange;
 			m_world.ReportReceived += HandleReport;
-
-			m_connection = connection;
 
 			Send(new Messages.LogOnReplyBeginMessage()
 			{
@@ -166,8 +179,6 @@ namespace Dwarrowdelf.Server
 		void OnDisconnected()
 		{
 			trace.TraceInformation("OnDisconnected");
-
-			DH.Dispose(ref m_connection);
 
 			foreach (var c in m_controllables)
 				UninitControllableVisionTracker(c);
@@ -291,8 +302,8 @@ namespace Dwarrowdelf.Server
 
 		public void Send(ClientMessage msg)
 		{
-			if (m_connection != null)
-				m_connection.Send(msg);
+			if (this.IsConnected)
+				this.User.Send(msg);
 		}
 
 		public void Send(IEnumerable<ClientMessage> msgs)
@@ -301,23 +312,8 @@ namespace Dwarrowdelf.Server
 				Send(msg);
 		}
 
-		public void HandleNewMessages()
-		{
-			trace.TraceVerbose("HandleNewMessages");
-
-			Message msg;
-			while (m_connection.TryGetMessage(out msg))
-				OnReceiveMessage(msg);
-
-			if (!m_connection.IsConnected)
-			{
-				trace.TraceInformation("HandleNewMessages, disconnected");
-
-				OnDisconnected();
-			}
-		}
-
-		void OnReceiveMessage(Message m)
+		// Called from User
+		public void OnReceiveMessage(Message m)
 		{
 			trace.TraceVerbose("OnReceiveMessage({0})", m);
 
@@ -331,7 +327,7 @@ namespace Dwarrowdelf.Server
 		{
 			Send(new Messages.LogOutReplyMessage());
 
-			m_connection.Disconnect();
+			this.User.Disconnect();
 		}
 
 		void ReceiveMessage(SetWorldConfigMessage msg)
