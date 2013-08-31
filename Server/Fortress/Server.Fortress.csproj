@@ -43,11 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DungeonGameManager.cs">
+    <Compile Include="DungeonGame.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DungeonWorldCreator.cs" />
-    <Compile Include="FortressGameManager.cs" />
+    <Compile Include="FortressGame.cs" />
     <Compile Include="DwarfAI.cs" />
     <Compile Include="EnvObserver.cs" />
     <Compile Include="Helpers.cs" />

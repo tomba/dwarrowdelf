@@ -7,9 +7,9 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	public sealed class DungeonGameManager : GameEngine
+	public sealed class DungeonGame : GameEngine
 	{
-		public DungeonGameManager(string gameDir, GameMode gameMode, WorldTickMethod tickMethod, GameMap map)
+		public DungeonGame(string gameDir, GameMode gameMode, WorldTickMethod tickMethod, GameMap map)
 			: base(gameDir, gameMode, tickMethod)
 		{
 			switch (map)

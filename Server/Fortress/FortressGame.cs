@@ -8,12 +8,12 @@ using Dwarrowdelf;
 namespace Dwarrowdelf.Server.Fortress
 {
 	[SaveGameObject]
-	public sealed class FortressGameManager : GameEngine
+	public sealed class FortressGame : GameEngine
 	{
 		[SaveGameProperty]
 		EnvObserver m_envObserver;
 
-		public FortressGameManager(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
+		public FortressGame(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
 			: base(gameDir, gameMode, tickMethod)
 		{
 			FortressWorldCreator.InitializeWorld(this.World);
@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Server.Fortress
 			}
 		}
 
-		FortressGameManager(SaveGameContext ctx)
+		FortressGame(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

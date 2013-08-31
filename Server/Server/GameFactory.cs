@@ -20,11 +20,11 @@ namespace Dwarrowdelf.Server
 			switch (mode)
 			{
 				case GameMode.Fortress:
-					game = new Fortress.FortressGameManager(gameDir, mode, WorldTickMethod.Simultaneous);
+					game = new Fortress.FortressGame(gameDir, mode, WorldTickMethod.Simultaneous);
 					break;
 
 				case GameMode.Adventure:
-					game = new Fortress.DungeonGameManager(gameDir, mode, WorldTickMethod.Sequential, map);
+					game = new Fortress.DungeonGame(gameDir, mode, WorldTickMethod.Sequential, map);
 					break;
 
 				default:
