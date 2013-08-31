@@ -346,64 +346,56 @@ namespace Dwarrowdelf.Server
 		/* functions for livings */
 		void ReceiveMessage(ProceedTurnReplyMessage msg)
 		{
-			try
+			if (this.IsProceedTurnReplyReceived == true)
+				throw new Exception();
+
+			foreach (var tuple in msg.Actions)
 			{
-				if (this.IsProceedTurnReplyReceived == true)
-					throw new Exception();
+				var actorOid = tuple.Item1;
+				var action = tuple.Item2;
 
-				foreach (var tuple in msg.Actions)
+				if (m_world.CurrentLivingID != ObjectID.AnyObjectID && m_world.CurrentLivingID != actorOid)
 				{
-					var actorOid = tuple.Item1;
-					var action = tuple.Item2;
-
-					if (m_world.CurrentLivingID != ObjectID.AnyObjectID && m_world.CurrentLivingID != actorOid)
-					{
-						trace.TraceWarning("received action request for living who's turn is not now: {0}", actorOid);
-						continue;
-					}
-
-					var living = m_controllables.SingleOrDefault(l => l.ObjectID == actorOid);
-
-					if (living == null)
-					{
-						trace.TraceWarning("received action request for non controlled living {0}", actorOid);
-						continue;
-					}
-
-					if (living.Controller != this)
-						throw new Exception();
-
-					if (action == null)
-					{
-						if (living.ActionPriority == ActionPriority.High)
-							throw new Exception();
-
-						living.CancelAction();
-
-						continue;
-					}
-
-					if (living.HasAction)
-					{
-						if (living.ActionPriority <= ActionPriority.User)
-							living.CancelAction();
-						else
-							throw new Exception("already has an action");
-					}
-
-					living.StartAction(action, ActionPriority.User);
+					trace.TraceWarning("received action request for living who's turn is not now: {0}", actorOid);
+					continue;
 				}
 
-				this.IsProceedTurnReplyReceived = true;
+				var living = m_controllables.SingleOrDefault(l => l.ObjectID == actorOid);
 
-				if (ProceedTurnReceived != null)
-					ProceedTurnReceived(this);
+				if (living == null)
+				{
+					trace.TraceWarning("received action request for non controlled living {0}", actorOid);
+					continue;
+				}
+
+				if (living.Controller != this)
+					throw new Exception();
+
+				if (action == null)
+				{
+					if (living.ActionPriority == ActionPriority.High)
+						throw new Exception();
+
+					living.CancelAction();
+
+					continue;
+				}
+
+				if (living.HasAction)
+				{
+					if (living.ActionPriority <= ActionPriority.User)
+						living.CancelAction();
+					else
+						throw new Exception("already has an action");
+				}
+
+				living.StartAction(action, ActionPriority.User);
 			}
-			catch (Exception e)
-			{
-				trace.TraceError("Uncaught exception");
-				trace.TraceError(e.ToString());
-			}
+
+			this.IsProceedTurnReplyReceived = true;
+
+			if (ProceedTurnReceived != null)
+				ProceedTurnReceived(this);
 		}
 
 		void ReceiveMessage(IPExpressionMessage msg)
