@@ -13,22 +13,22 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class ActionStartEvent : GameEvent
 	{
-		public GameAction Action { get; set; }
-		public ActionPriority Priority { get; set; }
+		public GameAction Action;
+		public ActionPriority Priority;
 	}
 
 	[Serializable]
 	public sealed class ActionProgressEvent : GameEvent
 	{
-		public ActionGUID GUID { get; set; }
-		public int TotalTicks { get; set; }
-		public int TicksUsed { get; set; }
+		public ActionGUID GUID;
+		public int TotalTicks;
+		public int TicksUsed;
 	}
 
 	[Serializable]
 	public sealed class ActionDoneEvent : GameEvent
 	{
-		public ActionGUID GUID { get; set; }
-		public ActionState State { get; set; }
+		public ActionGUID GUID;
+		public ActionState State;
 	}
 }

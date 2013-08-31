@@ -8,22 +8,22 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class WorldData
 	{
-		public int Tick { get; set; }
-		public int Year { get; set; }
-		public GameSeason Season { get; set; }
-		public LivingVisionMode LivingVisionMode { get; set; }
-		public GameMode GameMode { get; set; }
+		public int Tick;
+		public int Year;
+		public GameSeason Season;
+		public LivingVisionMode LivingVisionMode;
+		public GameMode GameMode;
 	}
 
 	[Serializable]
 	public abstract class BaseGameObjectData
 	{
-		public ObjectID ObjectID { get; set; }
+		public ObjectID ObjectID;
 
-		public DateTime CreationTime { get; set; }
-		public int CreationTick { get; set; }
+		public DateTime CreationTime;
+		public int CreationTick;
 
-		public Tuple<PropertyID, object>[] Properties { get; set; }
+		public Tuple<PropertyID, object>[] Properties;
 	}
 
 	[Serializable]
@@ -34,21 +34,21 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class EnvironmentObjectData : GameObjectData
 	{
-		public VisibilityMode VisibilityMode { get; set; }
-		public IntSize3 Size { get; set; }
+		public VisibilityMode VisibilityMode;
+		public IntSize3 Size;
 	}
 
 	[Serializable]
 	public abstract class MovableObjectData : GameObjectData
 	{
-		public IntPoint3 Location { get; set; }
-		public ObjectID Parent { get; set; }
+		public IntPoint3 Location;
+		public ObjectID Parent;
 	}
 
 	[Serializable]
 	public sealed class ItemData : MovableObjectData
 	{
-		public ItemID ItemID { get; set; }
+		public ItemID ItemID;
 
 		public override string ToString()
 		{
@@ -59,13 +59,13 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class LivingData : MovableObjectData
 	{
-		public LivingID LivingID { get; set; }
-		public GameAction CurrentAction { get; set; }
-		public ActionPriority ActionPriority { get; set; }
-		public int ActionTicksUsed { get; set; }
-		public int ActionTotalTicks { get; set; }
+		public LivingID LivingID;
+		public GameAction CurrentAction;
+		public ActionPriority ActionPriority;
+		public int ActionTicksUsed;
+		public int ActionTotalTicks;
 
-		public Tuple<SkillID, byte>[] Skills { get; set; }
+		public Tuple<SkillID, byte>[] Skills;
 
 		public override string ToString()
 		{

@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class ReportMessage : InformativeMessage
 	{
-		public GameReport Report { get; set; }
+		public GameReport Report;
 	}
 
 	/// <summary>
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class IPExpressionMessage : ServerMessage
 	{
-		public string Script { get; private set; }
+		public string Script;
 
 		public IPExpressionMessage(string script)
 		{
@@ -55,8 +55,8 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class IPScriptMessage : ServerMessage
 	{
-		public string Script { get; private set; }
-		public KeyValuePair<string, object>[] Args { get; private set; }
+		public string Script;
+		public KeyValuePair<string, object>[] Args;
 
 		public IPScriptMessage(string script)
 		{
@@ -74,20 +74,20 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class IPOutputMessage : ClientMessage
 	{
-		public string Text { get; set; }
+		public string Text;
 	}
 
 	[Serializable]
 	public sealed class LogOnRequestMessage : ServerMessage
 	{
-		public string Name { get; set; }
+		public string Name;
 	}
 
 	[Serializable]
 	public sealed class LogOnReplyBeginMessage : ClientMessage
 	{
-		public int PlayerID { get; set; }
-		public bool IsSeeAll { get; set; }
+		public int PlayerID;
+		public bool IsSeeAll;
 	}
 
 	[Serializable]
@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class ClientDataMessage : ClientMessage
 	{
-		public string ClientData { get; set; }
+		public string ClientData;
 	}
 
 	[Serializable]
@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class SetWorldConfigMessage : ServerMessage
 	{
-		public TimeSpan? MinTickTime { get; set; }
+		public TimeSpan? MinTickTime;
 	}
 
 	/// <summary>
@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class ChangeMessage : StateMessage
 	{
-		public ChangeData ChangeData { get; set; }
+		public ChangeData ChangeData;
 
 		public override string ToString()
 		{
@@ -139,7 +139,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class WorldDataMessage : StateMessage
 	{
-		public WorldData WorldData { get; set; }
+		public WorldData WorldData;
 
 		public WorldDataMessage(WorldData worldData)
 		{
@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class ObjectDataMessage : StateMessage
 	{
-		public BaseGameObjectData ObjectData { get; set; }
+		public BaseGameObjectData ObjectData;
 
 		public ObjectDataMessage(BaseGameObjectData objectData)
 		{
@@ -171,7 +171,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class ObjectDataEndMessage : StateMessage
 	{
-		public ObjectID ObjectID { get; set; }
+		public ObjectID ObjectID;
 
 		public override string ToString()
 		{
@@ -182,10 +182,10 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class MapDataTerrainsMessage : StateMessage
 	{
-		public ObjectID Environment { get; set; }
-		public IntGrid3 Bounds { get; set; }
-		public bool IsTerrainDataCompressed { get; set; }
-		public byte[] TerrainData { get; set; }
+		public ObjectID Environment;
+		public IntGrid3 Bounds;
+		public bool IsTerrainDataCompressed;
+		public byte[] TerrainData;
 
 		public override string ToString()
 		{
@@ -196,8 +196,8 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class MapDataTerrainsListMessage : StateMessage
 	{
-		public ObjectID Environment { get; set; }
-		public KeyValuePair<IntPoint3, TileData>[] TileDataList { get; set; }
+		public ObjectID Environment;
+		public KeyValuePair<IntPoint3, TileData>[] TileDataList;
 
 		public override string ToString()
 		{
@@ -215,8 +215,8 @@ namespace Dwarrowdelf.Messages
 			Remove,
 		}
 
-		public Op Operation { get; set; }
-		public ObjectID[] Controllables { get; set; }
+		public Op Operation;
+		public ObjectID[] Controllables;
 
 		public override string ToString()
 		{
@@ -227,7 +227,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class ProceedTurnReplyMessage : ServerMessage
 	{
-		public KeyValuePair<ObjectID, GameAction>[] Actions { get; set; }
+		public KeyValuePair<ObjectID, GameAction>[] Actions;
 	}
 
 	[Serializable]
