@@ -30,12 +30,12 @@ namespace Dwarrowdelf.Server
 	}
 
 	[SaveGameObject]
-	public class GameEngine : MarshalByRefObject, IGame
+	public abstract class GameEngine : MarshalByRefObject, IGame
 	{
 		string m_gameDir;
 
 		[SaveGameProperty]
-		World m_world;
+		public World World { get; private set; }
 
 		// Connected users
 		List<User> m_users;
@@ -73,22 +73,18 @@ namespace Dwarrowdelf.Server
 		/// </summary>
 		Timer m_maxMoveTimer;
 
-		public World World { get { return m_world; } }
 		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
 		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
 
-		public IGameManager GameManager { get; private set; }
-
-
-		public GameEngine(World world, GameMode mode)
+		protected GameEngine(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
 		{
-			m_dispatcher = new GameDispatcher();
+			CommonInit();
 
-			m_world = world;
+			m_gameDir = gameDir;
 
-			this.GameMode = mode;
+			this.GameMode = gameMode;
+			this.World = new World(gameMode, tickMethod);
 
-			m_users = new List<User>();
 			m_players = new List<Player>();
 
 			m_playerIDCounter = 2;
@@ -100,134 +96,33 @@ namespace Dwarrowdelf.Server
 				MinTickTime = TimeSpan.FromMilliseconds(50),
 			};
 
-			m_minTickTimer = new Timer(this._MinTickTimerCallback);
-			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
-
 			this.LastSaveID = Guid.Empty;
 			this.LastLoadID = Guid.Empty;
 		}
 
-		GameEngine(SaveGameContext ctx)
+		protected GameEngine(SaveGameContext ctx)
+		{
+			CommonInit();
+		}
+
+		void CommonInit()
 		{
 			m_dispatcher = new GameDispatcher();
 
 			m_minTickTimer = new Timer(this._MinTickTimerCallback);
 			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
+
+			m_users = new List<User>();
 		}
 
-		public void Init(string gameDir, IGameManager gameManager)
+		void SetupAfterLoad(string gameDir)
 		{
-			if (this.GameManager != null)
-				throw new Exception();
-
 			m_gameDir = gameDir;
-			this.GameManager = gameManager;
-		}
 
-		public void Save()
-		{
-			//var id = Guid.NewGuid();
-			// XXX use fixed guid to help testing
-			var id = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+			foreach (var p in m_players)
+				InitPlayer(p);
 
-			var msg = new Dwarrowdelf.Messages.SaveClientDataRequestMessage() { ID = id };
-			foreach (var p in m_players.Where(p => p.IsConnected))
-				p.Send(msg);
-
-			if (ServerConfig.DisableSaving)
-			{
-				Trace.TraceError("Warning: Saving is disabled");
-				return;
-			}
-
-			this.LastSaveID = id;
-
-			var saveDir = Path.Combine(m_gameDir, id.ToString());
-
-			Directory.CreateDirectory(saveDir);
-
-
-			/* Save game intro */
-			var saveEntry = new SaveEntry()
-			{
-				ID = id,
-				DateTime = DateTime.Now,
-				GameMode = this.GameMode,
-				Tick = m_world.TickNumber,
-			};
-
-			using (var stream = File.Create(Path.Combine(saveDir, "intro.json")))
-			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
-				serializer.Serialize(saveEntry);
-
-
-			/* Save game */
-
-			var savePath = Path.Combine(saveDir, "server.json");
-
-			Trace.TraceInformation("Saving game {0}", savePath);
-			var watch = Stopwatch.StartNew();
-
-			using (var stream = File.Create(savePath))
-			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
-				serializer.Serialize(this);
-
-			watch.Stop();
-			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
-		}
-
-		public void SaveClientData(int playerID, Guid id, string data)
-		{
-			if (ServerConfig.DisableSaving)
-				return;
-
-			var saveDir = Path.Combine(m_gameDir, id.ToString());
-
-			if (!Directory.Exists(saveDir))
-				throw new Exception();
-
-			if (this.LastSaveID != id)
-				throw new Exception();
-
-			string saveFile = String.Format("client-{0}.json", playerID);
-			File.WriteAllText(Path.Combine(saveDir, saveFile), data);
-		}
-
-		public string LoadClientData(int playerID, Guid id)
-		{
-			var saveDir = Path.Combine(m_gameDir, id.ToString());
-			string saveFile = String.Format("client-{0}.json", playerID);
-
-			saveFile = Path.Combine(saveDir, saveFile);
-
-			if (File.Exists(saveFile))
-				return File.ReadAllText(saveFile);
-			else
-				return null;
-		}
-
-		public static GameEngine Load(string gameDir, Guid id)
-		{
-			var savePath = Path.Combine(gameDir, id.ToString(), "server.json");
-
-			Trace.TraceInformation("Loading game {0}", savePath);
-			var watch = Stopwatch.StartNew();
-
-			GameEngine engine;
-
-			using (var stream = File.OpenRead(savePath))
-			using (var deserializer = new Dwarrowdelf.SaveGameDeserializer(stream))
-				engine = deserializer.Deserialize<GameEngine>();
-
-			watch.Stop();
-			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
-
-			foreach (var p in engine.m_players)
-				engine.InitPlayer(p);
-
-			engine.LastLoadID = engine.LastSaveID;
-
-			return engine;
+			this.LastLoadID = this.LastSaveID;
 		}
 
 		void VerifyAccess()
@@ -326,7 +221,7 @@ namespace Dwarrowdelf.Server
 			if (m_users.Any(u => u.UserID == userID))
 				throw new Exception("User already connected");
 
-			connection.NewMessageEvent += SignalWorld;
+			connection.NewMessageEvent += Signal;
 
 			var user = new User(connection, userID, name);
 			user.DisconnectEvent += OnUserDisconnected;
@@ -334,21 +229,14 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("User {0} connected", user);
 
-			var player = m_players.SingleOrDefault(u => u.UserID == userID);
+			var player = m_players.SingleOrDefault(p => p.UserID == userID);
 
 			if (player == null)
 			{
-				// new player needs to be created between ticks
+				player = m_players.FirstOrDefault(p => p.UserID == 0);
 
-				if (this.World.IsTickOnGoing)
-					await this.World.WaitTickEnded();	// XXX needs cancellation support
-
-				player = CreatePlayer();
-
-				trace.TraceInformation("New player {0}", player);
-
-				var controllables = this.GameManager.SetupWorldForNewPlayer(player);
-				player.SetupControllablesForNewPlayer(controllables);
+				if (player == null)
+					throw new Exception("game full");
 			}
 
 			user.SetPlayer(player);
@@ -388,17 +276,12 @@ namespace Dwarrowdelf.Server
 			player.DisconnectEvent -= OnPlayerDisconnected;
 		}
 
-		Player CreatePlayer()
+		protected void AddPlayer(Player player)
 		{
 			var playerID = m_playerIDCounter++;
 
-			trace.TraceInformation("Creating new player, pid {0}", playerID);
-			var player = new Player(playerID, this);
-
 			m_players.Add(player);
 			InitPlayer(player);
-
-			return player;
 		}
 
 		bool _IsTimeToStartTick()
@@ -470,7 +353,7 @@ namespace Dwarrowdelf.Server
 			this.World.SetProceedTurn();
 		}
 
-		public void SignalWorld()
+		public void Signal()
 		{
 			m_dispatcher.Signal();
 		}
@@ -490,20 +373,20 @@ namespace Dwarrowdelf.Server
 
 		void OnPlayerProceedTurnReceived(Player player)
 		{
-			switch (m_world.TickMethod)
+			switch (this.World.TickMethod)
 			{
 				case WorldTickMethod.Simultaneous:
 					if (m_players.Count > 0 && m_players.All(u => u.IsProceedTurnReplyReceived))
 					{
 						this.World.SetProceedTurn();
-						SignalWorld();
+						Signal();
 					}
 
 					break;
 
 				case WorldTickMethod.Sequential:
 					this.World.SetProceedTurn();
-					SignalWorld();
+					Signal();
 					break;
 			}
 		}
@@ -512,5 +395,110 @@ namespace Dwarrowdelf.Server
 		{
 			return null;
 		}
+
+
+		public void Save()
+		{
+			//var id = Guid.NewGuid();
+			// XXX use fixed guid to help testing
+			var id = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+
+			var msg = new Dwarrowdelf.Messages.SaveClientDataRequestMessage() { ID = id };
+			foreach (var p in m_players.Where(p => p.IsConnected))
+				p.Send(msg);
+
+			if (ServerConfig.DisableSaving)
+			{
+				Trace.TraceError("Warning: Saving is disabled");
+				return;
+			}
+
+			this.LastSaveID = id;
+
+			var saveDir = Path.Combine(m_gameDir, id.ToString());
+
+			Directory.CreateDirectory(saveDir);
+
+
+			/* Save game intro */
+			var saveEntry = new SaveEntry()
+			{
+				ID = id,
+				DateTime = DateTime.Now,
+				GameMode = this.GameMode,
+				Tick = this.World.TickNumber,
+			};
+
+			using (var stream = File.Create(Path.Combine(saveDir, "intro.json")))
+			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
+				serializer.Serialize(saveEntry);
+
+
+			/* Save game */
+
+			var savePath = Path.Combine(saveDir, "server.json");
+
+			Trace.TraceInformation("Saving game {0}", savePath);
+			var watch = Stopwatch.StartNew();
+
+			using (var stream = File.Create(savePath))
+			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
+				serializer.Serialize(this);
+
+			watch.Stop();
+			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
+		}
+
+		public void SaveClientData(int playerID, Guid id, string data)
+		{
+			if (ServerConfig.DisableSaving)
+				return;
+
+			var saveDir = Path.Combine(m_gameDir, id.ToString());
+
+			if (!Directory.Exists(saveDir))
+				throw new Exception();
+
+			if (this.LastSaveID != id)
+				throw new Exception();
+
+			string saveFile = String.Format("client-{0}.json", playerID);
+			File.WriteAllText(Path.Combine(saveDir, saveFile), data);
+		}
+
+		public string LoadClientData(int playerID, Guid id)
+		{
+			var saveDir = Path.Combine(m_gameDir, id.ToString());
+			string saveFile = String.Format("client-{0}.json", playerID);
+
+			saveFile = Path.Combine(saveDir, saveFile);
+
+			if (File.Exists(saveFile))
+				return File.ReadAllText(saveFile);
+			else
+				return null;
+		}
+
+		public static GameEngine Load(string gameDir, Guid id)
+		{
+			var savePath = Path.Combine(gameDir, id.ToString(), "server.json");
+
+			Trace.TraceInformation("Loading game {0}", savePath);
+			var watch = Stopwatch.StartNew();
+
+			GameEngine engine;
+
+			using (var stream = File.OpenRead(savePath))
+			using (var deserializer = new Dwarrowdelf.SaveGameDeserializer(stream))
+				engine = deserializer.Deserialize<GameEngine>();
+
+			watch.Stop();
+			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
+
+			engine.SetupAfterLoad(gameDir);
+
+			return engine;
+		}
+
 	}
 }

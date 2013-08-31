@@ -43,7 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DungeonGameManager.cs" />
+    <Compile Include="DungeonGameManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DungeonWorldCreator.cs" />
     <Compile Include="FortressGameManager.cs" />
     <Compile Include="DwarfAI.cs" />

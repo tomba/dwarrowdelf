@@ -32,6 +32,8 @@ namespace Dwarrowdelf
 		void Run(EventWaitHandle serverStartWaitHandle);
 		void Stop();
 
+		void Signal();
+
 		void Connect(DirectConnection clientConnection);
 	}
 }

@@ -22,7 +22,8 @@ namespace Dwarrowdelf.Server
 		public LivingVisionMode LivingVisionMode { get { return LivingVisionMode.LOS; } }
 
 		// only for debugging
-		public bool IsWritable { get; private set; }
+		// XXX always true for now
+		public bool IsWritable { get { return true; } }
 
 		public event Action<Change> WorldChanged;
 		public event Action<GameReport> ReportReceived;
@@ -71,21 +72,6 @@ namespace Dwarrowdelf.Server
 			this.Year = 1;
 			this.YearOctant = 1;
 			this.Season = (GameSeason)((this.YearOctant + 7) / 2 % 4);
-		}
-
-		public void Initialize(Action initializer)
-		{
-			this.IsWritable = true;
-
-			trace.TraceInformation("Initializing area");
-			var m_initSw = Stopwatch.StartNew();
-
-			initializer();
-
-			m_initSw.Stop();
-			trace.TraceInformation("Initializing area took {0} ms", m_initSw.ElapsedMilliseconds);
-
-			this.IsWritable = false;
 		}
 
 		public Random Random { get { return m_random; } }

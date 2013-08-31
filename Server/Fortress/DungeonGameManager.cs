@@ -7,24 +7,34 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	public sealed class DungeonGameManager : IGameManager
+	public sealed class DungeonGameManager : GameEngine
 	{
-		public World World { get; private set; }
-
-		public DungeonGameManager(World world)
+		public DungeonGameManager(string gameDir, GameMode gameMode, WorldTickMethod tickMethod, GameMap map)
+			: base(gameDir, gameMode, tickMethod)
 		{
-			this.World = world;
+			switch (map)
+			{
+				case GameMap.Fortress:
+					FortressWorldCreator.InitializeWorld(this.World);
+					break;
+
+				case GameMap.Adventure:
+					var dwc = new DungeonWorldCreator(this.World);
+					dwc.InitializeWorld(this.World);
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			var player = CreatePlayer();
 		}
 
-		#region IArea Members
-
-		public void SetupLivingAsControllable(LivingObject living)
-		{
-		}
-
-		public LivingObject[] SetupWorldForNewPlayer(Player player)
+		Player CreatePlayer()
 		{
 			const int NUM_DWARVES = 1;
+
+			var player = new Player(2, this);
 
 			// XXX entry location
 			var env = this.World.HackGetFirstEnv();
@@ -63,10 +73,11 @@ namespace Dwarrowdelf.Server.Fortress
 				list.Add(l);
 			}
 
-			return list.ToArray();
+			player.AddControllables(list);
+
+			return player;
 		}
 
-		#endregion
 
 
 

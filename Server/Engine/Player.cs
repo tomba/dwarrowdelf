@@ -198,7 +198,7 @@ namespace Dwarrowdelf.Server
 			AddControllables(controllables);
 		}
 
-		void AddControllables(IEnumerable<LivingObject> controllables)
+		public void AddControllables(IEnumerable<LivingObject> controllables)
 		{
 			m_controllables.AddRange(controllables);
 

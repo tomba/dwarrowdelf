@@ -7,36 +7,59 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	public sealed class FortressGameManager : IGameManager
+	[SaveGameObject]
+	public sealed class FortressGameManager : GameEngine
 	{
-		public World World { get; private set; }
-
+		[SaveGameProperty]
 		EnvObserver m_envObserver;
 
-		public FortressGameManager(World world)
+		public FortressGameManager(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
+			: base(gameDir, gameMode, tickMethod)
 		{
-			this.World = world;
+			FortressWorldCreator.InitializeWorld(this.World);
 
 			// XXX
 			var env = this.World.HackGetFirstEnv();
 			m_envObserver = new EnvObserver(env);
+
+			int numPlayers = 1;
+
+			for (int playerNum = 0; playerNum < numPlayers; ++playerNum)
+			{
+				var player = CreatePlayer(playerNum, env);
+
+				this.AddPlayer(player);
+			}
 		}
 
-		#region IArea Members
-
-		public void SetupLivingAsControllable(LivingObject living)
+		FortressGameManager(SaveGameContext ctx)
+			: base(ctx)
 		{
-			living.SetAI(new DwarfAI(living, m_envObserver, this.World.PlayerID));
 		}
 
-		public LivingObject[] SetupWorldForNewPlayer(Player player)
+		Player CreatePlayer(int playerNum, EnvironmentObject env)
 		{
 			const int NUM_DWARVES = 7;
 
-			// XXX entry location
-			var env = this.World.HackGetFirstEnv();
+			var player = new Player(2 + playerNum, this);
 
-			var startRect = FindStartLocation(env);
+			IntPoint3 pos;
+
+			switch (playerNum)
+			{
+				case 0:
+					pos = env.StartLocation;
+					break;
+
+				case 1:
+					pos = env.GetSurfaceLocation(env.Width / 4, env.Height / 4);
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			var startRect = FindStartLocation(env, pos);
 
 			if (!startRect.HasValue)
 				throw new Exception();
@@ -69,12 +92,10 @@ namespace Dwarrowdelf.Server.Fortress
 				list.Add(l);
 			}
 
-			return list.ToArray();
+			player.AddControllables(list);
+
+			return player;
 		}
-
-		#endregion
-
-
 
 		bool TestStartArea(EnvironmentObject env, IntGrid2Z r)
 		{
@@ -92,11 +113,11 @@ namespace Dwarrowdelf.Server.Fortress
 			return true;
 		}
 
-		IntGrid2Z? FindStartLocation(EnvironmentObject env)
+		IntGrid2Z? FindStartLocation(EnvironmentObject env, IntPoint3 pos)
 		{
 			const int size = 3;
 
-			var center = env.StartLocation;
+			var center = pos;
 
 			foreach (var p in IntPoint2.SquareSpiral(center.ToIntPoint(), env.Width / 2))
 			{
@@ -172,7 +193,7 @@ namespace Dwarrowdelf.Server.Fortress
 			Helpers.AddGem(dwarf);
 			Helpers.AddBattleGear(dwarf);
 
-			SetupLivingAsControllable(dwarf);
+			dwarf.SetAI(new DwarfAI(dwarf, m_envObserver, this.World.PlayerID));
 
 			return dwarf;
 		}

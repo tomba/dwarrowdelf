@@ -87,8 +87,6 @@ namespace Dwarrowdelf.Server
 
 			VerifyAccess();
 
-			this.IsWritable = true;
-
 			bool again = true;
 
 			if (m_state == WorldState.Idle)

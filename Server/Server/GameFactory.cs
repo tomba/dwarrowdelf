@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -11,86 +12,38 @@ namespace Dwarrowdelf.Server
 		{
 			MyTraceContext.ThreadTraceContext = new MyTraceContext("Server");
 
-			WorldTickMethod tickMethod;
+			Trace.TraceInformation("Initializing area");
+			var initSw = Stopwatch.StartNew();
+
+			IGame game;
 
 			switch (mode)
 			{
 				case GameMode.Fortress:
-					tickMethod = WorldTickMethod.Simultaneous;
+					game = new Fortress.FortressGameManager(gameDir, mode, WorldTickMethod.Simultaneous);
 					break;
 
 				case GameMode.Adventure:
-					tickMethod = WorldTickMethod.Sequential;
+					game = new Fortress.DungeonGameManager(gameDir, mode, WorldTickMethod.Sequential, map);
 					break;
 
 				default:
 					throw new Exception();
 			}
 
-			var world = new World(mode, tickMethod);
+			initSw.Stop();
+			Trace.TraceInformation("Initializing area took {0} ms", initSw.ElapsedMilliseconds);
 
-			Action<World> worldCreator;
-
-			switch (map)
-			{
-				case GameMap.Fortress:
-					worldCreator = Fortress.FortressWorldCreator.InitializeWorld;
-					break;
-
-				case GameMap.Adventure:
-					var dwc = new Fortress.DungeonWorldCreator(world);
-					worldCreator = dwc.InitializeWorld;
-					break;
-
-				case GameMap.Arena:
-					throw new Exception();
-
-				default:
-					throw new Exception();
-			}
-
-			world.Initialize(delegate
-			{
-				worldCreator(world);
-			});
-
-			var engine = new GameEngine(world, mode);
-
-			InitGame(engine, gameDir);
-
-			return engine;
+			return game;
 		}
 
 		public IGame LoadGame(string gameDir, Guid save)
 		{
 			MyTraceContext.ThreadTraceContext = new MyTraceContext("Server");
 
-			var engine = GameEngine.Load(gameDir, save);
+			IGame game = GameEngine.Load(gameDir, save);
 
-			InitGame(engine, gameDir);
-
-			return engine;
-		}
-
-		void InitGame(GameEngine engine, string gameDir)
-		{
-			IGameManager gameManager;
-
-			switch (engine.GameMode)
-			{
-				case GameMode.Fortress:
-					gameManager = new Fortress.FortressGameManager(engine.World);
-					break;
-
-				case GameMode.Adventure:
-					gameManager = new Fortress.DungeonGameManager(engine.World);
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			engine.Init(gameDir, gameManager);
+			return game;
 		}
 
 		public override object InitializeLifetimeService()
