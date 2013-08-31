@@ -16,10 +16,8 @@ namespace Dwarrowdelf.Server.Fortress
 		public FortressGame(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
 			: base(gameDir, gameMode, tickMethod)
 		{
-			FortressWorldCreator.InitializeWorld(this.World);
+			var env = FortressWorldCreator.InitializeWorld(this.World);
 
-			// XXX
-			var env = this.World.HackGetFirstEnv();
 			m_envObserver = new EnvObserver(env);
 
 			int numPlayers = 1;

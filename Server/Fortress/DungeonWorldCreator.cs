@@ -18,6 +18,8 @@ namespace Dwarrowdelf.Server.Fortress
 
 		LivingInfo[] m_livingInfos;
 
+		public EnvironmentObject MainEnv { get { return m_env; } }
+
 		public DungeonWorldCreator(World world)
 		{
 			m_world = world;

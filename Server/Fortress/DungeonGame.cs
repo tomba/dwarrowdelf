@@ -12,32 +12,32 @@ namespace Dwarrowdelf.Server.Fortress
 		public DungeonGame(string gameDir, GameMode gameMode, WorldTickMethod tickMethod, GameMap map)
 			: base(gameDir, gameMode, tickMethod)
 		{
+			EnvironmentObject env;
+
 			switch (map)
 			{
 				case GameMap.Fortress:
-					FortressWorldCreator.InitializeWorld(this.World);
+					env = FortressWorldCreator.InitializeWorld(this.World);
 					break;
 
 				case GameMap.Adventure:
 					var dwc = new DungeonWorldCreator(this.World);
 					dwc.InitializeWorld(this.World);
+					env = dwc.MainEnv;
 					break;
 
 				default:
 					throw new Exception();
 			}
 
-			var player = CreatePlayer();
+			var player = CreatePlayer(env);
 		}
 
-		Player CreatePlayer()
+		Player CreatePlayer(EnvironmentObject env)
 		{
 			const int NUM_DWARVES = 1;
 
 			var player = new Player(2, this);
-
-			// XXX entry location
-			var env = this.World.HackGetFirstEnv();
 
 			var startRect = FindStartLocation(env);
 

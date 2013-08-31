@@ -15,11 +15,6 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		uint[] m_objectIDcounterArray;
 
-		public EnvironmentObject HackGetFirstEnv()
-		{
-			return m_objectMap.Values.OfType<EnvironmentObject>().First();
-		}
-
 		internal void AddGameObject(BaseObject ob)
 		{
 			VerifyAccess();

@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Server.Fortress
 		const int MAP_SIZE = 8;	// 2^AREA_SIZE
 		const int MAP_DEPTH = 20;
 
-		public static void InitializeWorld(World world)
+		public static EnvironmentObject InitializeWorld(World world)
 		{
 			int side = MyMath.Pow2(MAP_SIZE);
 			var size = new IntSize3(side, side, MAP_DEPTH);
@@ -42,6 +42,8 @@ namespace Dwarrowdelf.Server.Fortress
 			//CreateWaterRiverTest(env);
 
 			FortressWorldPopulator.FinalizeEnv(env);
+
+			return env;
 		}
 
 		static TerrainData CreateOrLoadTerrain(IntSize3 size)
