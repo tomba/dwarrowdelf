@@ -29,9 +29,15 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		/// <summary>
+		/// UserID of the user who owns this Player
+		/// </summary>
 		[SaveGameProperty]
 		public int UserID { get; private set; }
 
+		/// <summary>
+		/// User who is currently connected to this Player
+		/// </summary>
 		public User User { get; private set; }
 
 		[SaveGameProperty]
@@ -50,7 +56,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Controllables")]
 		List<LivingObject> m_controllables;
 
-		public bool IsConnected { get { return this.User != null && this.User.IsConnected; } }
+		public bool IsConnected { get { return this.User != null; } }
 
 		public bool IsController(BaseObject living) { return m_controllables.Contains(living); }
 
@@ -118,6 +124,7 @@ namespace Dwarrowdelf.Server
 				throw new Exception();
 
 			this.User = user;
+			this.UserID = user.UserID;
 
 			OnConnected();
 		}

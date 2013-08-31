@@ -173,10 +173,25 @@ namespace Dwarrowdelf.Server
 
 		bool MainWork()
 		{
+			List<User> disconnectedUsers = null;
+
 			foreach (var user in m_users)
 			{
 				if (user.IsConnected)
 					user.PollNewMessages();
+
+				if (user.IsConnected == false)
+				{
+					if (disconnectedUsers == null)
+						disconnectedUsers = new List<User>();
+					disconnectedUsers.Add(user);
+				}
+			}
+
+			if (disconnectedUsers != null)
+			{
+				foreach (var user in disconnectedUsers)
+					m_users.Remove(user);
 			}
 
 			return this.World.Work();
@@ -249,6 +264,7 @@ namespace Dwarrowdelf.Server
 		void OnUserDisconnected(User user)
 		{
 			trace.TraceInformation("User {0} disconnected", user);
+			// Note: user will be removed from m_users in the MainWork
 		}
 
 		int GetUserID(string name)
