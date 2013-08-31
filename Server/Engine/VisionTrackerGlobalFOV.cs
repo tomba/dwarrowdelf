@@ -207,7 +207,7 @@ namespace Dwarrowdelf.Server
 			var msg = new Messages.MapDataTerrainsListMessage()
 			{
 				Environment = env.ObjectID,
-				TileDataList = revealed.Select(l => new Tuple<IntPoint3, TileData>(l, env.GetTileData(l))).ToArray(),
+				TileDataList = revealed.Select(l => new KeyValuePair<IntPoint3, TileData>(l, env.GetTileData(l))).ToArray(),
 			};
 
 			m_player.Send(msg);

@@ -325,10 +325,10 @@ namespace Dwarrowdelf.Server
 			if (this.IsProceedTurnReplyReceived == true)
 				throw new Exception();
 
-			foreach (var tuple in msg.Actions)
+			foreach (var kvp in msg.Actions)
 			{
-				var actorOid = tuple.Item1;
-				var action = tuple.Item2;
+				var actorOid = kvp.Key;
+				var action = kvp.Value;
 
 				if (m_world.CurrentLivingID != ObjectID.AnyObjectID && m_world.CurrentLivingID != actorOid)
 				{

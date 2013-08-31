@@ -261,7 +261,7 @@ namespace Dwarrowdelf.Client
 				MapTileTerrainChanged(l);
 		}
 
-		public void SetTerrains(Tuple<IntPoint3, TileData>[] tileDataList)
+		public void SetTerrains(KeyValuePair<IntPoint3, TileData>[] tileDataList)
 		{
 			this.Version += 1;
 
@@ -270,7 +270,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var kvp in tileDataList)
 			{
-				IntPoint3 p = kvp.Item1;
+				IntPoint3 p = kvp.Key;
 
 				if (x < p.X)
 					x = p.X;
@@ -284,8 +284,8 @@ namespace Dwarrowdelf.Client
 
 			foreach (var kvp in tileDataList)
 			{
-				IntPoint3 p = kvp.Item1;
-				TileData data = kvp.Item2;
+				IntPoint3 p = kvp.Key;
+				TileData data = kvp.Value;
 
 				m_tileGrid.SetTileData(p, data);
 

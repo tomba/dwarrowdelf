@@ -81,13 +81,13 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public void ExecScript(string script, Tuple<string, object>[] args)
+		public void ExecScript(string script, KeyValuePair<string, object>[] args)
 		{
 			try
 			{
 				if (args != null)
 					foreach (var kvp in args)
-						m_scriptScope.SetVariable(kvp.Item1, kvp.Item2);
+						m_scriptScope.SetVariable(kvp.Key, kvp.Value);
 
 				m_scriptEngine.Execute(script, m_scriptScope);
 			}

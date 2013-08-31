@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			var list = new List<Tuple<ObjectID, GameAction>>();
+			var list = new List<KeyValuePair<ObjectID, GameAction>>();
 
 			IEnumerable<LivingObject> livings;
 
@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Client
 				if (action != living.CurrentAction)
 				{
 					turnTrace.TraceVerbose("{0}: selecting new action {1}", living, action);
-					list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
+					list.Add(new KeyValuePair<ObjectID, GameAction>(living.ObjectID, action));
 				}
 			}
 

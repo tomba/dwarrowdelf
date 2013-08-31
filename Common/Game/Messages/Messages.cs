@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Messages
 	public sealed class IPScriptMessage : ServerMessage
 	{
 		public string Script { get; private set; }
-		public Tuple<string, object>[] Args { get; private set; }
+		public KeyValuePair<string, object>[] Args { get; private set; }
 
 		public IPScriptMessage(string script)
 		{
@@ -67,7 +67,7 @@ namespace Dwarrowdelf.Messages
 		public IPScriptMessage(string script, Dictionary<string, object> args)
 		{
 			this.Script = script;
-			this.Args = args.Select(kvp => new Tuple<string, object>(kvp.Key, kvp.Value)).ToArray();
+			this.Args = args.Select(kvp => new KeyValuePair<string, object>(kvp.Key, kvp.Value)).ToArray();
 		}
 	}
 
@@ -197,7 +197,7 @@ namespace Dwarrowdelf.Messages
 	public sealed class MapDataTerrainsListMessage : StateMessage
 	{
 		public ObjectID Environment { get; set; }
-		public Tuple<IntPoint3, TileData>[] TileDataList { get; set; }
+		public KeyValuePair<IntPoint3, TileData>[] TileDataList { get; set; }
 
 		public override string ToString()
 		{
@@ -227,7 +227,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class ProceedTurnReplyMessage : ServerMessage
 	{
-		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
+		public KeyValuePair<ObjectID, GameAction>[] Actions { get; set; }
 	}
 
 	[Serializable]
