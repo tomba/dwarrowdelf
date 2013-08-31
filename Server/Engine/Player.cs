@@ -13,22 +13,6 @@ namespace Dwarrowdelf.Server
 	[SaveGameObject]
 	public sealed class Player : IPlayer
 	{
-		static Dictionary<Type, Action<Player, ServerMessage>> s_handlerMap;
-
-		static Player()
-		{
-			var messageTypes = Helpers.GetNonabstractSubclasses(typeof(ServerMessage));
-
-			s_handlerMap = new Dictionary<Type, Action<Player, ServerMessage>>(messageTypes.Count());
-
-			foreach (var type in messageTypes)
-			{
-				var method = WrapperGenerator.CreateActionWrapper<Player, ServerMessage>("ReceiveMessage", type);
-				if (method != null)
-					s_handlerMap[type] = method;
-			}
-		}
-
 		/// <summary>
 		/// UserID of the user who owns this Player
 		/// </summary>
@@ -59,8 +43,6 @@ namespace Dwarrowdelf.Server
 		public bool IsConnected { get { return this.User != null; } }
 
 		public bool IsController(BaseObject living) { return m_controllables.Contains(living); }
-
-		IPRunner m_ipRunner;
 
 		ChangeHandler m_changeHandler;
 
@@ -104,12 +86,6 @@ namespace Dwarrowdelf.Server
 		void Construct()
 		{
 			trace.Header = String.Format("Player({0})", this.PlayerID);
-
-			// XXX creating IP engine takes some time. Do it in the background. Race condition with IP msg handlers
-			System.Threading.Tasks.Task.Factory.StartNew(delegate
-			{
-				m_ipRunner = new IPRunner(m_world, m_engine, this);
-			});
 
 			if (m_seeAll)
 				m_changeHandler = new AdminChangeHandler(this);
@@ -398,20 +374,6 @@ namespace Dwarrowdelf.Server
 				ProceedTurnReceived(this);
 		}
 
-		void ReceiveMessage(IPExpressionMessage msg)
-		{
-			trace.TraceInformation("IPExpressionMessage {0}", msg.Script);
-
-			m_ipRunner.ExecExpr(msg.Script);
-		}
-
-		void ReceiveMessage(IPScriptMessage msg)
-		{
-			trace.TraceInformation("IPScriptMessage {0}", msg.Script);
-
-			m_ipRunner.ExecScript(msg.Script, msg.Args);
-		}
-
 		void ReceiveMessage(SaveRequestMessage msg)
 		{
 			m_engine.Save();
@@ -567,6 +529,23 @@ namespace Dwarrowdelf.Server
 			{
 				var tracker = GetVisionTrackerInternal(src);
 				tracker.AddLiving(living);
+			}
+		}
+
+
+		static Dictionary<Type, Action<Player, ServerMessage>> s_handlerMap;
+
+		static Player()
+		{
+			var messageTypes = Helpers.GetNonabstractSubclasses(typeof(ServerMessage));
+
+			s_handlerMap = new Dictionary<Type, Action<Player, ServerMessage>>(messageTypes.Count());
+
+			foreach (var type in messageTypes)
+			{
+				var method = WrapperGenerator.CreateActionWrapper<Player, ServerMessage>("ReceiveMessage", type);
+				if (method != null)
+					s_handlerMap[type] = method;
 			}
 		}
 	}

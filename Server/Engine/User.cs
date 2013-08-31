@@ -20,12 +20,29 @@ namespace Dwarrowdelf.Server
 
 		public event Action<User> DisconnectEvent;
 
-		public User(IConnection connection, int userID, string name)
+		IPRunner m_ipRunner;
+
+		GameEngine m_engine;
+
+		Task m_ipStartTask;
+
+		public User(IConnection connection, int userID, string name, GameEngine engine, bool isIronPythonEnabled)
 		{
 			m_connection = connection;
 			this.UserID = userID;
 			this.Name = name;
+			m_engine = engine;
 			trace.Header = String.Format("User({0}/{1})", this.Name, this.UserID);
+
+			if (isIronPythonEnabled)
+			{
+				// XXX creating IP engine takes some time. Do it in the background. Race condition with IP msg handlers
+				m_ipStartTask = Task.Run(() =>
+				{
+					m_ipRunner = new IPRunner(this, m_engine);
+					m_ipStartTask = null;
+				});
+			}
 		}
 
 		public override string ToString()
@@ -37,12 +54,21 @@ namespace Dwarrowdelf.Server
 		{
 			this.Player = player;
 			player.ConnectUser(this);
+
+			if (m_ipStartTask != null)
+				m_ipStartTask.Wait();
+
+			if (m_ipRunner != null)
+				m_ipRunner.SetPlayer(player);
 		}
 
 		public void Disconnect()
 		{
 			if (this.Player != null)
 			{
+				if (m_ipRunner != null)
+					m_ipRunner.SetPlayer(null);
+
 				this.Player.DisconnectUser();
 				this.Player = null;
 			}
@@ -56,16 +82,14 @@ namespace Dwarrowdelf.Server
 
 			DH.Dispose(ref m_connection);
 
-			//foreach (var c in m_controllables)
-			//	UninitControllableVisionTracker(c);
-			//
-			//m_world.WorldChanged -= HandleWorldChange;
-			//m_world.ReportReceived -= HandleReport;
-			//
-			//this.IsProceedTurnReplyReceived = false;
-
 			if (DisconnectEvent != null)
 				DisconnectEvent(this);
+		}
+
+		public void Send(ClientMessage msg)
+		{
+			if (m_connection != null)
+				m_connection.Send(msg);
 		}
 
 		public void PollNewMessages()
@@ -76,7 +100,14 @@ namespace Dwarrowdelf.Server
 			{
 				Message msg;
 				while (m_connection.TryGetMessage(out msg))
-					this.Player.OnReceiveMessage(msg);
+				{
+					trace.TraceVerbose("OnReceiveMessage({0})", msg);
+
+					bool handled = OnReceiveMessage(msg);
+
+					if (!handled)
+						this.Player.OnReceiveMessage(msg);
+				}
 			}
 
 			if (!m_connection.IsConnected)
@@ -87,11 +118,60 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public void Send(ClientMessage msg)
+		bool OnReceiveMessage(Message msg)
 		{
-			if (m_connection != null)
-				m_connection.Send(msg);
+			Action<User, ServerMessage> method;
+
+			if (s_handlerMap.TryGetValue(msg.GetType(), out method) == false)
+				return false;
+
+			method(this, (ServerMessage)msg);
+
+			return true;
 		}
 
+
+		void ReceiveMessage(IPExpressionMessage msg)
+		{
+			trace.TraceInformation("IPExpressionMessage {0}", msg.Script);
+
+			if (m_ipStartTask != null)
+				m_ipStartTask.Wait();
+
+			if (m_ipRunner != null)
+				m_ipRunner.ExecExpr(msg.Script);
+			else
+				Send(new Messages.IPOutputMessage() { Text = "IronPython not enabled" });
+		}
+
+		void ReceiveMessage(IPScriptMessage msg)
+		{
+			trace.TraceInformation("IPScriptMessage {0}", msg.Script);
+
+			if (m_ipStartTask != null)
+				m_ipStartTask.Wait();
+
+			if (m_ipRunner != null)
+				m_ipRunner.ExecScript(msg.Script, msg.Args);
+			else
+				Send(new Messages.IPOutputMessage() { Text = "IronPython not enabled" });
+		}
+
+
+		static Dictionary<Type, Action<User, ServerMessage>> s_handlerMap;
+
+		static User()
+		{
+			var messageTypes = Helpers.GetNonabstractSubclasses(typeof(ServerMessage));
+
+			s_handlerMap = new Dictionary<Type, Action<User, ServerMessage>>(messageTypes.Count());
+
+			foreach (var type in messageTypes)
+			{
+				var method = WrapperGenerator.CreateActionWrapper<User, ServerMessage>("ReceiveMessage", type);
+				if (method != null)
+					s_handlerMap[type] = method;
+			}
+		}
 	}
 }

@@ -27,6 +27,8 @@ namespace Dwarrowdelf.Server
 		/// Minimum time between ticks. Ticks will never proceed faster than this.
 		/// </summary>
 		public TimeSpan MinTickTime;
+
+		public bool IronPythonEnabled;
 	}
 
 	[SaveGameObject]
@@ -94,6 +96,7 @@ namespace Dwarrowdelf.Server
 				RequirePlayer = true,
 				MaxMoveTime = TimeSpan.Zero,
 				MinTickTime = TimeSpan.FromMilliseconds(50),
+				IronPythonEnabled = false,
 			};
 
 			this.LastSaveID = Guid.Empty;
@@ -238,7 +241,7 @@ namespace Dwarrowdelf.Server
 
 			connection.NewMessageEvent += Signal;
 
-			var user = new User(connection, userID, name);
+			var user = new User(connection, userID, name, this, m_config.IronPythonEnabled);
 			user.DisconnectEvent += OnUserDisconnected;
 			m_users.Add(user);
 

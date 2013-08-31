@@ -14,23 +14,22 @@ namespace Dwarrowdelf.Server
 		ScriptScope m_exprScope;
 		ScriptScope m_scriptScope;
 		MyStream m_scriptOutputStream;
+		User m_user;
 
-		Player m_player;
-
-		public IPRunner(World world, GameEngine engine, Player player)
+		public IPRunner(User user, GameEngine engine)
 		{
-			m_player = player;
-			m_scriptOutputStream = new MyStream(player.Send);
+			m_user = user;
+			m_scriptOutputStream = new MyStream(user.Send);
 
 			m_scriptEngine = IronPython.Hosting.Python.CreateEngine();
 
 			InitRuntime(m_scriptEngine.Runtime);
 
 			m_exprScope = m_scriptEngine.CreateScope();
-			InitScope(m_exprScope, world, engine, player);
+			InitScope(m_exprScope, engine);
 
 			m_scriptScope = m_scriptEngine.CreateScope();
-			InitScope(m_scriptScope, world, engine, player);
+			InitScope(m_scriptScope, engine);
 		}
 
 		void InitRuntime(ScriptRuntime runtime)
@@ -45,14 +44,13 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void InitScope(ScriptScope scope, World world, GameEngine engine, Player player)
+		void InitScope(ScriptScope scope, GameEngine engine)
 		{
 			var globals = new Dictionary<string, object>()
 			{
-				{ "world", world },
 				{ "engine", engine },
-				{ "player", player},
-				{ "get", new Func<object, BaseObject>(world.IPGet) },
+				{ "world", engine.World },
+				{ "get", new Func<object, BaseObject>(engine.World.IPGet) },
 			};
 
 			foreach (var kvp in globals)
@@ -60,6 +58,12 @@ namespace Dwarrowdelf.Server
 
 			// XXX perhaps this can also be done with C# somehow...
 			m_scriptEngine.Execute("import Dwarrowdelf", scope);
+		}
+
+		public void SetPlayer(Player player)
+		{
+			m_exprScope.SetVariable("player", player);
+			m_scriptScope.SetVariable("player", player);
 		}
 
 		public void ExecExpr(string script)
@@ -73,7 +77,7 @@ namespace Dwarrowdelf.Server
 			catch (Exception e)
 			{
 				var str = e.Message;
-				m_player.Send(new Messages.IPOutputMessage() { Text = str });
+				m_user.Send(new Messages.IPOutputMessage() { Text = str });
 			}
 		}
 
@@ -90,7 +94,7 @@ namespace Dwarrowdelf.Server
 			catch (Exception e)
 			{
 				var str = m_scriptEngine.GetService<ExceptionOperations>().FormatException(e);
-				m_player.Send(new Messages.IPOutputMessage() { Text = str });
+				m_user.Send(new Messages.IPOutputMessage() { Text = str });
 			}
 		}
 		sealed class MyStream : Stream
