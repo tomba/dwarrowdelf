@@ -99,14 +99,9 @@ namespace Dwarrowdelf.Server
 			foreach (var ob in this.Inventory)
 				m_contentArray[ob.Z].Add(ob);
 
-			if (this.World.GameMode == GameMode.Fortress)
-			{
-				m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
-			}
-
-			m_waterHandler = new EnvWaterHandler(this);
-
 			CreateLevelMap();
+
+			CommonInit();
 		}
 
 		void CreateLevelMap()
@@ -148,6 +143,11 @@ namespace Dwarrowdelf.Server
 		{
 			base.Initialize(world);
 
+			CommonInit();
+		}
+
+		void CommonInit()
+		{
 			m_randomXYArray = new uint[this.Width * this.Height];
 			for (int i = 0; i < m_randomXYArray.Length; ++i)
 			{
