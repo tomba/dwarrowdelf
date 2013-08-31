@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Server
 
 			baseData.Properties = SerializeProperties().
 				Where(kvp => (PropertyVisibilities.GetPropertyVisibility(kvp.Key) & visibility) != 0).
-				Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).
+				Select(kvp => new KeyValuePair<PropertyID, object>(kvp.Key, kvp.Value)).
 				ToArray();
 		}
 

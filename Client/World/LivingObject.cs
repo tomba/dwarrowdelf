@@ -40,11 +40,11 @@ namespace Dwarrowdelf.Client
 		public LivingObject()
 			: this(null, new ObjectID(ObjectType.Living, 1234))
 		{
-			var props = new Tuple<PropertyID, object>[]
+			var props = new KeyValuePair<PropertyID, object>[]
 			{
-				new Tuple<PropertyID, object>(PropertyID.Name, "Testname"),
-				new Tuple<PropertyID, object>(PropertyID.Gender, LivingGender.Male),
-				new Tuple<PropertyID, object>(PropertyID.MaterialID, MaterialID.Flesh),
+				new KeyValuePair<PropertyID, object>(PropertyID.Name, "Testname"),
+				new KeyValuePair<PropertyID, object>(PropertyID.Gender, LivingGender.Male),
+				new KeyValuePair<PropertyID, object>(PropertyID.MaterialID, MaterialID.Flesh),
 			};
 
 			var data = new LivingData()
@@ -96,7 +96,8 @@ namespace Dwarrowdelf.Client
 			this.Description = this.Name ?? this.LivingInfo.Name;
 
 			if (data.Skills != null)
-				m_skills = new ObservableCollection<Tuple<SkillID, byte>>(data.Skills);
+				m_skills = new ObservableCollection<Tuple<SkillID, byte>>(data.Skills.Select(kvp =>
+					new Tuple<SkillID, byte>(kvp.Key, kvp.Value)));
 			else
 				m_skills = new ObservableCollection<Tuple<SkillID, byte>>();
 			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);

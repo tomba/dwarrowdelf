@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Client
 			if (data.Properties != null)
 			{
 				foreach (var tuple in data.Properties)
-					SetProperty(tuple.Item1, tuple.Item2);
+					SetProperty(tuple.Key, tuple.Value);
 			}
 
 			this.IsInitialized = true;

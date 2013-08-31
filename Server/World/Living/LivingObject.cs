@@ -226,7 +226,7 @@ namespace Dwarrowdelf.Server
 				data.ActionTicksUsed = this.ActionTicksUsed;
 				data.ActionTotalTicks = this.ActionTotalTicks;
 
-				data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
+				data.Skills = m_skillMap.Select(kvp => new KeyValuePair<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
 			}
 		}
 

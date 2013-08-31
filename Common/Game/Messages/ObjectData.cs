@@ -23,7 +23,7 @@ namespace Dwarrowdelf
 		public DateTime CreationTime;
 		public int CreationTick;
 
-		public Tuple<PropertyID, object>[] Properties;
+		public KeyValuePair<PropertyID, object>[] Properties;
 	}
 
 	[Serializable]
@@ -65,7 +65,7 @@ namespace Dwarrowdelf
 		public int ActionTicksUsed;
 		public int ActionTotalTicks;
 
-		public Tuple<SkillID, byte>[] Skills;
+		public KeyValuePair<SkillID, byte>[] Skills;
 
 		public override string ToString()
 		{

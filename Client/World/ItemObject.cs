@@ -22,9 +22,9 @@ namespace Dwarrowdelf.Client
 		public ItemObject()
 			: base(null, new ObjectID(ObjectType.Item, 123456))
 		{
-			var props = new Tuple<PropertyID, object>[]
+			var props = new KeyValuePair<PropertyID, object>[]
 			{
-				new Tuple<PropertyID, object>(PropertyID.MaterialID, MaterialID.Bronze),
+				new KeyValuePair<PropertyID, object>(PropertyID.MaterialID, MaterialID.Bronze),
 			};
 
 			var data = new ItemData()
