@@ -296,7 +296,7 @@ namespace Dwarrowdelf.Server
 
 		public TileData GetTileData(int x, int y, int z)
 		{
-			return m_tileGrid[x, y, z];
+			return m_tileGrid[z, y, x];
 		}
 
 		public byte GetWaterLevel(IntPoint3 p)
