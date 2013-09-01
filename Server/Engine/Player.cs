@@ -355,17 +355,6 @@ namespace Dwarrowdelf.Server
 				ProceedTurnReceived(this);
 		}
 
-		void ReceiveMessage(SaveRequestMessage msg)
-		{
-			m_engine.Save();
-		}
-
-		void ReceiveMessage(SaveClientDataReplyMessage msg)
-		{
-			m_engine.SaveClientData(this.PlayerID, msg.ID, msg.Data);
-		}
-
-
 		void HandleReport(GameReport report)
 		{
 			if (report is LivingReport)

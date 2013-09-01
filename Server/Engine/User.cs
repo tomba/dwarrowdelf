@@ -143,6 +143,16 @@ namespace Dwarrowdelf.Server
 				m_engine.SetMinTickTime(msg.MinTickTime.Value);
 		}
 
+		void ReceiveMessage(SaveRequestMessage msg)
+		{
+			m_engine.Save();
+		}
+
+		void ReceiveMessage(SaveClientDataReplyMessage msg)
+		{
+			m_engine.SaveClientData(this.Player.PlayerID, msg.ID, msg.Data);
+		}
+
 		void ReceiveMessage(IPExpressionMessage msg)
 		{
 			//trace.TraceInformation("IPExpressionMessage {0}", msg.Script);
