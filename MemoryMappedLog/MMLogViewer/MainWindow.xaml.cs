@@ -170,7 +170,7 @@ namespace MemoryMappedLog
 
 			if (m_showOnlyRegex != null)
 			{
-				return m_showOnlyRegex.IsMatch(entry.Message);
+				return entry.Component == "M" || m_showOnlyRegex.IsMatch(entry.Message);
 			}
 
 			foreach (var rule in LogRules)
