@@ -145,7 +145,7 @@ namespace Dwarrowdelf.Server
 
 		void ReceiveMessage(IPExpressionMessage msg)
 		{
-			trace.TraceInformation("IPExpressionMessage {0}", msg.Script);
+			//trace.TraceInformation("IPExpressionMessage {0}", msg.Script);
 
 			if (m_ipStartTask != null)
 				m_ipStartTask.Wait();
@@ -158,7 +158,7 @@ namespace Dwarrowdelf.Server
 
 		void ReceiveMessage(IPScriptMessage msg)
 		{
-			trace.TraceInformation("IPScriptMessage {0}", msg.Script);
+			//trace.TraceInformation("IPScriptMessage {0}", msg.Script);
 
 			if (m_ipStartTask != null)
 				m_ipStartTask.Wait();

@@ -12,9 +12,9 @@ namespace Dwarrowdelf.Server
 	{
 		ScriptEngine m_scriptEngine;
 		ScriptScope m_exprScope;
-		ScriptScope m_scriptScope;
 		MyStream m_scriptOutputStream;
 		User m_user;
+		Dictionary<string, object> m_scopeVars;
 
 		public IPRunner(User user, GameEngine engine)
 		{
@@ -25,11 +25,15 @@ namespace Dwarrowdelf.Server
 
 			InitRuntime(m_scriptEngine.Runtime);
 
-			m_exprScope = m_scriptEngine.CreateScope();
-			InitScope(m_exprScope, engine);
+			m_scopeVars = new Dictionary<string, object>()
+			{
+				{ "engine", engine },
+				{ "world", engine.World },
+				{ "get", new Func<object, BaseObject>(engine.World.IPGet) },
+			};
 
-			m_scriptScope = m_scriptEngine.CreateScope();
-			InitScope(m_scriptScope, engine);
+			m_exprScope = m_scriptEngine.CreateScope(m_scopeVars);
+			InitScopeImports(m_exprScope);
 		}
 
 		void InitRuntime(ScriptRuntime runtime)
@@ -44,26 +48,24 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void InitScope(ScriptScope scope, GameEngine engine)
+		void InitScopeImports(ScriptScope scope)
 		{
-			var globals = new Dictionary<string, object>()
-			{
-				{ "engine", engine },
-				{ "world", engine.World },
-				{ "get", new Func<object, BaseObject>(engine.World.IPGet) },
-			};
-
-			foreach (var kvp in globals)
-				scope.SetVariable(kvp.Key, kvp.Value);
-
 			// XXX perhaps this can also be done with C# somehow...
 			m_scriptEngine.Execute("import Dwarrowdelf", scope);
 		}
 
 		public void SetPlayer(Player player)
 		{
-			m_exprScope.SetVariable("player", player);
-			m_scriptScope.SetVariable("player", player);
+			if (player != null)
+			{
+				m_exprScope.SetVariable("player", player);
+				m_scopeVars["player"] = player;
+			}
+			else
+			{
+				m_exprScope.RemoveVariable("player");
+				m_scopeVars.Remove("player");
+			}
 		}
 
 		public void ExecExpr(string script)
@@ -85,11 +87,14 @@ namespace Dwarrowdelf.Server
 		{
 			try
 			{
+				var scope = m_scriptEngine.CreateScope(m_scopeVars);
+				InitScopeImports(scope);
+
 				if (args != null)
 					foreach (var kvp in args)
-						m_scriptScope.SetVariable(kvp.Key, kvp.Value);
+						scope.SetVariable(kvp.Key, kvp.Value);
 
-				m_scriptEngine.Execute(script, m_scriptScope);
+				m_scriptEngine.Execute(script, scope);
 			}
 			catch (Exception e)
 			{
@@ -97,6 +102,7 @@ namespace Dwarrowdelf.Server
 				m_user.Send(new Messages.IPOutputMessage() { Text = str });
 			}
 		}
+
 		sealed class MyStream : Stream
 		{
 			Action<Messages.ClientMessage> m_sender;
