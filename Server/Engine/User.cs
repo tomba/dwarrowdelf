@@ -103,10 +103,10 @@ namespace Dwarrowdelf.Server
 				{
 					trace.TraceVerbose("OnReceiveMessage({0})", msg);
 
-					bool handled = OnReceiveMessage(msg);
+					bool handled = DispatchMessage(msg);
 
 					if (!handled)
-						this.Player.OnReceiveMessage(msg);
+						this.Player.DispatchMessage(msg);
 				}
 			}
 
@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		bool OnReceiveMessage(Message msg)
+		bool DispatchMessage(Message msg)
 		{
 			Action<User, ServerMessage> method;
 
@@ -130,6 +130,18 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
+		void ReceiveMessage(LogOutRequestMessage msg)
+		{
+			Send(new Messages.LogOutReplyMessage());
+
+			Disconnect();
+		}
+
+		void ReceiveMessage(SetWorldConfigMessage msg)
+		{
+			if (msg.MinTickTime.HasValue)
+				m_engine.SetMinTickTime(msg.MinTickTime.Value);
+		}
 
 		void ReceiveMessage(IPExpressionMessage msg)
 		{

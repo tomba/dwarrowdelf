@@ -296,27 +296,14 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Called from User
-		public void OnReceiveMessage(Message m)
+		public void DispatchMessage(Message m)
 		{
-			trace.TraceVerbose("OnReceiveMessage({0})", m);
+			trace.TraceVerbose("DispatchMessage({0})", m);
 
 			var msg = (ServerMessage)m;
 
 			Action<Player, ServerMessage> method = s_handlerMap[msg.GetType()];
 			method(this, msg);
-		}
-
-		void ReceiveMessage(LogOutRequestMessage msg)
-		{
-			Send(new Messages.LogOutReplyMessage());
-
-			this.User.Disconnect();
-		}
-
-		void ReceiveMessage(SetWorldConfigMessage msg)
-		{
-			if (msg.MinTickTime.HasValue)
-				m_engine.SetMinTickTime(msg.MinTickTime.Value);
 		}
 
 		/* functions for livings */
