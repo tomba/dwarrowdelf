@@ -78,6 +78,8 @@ namespace Dwarrowdelf.Server
 		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
 		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
 
+		bool m_minTickTimePassed = true;
+
 		protected GameEngine(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
 		{
 			CommonInit();
@@ -305,9 +307,10 @@ namespace Dwarrowdelf.Server
 
 		bool _IsTimeToStartTick()
 		{
-			// XXX check if this.UseMinTickTime && enough time passed
-
 			if (m_config.RequirePlayer && m_playersConnected == 0)
+				return false;
+
+			if (this.UseMinTickTime && m_minTickTimePassed == false)
 				return false;
 
 			return true;
@@ -339,6 +342,7 @@ namespace Dwarrowdelf.Server
 		{
 			if (this.UseMinTickTime)
 			{
+				m_minTickTimePassed = false;
 				m_minTickTimer.Change(m_config.MinTickTime, TimeSpan.FromMilliseconds(-1));
 			}
 			else
@@ -350,7 +354,7 @@ namespace Dwarrowdelf.Server
 		void _MinTickTimerCallback(object stateInfo)
 		{
 			trace.TraceVerbose("MinTickTimerCallback");
-			m_dispatcher.BeginInvoke(_ => CheckForStartTick(), null);
+			m_dispatcher.BeginInvoke(_ => { m_minTickTimePassed = true; CheckForStartTick(); }, null);
 		}
 
 		void OnTurnStart(LivingObject living)
