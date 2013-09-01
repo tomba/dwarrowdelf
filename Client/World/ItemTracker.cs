@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Client
 	/// use http://blogs.msdn.com/b/devdev/archive/2007/06/07/k-nearest-neighbor-spatial-search.aspx
 	/// to speed up the search by distance.
 	/// </summary>
-	public class ItemTracker
+	public sealed class ItemTracker
 	{
 		List<ItemObject> m_items;
 		EnvironmentObject m_env;
@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	public class Unreachables
+	public sealed class Unreachables
 	{
 		// location : expiration tick
 		Dictionary<IntPoint3, int> m_map = new Dictionary<IntPoint3, int>();

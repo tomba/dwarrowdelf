@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf
 {
-	public class PipeConnection : IConnection
+	public sealed class PipeConnection : IConnection
 	{
 		PipeStream m_stream;
 

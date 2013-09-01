@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf
 {
-	public class DirectConnection : MarshalByRefObject, IConnection
+	public sealed class DirectConnection : MarshalByRefObject, IConnection
 	{
 		DirectConnection m_remoteConnection;
 

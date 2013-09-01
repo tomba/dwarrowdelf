@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Dwarrowdelf
 {
-	public class LRUCache<TKey, TValue>
+	public sealed class LRUCache<TKey, TValue>
 	{
 		int m_capacity;
 		Dictionary<TKey, LinkedListNode<LRUCacheItem>> m_cacheMap;

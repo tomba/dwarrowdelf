@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client
 {
-	public class TileSet : Dwarrowdelf.Client.TileControl.ITileSet
+	public sealed class TileSet : Dwarrowdelf.Client.TileControl.ITileSet
 	{
 		public BitmapSource Atlas { get; private set; }
 		public int MaxTileSize { get; private set; }

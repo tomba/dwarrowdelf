@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace Dwarrowdelf
 {
-	public class ReadOnlyArray<T> : IEnumerable<T>, IEnumerable
+	public sealed class ReadOnlyArray<T> : IEnumerable<T>, IEnumerable
 	{
 		T[] m_array;
 

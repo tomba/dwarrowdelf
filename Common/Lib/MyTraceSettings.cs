@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf
 {
-	public class MyTraceSettings : ConfigurationSection
+	public sealed class MyTraceSettings : ConfigurationSection
 	{
 		static MyTraceSettings s_settings = ConfigurationManager.GetSection("myTraceSettings") as MyTraceSettings;
 
@@ -22,7 +22,7 @@ namespace Dwarrowdelf
 	}
 
 	[ConfigurationCollection(typeof(DefaultTraceLevelElement))]
-	public class DefaultTraceLevelCollection : ConfigurationElementCollection
+	public sealed class DefaultTraceLevelCollection : ConfigurationElementCollection
 	{
 		protected override ConfigurationElement CreateNewElement()
 		{
@@ -45,7 +45,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class DefaultTraceLevelElement : ConfigurationElement
+	public sealed class DefaultTraceLevelElement : ConfigurationElement
 	{
 		[ConfigurationProperty("name", DefaultValue = "", IsKey = true, IsRequired = true)]
 		public string Name

@@ -10,7 +10,7 @@ using Dwarrowdelf.Jobs.AssignmentGroups;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject]
-	public class InstallItemManager : IJobSource, IJobObserver
+	public sealed class InstallItemManager : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
 		EnvironmentObject m_environment;

@@ -284,7 +284,7 @@ namespace Dwarrowdelf.Client.UI
 		#endregion
 	}
 
-	public class SelectableItem<T> : INotifyPropertyChanged
+	public sealed class SelectableItem<T> : INotifyPropertyChanged
 	{
 		Action<T> m_callback;
 

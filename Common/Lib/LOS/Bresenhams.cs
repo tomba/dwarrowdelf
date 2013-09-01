@@ -2,7 +2,7 @@
 
 namespace Dwarrowdelf
 {
-	public class Bresenhams
+	public static class Bresenhams
 	{
 		static void Swap<T>(ref T lhs, ref T rhs) { T temp; temp = lhs; lhs = rhs; rhs = temp; }
 

@@ -9,7 +9,7 @@ namespace Dwarrowdelf
 {
 	//Generates random names based on the statistical weight of letter sequences
 	//in a collection of sample names
-	public class MarkovNameGenerator
+	public sealed class MarkovNameGenerator
 	{
 		public static readonly string[] OrcNameSamples = {
 			"Azog",
