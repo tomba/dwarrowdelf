@@ -139,7 +139,8 @@ namespace Dwarrowdelf.Server
 		{
 			this.World.TickStarted += OnTickStarted;
 			this.World.TickEnded += OnTickEnded;
-			this.World.TurnStarting += OnTurnStart;
+			this.World.TurnStarting += OnTurnStarting;
+			this.World.TurnEnded += OnTurnEnded;
 
 			PipeConnectionListener.StartListening(_OnNewConnection);
 			TcpConnectionListener.StartListening(_OnNewConnection);
@@ -162,7 +163,8 @@ namespace Dwarrowdelf.Server
 			TcpConnectionListener.StopListening();
 			PipeConnectionListener.StopListening();
 
-			this.World.TurnStarting -= OnTurnStart;
+			this.World.TurnEnded -= OnTurnEnded;
+			this.World.TurnStarting -= OnTurnStarting;
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TickStarted -= OnTickStarted;
 
@@ -357,12 +359,10 @@ namespace Dwarrowdelf.Server
 			m_dispatcher.BeginInvoke(_ => { m_minTickTimePassed = true; CheckForStartTick(); }, null);
 		}
 
-		void OnTurnStart(LivingObject living)
+		void OnTurnStarting(LivingObject living)
 		{
 			if (this.UseMaxMoveTime)
 				m_maxMoveTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
-
-			// XXX use TurnEnded to cancel?
 		}
 
 		void _MaxMoveTimerCallback(object stateInfo)
@@ -374,6 +374,15 @@ namespace Dwarrowdelf.Server
 		void MaxMoveTimerCallback()
 		{
 			this.World.SetProceedTurn();
+		}
+
+		void OnTurnEnded(LivingObject living)
+		{
+			// Cancel the timer
+			if (this.UseMaxMoveTime)
+				m_maxMoveTimer.Change(TimeSpan.FromMilliseconds(-1), TimeSpan.FromMilliseconds(-1));
+
+			// XXX There's a race. The timer could fire before the cancellation, but the timer action could be run after.
 		}
 
 		public void Signal()
