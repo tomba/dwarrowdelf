@@ -300,7 +300,6 @@ namespace Dwarrowdelf.Server
 			method(this, msg);
 		}
 
-		/* functions for livings */
 		void ReceiveMessage(ProceedTurnReplyMessage msg)
 		{
 			if (this.IsProceedTurnReplyReceived == true)
