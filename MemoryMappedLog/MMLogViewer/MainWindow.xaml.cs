@@ -330,7 +330,9 @@ namespace MemoryMappedLog
 			var entry = new ViewableLogEntry()
 				{
 					DateTime = DateTime.Now,
-					Component = "Mark",
+					Component = "M",
+					Thread = "",
+					Message = "",
 				};
 			Add(entry);
 		}
