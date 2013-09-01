@@ -175,12 +175,6 @@ namespace Dwarrowdelf.Server
 				DisconnectEvent(this);
 		}
 
-		// Called from game engine when creating new player, before the player object is connected
-		public void SetupControllablesForNewPlayer(IEnumerable<LivingObject> controllables)
-		{
-			AddControllables(controllables);
-		}
-
 		public void AddControllables(IEnumerable<LivingObject> controllables)
 		{
 			m_controllables.AddRange(controllables);
