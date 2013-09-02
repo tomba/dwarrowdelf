@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Server
 
 		ChangeHandler m_changeHandler;
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
+		MyTraceSource trace = new MyTraceSource("Server.Player");
 
 		public bool IsProceedTurnReplyReceived { get; private set; }
 		public event Action<Player> ProceedTurnReceived;

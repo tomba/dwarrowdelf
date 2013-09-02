@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Server
 			// XXX inventory items are not present yet?
 			RecalcArmorClass();
 
-			this.Trace = new MyTraceSource("Dwarrowdelf.LivingObject",
+			this.Trace = new MyTraceSource("Server.LivingObject",
 				String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID));
 		}
 
@@ -87,7 +87,7 @@ namespace Dwarrowdelf.Server
 			world.AddLiving(this);
 			world.TickEnding += OnTickEnding;
 
-			this.Trace = new MyTraceSource("Dwarrowdelf.LivingObject",
+			this.Trace = new MyTraceSource("Server.LivingObject",
 				String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID));
 		}
 

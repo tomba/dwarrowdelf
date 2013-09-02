@@ -14,7 +14,7 @@ namespace Dwarrowdelf
 		static Socket s_listenSocket;
 		static ManualResetEvent s_acceptStopEvent;
 		volatile static bool s_stopListen;
-		static MyTraceSource s_trace = new MyTraceSource("Dwarrowdelf.Connection", "Connection");
+		static MyTraceSource s_trace = new MyTraceSource("Connection", "Connection");
 
 		static Action<TcpConnection> s_callback;
 

@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Client
 		World m_world;
 		ClientUser m_user;
 
-		MyTraceSource turnTrace = new MyTraceSource("Dwarrowdelf.Turn", "ClientUser");
+		MyTraceSource turnTrace = new MyTraceSource("Client.Turn", "ClientUser");
 
 		Dictionary<LivingObject, GameAction> m_actionMap = new Dictionary<LivingObject, GameAction>();
 		bool m_proceedTurnSent;

@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<BuildOrder> m_buildOrderQueue;
 		public ReadOnlyCollection<BuildOrder> BuildOrderQueue { get; private set; }
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.BuildItemManager");
+		MyTraceSource trace = new MyTraceSource("Client.BuildItemManager");
 
 		[SaveGameProperty]
 		BuildOrder m_currentBuildOrder;

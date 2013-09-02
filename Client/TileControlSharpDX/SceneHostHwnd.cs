@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		IScene m_scene;
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
+		MyTraceSource trace = new MyTraceSource("Client.Render", "TileControl");
 
 		public SceneHostHwnd(IntPtr windowHandle)
 		{

@@ -23,7 +23,7 @@ namespace Dwarrowdelf
 
 		INetStatCollector m_netStatCollector;
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
+		MyTraceSource trace = new MyTraceSource("Connection");
 
 		object m_sendLock = new object();
 

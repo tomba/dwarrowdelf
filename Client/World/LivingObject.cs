@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Client
 			m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>();
 			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
 
-			this.Trace = new MyTraceSource("Dwarrowdelf.LivingObject");
+			this.Trace = new MyTraceSource("Client.LivingObject");
 		}
 
 		public override void ReceiveObjectData(BaseGameObjectData _data)

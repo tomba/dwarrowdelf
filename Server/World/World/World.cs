@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Server
 	[SaveGameObject]
 	public sealed partial class World : IWorld
 	{
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");
+		MyTraceSource trace = new MyTraceSource("Server.World", "World");
 
 		// XXX where should this be?
 		public LivingVisionMode LivingVisionMode { get { return LivingVisionMode.LOS; } }

@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client.TileControl
 		bool m_tileDataInvalid;
 		bool m_tileRenderInvalid;
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
+		MyTraceSource trace = new MyTraceSource("Client.Render", "TileControl");
 
 		/// <summary>
 		/// Called before render if grid size, tilesize or centerpos have changed

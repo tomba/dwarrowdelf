@@ -17,7 +17,7 @@ namespace Dwarrowdelf
 
 		Thread m_deserializerThread;
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
+		MyTraceSource trace = new MyTraceSource("Connection");
 
 		public event Action NewMessageEvent;
 

@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		IntSize2 m_renderSize;
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
+		MyTraceSource trace = new MyTraceSource("Client.Render", "TileControl");
 
 		public SceneHostWPF()
 		{

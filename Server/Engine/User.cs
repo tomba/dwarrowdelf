@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Server
 		IConnection m_connection;
 		public bool IsConnected { get { return m_connection != null; } }
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.User");
+		MyTraceSource trace = new MyTraceSource("Server.User");
 
 		public event Action<User> DisconnectEvent;
 

@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 		World m_world;
 		public World World { get { return m_world; } }
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ClientUser");
+		MyTraceSource trace = new MyTraceSource("Client.User", "ClientUser");
 
 		SynchronizationContext m_syncCtx;
 

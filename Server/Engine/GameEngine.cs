@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Server
 
 		GameDispatcher m_dispatcher;
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "Engine");
+		MyTraceSource trace = new MyTraceSource("Server.GameEngine", "Engine");
 
 		/// <summary>
 		/// Timer is used to start the tick after MinTickTime
