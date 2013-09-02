@@ -52,6 +52,7 @@ namespace Dwarrowdelf.Server
 
 		public void SetPlayer(Player player)
 		{
+			trace.TraceInformation("{0} takes control of {1}", this, player);
 			this.Player = player;
 			player.ConnectUser(this);
 
