@@ -408,7 +408,7 @@ namespace Dwarrowdelf.Server
 			switch (this.World.TickMethod)
 			{
 				case WorldTickMethod.Simultaneous:
-					if (m_players.Count > 0 && m_players.All(u => u.IsProceedTurnReplyReceived))
+					if (m_players.Count > 0 && m_players.Where(p => p.IsConnected).All(p => p.IsProceedTurnReplyReceived))
 					{
 						this.World.SetProceedTurn();
 						Signal();
