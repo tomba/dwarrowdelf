@@ -1,0 +1,15 @@
+﻿<Window x:Class="Dwarrowdelf.Client.UI.StatWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="StatWindow" Height="200" Width="168">
+	<StackPanel>
+		<UniformGrid Columns="2">
+			<TextBlock Text="Frames/s" />
+			<TextBox Name="fpsTextBox" Text="60" />
+			<TextBlock Text="Turns/s" />
+			<TextBox Name="turnsTextBox" Text="60" />
+			<TextBlock Text="Ticks/s" />
+			<TextBox Name="ticksTextBox" Text="60" />
+		</UniformGrid>
+	</StackPanel>
+</Window>

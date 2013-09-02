@@ -76,6 +76,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="UI\Windows\StatWindow.xaml.cs">
+      <DependentUpon>StatWindow.xaml</DependentUpon>
+    </Compile>
     <None Include="TileSet\DefaultTileSet.xaml">
       <SubType>Designer</SubType>
     </None>
@@ -389,6 +392,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\ItemInfoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Windows\StatWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

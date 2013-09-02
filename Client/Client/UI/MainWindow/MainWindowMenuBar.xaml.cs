@@ -149,6 +149,13 @@ namespace Dwarrowdelf.Client.UI
 			netWnd.Show();
 		}
 
+		private void Stats_MenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var wnd = new UI.StatWindow();
+			wnd.Owner = App.GameWindow;
+			wnd.Show();
+		}
+
 		private void GCDebug_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			var wnd = new UI.GCDebugWindow();

@@ -90,13 +90,6 @@
 			</TextBlock>
 		</StatusBar>
 
-		<StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowFps}, Converter={StaticResource boolToVisConverter}}">
-			<Separator />
-
-			<TextBlock>FPS</TextBlock>
-			<TextBlock Name="fpsTextBlock" Width="50" />
-		</StatusBar>
-
 		<StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowTileSize}, Converter={StaticResource boolToVisConverter}}">
 			<Separator />
 

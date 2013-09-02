@@ -23,6 +23,7 @@
 			<MenuItem Header="Console" Command="ui:ClientCommands.OpenConsoleCommand" />
 			<MenuItem Header="FocusDebug" Command="ui:ClientCommands.OpenFocusDebugCommand" />
 			<MenuItem Header="NetStats" Click="NetStats_MenuItem_Click" />
+			<MenuItem Header="Stats" Click="Stats_MenuItem_Click" />
 			<MenuItem Header="GCDebug" Click="GCDebug_MenuItem_Click" />
 		</MenuItem>
         <MenuItem Header="Actions">
