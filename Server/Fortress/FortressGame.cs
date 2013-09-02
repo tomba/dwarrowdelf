@@ -61,6 +61,8 @@ namespace Dwarrowdelf.Server.Fortress
 			if (!startRect.HasValue)
 				throw new Exception();
 
+			player.EnvObserver.Add(startRect.Value);
+
 			var startLocs = startRect.Value.Range().ToArray();
 
 			// clear trees

@@ -13,5 +13,10 @@ namespace Dwarrowdelf.Server.Fortress
 			: base(playerID, engine)
 		{
 		}
+
+		DungeonPlayer(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
 	}
 }

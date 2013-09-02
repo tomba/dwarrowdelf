@@ -17,5 +17,10 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			this.EnvObserver = new EnvObserver(env);
 		}
+
+		FortressPlayer(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
 	}
 }

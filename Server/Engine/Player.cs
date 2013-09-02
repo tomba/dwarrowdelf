@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Server
 			Construct();
 		}
 
-		Player(SaveGameContext ctx)
+		protected Player(SaveGameContext ctx)
 		{
 			InitControllables(m_controllables);
 
