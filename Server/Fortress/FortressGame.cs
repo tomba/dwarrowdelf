@@ -53,6 +53,10 @@ namespace Dwarrowdelf.Server.Fortress
 					pos = env.GetSurfaceLocation(env.Width / 4, env.Height / 4);
 					break;
 
+				case 2:
+					pos = env.GetSurfaceLocation(env.Width / 4 * 3, env.Height / 4 * 3);
+					break;
+
 				default:
 					throw new Exception();
 			}
