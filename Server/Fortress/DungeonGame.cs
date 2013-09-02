@@ -9,12 +9,12 @@ namespace Dwarrowdelf.Server.Fortress
 {
 	public sealed class DungeonGame : GameEngine
 	{
-		public DungeonGame(string gameDir, GameMode gameMode, WorldTickMethod tickMethod, GameMap map)
-			: base(gameDir, gameMode, tickMethod)
+		public DungeonGame(string gameDir, GameOptions options)
+			: base(gameDir, options)
 		{
 			EnvironmentObject env;
 
-			switch (map)
+			switch (options.Map)
 			{
 				case GameMap.Fortress:
 					env = FortressWorldCreator.InitializeWorld(this.World);

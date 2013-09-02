@@ -7,12 +7,6 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	public enum WorldTickMethod
-	{
-		Simultaneous,
-		Sequential,
-	}
-
 	[SaveGameObject]
 	public sealed partial class World : IWorld
 	{

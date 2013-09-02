@@ -10,8 +10,8 @@ namespace Dwarrowdelf.Server.Fortress
 	[SaveGameObject]
 	public sealed class FortressGame : GameEngine
 	{
-		public FortressGame(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
-			: base(gameDir, gameMode, tickMethod)
+		public FortressGame(string gameDir, GameOptions options)
+			: base(gameDir, options)
 		{
 			var env = FortressWorldCreator.InitializeWorld(this.World);
 

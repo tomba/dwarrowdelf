@@ -37,7 +37,13 @@ namespace Dwarrowdelf.Server
 			IGame game;
 
 			if (save == Guid.Empty)
-				game = gf.CreateGame(gameDir, GameMode.Fortress, GameMap.Fortress);
+				game = gf.CreateGame(gameDir,
+					new GameOptions()
+					{
+						Mode = GameMode.Fortress,
+						Map = GameMap.Fortress,
+						TickMethod = WorldTickMethod.Simultaneous
+					});
 			else
 				game = gf.LoadGame(gameDir, save);
 

@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client
 	public class EmbeddedServerOptions
 	{
 		public EmbeddedServerMode ServerMode;
-		public GameMode NewGameMode;
+		public GameOptions NewGameOptions;
 		public string SaveGamePath;
 		public bool CleanSaveDir;
 	}
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 	public sealed class EmbeddedServer
 	{
 		EmbeddedServerMode m_serverMode;
-		GameMode m_gameMode;
+		GameOptions m_gameOptions;
 
 		SaveManager m_saveManager;
 
@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client
 				throw new Exception();
 
 			m_serverMode = options.ServerMode;
-			m_gameMode = options.NewGameMode;
+			m_gameOptions = options.NewGameOptions;
 
 			if (!System.IO.Directory.Exists(options.SaveGamePath))
 				System.IO.Directory.CreateDirectory(options.SaveGamePath);
@@ -158,27 +158,7 @@ namespace Dwarrowdelf.Client
 			if (m_save == Guid.Empty)
 			{
 				UpdateStatus("Creating Game");
-
-				GameMode gameMode;
-				GameMap gameMap;
-
-				switch (m_gameMode)
-				{
-					case GameMode.Fortress:
-						gameMode = GameMode.Fortress;
-						gameMap = GameMap.Fortress;
-						break;
-
-					case GameMode.Adventure:
-						gameMode = GameMode.Adventure;
-						gameMap = GameMap.Adventure;
-						break;
-
-					default:
-						throw new Exception();
-				}
-
-				m_game = m_gameFactory.CreateGame(m_saveManager.GameDir, gameMode, gameMap);
+				m_game = m_gameFactory.CreateGame(m_saveManager.GameDir, m_gameOptions);
 				UpdateStatus("Game Created");
 			}
 			else

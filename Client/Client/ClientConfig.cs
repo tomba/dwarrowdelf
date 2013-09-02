@@ -17,7 +17,12 @@ namespace Dwarrowdelf.Client
 		public static bool ShowTileSize = true;
 
 		// Game mode if new game is created
-		public static GameMode NewGameMode = GameMode.Fortress;
+		public static GameOptions NewGameOptions = new GameOptions()
+		{
+			Mode = GameMode.Fortress,
+			Map = GameMap.Fortress,
+			TickMethod = WorldTickMethod.Simultaneous,
+		};
 
 		// Delete all saves before starting
 		public static bool CleanSaveDir = true;

@@ -132,7 +132,7 @@ namespace Dwarrowdelf.Client
 				var options = new EmbeddedServerOptions()
 				{
 					ServerMode = ClientConfig.EmbeddedServerMode,
-					NewGameMode = ClientConfig.NewGameMode,
+					NewGameOptions = ClientConfig.NewGameOptions,
 					SaveGamePath = path,
 					CleanSaveDir = ClientConfig.CleanSaveDir,
 				};

@@ -80,14 +80,14 @@ namespace Dwarrowdelf.Server
 
 		bool m_minTickTimePassed = true;
 
-		protected GameEngine(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
+		protected GameEngine(string gameDir, GameOptions options)
 		{
 			CommonInit();
 
 			m_gameDir = gameDir;
 
-			this.GameMode = gameMode;
-			this.World = new World(gameMode, tickMethod);
+			this.GameMode = options.Mode;
+			this.World = new World(options.Mode, options.TickMethod);
 
 			m_players = new List<Player>();
 

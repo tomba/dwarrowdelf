@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Server
 {
 	public sealed class GameFactory : MarshalByRefObject, IGameFactory
 	{
-		public IGame CreateGame(string gameDir, GameMode mode, GameMap map)
+		public IGame CreateGame(string gameDir, GameOptions options)
 		{
 			MyTraceContext.ThreadTraceContext = new MyTraceContext("Server");
 
@@ -17,14 +17,14 @@ namespace Dwarrowdelf.Server
 
 			IGame game;
 
-			switch (mode)
+			switch (options.Mode)
 			{
 				case GameMode.Fortress:
-					game = new Fortress.FortressGame(gameDir, mode, WorldTickMethod.Simultaneous);
+					game = new Fortress.FortressGame(gameDir, options);
 					break;
 
 				case GameMode.Adventure:
-					game = new Fortress.DungeonGame(gameDir, mode, WorldTickMethod.Sequential, map);
+					game = new Fortress.DungeonGame(gameDir, options);
 					break;
 
 				default:

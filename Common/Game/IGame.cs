@@ -21,9 +21,22 @@ namespace Dwarrowdelf
 		Arena,
 	}
 
+	public enum WorldTickMethod
+	{
+		Simultaneous,
+		Sequential,
+	}
+
+	public class GameOptions
+	{
+		public GameMode Mode;
+		public GameMap Map;
+		public WorldTickMethod TickMethod;
+	}
+
 	public interface IGameFactory
 	{
-		IGame CreateGame(string gameDir, GameMode mode, GameMap map);
+		IGame CreateGame(string gameDir, GameOptions options);
 		IGame LoadGame(string gameDir, Guid save);
 	}
 
