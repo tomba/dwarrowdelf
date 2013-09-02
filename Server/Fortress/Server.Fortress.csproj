@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DungeonPlayer.cs" />
     <Compile Include="DungeonGame.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -50,6 +51,7 @@
     <Compile Include="FortressGame.cs" />
     <Compile Include="DwarfAI.cs" />
     <Compile Include="EnvObserver.cs" />
+    <Compile Include="FortressPlayer.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="Items\WaterGenerator.cs" />

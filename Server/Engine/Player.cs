@@ -11,7 +11,7 @@ using System.ComponentModel;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObject]
-	public sealed class Player : IPlayer
+	public abstract class Player : IPlayer
 	{
 		/// <summary>
 		/// UserID of the user who owns this Player
@@ -53,7 +53,7 @@ namespace Dwarrowdelf.Server
 
 		public event Action<Player> DisconnectEvent;
 
-		public Player(int playerID, GameEngine engine)
+		protected Player(int playerID, GameEngine engine)
 		{
 			// player ID 0 is invalid, 1 is reserved for server
 			if (playerID == 0 || playerID == 1)

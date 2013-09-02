@@ -10,15 +10,10 @@ namespace Dwarrowdelf.Server.Fortress
 	[SaveGameObject]
 	public sealed class FortressGame : GameEngine
 	{
-		[SaveGameProperty]
-		EnvObserver m_envObserver;
-
 		public FortressGame(string gameDir, GameMode gameMode, WorldTickMethod tickMethod)
 			: base(gameDir, gameMode, tickMethod)
 		{
 			var env = FortressWorldCreator.InitializeWorld(this.World);
-
-			m_envObserver = new EnvObserver(env);
 
 			int numPlayers = 1;
 
@@ -39,7 +34,7 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			const int NUM_DWARVES = 7;
 
-			var player = new Player(2 + playerNum, this);
+			var player = new FortressPlayer(2 + playerNum, this, env);
 
 			IntPoint3 pos;
 
@@ -87,6 +82,8 @@ namespace Dwarrowdelf.Server.Fortress
 				var p = startLocs[Helpers.GetRandomInt(startLocs.Length - 1)];
 
 				var l = CreateDwarf(i);
+
+				l.SetAI(new DwarfAI(l, player.EnvObserver, this.World.PlayerID));
 
 				if (!l.MoveTo(env, p))
 					throw new Exception();
@@ -194,8 +191,6 @@ namespace Dwarrowdelf.Server.Fortress
 
 			Helpers.AddGem(dwarf);
 			Helpers.AddBattleGear(dwarf);
-
-			dwarf.SetAI(new DwarfAI(dwarf, m_envObserver, this.World.PlayerID));
 
 			return dwarf;
 		}

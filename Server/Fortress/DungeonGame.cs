@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			const int NUM_DWARVES = 1;
 
-			var player = new Player(2, this);
+			var player = new DungeonPlayer(2, this);
 
 			var startRect = FindStartLocation(env);
 
