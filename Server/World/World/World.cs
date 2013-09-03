@@ -99,7 +99,6 @@ namespace Dwarrowdelf.Server
 				Year = this.Year,
 				Season = this.Season,
 				LivingVisionMode = this.LivingVisionMode,
-				GameMode = this.GameMode,
 			};
 
 			player.Send(new Messages.WorldDataMessage(data));

@@ -12,7 +12,6 @@ namespace Dwarrowdelf
 		public int Year;
 		public GameSeason Season;
 		public LivingVisionMode LivingVisionMode;
-		public GameMode GameMode;
 	}
 
 	[Serializable]

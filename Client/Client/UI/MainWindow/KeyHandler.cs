@@ -27,16 +27,22 @@ namespace Dwarrowdelf.Client.UI
 			mapControl.KeyUp += OnKeyUp;
 			mapControl.TextInput += OnTextInput;
 
-			GameData.Data.WorldChanged += (world) =>
+			GameData.Data.GameModeChanged += (mode) =>
 			{
-				if (world == null || world.GameMode == GameMode.Undefined)
-					this.Mode = KeyHandlerMode.None;
-				else if (world.GameMode == GameMode.Adventure)
-					this.Mode = KeyHandlerMode.LivingControl;
-				else if (world.GameMode == GameMode.Fortress)
-					this.Mode = KeyHandlerMode.MapControl;
-				else
-					throw new Exception();
+				switch (mode)
+				{
+					case GameMode.Undefined:
+						this.Mode = KeyHandlerMode.None;
+						break;
+
+					case GameMode.Adventure:
+						this.Mode = KeyHandlerMode.LivingControl;
+						break;
+
+					case GameMode.Fortress:
+						this.Mode = KeyHandlerMode.MapControl;
+						break;
+				}
 			};
 
 			this.Mode = KeyHandlerMode.None;

@@ -35,15 +35,12 @@ namespace Dwarrowdelf.Client
 
 		public int PlayerID { get; private set; }
 
-		public GameMode GameMode { get; private set; }
-
 #if TRACK_DESTRUCTED_OBJECTS
 		BaseGameObjectCollection m_destructedObjects = new BaseGameObjectCollection();
 #endif
 
 		public World(WorldData data, int playerID)
 		{
-			this.GameMode = data.GameMode;
 			this.LivingVisionMode = data.LivingVisionMode;
 			this.TickNumber = data.Tick;
 			this.Year = data.Year;

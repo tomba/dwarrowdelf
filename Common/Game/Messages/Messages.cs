@@ -88,6 +88,7 @@ namespace Dwarrowdelf.Messages
 	{
 		public int PlayerID;
 		public bool IsSeeAll;
+		public GameMode GameMode;
 	}
 
 	[Serializable]

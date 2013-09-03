@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Client.UI
 
 			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
 
-			GameData.Data.WorldChanged += OnWorldChanged;
+			GameData.Data.GameModeChanged += OnGameModeChanged;
 			GameData.Data.FocusedObjectChanged += OnFocusedObjectChanged;
 
 			this.ClientTools = new ClientTools();
@@ -343,14 +343,14 @@ namespace Dwarrowdelf.Client.UI
 			this.MapControl.Selection = new MapSelection();
 		}
 
-		void OnWorldChanged(World world)
+		void OnGameModeChanged(GameMode mode)
 		{
 			this.CommandBindings.Clear();
 
-			if (world == null)
+			if (mode == GameMode.Undefined)
 				return;
 
-			m_cmdHandler.AddCommandBindings(world.GameMode);
+			m_cmdHandler.AddCommandBindings(mode);
 		}
 
 		void OnMouseClicked(object sender, MouseButtonEventArgs ev)

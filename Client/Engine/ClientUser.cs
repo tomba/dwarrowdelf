@@ -192,7 +192,12 @@ namespace Dwarrowdelf.Client
 
 			this.PlayerID = msg.PlayerID;
 			this.IsSeeAll = msg.IsSeeAll;
+			// XXX move to game engine or such
+			this.GameMode = msg.GameMode;
 		}
+
+		// XXX move to game engine or such
+		public GameMode GameMode { get; private set; }
 
 		void HandleMessage(WorldDataMessage msg)
 		{

@@ -127,6 +127,7 @@ namespace Dwarrowdelf.Server
 			{
 				PlayerID = this.PlayerID,
 				IsSeeAll = m_seeAll,
+				GameMode = m_engine.GameMode,
 			});
 
 			m_world.SendWorldData(this);

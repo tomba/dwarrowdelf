@@ -98,6 +98,15 @@ namespace Dwarrowdelf.Client
 			set { m_world = value; Notify("World"); if (this.WorldChanged != null) this.WorldChanged(value); }
 		}
 
+		public event Action<GameMode> GameModeChanged;
+
+		GameMode m_gameMode;
+		public GameMode GameMode
+		{
+			get { return m_gameMode; }
+			set { m_gameMode = value; Notify("GameMode"); if (this.GameModeChanged != null) this.GameModeChanged(value); }
+		}
+
 		bool m_autoAdvanceTurnEnabled;
 		public bool IsAutoAdvanceTurn
 		{
@@ -159,6 +168,7 @@ namespace Dwarrowdelf.Client
 				throw new Exception();
 
 			this.User = user;
+			this.GameMode = user.GameMode;
 			this.World = user.World;
 
 			user.DisconnectEvent += user_DisconnectEvent;
@@ -174,7 +184,7 @@ namespace Dwarrowdelf.Client
 				mapControl.CenterPos = new Point(controllable.Location.X, controllable.Location.Y);
 				mapControl.Z = controllable.Location.Z;
 
-				if (this.World.GameMode == GameMode.Adventure)
+				if (this.GameMode == GameMode.Adventure)
 					this.FocusedObject = controllable;
 			}
 
