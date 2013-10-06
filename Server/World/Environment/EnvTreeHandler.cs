@@ -20,7 +20,16 @@ namespace Dwarrowdelf.Server
 			m_env = env;
 			m_targetNumTrees = targetNumTrees;
 
-			m_numTrees = m_env.Size.Range().Count(p => m_env.GetTileData(p).InteriorID.IsTree());
+			m_numTrees = ParallelEnumerable.Range(0, m_env.Size.Depth).Sum(z =>
+			{
+				int sum = 0;
+				for (int y = 0; y < m_env.Size.Height; ++y)
+					for (int x = 0; x < m_env.Size.Width; ++x)
+						if (m_env.GetTileData(x, y, z).InteriorID.IsTree())
+							sum++;
+
+				return sum;
+			});
 
 			m_env.TerrainOrInteriorChanged += OnTerrainOrInteriorChanged;
 

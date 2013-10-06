@@ -82,11 +82,21 @@ namespace Dwarrowdelf.Server
 
 			SetSubterraneanFlags();
 
+
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < size.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
 
-			m_originalNumTrees = this.Size.Range().Count(p => GetTileData(p).InteriorID.IsTree());
+			m_originalNumTrees = ParallelEnumerable.Range(0, this.Size.Depth).Sum(z =>
+			{
+				int sum = 0;
+				for (int y = 0; y < this.Size.Height; ++y)
+					for (int x = 0; x < this.Size.Width; ++x)
+						if (GetTileData(x, y, z).InteriorID.IsTree())
+							sum++;
+
+				return sum;
+			});
 		}
 
 		[OnSaveGamePostDeserialization]
