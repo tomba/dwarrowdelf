@@ -80,6 +80,19 @@ namespace Dwarrowdelf.Client
 			Debug.Print("GrowingTileGrid.Grow({0})", this.Size);
 		}
 
+		public void SetTileDataRange(System.IO.BinaryReader reader, IntGrid3 bounds)
+		{
+			TileData td = new TileData();
+
+			for (int z = bounds.Z; z < bounds.Z + bounds.Depth; ++z)
+				for (int y = bounds.Y; y < bounds.Y + bounds.Rows; ++y)
+					for (int x = bounds.X; x < bounds.X + bounds.Columns; ++x)
+					{
+						td.Raw = reader.ReadUInt64();
+						m_grid[z, y, x] = td;
+					}
+		}
+
 		public void SetTileData(IntPoint3 p, TileData data)
 		{
 			m_grid[p.Z, p.Y, p.X] = data;

@@ -297,18 +297,12 @@ namespace Dwarrowdelf.Client
 		void ReadAndSetTileData(Stream stream, IntGrid3 bounds)
 		{
 			using (var reader = new BinaryReader(stream))
+				m_tileGrid.SetTileDataRange(reader, bounds);
+
+			if (this.MapTileTerrainChanged != null)
 			{
-				TileData td = new TileData();
-
-				foreach (IntPoint3 p in bounds.Range())
-				{
-					td.Raw = reader.ReadUInt64();
-
-					m_tileGrid.SetTileData(p, td);
-
-					if (MapTileTerrainChanged != null)
-						MapTileTerrainChanged(p);
-				}
+				foreach (var p in bounds.Range())
+					MapTileTerrainChanged(p);
 			}
 		}
 
