@@ -89,7 +89,7 @@ namespace Dwarrowdelf.TerrainGen
 			int soilLimit = m_size.Depth * 4 / 5;
 			TerrainHelpers.CreateSoil(m_data, soilLimit);
 
-			TerrainHelpers.CreateSlopes(m_data, m_random.Next());
+			TerrainHelpers.CreateSlopes(m_data);
 		}
 
 		void CreateBaseGrid()

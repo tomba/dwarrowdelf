@@ -38,7 +38,7 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		public static void CreateSlopes(TerrainData data, int baseSeed)
+		public static void CreateSlopes(TerrainData data)
 		{
 			var plane = data.Size.Plane;
 
