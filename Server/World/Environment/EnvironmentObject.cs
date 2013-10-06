@@ -37,13 +37,14 @@ namespace Dwarrowdelf.Server
 		public VisibilityMode VisibilityMode { get; private set; }
 
 		[SaveGameProperty]
-		public int Width { get; private set; }
+		public int Width { get { return this.Size.Width; } }
 		[SaveGameProperty]
-		public int Height { get; private set; }
+		public int Height { get { return this.Size.Height; } }
 		[SaveGameProperty]
-		public int Depth { get; private set; }
+		public int Depth { get { return this.Size.Depth; } }
 
-		public IntSize3 Size { get { return new IntSize3(this.Width, this.Height, this.Depth); } }
+		[SaveGameProperty]
+		public IntSize3 Size { get; private set; }
 
 		[SaveGameProperty]
 		public IntPoint3 StartLocation { get; private set; }
@@ -73,10 +74,7 @@ namespace Dwarrowdelf.Server
 
 			terrain.GetData(out m_tileGrid, out m_levelMap);
 
-			var size = terrain.Size;
-			this.Width = size.Width;
-			this.Height = size.Height;
-			this.Depth = size.Depth;
+			this.Size = terrain.Size;
 
 			this.StartLocation = startLocation;
 
@@ -84,7 +82,7 @@ namespace Dwarrowdelf.Server
 
 
 			m_contentArray = new KeyedObjectCollection[this.Depth];
-			for (int i = 0; i < size.Depth; ++i)
+			for (int i = 0; i < this.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
 
 			m_originalNumTrees = ParallelEnumerable.Range(0, this.Size.Depth).Sum(z =>
