@@ -109,7 +109,7 @@
   -->
   <Target AfterTargets="BeforeBuild" Name="Shaders" Inputs="TileMapPS.hlsl;TileMapVS.hlsl" Outputs="TileMapPS.hlslo;TileMapVS.hlslo">
     <PropertyGroup>
-      <FxcPath>$(MSBuildExtensionsPath32)/../Windows Kits/8.0/bin/x86</FxcPath>
+      <FxcPath>$(MSBuildExtensionsPath32)/../Windows Kits/8.1/bin/x86</FxcPath>
     </PropertyGroup>
     <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T ps_4_0 /E PS /Fo TileMapPS.hlslo TileMapPS.hlsl" Outputs="TileMapPS.hlslo" />
     <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T vs_4_0 /E VS /Fo TileMapVS.hlslo TileMapVS.hlsl" />
