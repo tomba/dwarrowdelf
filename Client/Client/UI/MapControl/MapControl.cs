@@ -23,6 +23,7 @@ namespace Dwarrowdelf.Client.UI
 	/// </summary>
 	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged, IDisposable
 	{
+		bool m_initialized;
 		RenderView m_renderView;
 		TileControl.RenderData<TileControl.RenderTile> m_renderData;
 		TileControl.SceneHostWPF m_renderer;
@@ -36,19 +37,6 @@ namespace Dwarrowdelf.Client.UI
 
 		public MapControl()
 		{
-		}
-
-		bool IsD3D10Supported()
-		{
-			if (DesignerProperties.GetIsInDesignMode(this))
-				return false;
-
-			var os = System.Environment.OSVersion;
-
-			if (os.Version.Major >= 6)
-				return true;
-			else
-				return false;
 		}
 
 		#region IDisposable
@@ -84,7 +72,7 @@ namespace Dwarrowdelf.Client.UI
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			if (!IsD3D10Supported())
+			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
 
 			m_renderData = new TileControl.RenderData<TileControl.RenderTile>();
@@ -98,6 +86,8 @@ namespace Dwarrowdelf.Client.UI
 			m_scene.SetTileSet(GameData.Data.TileSet);
 			GameData.Data.TileSetChanged += OnTileSetChanged;
 
+			m_initialized = true;
+
 			base.OnInitialized(e);
 		}
 
@@ -105,22 +95,22 @@ namespace Dwarrowdelf.Client.UI
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
-			if (m_renderView != null)
+			if (!m_initialized)
+				return base.ArrangeOverride(arrangeBounds);
+
+			var renderSize = arrangeBounds;
+
+			var columns = (int)Math.Ceiling(renderSize.Width / MINTILESIZE + 1) | 1;
+			var rows = (int)Math.Ceiling(renderSize.Height / MINTILESIZE + 1) | 1;
+
+			var bufferSize = new IntSize2(columns, rows);
+
+			if (bufferSize != m_bufferSize)
 			{
-				var renderSize = arrangeBounds;
-
-				var columns = (int)Math.Ceiling(renderSize.Width / MINTILESIZE + 1) | 1;
-				var rows = (int)Math.Ceiling(renderSize.Height / MINTILESIZE + 1) | 1;
-
-				var bufferSize = new IntSize2(columns, rows);
-
-				if (bufferSize != m_bufferSize)
-				{
-					m_bufferSize = bufferSize;
-					m_renderView.SetMaxSize(bufferSize);
-					m_scene.SetupTileBuffer(bufferSize);
-					m_renderer.SetRenderSize(new IntSize2((int)Math.Ceiling(arrangeBounds.Width), (int)Math.Ceiling(arrangeBounds.Height)));
-				}
+				m_bufferSize = bufferSize;
+				m_renderView.SetMaxSize(bufferSize);
+				m_scene.SetupTileBuffer(bufferSize);
+				m_renderer.SetRenderSize(new IntSize2((int)Math.Ceiling(arrangeBounds.Width), (int)Math.Ceiling(arrangeBounds.Height)));
 			}
 
 			return base.ArrangeOverride(arrangeBounds);
@@ -134,6 +124,9 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
+			if (!m_initialized)
+				return;
+
 			//System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
 
 			m_renderView.SetSize(gridSize);
@@ -146,6 +139,9 @@ namespace Dwarrowdelf.Client.UI
 
 		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileControl.TileRenderContext ctx)
 		{
+			if (!m_initialized)
+				return;
+
 			if (ctx.TileDataInvalid)
 			{
 				m_renderView.Resolve();

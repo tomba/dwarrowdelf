@@ -14,15 +14,7 @@ namespace Dwarrowdelf.Client
 {
 	sealed class GameData : INotifyPropertyChanged
 	{
-		public static GameData Data { get; private set; }
-
-		public static void InitGameData()
-		{
-			if (Data != null)
-				throw new Exception();
-
-			Data = new GameData();
-		}
+		public static readonly GameData Data = new GameData();
 
 		GameData()
 		{
@@ -30,7 +22,12 @@ namespace Dwarrowdelf.Client
 
 			m_timer = new DispatcherTimer(DispatcherPriority.Background);
 			m_timer.Interval = TimeSpan.FromMilliseconds(500);
-			m_timer.Tick += delegate { if (_Blink != null) _Blink(); MainWindow.MapControl.InvalidateTileData(); };
+			m_timer.Tick += delegate
+			{
+				if (_Blink != null) _Blink();
+				if (MainWindow != null && MainWindow.MapControl != null)
+					MainWindow.MapControl.InvalidateTileData();
+			};
 
 			this.ConnectManager = new ConnectManager();
 			this.ConnectManager.UserConnected += ConnectManager_UserConnected;

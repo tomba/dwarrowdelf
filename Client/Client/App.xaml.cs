@@ -33,7 +33,9 @@ namespace Dwarrowdelf.Client
 			else if (e.Args.Contains("fortress"))
 				ClientConfig.NewGameOptions.Mode = GameMode.Fortress;
 
-			GameData.InitGameData();
+			// this will force instantiating GameData.Data in the main thread
+			if (GameData.Data == null)
+				throw new Exception();
 			
 			var mainWindow = new UI.MainWindow();
 			this.MainWindow = mainWindow;
