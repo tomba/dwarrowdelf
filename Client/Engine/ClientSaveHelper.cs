@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 				data = deserializer.Deserialize<ClientSaveData>();
 			}
 
-			// Note that BaseObjects are deserialized by the NetSerializer, so we don't need to do anything for them here.
+			// Note that BaseObjects are deserialized by the SaveGameDeserializer, so we don't need to do anything for them here.
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
