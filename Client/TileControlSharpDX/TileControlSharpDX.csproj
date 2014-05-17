@@ -15,6 +15,7 @@
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>4b2c9e68</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,20 +41,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
-    <Reference Include="SharpDX">
-      <HintPath>..\..\packages\SharpDX.2.5.0\lib\net40\SharpDX.dll</HintPath>
+    <Reference Include="SharpDX, Version=2.6.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.D3DCompiler">
-      <HintPath>..\..\packages\SharpDX.D3DCompiler.2.5.0\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D11">
-      <HintPath>..\..\packages\SharpDX.Direct3D11.2.5.0\lib\net40\SharpDX.Direct3D11.dll</HintPath>
+    <Reference Include="SharpDX.Direct3D11, Version=2.6.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D9">
-      <HintPath>..\..\packages\SharpDX.Direct3D9.2.5.0\lib\net40\SharpDX.Direct3D9.dll</HintPath>
+    <Reference Include="SharpDX.Direct3D9, Version=2.6.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI">
-      <HintPath>..\..\packages\SharpDX.DXGI.2.5.0\lib\net40\SharpDX.DXGI.dll</HintPath>
+    <Reference Include="SharpDX.DXGI, Version=2.6.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -116,5 +121,12 @@
   </Target>
   <Target AfterTargets="Clean" Name="CleanShaders">
     <Delete Files="TileMapPS.hlslo;TileMapVS.hlslo" />
+  </Target>
+  <Import Project="..\..\packages\SharpDX.2.6.0\build\SharpDX.targets" Condition="Exists('..\..\packages\SharpDX.2.6.0\build\SharpDX.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\SharpDX.2.6.0\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SharpDX.2.6.0\build\SharpDX.targets'))" />
   </Target>
 </Project>
