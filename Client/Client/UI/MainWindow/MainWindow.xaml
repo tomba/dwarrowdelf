@@ -130,20 +130,23 @@
 					<RowDefinition />
 				</Grid.RowDefinitions>
 
-				<!-- Selection -->
-				<GroupBox Header="Selection" Grid.Row="0" >
-					<ui:MultiTileInfoControl DataContext="{Binding Path=SelectionTileAreaView, ElementName=map, Mode=OneTime}"  Margin="2" />
-
-				</GroupBox>
-
 				<!-- Hover -->
-				<GroupBox Header="Hover" Grid.Row="1">
+				<GroupBox Header="Hover" Grid.Row="0">
 					<ui:SingleTileInfoControl DataContext="{Binding Path=HoverTileView, ElementName=map, Mode=OneTime}"  Margin="2" />
 				</GroupBox>
 
+				<!-- Selection -->
+				<GroupBox Header="Selection" Grid.Row="1"
+						  DataContext="{Binding Path=SelectionTileAreaView, ElementName=map, Mode=OneTime}"
+						  Visibility="{Binding IsNotEmpty,Converter={StaticResource boolToVisConverter}}">
+					<ui:MultiTileInfoControl Margin="2" />
+				</GroupBox>
+
 				<!-- Focused Controllable -->
-				<GroupBox Header="Current" Grid.Row="2" Margin="2" >
-					<ui:SingleTileInfoControl DataContext="{Binding Path=FocusedTileView, ElementName=map, Mode=OneTime}"  Margin="2" />
+				<GroupBox Header="Current" Grid.Row="2" Margin="2"
+						  DataContext="{Binding Path=FocusedTileView, ElementName=map, Mode=OneTime}"
+						  Visibility="{Binding IsEnabled,Converter={StaticResource boolToVisConverter}}">
+					<ui:SingleTileInfoControl Margin="2" />
 				</GroupBox>
 			</Grid>
 

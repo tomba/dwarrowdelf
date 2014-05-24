@@ -19,6 +19,8 @@ namespace Dwarrowdelf.Client.UI
 			this.Objects = new ReadOnlyMovableObjectCollection(m_objects);
 		}
 
+		public bool IsNotEmpty { get { return !m_box.IsNull; } }
+
 		public EnvironmentObject Environment
 		{
 			get { return m_environment; }
@@ -64,6 +66,7 @@ namespace Dwarrowdelf.Client.UI
 				Notify("Box");
 				NotifyTileTerrainChanges();
 				NotifyTileObjectChanges(old, m_box);
+				Notify("IsNotEmpty");
 			}
 		}
 
