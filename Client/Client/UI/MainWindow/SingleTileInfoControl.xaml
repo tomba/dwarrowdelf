@@ -59,9 +59,9 @@
 
 		<TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding AreaElement.Description, Mode=OneWay}" Margin="2" />
 
-		<GroupBox Header="Objects" Grid.Row="6" Grid.ColumnSpan="2">
-			<ListBox BorderThickness="0" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
-		</GroupBox>
+		<ListBox BorderThickness="0" ItemsSource="{Binding Objects}" SelectionMode="Extended"
+					Grid.Row="6" Grid.ColumnSpan="2" Background="Transparent"
+					HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
 	</Grid>
 
 </UserControl>

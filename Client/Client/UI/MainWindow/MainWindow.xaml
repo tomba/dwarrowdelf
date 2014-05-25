@@ -123,32 +123,51 @@
 				</ListBox.ItemTemplate>
 			</ListBox>
 
-			<Grid Grid.Column="4" Grid.RowSpan="3">
-				<Grid.RowDefinitions>
-					<RowDefinition />
-					<RowDefinition />
-					<RowDefinition />
-				</Grid.RowDefinitions>
+			<StackPanel Orientation="Vertical" Grid.Column="4" Grid.RowSpan="3">
+				<StackPanel.Resources>
+					<Style TargetType="GroupBox">
+						<Setter Property="BorderThickness" Value="0" />
+						<Setter Property="Background">
+							<Setter.Value>
+								<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
+							</Setter.Value>
+						</Setter>
+						<Setter Property="HeaderTemplate">
+							<Setter.Value>
+								<DataTemplate>
+									<Border BorderBrush="Black" BorderThickness="1" CornerRadius="2" Padding="2">
+										<Border.Background>
+											<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}" Opacity="1"/>
+										</Border.Background>
+										<TextBlock Text="{Binding}" />
+									</Border>
+								</DataTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</StackPanel.Resources>
+
+				<!-- Focused Controllable -->
+				<GroupBox Header="Current"
+						  DataContext="{Binding Path=FocusedTileView, ElementName=map, Mode=OneTime}"
+						Visibility="{Binding Location,Converter={StaticResource nullToVisConverter}}">
+					<ui:SingleTileInfoControl Margin="2" />
+				</GroupBox>
 
 				<!-- Hover -->
-				<GroupBox Header="Hover" Grid.Row="0">
-					<ui:SingleTileInfoControl DataContext="{Binding Path=HoverTileView, ElementName=map, Mode=OneTime}"  Margin="2" />
+				<GroupBox Header="Hover"
+						  DataContext="{Binding Path=HoverTileView, ElementName=map, Mode=OneTime}"
+						  Visibility="{Binding Location,Converter={StaticResource nullToVisConverter}}">
+					<ui:SingleTileInfoControl Margin="2" />
 				</GroupBox>
 
 				<!-- Selection -->
-				<GroupBox Header="Selection" Grid.Row="1"
+				<GroupBox Header="Selection"
 						  DataContext="{Binding Path=SelectionTileAreaView, ElementName=map, Mode=OneTime}"
 						  Visibility="{Binding IsNotEmpty,Converter={StaticResource boolToVisConverter}}">
 					<ui:MultiTileInfoControl Margin="2" />
 				</GroupBox>
-
-				<!-- Focused Controllable -->
-				<GroupBox Header="Current" Grid.Row="2" Margin="2"
-						  DataContext="{Binding Path=FocusedTileView, ElementName=map, Mode=OneTime}"
-						  Visibility="{Binding IsEnabled,Converter={StaticResource boolToVisConverter}}">
-					<ui:SingleTileInfoControl Margin="2" />
-				</GroupBox>
-			</Grid>
+			</StackPanel>
 
 		</Grid>
 

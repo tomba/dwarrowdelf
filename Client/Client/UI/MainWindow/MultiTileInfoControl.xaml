@@ -59,10 +59,9 @@
 					</InlineUIContainer></TextBlock>
 		</StackPanel>
 
-		<GroupBox Header="Objects">
-			<ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-						 BorderThickness="0"/>
-		</GroupBox>
+		<ListBox ItemsSource="{Binding Objects}" Background="Transparent"
+				 HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+						BorderThickness="0"/>
 
 	</DockPanel>
 </UserControl>
