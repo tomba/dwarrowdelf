@@ -126,6 +126,7 @@
 			<StackPanel Orientation="Vertical" Grid.Column="4" Grid.RowSpan="3">
 				<StackPanel.Resources>
 					<Style TargetType="GroupBox">
+						<Setter Property="IsHitTestVisible" Value="False" />
 						<Setter Property="BorderThickness" Value="0" />
 						<Setter Property="Background">
 							<Setter.Value>
