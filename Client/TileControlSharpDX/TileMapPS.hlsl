@@ -158,14 +158,14 @@ float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkn
 	return c;
 }
 
-float3 PS( float4 pin : SV_POSITION ) : SV_Target
+float4 PS( float4 pin : SV_POSITION ) : SV_Target
 {
 	float2 pos = pin.xy;
 
 	float2 xy = pos - g_renderOffset;
 
 	if (xy.x < 0 || xy.y < 0 || xy.x >= g_colrow.x * g_tileSize || xy.y >= g_colrow.y * g_tileSize)
-		return float3(1.0f, 0, 0);
+		return float4(1.0f, 0, 0, 1.0f);
 
 	float2 tilepos = floor(xy / g_tileSize);
 	
@@ -207,5 +207,5 @@ float3 PS( float4 pin : SV_POSITION ) : SV_Target
 	c = c3.rgb + (1.0f - c3.a) * c.rgb;
 	c = c4.rgb + (1.0f - c4.a) * c.rgb;
 
-	return c;
+	return float4(c, 1.0f);
 }
