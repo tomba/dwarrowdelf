@@ -180,7 +180,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public bool IsVisibilityCheckEnabled
 		{
-			get { return m_renderView.IsVisibilityCheckEnabled; }
+			get { return m_renderView != null && m_renderView.IsVisibilityCheckEnabled; }
 
 			set
 			{
