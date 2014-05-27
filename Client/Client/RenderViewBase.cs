@@ -16,10 +16,6 @@ namespace Dwarrowdelf.Client
 		bool m_isVisibilityCheckEnabled;
 		protected EnvironmentObject m_environment;
 		protected IntPoint3 m_centerPos;
-		IntGrid3 m_bounds;
-
-		/* How many levels to show */
-		const int MAXLEVEL = 4;
 
 		protected RenderViewBase(RenderData<T> renderData)
 		{
@@ -40,20 +36,11 @@ namespace Dwarrowdelf.Client
 
 				m_centerPos = value;
 
-				if (!m_renderData.Invalid)
-				{
-					if (diff.Z != 0)
-						m_renderData.Invalid = true;
-					else
-						ScrollTiles(new IntVector2(diff.X, diff.Y));
-				}
-
-				var cp = CenterPos;
-				var s = m_renderData.Size;
-				m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
-					new IntSize3(s, MAXLEVEL));
+				OnCenterPosChanged(diff);
 			}
 		}
+
+		protected abstract void OnCenterPosChanged(IntVector3 diff);
 
 		public void SetMaxSize(IntSize2 size)
 		{
@@ -66,33 +53,11 @@ namespace Dwarrowdelf.Client
 			{
 				m_renderData.SetSize(size);
 
-				var cp = CenterPos;
-				var s = m_renderData.Size;
-				m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
-					new IntSize3(s, MAXLEVEL));
+				OnSizeChanged();
 			}
 		}
 
-		protected IntPoint3 RenderDataLocationToMapLocation(int x, int y)
-		{
-			int sx = x + m_bounds.X1;
-			int sy = y + m_bounds.Y1;
-
-			return new IntPoint3(sx, sy, m_centerPos.Z);
-		}
-
-		protected IntPoint2 MapLocationToRenderDataLocation(IntPoint3 p)
-		{
-			var x = p.X - m_bounds.X1;
-			var y = p.Y - m_bounds.Y1;
-
-			return new IntPoint2(x, y);
-		}
-
-		public bool Contains(IntPoint3 ml)
-		{
-			return m_bounds.Contains(ml);
-		}
+		protected abstract void OnSizeChanged();
 
 		public bool IsVisibilityCheckEnabled
 		{
@@ -139,7 +104,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		// Note: this is used to scroll the rendermap immediately when setting the centerpos. Could be used only when GetRenderMap is called
-		void ScrollTiles(IntVector2 scrollVector)
+		protected void ScrollTiles(IntVector2 scrollVector)
 		{
 			//Debug.WriteLine("RenderView.ScrollTiles");
 
@@ -246,12 +211,63 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		protected static byte GetDarknessForLevel(int level)
+		protected static SymbolID GetDesignationSymbolAt(Designation designation, IntPoint3 p)
 		{
-			if (level == 0)
-				return 0;
-			else
-				return (byte)((level + 2) * 127 / (MAXLEVEL + 2));
+			var dt = designation.ContainsPoint(p);
+
+			switch (dt)
+			{
+				case DesignationType.None:
+					return SymbolID.Undefined;
+
+				case DesignationType.Mine:
+					return SymbolID.DesignationMine;
+
+				case DesignationType.CreateStairs:
+					return SymbolID.StairsUp;
+
+				case DesignationType.Channel:
+					return SymbolID.DesignationChannel;
+
+				case DesignationType.FellTree:
+					return SymbolID.Log;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		protected static SymbolID GetConstructSymbolAt(ConstructManager mgr, IntPoint3 p)
+		{
+			var dt = mgr.ContainsPoint(p);
+
+			switch (dt)
+			{
+				case ConstructMode.None:
+					return SymbolID.Undefined;
+
+				case ConstructMode.Pavement:
+					return SymbolID.Floor;
+
+				case ConstructMode.Floor:
+					return SymbolID.Floor;
+
+				case ConstructMode.Wall:
+					return SymbolID.Wall;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		protected static SymbolID GetInstallSymbolAt(InstallItemManager mgr, IntPoint3 p)
+		{
+			var item = mgr.ContainsPoint(p);
+
+			if (item == null)
+				return SymbolID.Undefined;
+
+			return item.SymbolID;
 		}
 	}
 }

@@ -11,13 +11,11 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class RenderView : RenderViewBase<RenderTile>
+	sealed class RenderViewXY : RenderViewBaseXY<RenderTile>
 	{
-		/* How many levels to show */
-		const int MAXLEVEL = 4;
 		static bool m_symbolToggler;
 
-		public RenderView(TileControl.RenderData<TileControl.RenderTile> renderData)
+		public RenderViewXY(TileControl.RenderData<TileControl.RenderTile> renderData)
 			: base(renderData)
 		{
 			GameData.Data.Blink += OnBlink;
@@ -502,63 +500,12 @@ namespace Dwarrowdelf.Client
 			tile.SymbolID = id;
 		}
 
-		public static SymbolID GetDesignationSymbolAt(Designation designation, IntPoint3 p)
+		static byte GetDarknessForLevel(int level)
 		{
-			var dt = designation.ContainsPoint(p);
-
-			switch (dt)
-			{
-				case DesignationType.None:
-					return SymbolID.Undefined;
-
-				case DesignationType.Mine:
-					return SymbolID.DesignationMine;
-
-				case DesignationType.CreateStairs:
-					return SymbolID.StairsUp;
-
-				case DesignationType.Channel:
-					return SymbolID.DesignationChannel;
-
-				case DesignationType.FellTree:
-					return SymbolID.Log;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		public static SymbolID GetConstructSymbolAt(ConstructManager mgr, IntPoint3 p)
-		{
-			var dt = mgr.ContainsPoint(p);
-
-			switch (dt)
-			{
-				case ConstructMode.None:
-					return SymbolID.Undefined;
-
-				case ConstructMode.Pavement:
-					return SymbolID.Floor;
-
-				case ConstructMode.Floor:
-					return SymbolID.Floor;
-
-				case ConstructMode.Wall:
-					return SymbolID.Wall;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		static SymbolID GetInstallSymbolAt(InstallItemManager mgr, IntPoint3 p)
-		{
-			var item = mgr.ContainsPoint(p);
-
-			if (item == null)
-				return SymbolID.Undefined;
-
-			return item.SymbolID;
+			if (level == 0)
+				return 0;
+			else
+				return (byte)((level + 2) * 127 / (MAXLEVEL + 2));
 		}
 	}
 }

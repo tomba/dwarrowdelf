@@ -76,6 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="RenderViewBaseXY.cs" />
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>
@@ -311,7 +312,7 @@
       <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ListBoxExtenders.cs" />
-    <Compile Include="RenderView.cs" />
+    <Compile Include="RenderViewXY.cs" />
     <Compile Include="RenderViewBase.cs" />
     <Compile Include="UI\MainWindow\SingleTileInfoControl.xaml.cs">
       <DependentUpon>SingleTileInfoControl.xaml</DependentUpon>

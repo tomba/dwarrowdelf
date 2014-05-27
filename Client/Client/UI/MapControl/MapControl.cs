@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Client.UI
 	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged, IDisposable
 	{
 		bool m_initialized;
-		RenderView m_renderView;
+		RenderViewXY m_renderView;
 		TileControl.RenderData<TileControl.RenderTile> m_renderData;
 		TileControl.SceneHostWPF m_renderer;
 		TileControl.TileMapScene m_scene;
@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			m_renderData = new TileControl.RenderData<TileControl.RenderTile>();
-			m_renderView = new RenderView(m_renderData);
+			m_renderView = new RenderViewXY(m_renderData);
 			m_renderer = new TileControl.SceneHostWPF();
 			m_scene = new TileControl.TileMapScene();
 			m_renderer.Scene = m_scene;
