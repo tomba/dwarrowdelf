@@ -120,6 +120,7 @@ namespace Dwarrowdelf.Client.UI
 			m_elementsService = new MapControlElementsService(this, m_elementCanvas);
 
 			m_dragService = new MapControlDragService(this);
+			m_dragService.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
 		}
 
 		void OnEnvironmentChanged(EnvironmentObject env)
