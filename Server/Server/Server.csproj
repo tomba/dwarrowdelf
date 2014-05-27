@@ -65,7 +65,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
-      <Name>Common %28Common\Common%29</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Engine\Server.Engine.csproj">
       <Project>{BCAE564B-8D06-4D7F-866E-EF9E10B27FE0}</Project>

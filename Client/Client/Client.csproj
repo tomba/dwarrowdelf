@@ -446,11 +446,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
-      <Name>Common %28Common\Common%29</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Server\Server\Server.csproj">
       <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
-      <Name>Server %28Server\Server%29</Name>
+      <Name>Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\Engine\Client.Engine.csproj">
       <Project>{a7884edf-fd74-45d6-9953-e1d76dc0a45a}</Project>
