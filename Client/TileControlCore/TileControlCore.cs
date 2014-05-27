@@ -342,6 +342,12 @@ namespace Dwarrowdelf.Client.TileControl
 			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
 		}
 
+		public IntPoint2 ScreenPointToIntScreenTile(Point p)
+		{
+			var st = ScreenPointToScreenTile(p);
+			return new IntPoint2((int)Math.Round(st.X), (int)Math.Round(st.Y));
+		}
+
 		public Point ScreenTileToScreenPoint(Point t)
 		{
 			var p = new Point((t.X + 0.5) * this.TileSize, (t.Y + 0.5) * this.TileSize);
@@ -380,12 +386,6 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			var st = MapTileToScreenTile(mt);
 			return ScreenTileToScreenPoint(st);
-		}
-
-		public IntPoint2 ScreenPointToIntScreenTile(Point p)
-		{
-			p -= new Vector(this.RenderOffset.X, this.RenderOffset.Y);
-			return new IntPoint2((int)Math.Round(p.X / this.TileSize - 0.5), (int)Math.Round(p.Y / this.TileSize - 0.5));
 		}
 	}
 }
