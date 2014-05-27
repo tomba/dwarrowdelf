@@ -121,12 +121,14 @@ namespace Dwarrowdelf.Client
 
 				var p = new IntPoint3(ml.X, ml.Y, z);
 
+				byte darkness = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+
 				if (tile.Top.SymbolID == SymbolID.Undefined)
 				{
 					GetTopTile(p, env, ref tile.Top);
 
 					if (tile.Top.SymbolID != SymbolID.Undefined)
-						tile.TopDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+						tile.TopDarknessLevel = darkness;
 				}
 
 				if (tile.Object.SymbolID == SymbolID.Undefined)
@@ -134,7 +136,7 @@ namespace Dwarrowdelf.Client
 					GetObjectTile(p, env, ref tile.Object);
 
 					if (tile.Object.SymbolID != SymbolID.Undefined)
-						tile.ObjectDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+						tile.ObjectDarknessLevel = darkness;
 				}
 
 				if (tile.Interior.SymbolID == SymbolID.Undefined)
@@ -142,7 +144,7 @@ namespace Dwarrowdelf.Client
 					GetInteriorTile(p, env, ref tile.Interior, out seeThrough);
 
 					if (tile.Interior.SymbolID != SymbolID.Undefined)
-						tile.InteriorDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+						tile.InteriorDarknessLevel = darkness;
 
 					if (!seeThrough)
 						break;
@@ -151,7 +153,7 @@ namespace Dwarrowdelf.Client
 				GetTerrainTile(p, env, ref tile.Terrain, out seeThrough);
 
 				if (tile.Terrain.SymbolID != SymbolID.Undefined)
-					tile.TerrainDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+					tile.TerrainDarknessLevel = darkness;
 
 				if (!seeThrough)
 					break;
