@@ -17,7 +17,7 @@ namespace TileControlD3DWinFormsTest
 		[STAThread]
 		static void Main()
 		{
-			RenderData<RenderTile> renderData = new RenderData<RenderTile>();
+			DataGrid2D<RenderTile> renderData = new DataGrid2D<RenderTile>();
 
 			int frameCount = 0;
 			var fpsClock = Stopwatch.StartNew();
@@ -185,7 +185,7 @@ namespace TileControlD3DWinFormsTest
 		static SymbolID[] s_objectSymbols = new SymbolID[] { SymbolID.Player, SymbolID.Wolf, SymbolID.Sheep, SymbolID.Orc };
 		static SymbolID[] s_topSymbols = new SymbolID[] { SymbolID.Empty, SymbolID.Water };
 
-		static void RecreateMap(RenderData<RenderTile> renderData)
+		static void RecreateMap(DataGrid2D<RenderTile> renderData)
 		{
 			for (int y = 0; y < renderData.Height; ++y)
 			{

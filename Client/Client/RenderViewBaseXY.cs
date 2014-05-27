@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 		/* How many levels to show */
 		protected const int MAXLEVEL = 4;
 
-		protected RenderViewBaseXY(RenderData<T> renderData)
+		protected RenderViewBaseXY(DataGrid2D<T> renderData)
 			: base(renderData)
 		{
 		}

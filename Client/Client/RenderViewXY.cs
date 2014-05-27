@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client
 	{
 		static bool m_symbolToggler;
 
-		public RenderViewXY(TileControl.RenderData<TileControl.RenderTile> renderData)
+		public RenderViewXY(DataGrid2D<TileControl.RenderTile> renderData)
 			: base(renderData)
 		{
 			GameData.Data.Blink += OnBlink;

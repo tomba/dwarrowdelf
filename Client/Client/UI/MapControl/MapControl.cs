@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client.UI
 	{
 		bool m_initialized;
 		RenderViewXY m_renderView;
-		TileControl.RenderData<TileControl.RenderTile> m_renderData;
+		DataGrid2D<TileControl.RenderTile> m_renderData;
 		TileControl.SceneHostWPF m_renderer;
 		TileControl.TileMapScene m_scene;
 
@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Client.UI
 			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
 
-			m_renderData = new TileControl.RenderData<TileControl.RenderTile>();
+			m_renderData = new DataGrid2D<TileControl.RenderTile>();
 			m_renderView = new RenderViewXY(m_renderData);
 			m_renderer = new TileControl.SceneHostWPF();
 			m_scene = new TileControl.TileMapScene();

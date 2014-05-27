@@ -72,7 +72,6 @@
   <ItemGroup>
     <Compile Include="IScene.cs" />
     <Compile Include="SceneHostHwnd.cs" />
-    <Compile Include="RenderData.cs" />
     <Compile Include="RenderTile.cs" />
     <Compile Include="D3DImage11.cs" />
     <Compile Include="Helpers11.cs" />

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Dwarrowdelf.Client.TileControl
+namespace Dwarrowdelf
 {
-	public sealed class RenderData<T> where T : struct
+	public sealed class DataGrid2D<T>
 	{
 		public int Width { get { return this.Size.Width; } }
 		public int Height { get { return this.Size.Height; } }
@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public T[] Grid { get; private set; }
 
-		public RenderData()
+		public DataGrid2D()
 		{
 			this.Grid = new T[0];
 		}

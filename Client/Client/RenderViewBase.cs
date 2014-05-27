@@ -11,13 +11,13 @@ namespace Dwarrowdelf.Client
 {
 	abstract class RenderViewBase<T> where T : struct
 	{
-		protected readonly RenderData<T> m_renderData;
+		protected readonly DataGrid2D<T> m_renderData;
 
 		bool m_isVisibilityCheckEnabled;
 		protected EnvironmentObject m_environment;
 		protected IntPoint3 m_centerPos;
 
-		protected RenderViewBase(RenderData<T> renderData)
+		protected RenderViewBase(DataGrid2D<T> renderData)
 		{
 			m_renderData = renderData;
 		}
