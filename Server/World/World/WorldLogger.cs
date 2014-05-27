@@ -18,7 +18,6 @@ namespace Dwarrowdelf.Server
 		public void Start(World world, string path)
 		{
 			m_world = world;
-			var dir = Path.GetDirectoryName(path);
 
 			var stream = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read);
 			m_writer = new StreamWriter(stream);

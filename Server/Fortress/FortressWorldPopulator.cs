@@ -117,8 +117,6 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static void CreateWorkbenches(EnvironmentObject env)
 		{
-			var world = env.World;
-
 			int posx = env.Width / 2 - 10;
 			int posy = env.Height / 2 - 10;
 

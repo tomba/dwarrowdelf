@@ -264,7 +264,6 @@ namespace Dwarrowdelf.Client
 
 		IAssignment IJobSource.FindAssignment(ILivingObject _living)
 		{
-			var env = this.Environment;
 			var living = (LivingObject)_living;
 
 			if (this.CurrentBuildOrder == null)

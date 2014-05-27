@@ -75,9 +75,6 @@ namespace Dwarrowdelf.Client
 
 		protected IntPoint3 RenderDataLocationToMapLocation(int x, int y)
 		{
-			int columns = m_renderData.Width;
-			int rows = m_renderData.Height;
-
 			int sx = x + m_bounds.X1;
 			int sy = y + m_bounds.Y1;
 
@@ -86,9 +83,6 @@ namespace Dwarrowdelf.Client
 
 		protected IntPoint2 MapLocationToRenderDataLocation(IntPoint3 p)
 		{
-			int columns = m_renderData.Width;
-			int rows = m_renderData.Height;
-
 			var x = p.X - m_bounds.X1;
 			var y = p.Y - m_bounds.Y1;
 

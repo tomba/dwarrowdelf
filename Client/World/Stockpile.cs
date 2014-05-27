@@ -218,8 +218,6 @@ namespace Dwarrowdelf.Client
 		// XXX Silly algorithm. Fill the stockpile evenly.
 		public IntPoint3 FindEmptyLocation(out bool ok)
 		{
-			var env = this.Environment;
-
 			int min = GetMinStack();
 
 			var loc = this.Area.Range().FirstOrDefault(p => GetStack(p) == min);
@@ -238,8 +236,6 @@ namespace Dwarrowdelf.Client
 		{
 			if (!this.Area.Contains(p))
 				throw new Exception();
-
-			int min = GetMinStack();
 
 			return GetStack(p) == GetMinStack();
 		}

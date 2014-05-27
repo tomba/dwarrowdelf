@@ -38,8 +38,6 @@ namespace TilePrerenderer
 
 			target.Lock();
 
-			var buf = target.BackBuffer;
-
 			// leave the first one (Undefined) empty
 			for (int i = 1; i < numSymbols; ++i)
 			{

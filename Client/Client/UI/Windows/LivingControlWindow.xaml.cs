@@ -98,8 +98,6 @@ namespace Dwarrowdelf.Client.UI
 
 		private void WearButton_Click(object sender, RoutedEventArgs e)
 		{
-			var living = (LivingObject)this.DataContext;
-
 			foreach (ItemObject item in inventoryListBox.SelectedItems)
 			{
 				var action = new EquipItemAction(item);
@@ -109,8 +107,6 @@ namespace Dwarrowdelf.Client.UI
 
 		private void RemoveButton_Click(object sender, RoutedEventArgs e)
 		{
-			var living = (LivingObject)this.DataContext;
-
 			foreach (ItemObject item in inventoryListBox.SelectedItems)
 			{
 				GameAction action;

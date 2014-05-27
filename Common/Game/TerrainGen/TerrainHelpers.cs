@@ -62,9 +62,6 @@ namespace Dwarrowdelf.TerrainGen
 
 		public static void CreateVegetation(TerrainData terrain, Random random, int vegetationLimit)
 		{
-			int w = terrain.Width;
-			int h = terrain.Height;
-
 			var grassMaterials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
 			var woodMaterials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 			var berryMaterials = Materials.GetMaterials(MaterialCategory.Berry).ToArray();
