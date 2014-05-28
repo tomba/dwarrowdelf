@@ -227,15 +227,15 @@ namespace Dwarrowdelf.Client.UI
 
 		public Rect MapRectToScreenPointRect(IntGrid2 ir)
 		{
-			Rect r = new Rect(MapTileToScreenPoint(new Point(ir.X1 - 0.5, ir.Y1 - 0.5)),
+			Rect r = new Rect(ContentTileToScreenPoint(new Point(ir.X1 - 0.5, ir.Y1 - 0.5)),
 				new Size(ir.Columns * this.TileSize, ir.Rows * this.TileSize));
 			return r;
 		}
 
 		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
-			var ml = ScreenPointToMapTile(p);
-			return new IntPoint3((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
+			var ct = ScreenPointToContentTile(p);
+			return new IntPoint3((int)Math.Round(ct.X), (int)Math.Round(ct.Y), this.Z);
 		}
 
 		public int Z

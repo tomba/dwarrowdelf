@@ -219,7 +219,7 @@ namespace Dwarrowdelf.Client.UI
 			this.DebugData.ScreenPos = sp;
 			this.DebugData.ScreenTile = ScreenPointToScreenTile(sp);
 			this.DebugData.IntScreenTile = ScreenPointToIntScreenTile(sp);
-			this.DebugData.MapTile = ScreenPointToMapTile(sp);
+			this.DebugData.MapTile = ScreenPointToContentTile(sp);
 			this.DebugData.MapLocation = ScreenPointToMapLocation(sp);
 
 			Notify("DebugData");
@@ -310,8 +310,8 @@ namespace Dwarrowdelf.Client.UI
 			Vector v = p - new Point(this.ActualWidth / 2, this.ActualHeight / 2);
 			v /= targetTileSize;
 
-			var ml = ScreenPointToMapTile(p);
-			var targetCenterPos = ml - v;
+			var ct = ScreenPointToContentTile(p);
+			var targetCenterPos = ct - v;
 
 			ZoomTo(targetTileSize);
 			ScrollTo(targetCenterPos, targetTileSize);

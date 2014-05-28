@@ -227,14 +227,14 @@ namespace AStarTest
 
 		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
-			var ml = ScreenPointToMapTile(p);
-			return new IntPoint3((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
+			var ct = ScreenPointToContentTile(p);
+			return new IntPoint3((int)Math.Round(ct.X), (int)Math.Round(ct.Y), this.Z);
 		}
 
 		public IntPoint3 ScreenTileToMapLocation(IntPoint2 p)
 		{
-			var mt = ScreenTileToMapTile(new Point(p.X, p.Y));
-			var ml = new IntPoint3((int)Math.Round(mt.X), (int)Math.Round(mt.Y), m_z);
+			var ct = ScreenTileToContentTile(new Point(p.X, p.Y));
+			var ml = new IntPoint3((int)Math.Round(ct.X), (int)Math.Round(ct.Y), m_z);
 			return ml;
 		}
 
@@ -466,11 +466,11 @@ namespace AStarTest
 		public bool Step { get; set; }
 		AutoResetEvent m_contEvent = new AutoResetEvent(false);
 
-		Point m_mapTile;
+		Point m_contentTile;
 
 		void OnDragStarted(Point pos)
 		{
-			m_mapTile = ScreenPointToMapTile(pos);
+			m_contentTile = ScreenPointToContentTile(pos);
 			Cursor = Cursors.ScrollAll;
 		}
 
@@ -481,13 +481,13 @@ namespace AStarTest
 
 		void OnDragging(Point pos)
 		{
-			var v = MapTileToScreenPoint(m_mapTile) - pos;
+			var v = ContentTileToScreenPoint(m_contentTile) - pos;
 
-			var sp = MapTileToScreenPoint(this.CenterPos) + v;
+			var sp = ContentTileToScreenPoint(this.CenterPos) + v;
 
-			var mt = ScreenPointToMapTile(sp);
+			var ct = ScreenPointToContentTile(sp);
 
-			this.CenterPos = mt;
+			this.CenterPos = ct;
 		}
 
 		void OnDragAborted()
