@@ -64,7 +64,7 @@ namespace Dwarrowdelf.Server
 			m_engine = engine;
 			m_world = engine.World;
 
-			m_seeAll = false;
+			m_seeAll = true;
 
 			m_controllables = new List<LivingObject>();
 
