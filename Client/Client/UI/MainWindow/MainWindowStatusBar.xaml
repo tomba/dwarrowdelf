@@ -52,26 +52,5 @@
 			</TextBlock.Text>
 		</TextBlock>
 
-		<StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowCenterPos}, Converter={StaticResource boolToVisConverter}}">
-			<Separator />
-
-			<TextBlock>CenterPos</TextBlock>
-			<TextBlock Width="100" DataContext="{Binding MapControl}">
-			<TextBlock.Text>
-				<MultiBinding StringFormat="{}{0:F2}, {1:F2}">
-					<Binding Path="CenterPos.X" />
-					<Binding Path="CenterPos.Y" />
-				</MultiBinding>
-			</TextBlock.Text>
-			</TextBlock>
-		</StatusBar>
-
-		<StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowTileSize}, Converter={StaticResource boolToVisConverter}}">
-			<Separator />
-
-			<TextBlock>TileSize</TextBlock>
-			<TextBlock Width="50" Text="{Binding MapControl.TileSize}" />
-		</StatusBar>
-
 	</StatusBar>
 </UserControl>

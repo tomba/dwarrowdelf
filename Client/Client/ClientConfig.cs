@@ -12,8 +12,7 @@ namespace Dwarrowdelf.Client
 		public static bool AutoConnect = true;
 
 		public static bool ShowMouseDebug = true;
-		public static bool ShowCenterPos = true;
-		public static bool ShowTileSize = true;
+		public static bool ShowMapDebug = true;
 
 		// Game mode if new game is created
 		public static GameOptions NewGameOptions = new GameOptions()

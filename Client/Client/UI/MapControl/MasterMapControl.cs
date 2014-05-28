@@ -121,6 +121,30 @@ namespace Dwarrowdelf.Client.UI
 
 			m_dragService = new MapControlDragService(this);
 			m_dragService.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
+
+			if (ClientConfig.ShowMapDebug)
+			{
+				var bar = new System.Windows.Controls.Primitives.StatusBar();
+				bar.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
+				bar.VerticalAlignment = System.Windows.VerticalAlignment.Bottom;
+				m_overlayGrid.Children.Add(bar);
+
+				TextBlock textBlock = new TextBlock();
+				var binding = new Binding("CenterPos");
+				binding.Source = this;
+				binding.Converter = new CoordinateValueConverter();
+				textBlock.SetBinding(TextBlock.TextProperty, binding);
+				bar.Items.Add(textBlock);
+
+				bar.Items.Add(new Separator());
+
+				textBlock = new TextBlock();
+				binding = new Binding("TileSize");
+				binding.Source = this;
+				binding.StringFormat = "{0:F2}";
+				textBlock.SetBinding(TextBlock.TextProperty, binding);
+				bar.Items.Add(textBlock);
+			}
 		}
 
 		void OnEnvironmentChanged(EnvironmentObject env)
