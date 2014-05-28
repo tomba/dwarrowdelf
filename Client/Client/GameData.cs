@@ -177,9 +177,7 @@ namespace Dwarrowdelf.Client
 			{
 				var mapControl = App.GameWindow.MapControl;
 				mapControl.IsVisibilityCheckEnabled = !user.IsSeeAll;
-				mapControl.Environment = controllable.Environment;
-				mapControl.CenterPos = new Point(controllable.Location.X, controllable.Location.Y);
-				mapControl.Z = controllable.Location.Z;
+				mapControl.ScrollToImmediate(controllable.Environment, controllable.Location);
 
 				if (this.GameMode == GameMode.Adventure)
 					this.FocusedObject = controllable;

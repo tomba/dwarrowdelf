@@ -66,7 +66,8 @@ namespace Dwarrowdelf.Client.UI
 			m_oldDragPos = pos;
 
 			var tileOffset = v / m_mapControl.TileSize;
-			m_mapControl.CenterPos += tileOffset;
+
+			m_mapControl.Pan(tileOffset);
 		}
 
 		void OnDragAborted()

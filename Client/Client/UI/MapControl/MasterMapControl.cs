@@ -416,6 +416,18 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
+		public void Pan(Vector p)
+		{
+			this.CenterPos += p;
+		}
+
+		public void ScrollToImmediate(EnvironmentObject env, IntPoint3 p)
+		{
+			this.Environment = env;
+			this.Z = p.Z;
+			this.CenterPos = new Point(p.X, p.Y);
+		}
+
 		public void ScrollTo(EnvironmentObject env, IntPoint3 p)
 		{
 			this.Environment = env;
