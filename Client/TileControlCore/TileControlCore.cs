@@ -21,6 +21,11 @@ namespace Dwarrowdelf.Client.TileControl
 		bool m_tileDataInvalid;
 		bool m_tileRenderInvalid;
 
+		/// <summary>
+		/// Offset between screen based tiles and map based tiles
+		/// </summary>
+		Vector m_mapOffset;
+
 		MyTraceSource trace = new MyTraceSource("Client.Render", "TileControl");
 
 		/// <summary>
@@ -132,6 +137,9 @@ namespace Dwarrowdelf.Client.TileControl
 			var cy = -(this.CenterPos.Y - Math.Round(this.CenterPos.Y)) * this.TileSize;
 
 			this.RenderOffset = new Point(Math.Round(renderOffsetX + cx), Math.Round(renderOffsetY + cy));
+
+			m_mapOffset = new Vector(Math.Round(this.CenterPos.X) - this.GridSize.Width / 2,
+				Math.Round(this.CenterPos.Y) - this.GridSize.Height / 2);
 
 			m_tileLayoutInvalid = true;
 
@@ -333,7 +341,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 		/**
-		 * coordinate functions
+		 * Screen coordinate functions
 		 */
 
 		public Point ScreenPointToScreenTile(Point p)
@@ -354,26 +362,18 @@ namespace Dwarrowdelf.Client.TileControl
 			return p + new Vector(this.RenderOffset.X, this.RenderOffset.Y);
 		}
 
-		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
+		/**
+		 * Map coordinate functions
+		 */
 
 		public Point ScreenTileToMapTile(Point st)
 		{
-			var gridSize = this.GridSize;
-
-			var v = st - new Vector(gridSize.Width / 2, gridSize.Height / 2);
-			v += this.ScreenMapDiff;
-
-			return v;
+			return st + m_mapOffset;
 		}
 
 		public Point MapTileToScreenTile(Point mt)
 		{
-			var gridSize = this.GridSize;
-
-			var st = mt - this.ScreenMapDiff;
-			st += new Vector(gridSize.Width / 2, gridSize.Height / 2);
-
-			return st;
+			return mt - m_mapOffset;
 		}
 
 		public Point ScreenPointToMapTile(Point p)
