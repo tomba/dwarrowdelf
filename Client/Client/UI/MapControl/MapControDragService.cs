@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client.UI
 	{
 		MasterMapControl m_mapControl;
 
-		Point m_contentTile;
+		Point m_oldDragPos;
 
 		bool m_enabled;
 
@@ -51,7 +51,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnDragStarted(Point pos)
 		{
-			m_contentTile = m_mapControl.ScreenPointToContentTile(pos);
+			m_oldDragPos = pos;
 			m_mapControl.Cursor = Cursors.ScrollAll;
 		}
 
@@ -62,13 +62,11 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnDragging(Point pos)
 		{
-			var v = m_mapControl.ContentTileToScreenPoint(m_contentTile) - pos;
+			var v = m_oldDragPos - pos;
+			m_oldDragPos = pos;
 
-			var sp = m_mapControl.ContentTileToScreenPoint(m_mapControl.CenterPos) + v;
-
-			var ct = m_mapControl.ScreenPointToContentTile(sp);
-
-			m_mapControl.CenterPos = ct;
+			var tileOffset = v / m_mapControl.TileSize;
+			m_mapControl.CenterPos += tileOffset;
 		}
 
 		void OnDragAborted()
