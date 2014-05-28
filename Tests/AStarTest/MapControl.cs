@@ -466,11 +466,11 @@ namespace AStarTest
 		public bool Step { get; set; }
 		AutoResetEvent m_contEvent = new AutoResetEvent(false);
 
-		Point m_contentTile;
+		Point m_oldDragPos;
 
 		void OnDragStarted(Point pos)
 		{
-			m_contentTile = ScreenPointToContentTile(pos);
+			m_oldDragPos = pos;
 			Cursor = Cursors.ScrollAll;
 		}
 
@@ -481,13 +481,11 @@ namespace AStarTest
 
 		void OnDragging(Point pos)
 		{
-			var v = ContentTileToScreenPoint(m_contentTile) - pos;
+			var v = m_oldDragPos - pos;
+			m_oldDragPos = pos;
 
-			var sp = ContentTileToScreenPoint(this.CenterPos) + v;
-
-			var ct = ScreenPointToContentTile(sp);
-
-			this.CenterPos = ct;
+			var tileOffset = v / this.TileSize;
+			this.CenterPos += tileOffset;
 		}
 
 		void OnDragAborted()
