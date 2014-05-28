@@ -54,9 +54,6 @@ namespace Dwarrowdelf.Client.UI
 
 		public MasterMapControl()
 		{
-			if (ClientConfig.ShowMouseDebug)
-				this.DebugData = new MapControlDebugData();
-
 			m_vc = new VisualCollection(this);
 
 			this.Focusable = true;
@@ -65,17 +62,6 @@ namespace Dwarrowdelf.Client.UI
 
 			m_keyHandler = new KeyHandler(this);
 		}
-
-		public class MapControlDebugData
-		{
-			public Point ScreenPos { get; set; }
-			public Point ScreenTile { get; set; }
-			public IntPoint2 IntScreenTile { get; set; }
-			public Point MapTile { get; set; }
-			public IntPoint3 MapLocation { get; set; }
-		}
-
-		public MapControlDebugData DebugData { get; private set; }
 
 		VisualCollection m_vc;
 
@@ -207,22 +193,20 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			if (ClientConfig.ShowMouseDebug)
-				UpdateDebugPrint();
+			{
+				var data = MapControlDebugData.Data;
+
+				var sp = Mouse.GetPosition(this);
+
+				data.ScreenPos = sp;
+				data.ScreenTile = ScreenPointToScreenTile(sp);
+				data.IntScreenTile = ScreenPointToIntScreenTile(sp);
+				data.MapTile = ScreenPointToContentTile(sp);
+				data.MapLocation = ScreenPointToMapLocation(sp);
+				data.Update();
+			}
 
 			m_updateHoverTileInfoQueued = false;
-		}
-
-		void UpdateDebugPrint()
-		{
-			var sp = Mouse.GetPosition(this);
-
-			this.DebugData.ScreenPos = sp;
-			this.DebugData.ScreenTile = ScreenPointToScreenTile(sp);
-			this.DebugData.IntScreenTile = ScreenPointToIntScreenTile(sp);
-			this.DebugData.MapTile = ScreenPointToContentTile(sp);
-			this.DebugData.MapLocation = ScreenPointToMapLocation(sp);
-
-			Notify("DebugData");
 		}
 
 		public int Columns { get { return this.GridSize.Width; } }
