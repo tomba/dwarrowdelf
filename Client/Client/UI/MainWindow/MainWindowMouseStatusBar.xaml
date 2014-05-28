@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.MainWindowMouseStatusBar"
+			 x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
+	<StatusBar DataContext="{Binding MapControl}">
+		<StatusBar.Resources>
+			<ui:CoordinateValueConverter x:Key="conv" />
+		</StatusBar.Resources>
+		
+		<TextBlock>SP</TextBlock>
+		<TextBlock Text="{Binding DebugData.ScreenPos, Converter={StaticResource conv}, FallbackValue=0.0}" />
+		<Separator />
+
+		<TextBlock>ST</TextBlock>
+		<TextBlock Text="{Binding DebugData.ScreenTile, Converter={StaticResource conv}, FallbackValue=0.0}" />
+		<Separator />
+
+		<TextBlock>IST</TextBlock>
+		<TextBlock Text="{Binding DebugData.IntScreenTile, Converter={StaticResource conv}, FallbackValue=0.0}" />
+		<Separator />
+
+		<TextBlock>MT</TextBlock>
+		<TextBlock Text="{Binding DebugData.MapTile, Converter={StaticResource conv}, FallbackValue=0.0}" />
+		<Separator />
+
+		<TextBlock>ML</TextBlock>
+		<TextBlock Text="{Binding DebugData.MapLocation, Converter={StaticResource conv}, FallbackValue=0.0}" />
+
+	</StatusBar>
+</UserControl>

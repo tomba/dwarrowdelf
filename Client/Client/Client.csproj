@@ -77,6 +77,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="RenderViewBaseXY.cs" />
+    <Compile Include="UI\MainWindow\MainWindowMouseStatusBar.xaml.cs">
+      <DependentUpon>MainWindowMouseStatusBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>
@@ -111,6 +114,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\MainWindow\MainWindowMenuBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainWindow\MainWindowMouseStatusBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

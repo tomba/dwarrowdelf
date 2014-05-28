@@ -52,30 +52,6 @@
 			</TextBlock.Text>
 		</TextBlock>
 
-		<StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowMousePos}, Converter={StaticResource boolToVisConverter}}">
-			<Separator />
-
-			<TextBlock>ML</TextBlock>
-			<TextBlock Width="75" DataContext="{Binding MapControl.HoverTileView}" Text="{Binding Location}" />
-
-			<Separator />
-
-			<TextBlock>SL</TextBlock>
-			<TextBlock Width="50" DataContext="{Binding MapControl}" Text="{Binding ScreenLocation}" />
-
-			<Separator />
-
-			<TextBlock>MousePos</TextBlock>
-			<TextBlock Width="100" DataContext="{Binding MapControl}">
-			<TextBlock.Text>
-				<MultiBinding StringFormat="{}{0:F2}, {1:F2}">
-					<Binding Path="MousePos.X" />
-					<Binding Path="MousePos.Y" />
-				</MultiBinding>
-			</TextBlock.Text>
-			</TextBlock>
-		</StatusBar>
-
 		<StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowCenterPos}, Converter={StaticResource boolToVisConverter}}">
 			<Separator />
 

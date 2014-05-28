@@ -11,8 +11,8 @@ namespace Dwarrowdelf.Client
 		public static ConnectionType ConnectionType = ConnectionType.Tcp;
 		public static bool AutoConnect = true;
 
-		public static bool ShowMousePos = false;
-		public static bool ShowCenterPos = false;
+		public static bool ShowMouseDebug = true;
+		public static bool ShowCenterPos = true;
 		public static bool ShowTileSize = true;
 
 		// Game mode if new game is created
