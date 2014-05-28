@@ -118,8 +118,7 @@ namespace AStarTest
 				{
 					for (int x = 0; x < width; ++x)
 					{
-						var _ml = ScreenTileToMapTile(new Point(x, y));
-						var ml = new IntPoint3(PointToIntPoint(_ml), m_z);
+						var ml = ScreenTileToMapLocation(new IntPoint2(x, y));
 
 						UpdateTile(ref grid[y, x], ml);
 					}
@@ -128,12 +127,6 @@ namespace AStarTest
 
 			m_renderer.Render(drawingContext, renderSize, ctx);
 		}
-
-		IntPoint2 PointToIntPoint(Point p)
-		{
-			return new IntPoint2((int)Math.Round(p.X), (int)Math.Round(p.Y));
-		}
-
 
 		void UpdateTile(ref RenderTileData tile, IntPoint3 ml)
 		{
@@ -236,6 +229,13 @@ namespace AStarTest
 		{
 			var ml = ScreenPointToMapTile(p);
 			return new IntPoint3((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
+		}
+
+		public IntPoint3 ScreenTileToMapLocation(IntPoint2 p)
+		{
+			var mt = ScreenTileToMapTile(new Point(p.X, p.Y));
+			var ml = new IntPoint3((int)Math.Round(mt.X), (int)Math.Round(mt.Y), m_z);
+			return ml;
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
