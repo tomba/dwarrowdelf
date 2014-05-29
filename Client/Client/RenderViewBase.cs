@@ -103,48 +103,6 @@ namespace Dwarrowdelf.Client
 			m_renderData.Invalid = true;
 		}
 
-		// Note: this is used to scroll the rendermap immediately when setting the centerpos. Could be used only when GetRenderMap is called
-		protected void ScrollTiles(IntVector2 scrollVector)
-		{
-			//Debug.WriteLine("RenderView.ScrollTiles");
-
-			var columns = m_renderData.Width;
-			var rows = m_renderData.Height;
-			var grid = m_renderData.Grid;
-
-			var ax = Math.Abs(scrollVector.X);
-			var ay = Math.Abs(scrollVector.Y);
-
-			if (ax >= columns || ay >= rows)
-			{
-				m_renderData.Invalid = true;
-				return;
-			}
-
-			int srcIdx = 0;
-			int dstIdx = 0;
-
-			if (scrollVector.X >= 0)
-				srcIdx += ax;
-			else
-				dstIdx += ax;
-
-			if (scrollVector.Y >= 0)
-				srcIdx += columns * ay;
-			else
-				dstIdx += columns * ay;
-
-			var xClrIdx = scrollVector.X >= 0 ? columns - ax : 0;
-			var yClrIdx = scrollVector.Y >= 0 ? rows - ay : 0;
-
-			Array.Copy(grid, srcIdx, grid, dstIdx, columns * rows - ax - columns * ay);
-
-			for (int y = 0; y < rows; ++y)
-				Array.Clear(grid, y * columns + xClrIdx, ax);
-
-			Array.Clear(grid, yClrIdx * columns, columns * ay);
-		}
-
 		void MapChangedCallback(IntPoint3 ml)
 		{
 			MapChangedOverride(ml);

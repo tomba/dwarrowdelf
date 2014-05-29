@@ -62,5 +62,46 @@ namespace Dwarrowdelf
 		{
 			Array.Clear(this.Grid, 0, this.Size.Width * this.Size.Height);
 		}
+
+		public void Scroll(IntVector2 scrollVector)
+		{
+			//Debug.WriteLine("RenderView.ScrollTiles");
+
+			var columns = this.Width;
+			var rows = this.Height;
+			var grid = this.Grid;
+
+			var ax = Math.Abs(scrollVector.X);
+			var ay = Math.Abs(scrollVector.Y);
+
+			if (ax >= columns || ay >= rows)
+			{
+				this.Invalid = true;
+				return;
+			}
+
+			int srcIdx = 0;
+			int dstIdx = 0;
+
+			if (scrollVector.X >= 0)
+				srcIdx += ax;
+			else
+				dstIdx += ax;
+
+			if (scrollVector.Y >= 0)
+				srcIdx += columns * ay;
+			else
+				dstIdx += columns * ay;
+
+			var xClrIdx = scrollVector.X >= 0 ? columns - ax : 0;
+			var yClrIdx = scrollVector.Y >= 0 ? rows - ay : 0;
+
+			Array.Copy(grid, srcIdx, grid, dstIdx, columns * rows - ax - columns * ay);
+
+			for (int y = 0; y < rows; ++y)
+				Array.Clear(grid, y * columns + xClrIdx, ax);
+
+			Array.Clear(grid, yClrIdx * columns, columns * ay);
+		}
 	}
 }

@@ -28,7 +28,9 @@ namespace Dwarrowdelf.Client
 				if (diff.Z != 0)
 					m_renderData.Invalid = true;
 				else
-					ScrollTiles(new IntVector2(diff.X, diff.Y));
+					// Note: this is used to scroll the rendermap immediately when setting the centerpos.
+					// Could be used only when GetRenderMap is called
+					m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
 			}
 
 			var cp = CenterPos;
