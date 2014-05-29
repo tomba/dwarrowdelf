@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Client.UI
 			mapYZ.InvalidateTileData();
 		}
 
-		public void ScrollToImmediate(EnvironmentObject env, IntPoint3 p)
+		public void GoTo(EnvironmentObject env, IntPoint3 p)
 		{
 			mapXY.ScrollToImmediate(env, p);
 			mapXZ.ScrollToImmediate(env, p);

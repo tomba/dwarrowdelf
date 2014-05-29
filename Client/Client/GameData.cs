@@ -177,7 +177,7 @@ namespace Dwarrowdelf.Client
 			{
 				var mapControl = App.GameWindow.MapControl;
 				mapControl.IsVisibilityCheckEnabled = !user.IsSeeAll;
-				mapControl.ScrollToImmediate(controllable.Environment, controllable.Location);
+				mapControl.GoTo(controllable.Environment, controllable.Location);
 
 				if (this.GameMode == GameMode.Adventure)
 					this.FocusedObject = controllable;
@@ -196,7 +196,7 @@ namespace Dwarrowdelf.Client
 			this.User.DisconnectEvent -= user_DisconnectEvent;
 
 			this.FocusedObject = null;
-			App.GameWindow.MapControl.ScrollToImmediate(null, new IntPoint3());
+			App.GameWindow.MapControl.GoTo(null, new IntPoint3());
 			this.User = null;
 			this.World = null;
 			m_turnHandler = null;

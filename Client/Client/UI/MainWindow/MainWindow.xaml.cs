@@ -437,7 +437,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			EnvironmentObject env = dst as EnvironmentObject;
 			if (env != null)
-				map.ScrollToImmediate(env, loc);
+				map.GoTo(env, loc);
 		}
 
 		protected override void OnPreviewKeyDown(KeyEventArgs e)
