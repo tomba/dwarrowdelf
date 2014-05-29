@@ -104,12 +104,10 @@ namespace Dwarrowdelf.Client.UI
 			if (!m_initialized)
 				return base.ArrangeOverride(arrangeBounds);
 
-			var renderSize = arrangeBounds;
+			var maxColumns = (int)Math.Ceiling(arrangeBounds.Width / MINTILESIZE + 1) | 1;
+			var maxRows = (int)Math.Ceiling(arrangeBounds.Height / MINTILESIZE + 1) | 1;
 
-			var columns = (int)Math.Ceiling(renderSize.Width / MINTILESIZE + 1) | 1;
-			var rows = (int)Math.Ceiling(renderSize.Height / MINTILESIZE + 1) | 1;
-
-			var bufferSize = new IntSize2(columns, rows);
+			var bufferSize = new IntSize2(maxColumns, maxRows);
 
 			if (bufferSize != m_bufferSize)
 			{
