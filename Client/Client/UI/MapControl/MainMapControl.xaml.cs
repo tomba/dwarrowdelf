@@ -17,13 +17,31 @@ namespace Dwarrowdelf.Client.UI
 {
 	sealed partial class MainMapControl : UserControl, IDisposable
 	{
-		// XXX create proper WPF event
 		public event Action<MapSelection> GotSelection;
 
-		public bool IsVisibilityCheckEnabled { get; set; }
+		public MapSelectionMode SelectionMode
+		{
+			get { return mapXY.SelectionMode; }
 
-		public MapSelectionMode SelectionMode { get; set; }
-		public MapSelection Selection { get; set; }
+			set
+			{
+				mapXY.SelectionMode = value;
+				mapXZ.SelectionMode = value;
+				mapYZ.SelectionMode = value;
+			}
+		}
+
+		public MapSelection Selection
+		{
+			get { return mapXY.Selection; }
+
+			set
+			{
+				mapXY.Selection = value;
+				mapXZ.Selection = value;
+				mapYZ.Selection = value;
+			}
+		}
 
 		public EnvironmentObject Environment { get { return mapXY.Environment; } }
 
@@ -32,7 +50,15 @@ namespace Dwarrowdelf.Client.UI
 
 		public MainMapControl()
 		{
+			this.Initialized += MainMapControl_Initialized;
 			InitializeComponent();
+		}
+
+		void MainMapControl_Initialized(object sender, EventArgs e)
+		{
+			mapXY.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
+			mapXZ.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
+			mapYZ.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
 		}
 
 		public void Blink()

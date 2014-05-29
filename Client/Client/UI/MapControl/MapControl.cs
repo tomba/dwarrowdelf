@@ -86,6 +86,12 @@ namespace Dwarrowdelf.Client.UI
 			m_scene.SetTileSet(GameData.Data.TileSet);
 			GameData.Data.TileSetChanged += OnTileSetChanged;
 
+			GameData.Data.IsVisibilityCheckEnabledChanged += v =>
+			{
+				m_renderView.IsVisibilityCheckEnabled = v;
+				InvalidateTileData();
+			};
+
 			m_initialized = true;
 
 			base.OnInitialized(e);
@@ -176,18 +182,6 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (m_renderView.Invalidate(ml))
 				InvalidateTileData();
-		}
-
-		public bool IsVisibilityCheckEnabled
-		{
-			get { return m_renderView != null && m_renderView.IsVisibilityCheckEnabled; }
-
-			set
-			{
-				m_renderView.IsVisibilityCheckEnabled = value;
-				InvalidateTileData();
-				Notify("IsVisibilityCheckEnabled");
-			}
 		}
 
 		public EnvironmentObject Environment

@@ -104,6 +104,15 @@ namespace Dwarrowdelf.Client
 			set { m_gameMode = value; Notify("GameMode"); if (this.GameModeChanged != null) this.GameModeChanged(value); }
 		}
 
+		public event Action<bool> IsVisibilityCheckEnabledChanged;
+
+		bool m_isVisibilityCheckEnabled;
+		public bool IsVisibilityCheckEnabled
+		{
+			get { return m_isVisibilityCheckEnabled; }
+			set { m_isVisibilityCheckEnabled = value; Notify("IsVisibilityCheckEnabled"); if (this.IsVisibilityCheckEnabledChanged != null) this.IsVisibilityCheckEnabledChanged(value); }
+		}
+
 		bool m_autoAdvanceTurnEnabled;
 		public bool IsAutoAdvanceTurn
 		{
@@ -167,6 +176,7 @@ namespace Dwarrowdelf.Client
 			this.User = user;
 			this.GameMode = user.GameMode;
 			this.World = user.World;
+			this.IsVisibilityCheckEnabled = !user.IsSeeAll;
 
 			user.DisconnectEvent += user_DisconnectEvent;
 
@@ -175,9 +185,7 @@ namespace Dwarrowdelf.Client
 			var controllable = this.World.Controllables.FirstOrDefault();
 			if (controllable != null && controllable.Environment != null)
 			{
-				var mapControl = App.GameWindow.MapControl;
-				mapControl.IsVisibilityCheckEnabled = !user.IsSeeAll;
-				mapControl.GoTo(controllable.Environment, controllable.Location);
+				App.GameWindow.MapControl.GoTo(controllable.Environment, controllable.Location);
 
 				if (this.GameMode == GameMode.Adventure)
 					this.FocusedObject = controllable;
