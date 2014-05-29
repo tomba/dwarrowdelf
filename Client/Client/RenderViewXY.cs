@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Client
 {
 	sealed class RenderViewXY : RenderViewBaseXY<RenderTile>
 	{
-		static bool m_symbolToggler;
+		static bool s_symbolToggler;
 
 		public RenderViewXY(DataGrid2D<TileControl.RenderTile> renderData)
 			: base(renderData)
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 		{
 			// XXX we should invalidate only the needed tiles
 			Invalidate();
-			m_symbolToggler = !m_symbolToggler;
+			s_symbolToggler = !s_symbolToggler;
 		}
 
 		protected override void MapChangedOverride(IntPoint3 ml)
@@ -123,7 +123,7 @@ namespace Dwarrowdelf.Client
 
 				if (tile.Top.SymbolID == SymbolID.Undefined)
 				{
-					GetTopTile(p, env, ref tile.Top);
+					GetTopTile(p, env, ref tile.Top, s_symbolToggler);
 
 					if (tile.Top.SymbolID != SymbolID.Undefined)
 						tile.TopDarknessLevel = darkness;
@@ -429,11 +429,11 @@ namespace Dwarrowdelf.Client
 			tile.BgColor = GameColor.None;
 		}
 
-		static void GetTopTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile)
+		static void GetTopTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool symbolToggler)
 		{
 			SymbolID id;
 
-			if (m_symbolToggler)
+			if (symbolToggler)
 			{
 				id = GetDesignationSymbolAt(env.Designations, ml);
 				if (id != SymbolID.Undefined)
@@ -448,14 +448,14 @@ namespace Dwarrowdelf.Client
 			if (id != SymbolID.Undefined)
 			{
 				tile.SymbolID = id;
-				if (m_symbolToggler)
+				if (symbolToggler)
 					tile.Color = GameColor.DarkGray;
 				else
 					tile.Color = GameColor.LightGray;
 				return;
 			}
 
-			if (!m_symbolToggler)
+			if (!symbolToggler)
 			{
 				id = GetInstallSymbolAt(env.InstallItemManager, ml);
 				if (id != SymbolID.Undefined)
