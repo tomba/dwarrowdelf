@@ -35,6 +35,8 @@ namespace Dwarrowdelf.Client.UI
 
 		const double MINTILESIZE = 2;
 
+		IntSize2 m_bufferSize;
+
 		public MapControl()
 		{
 		}
@@ -96,8 +98,6 @@ namespace Dwarrowdelf.Client.UI
 
 			base.OnInitialized(e);
 		}
-
-		IntSize2 m_bufferSize;
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
