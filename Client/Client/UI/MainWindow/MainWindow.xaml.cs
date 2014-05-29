@@ -45,6 +45,8 @@ namespace Dwarrowdelf.Client.UI
 
 		public GameData Data { get { return GameData.Data; } }
 
+		public TileView FocusedTileView { get; private set; }
+
 		public MainWindow()
 		{
 			this.Initialized += MainWindow_Initialized;
@@ -52,14 +54,14 @@ namespace Dwarrowdelf.Client.UI
 			this.Closing += MainWindow_Closing;
 			this.Closed += MainWindow_Closed;
 
+			this.FocusedTileView = new TileView();
+
 			InitializeComponent();
 		}
 
 		void MainWindow_Initialized(object sender, EventArgs e)
 		{
 			m_cmdHandler = new MainWindowCommandHandler(this);
-
-			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
 
 			GameData.Data.GameModeChanged += OnGameModeChanged;
 			GameData.Data.FocusedObjectChanged += OnFocusedObjectChanged;
@@ -353,62 +355,6 @@ namespace Dwarrowdelf.Client.UI
 			m_cmdHandler.AddCommandBindings(mode);
 		}
 
-		void OnMouseClicked(object sender, MouseButtonEventArgs ev)
-		{
-			if (this.ClientTools.ToolMode == ClientToolMode.Info)
-			{
-				var env = this.MapControl.Environment;
-
-				if (env == null)
-					return;
-
-				var ml = this.MapControl.ScreenPointToMapLocation(ev.GetPosition(this.MapControl));
-
-				var obs = new List<object>();
-
-				var elem = env.GetElementAt(ml);
-				if (elem != null)
-					obs.Add(env.GetElementAt(ml));
-
-				obs.AddRange(env.GetContents(ml));
-
-				if (obs.Count == 1)
-				{
-					object ob = obs[0];
-					ShowObjectInDialog(ob);
-				}
-				else if (obs.Count > 0)
-				{
-					var ctxMenu = (ContextMenu)this.FindResource("objectSelectorContextMenu");
-
-					ctxMenu.ItemsSource = obs;
-					ctxMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
-					ctxMenu.PlacementTarget = this.MapControl;
-					var rect = this.MapControl.MapRectToScreenPointRect(new IntGrid2(ml.ToIntPoint(), new IntSize2(1, 1)));
-					ctxMenu.PlacementRectangle = rect;
-
-					ctxMenu.IsOpen = true;
-				}
-
-				ev.Handled = true;
-			}
-		}
-
-		void OnObjectSelectContextMenuClick(object sender, RoutedEventArgs e)
-		{
-			var item = (MenuItem)e.OriginalSource;
-			var ob = item.Header;
-			ShowObjectInDialog(ob);
-		}
-
-		void ShowObjectInDialog(object ob)
-		{
-			var dlg = new ObjectEditDialog();
-			dlg.DataContext = ob;
-			dlg.Owner = this;
-			dlg.Show();
-		}
-
 		public LogOnDialog OpenLogOnDialog()
 		{
 			this.IsEnabled = false;
@@ -447,11 +393,11 @@ namespace Dwarrowdelf.Client.UI
 			if (newOb != null)
 			{
 				newOb.ObjectMoved += OnFocusedControllableMoved;
-				this.MapControl.FocusedTileView.SetTarget(newOb.Environment, newOb.Location);
+				this.FocusedTileView.SetTarget(newOb.Environment, newOb.Location);
 			}
 			else
 			{
-				this.MapControl.FocusedTileView.ClearTarget();
+				this.FocusedTileView.ClearTarget();
 			}
 
 			// always follow the focused ob for now
@@ -460,7 +406,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnFocusedControllableMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
 		{
-			this.MapControl.FocusedTileView.SetTarget(ob.Environment, ob.Location);
+			this.FocusedTileView.SetTarget(ob.Environment, ob.Location);
 		}
 
 		public MovableObject FollowObject

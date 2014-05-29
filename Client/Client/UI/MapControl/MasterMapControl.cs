@@ -27,7 +27,6 @@ namespace Dwarrowdelf.Client.UI
 	sealed class MasterMapControl : MapControl
 	{
 		public TileView HoverTileView { get; private set; }
-		public TileView FocusedTileView { get; private set; }
 		public TileAreaView SelectionTileAreaView { get; private set; }
 
 		Grid m_overlayGrid;
@@ -98,7 +97,6 @@ namespace Dwarrowdelf.Client.UI
 			this.TileSize = INITIALTILESIZE;
 
 			this.HoverTileView = new TileView();
-			this.FocusedTileView = new TileView();
 
 			m_overlayGrid = new Grid();
 			m_overlayGrid.ClipToBounds = true;
