@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client
 			{
 				if (_Blink != null) _Blink();
 				if (MainWindow != null && MainWindow.MapControl != null)
-					MainWindow.MapControl.InvalidateTileData();
+					MainWindow.MapControl.Blink();
 			};
 
 			this.ConnectManager = new ConnectManager();
@@ -196,7 +196,7 @@ namespace Dwarrowdelf.Client
 			this.User.DisconnectEvent -= user_DisconnectEvent;
 
 			this.FocusedObject = null;
-			App.GameWindow.MapControl.Environment = null;
+			App.GameWindow.MapControl.ScrollToImmediate(null, new IntPoint3());
 			this.User = null;
 			this.World = null;
 			m_turnHandler = null;

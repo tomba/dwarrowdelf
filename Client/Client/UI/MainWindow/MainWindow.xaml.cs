@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public ClientTools ClientTools { get; private set; }
 
-		public MasterMapControl MapControl { get { return map; } }
+		public MainMapControl MapControl { get { return map; } }
 
 		public GameData Data { get { return GameData.Data; } }
 
@@ -505,7 +505,6 @@ namespace Dwarrowdelf.Client.UI
 		internal EnvironmentObject Map
 		{
 			get { return map.Environment; }
-			set { map.Environment = value; }
 		}
 
 		private void MenuItem_Click_JobTreeView(object sender, RoutedEventArgs e)

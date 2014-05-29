@@ -80,6 +80,9 @@
     <Compile Include="UI\MainWindow\MainWindowMouseStatusBar.xaml.cs">
       <DependentUpon>MainWindowMouseStatusBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\MapControl\MainMapControl.xaml.cs">
+      <DependentUpon>MainMapControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MapControl\MapControlDebugData.cs" />
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
@@ -123,6 +126,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\MainWindow\MapToolBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MapControl\MainMapControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
