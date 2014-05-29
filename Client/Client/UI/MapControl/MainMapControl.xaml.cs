@@ -68,11 +68,27 @@ namespace Dwarrowdelf.Client.UI
 			mapYZ.InvalidateTileData();
 		}
 
+		public void GoTo(MovableObject ob)
+		{
+			if (ob == null)
+				GoTo(null, new IntPoint3());
+			else
+				GoTo(ob.Environment, ob.Location);
+		}
+
 		public void GoTo(EnvironmentObject env, IntPoint3 p)
 		{
 			mapXY.ScrollToImmediate(env, p);
 			mapXZ.ScrollToImmediate(env, p);
 			mapYZ.ScrollToImmediate(env, p);
+		}
+
+		public void ScrollTo(MovableObject ob)
+		{
+			if (ob == null)
+				ScrollTo(null, new IntPoint3());
+			else
+				ScrollTo(ob.Environment, ob.Location);
 		}
 
 		public void ScrollTo(EnvironmentObject env, IntPoint3 p)

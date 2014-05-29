@@ -426,7 +426,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_followObject != null)
 				{
 					m_followObject.ObjectMoved += FollowedObjectMoved;
-					map.ScrollTo(m_followObject.Environment, m_followObject.Location);
+					map.ScrollTo(m_followObject);
 				}
 
 				Notify("FollowObject");
@@ -435,9 +435,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void FollowedObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
 		{
-			EnvironmentObject env = dst as EnvironmentObject;
-			if (env != null)
-				map.GoTo(env, loc);
+			map.GoTo(ob);
 		}
 
 		protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -500,7 +498,7 @@ namespace Dwarrowdelf.Client.UI
 			if (movable == null || movable.Environment == null)
 				return;
 
-			map.ScrollTo(movable.Environment, movable.Location);
+			map.ScrollTo(movable);
 		}
 
 		private void MessageListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

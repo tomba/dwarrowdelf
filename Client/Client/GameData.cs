@@ -185,7 +185,7 @@ namespace Dwarrowdelf.Client
 			var controllable = this.World.Controllables.FirstOrDefault();
 			if (controllable != null && controllable.Environment != null)
 			{
-				App.GameWindow.MapControl.GoTo(controllable.Environment, controllable.Location);
+				App.GameWindow.MapControl.GoTo(controllable);
 
 				if (this.GameMode == GameMode.Adventure)
 					this.FocusedObject = controllable;
@@ -204,7 +204,7 @@ namespace Dwarrowdelf.Client
 			this.User.DisconnectEvent -= user_DisconnectEvent;
 
 			this.FocusedObject = null;
-			App.GameWindow.MapControl.GoTo(null, new IntPoint3());
+			App.GameWindow.MapControl.GoTo(null);
 			this.User = null;
 			this.World = null;
 			m_turnHandler = null;
