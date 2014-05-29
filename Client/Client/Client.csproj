@@ -255,7 +255,6 @@
     <Compile Include="ClientConfig.cs" />
     <Compile Include="DebugScriptMessages.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Selectables.cs" />
     <Compile Include="TileGraphics.cs" />
     <Compile Include="UI\ClientTools.cs" />
     <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
@@ -299,7 +298,6 @@
       <DependentUpon>ItemObjectPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Converters\DrawingConverter.cs" />
-    <Compile Include="UI\ListBoxHelper.cs" />
     <Compile Include="UI\BuildingEditControl.xaml.cs">
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
@@ -319,7 +317,6 @@
     <Compile Include="UI\StockpileInfoControl.xaml.cs">
       <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ListBoxExtenders.cs" />
     <Compile Include="RenderViewXY.cs" />
     <Compile Include="RenderViewBase.cs" />
     <Compile Include="UI\MainWindow\SingleTileInfoControl.xaml.cs">
@@ -459,6 +456,10 @@
     <ProjectReference Include="..\..\Server\Server\Server.csproj">
       <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
       <Name>Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BaseWPF\Client.BaseWPF.csproj">
+      <Project>{3a421fe6-7dee-4782-9d89-b6d2eb2f24fb}</Project>
+      <Name>Client.BaseWPF</Name>
     </ProjectReference>
     <ProjectReference Include="..\Engine\Client.Engine.csproj">
       <Project>{a7884edf-fd74-45d6-9953-e1d76dc0a45a}</Project>

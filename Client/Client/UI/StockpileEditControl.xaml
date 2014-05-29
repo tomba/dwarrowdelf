@@ -10,6 +10,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:client="clr-namespace:Dwarrowdelf.Client"
 	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+	xmlns:wpfbase="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.BaseWPF"
 	x:Name="root"
 	DataContext="{Binding}"
 	d:DataContext="{d:DesignInstance Type=ui:DesignStockpileSample, IsDesignTimeCreatable=True}">
@@ -67,13 +68,13 @@
 			<TextBlock Grid.Column="3" Grid.Row="0" Text="MaterialClasses" Padding="4" />
 
 			<ListBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding Source={StaticResource itemIDs}}" SelectionMode="Multiple"
-					 client:ListBoxHelper.SelectedItems="{Binding ItemIDs}" />
+					 wpfbase:ListBoxHelper.SelectedItems="{Binding ItemIDs}" />
 			<ListBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={StaticResource itemCategories}}" SelectionMode="Multiple"
-					 client:ListBoxHelper.SelectedItems="{Binding ItemCategories}" />
+					 wpfbase:ListBoxHelper.SelectedItems="{Binding ItemCategories}" />
 			<ListBox Grid.Column="2" Grid.Row="1" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectionMode="Multiple"
-					 client:ListBoxHelper.SelectedItems="{Binding MaterialIDs}" />
+					 wpfbase:ListBoxHelper.SelectedItems="{Binding MaterialIDs}" />
 			<ListBox Grid.Column="3" Grid.Row="1" ItemsSource="{Binding Source={StaticResource materialCategories}}" SelectionMode="Multiple"
-					 client:ListBoxHelper.SelectedItems="{Binding MaterialCategories}" />
+					 wpfbase:ListBoxHelper.SelectedItems="{Binding MaterialCategories}" />
 
 		</Grid>
 	</DockPanel>

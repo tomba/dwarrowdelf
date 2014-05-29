@@ -6,12 +6,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Collections.Specialized;
 
-namespace Dwarrowdelf.Client.UI
+namespace Dwarrowdelf.Client
 {
 	/// <summary>
 	/// This class contains a few useful extenders for the ListBox
 	/// </summary>
-	static class ListBoxExtenders
+	public static class ListBoxExtenders
 	{
 		public static readonly DependencyProperty AutoScrollToEndProperty =
 			DependencyProperty.RegisterAttached("AutoScrollToEnd", typeof(bool), typeof(ListBoxExtenders), new UIPropertyMetadata(default(bool), OnAutoScrollToEndChanged));
