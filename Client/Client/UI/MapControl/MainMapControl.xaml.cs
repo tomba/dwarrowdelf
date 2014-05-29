@@ -17,6 +17,8 @@ namespace Dwarrowdelf.Client.UI
 {
 	sealed partial class MainMapControl : UserControl, IDisposable
 	{
+		List<MasterMapControl> m_mapList = new List<MasterMapControl>();
+
 		public event Action<MapSelection> GotSelection;
 
 		public MapSelectionMode SelectionMode
@@ -25,9 +27,8 @@ namespace Dwarrowdelf.Client.UI
 
 			set
 			{
-				mapXY.SelectionMode = value;
-				mapXZ.SelectionMode = value;
-				mapYZ.SelectionMode = value;
+				foreach (var map in m_mapList)
+					map.SelectionMode = value;
 			}
 		}
 
@@ -37,9 +38,8 @@ namespace Dwarrowdelf.Client.UI
 
 			set
 			{
-				mapXY.Selection = value;
-				mapXZ.Selection = value;
-				mapYZ.Selection = value;
+				foreach (var map in m_mapList)
+					map.Selection = value;
 			}
 		}
 
@@ -56,16 +56,18 @@ namespace Dwarrowdelf.Client.UI
 
 		void MainMapControl_Initialized(object sender, EventArgs e)
 		{
-			mapXY.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
-			mapXZ.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
-			mapYZ.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
+			m_mapList.Add(mapXY);
+			m_mapList.Add(mapXZ);
+			m_mapList.Add(mapYZ);
+
+			foreach (var map in m_mapList)
+				map.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
 		}
 
 		public void Blink()
 		{
-			mapXY.InvalidateTileData();
-			mapXZ.InvalidateTileData();
-			mapYZ.InvalidateTileData();
+			foreach (var map in m_mapList)
+				map.InvalidateTileData();
 		}
 
 		public void GoTo(MovableObject ob)
@@ -78,9 +80,8 @@ namespace Dwarrowdelf.Client.UI
 
 		public void GoTo(EnvironmentObject env, IntPoint3 p)
 		{
-			mapXY.ScrollToImmediate(env, p);
-			mapXZ.ScrollToImmediate(env, p);
-			mapYZ.ScrollToImmediate(env, p);
+			foreach (var map in m_mapList)
+				map.ScrollToImmediate(env, p);
 		}
 
 		public void ScrollTo(MovableObject ob)
@@ -93,16 +94,14 @@ namespace Dwarrowdelf.Client.UI
 
 		public void ScrollTo(EnvironmentObject env, IntPoint3 p)
 		{
-			mapXY.ScrollTo(env, p);
-			mapXZ.ScrollTo(env, p);
-			mapYZ.ScrollTo(env, p);
+			foreach (var map in m_mapList)
+				map.ScrollTo(env, p);
 		}
 
 		public void Dispose()
 		{
-			mapXY.Dispose();
-			mapXZ.Dispose();
-			mapYZ.Dispose();
+			foreach (var map in m_mapList)
+				map.Dispose();
 		}
 
 		void OnMapMouseClicked(object sender, MouseButtonEventArgs ev)
