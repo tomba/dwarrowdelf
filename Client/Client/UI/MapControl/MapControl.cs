@@ -137,7 +137,7 @@ namespace Dwarrowdelf.Client.UI
 
 			m_renderView.SetSize(gridSize);
 
-			m_renderView.CenterPos = new IntPoint3((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
+			m_renderView.CenterPos = ContentTileToMapLocation(centerPos);
 
 			m_scene.SetTileSize((float)tileSize);
 			m_scene.SetRenderOffset((float)this.RenderOffset.X, (float)this.RenderOffset.Y);
@@ -229,7 +229,39 @@ namespace Dwarrowdelf.Client.UI
 		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
 			var ct = ScreenPointToContentTile(p);
-			return new IntPoint3((int)Math.Round(ct.X), (int)Math.Round(ct.Y), this.Z);
+
+#warning testing
+			var t0 = new Point((int)Math.Round(ct.X), (int)Math.Round(ct.Y));
+			var t1 = ContentTileToMapLocation(ct);
+			var t2 = MapLocationToContentTile(t1);
+			if (t0 != t2)
+				throw new Exception();
+
+			return ContentTileToMapLocation(ct);
+		}
+
+		public IntPoint3 ScreenTileToMapLocation(Point p)
+		{
+			var ct = ScreenTileToContentTile(p);
+			return ContentTileToMapLocation(ct);
+		}
+
+		public IntPoint3 ContentTileToMapLocation(Point p)
+		{
+			return ContentTileToMapLocation(p, this.Z);
+		}
+
+		public IntPoint3 ContentTileToMapLocation(Point p, int z)
+		{
+			int x = (int)Math.Round(p.X);
+			int y = (int)Math.Round(p.Y);
+
+			return new IntPoint3(x, y, z);
+		}
+
+		public Point MapLocationToContentTile(IntPoint3 p)
+		{
+			return new Point(p.X, p.Y);
 		}
 
 		public int Z
@@ -248,7 +280,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var p = mc.CenterPos;
 
-			mc.m_renderView.CenterPos = new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), val);
+			mc.m_renderView.CenterPos = mc.ContentTileToMapLocation(p, val);
 
 			mc.InvalidateTileData();
 
