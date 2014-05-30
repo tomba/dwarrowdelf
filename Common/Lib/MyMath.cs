@@ -132,11 +132,23 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Round double to integer. Note: uses different midpoint rounding than System.Math.Round()
+		/// Round double to integer.
+		/// Note: uses different midpoint rounding than System.Math.Round()
 		/// </summary>
 		public static int Round(double val)
 		{
 			return val >= 0 ? (int)(val + 0.5) : (int)(val - 0.5);
+		}
+
+		/// <summary>
+		/// Round value up for positive numbers and down for negative numbers.
+		/// Note: different behavior for negative numbers than System.Math.Ceiling()
+		/// </summary>
+		/// <param name="val"></param>
+		/// <returns></returns>
+		public static int Ceiling(double val)
+		{
+			return (int)val + (1 - (int)((int)(val + 1) - val));
 		}
 	}
 }

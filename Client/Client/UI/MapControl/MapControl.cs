@@ -128,8 +128,8 @@ namespace Dwarrowdelf.Client.UI
 			if (!m_initialized)
 				return base.ArrangeOverride(arrangeBounds);
 
-			var maxColumns = (int)Math.Ceiling(arrangeBounds.Width / MINTILESIZE + 1) | 1;
-			var maxRows = (int)Math.Ceiling(arrangeBounds.Height / MINTILESIZE + 1) | 1;
+			var maxColumns = MyMath.Ceiling(arrangeBounds.Width / MINTILESIZE + 1) | 1;
+			var maxRows = MyMath.Ceiling(arrangeBounds.Height / MINTILESIZE + 1) | 1;
 
 			var bufferSize = new IntSize2(maxColumns, maxRows);
 
@@ -138,7 +138,7 @@ namespace Dwarrowdelf.Client.UI
 				m_bufferSize = bufferSize;
 				m_renderData.SetMaxSize(bufferSize);
 				m_scene.SetupTileBuffer(bufferSize);
-				m_renderer.SetRenderSize(new IntSize2((int)Math.Ceiling(arrangeBounds.Width), (int)Math.Ceiling(arrangeBounds.Height)));
+				m_renderer.SetRenderSize(new IntSize2(MyMath.Ceiling(arrangeBounds.Width), MyMath.Ceiling(arrangeBounds.Height)));
 			}
 
 			return base.ArrangeOverride(arrangeBounds);

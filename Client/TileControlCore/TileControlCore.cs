@@ -120,11 +120,11 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			var tileSize = this.TileSize;
 
-			var renderWidth = (int)Math.Ceiling(renderSize.Width);
-			var renderHeight = (int)Math.Ceiling(renderSize.Height);
+			var renderWidth = MyMath.Ceiling(renderSize.Width);
+			var renderHeight = MyMath.Ceiling(renderSize.Height);
 
-			var columns = (int)Math.Ceiling(renderSize.Width / tileSize + 1) | 1;
-			var rows = (int)Math.Ceiling(renderSize.Height / tileSize + 1) | 1;
+			var columns = MyMath.Ceiling(renderSize.Width / tileSize + 1) | 1;
+			var rows = MyMath.Ceiling(renderSize.Height / tileSize + 1) | 1;
 
 			var gridSize = new IntSize2(columns, rows);
 
@@ -157,8 +157,8 @@ namespace Dwarrowdelf.Client.TileControl
 			trace.TraceVerbose("ArrangeOverride({0})", arrangeBounds);
 
 			var renderSize = arrangeBounds;
-			var renderWidth = (int)Math.Ceiling(renderSize.Width);
-			var renderHeight = (int)Math.Ceiling(renderSize.Height);
+			var renderWidth = MyMath.Ceiling(renderSize.Width);
+			var renderHeight = MyMath.Ceiling(renderSize.Height);
 
 			if (m_oldRenderSize != arrangeBounds)
 				UpdateTileLayout(renderSize);

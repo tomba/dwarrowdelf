@@ -86,7 +86,7 @@ namespace Dwarrowdelf
 				double newStart = 0;
 
 				int lowY = (int)Math.Floor(startSlope * x);
-				int highY = (int)Math.Ceiling(endSlope * x);
+				int highY = MyMath.Ceiling(endSlope * x);
 
 				switch (octant)
 				{

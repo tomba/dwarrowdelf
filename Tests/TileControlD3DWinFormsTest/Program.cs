@@ -64,8 +64,8 @@ namespace TileControlD3DWinFormsTest
 
 				var size = new IntSize2(form.ClientSize.Width, form.ClientSize.Height);
 
-				columns = (int)Math.Ceiling((double)size.Width / tilesize + 1) | 1;
-				rows = (int)Math.Ceiling((double)size.Height / tilesize + 1) | 1;
+				columns = MyMath.Ceiling((double)size.Width / tilesize + 1) | 1;
+				rows = MyMath.Ceiling((double)size.Height / tilesize + 1) | 1;
 
 				renderData.SetSize(new IntSize2(columns, rows));
 
@@ -98,8 +98,8 @@ namespace TileControlD3DWinFormsTest
 
 				var size = new IntSize2(form.ClientSize.Width, form.ClientSize.Height);
 
-				columns = (int)Math.Ceiling((double)size.Width / tilesize + 1) | 1;
-				rows = (int)Math.Ceiling((double)size.Height / tilesize + 1) | 1;
+				columns = MyMath.Ceiling((double)size.Width / tilesize + 1) | 1;
+				rows = MyMath.Ceiling((double)size.Height / tilesize + 1) | 1;
 
 				renderData.SetSize(new IntSize2(columns, rows));
 
@@ -116,14 +116,14 @@ namespace TileControlD3DWinFormsTest
 
 				renderer.SetRenderSize(size);
 
-				int maxColumns = (int)Math.Ceiling((double)size.Width / MINTILESIZE + 1) | 1;
-				int maxRows = (int)Math.Ceiling((double)size.Height / MINTILESIZE + 1) | 1;
+				int maxColumns = MyMath.Ceiling((double)size.Width / MINTILESIZE + 1) | 1;
+				int maxRows = MyMath.Ceiling((double)size.Height / MINTILESIZE + 1) | 1;
 
 				renderData.SetMaxSize(new IntSize2(maxColumns, maxRows));
 				scene.SetupTileBuffer(new IntSize2(maxColumns, maxRows));
 
-				columns = (int)Math.Ceiling((double)size.Width / tilesize + 1) | 1;
-				rows = (int)Math.Ceiling((double)size.Height / tilesize + 1) | 1;
+				columns = MyMath.Ceiling((double)size.Width / tilesize + 1) | 1;
+				rows = MyMath.Ceiling((double)size.Height / tilesize + 1) | 1;
 
 				renderData.SetSize(new IntSize2(columns, rows));
 
@@ -154,8 +154,8 @@ namespace TileControlD3DWinFormsTest
 				if (renderSize == new IntSize2())
 					return;
 
-				int offsetX = (int)Math.Ceiling((renderSize.Width - renderData.Size.Width * tilesize) / 2);
-				int offsetY = (int)Math.Ceiling((renderSize.Height - renderData.Size.Height * tilesize) / 2);
+				int offsetX = MyMath.Ceiling((renderSize.Width - renderData.Size.Width * tilesize) / 2);
+				int offsetY = MyMath.Ceiling((renderSize.Height - renderData.Size.Height * tilesize) / 2);
 
 				scene.SetRenderOffset(offsetX, offsetY);
 
