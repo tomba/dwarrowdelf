@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Server
 				RequirePlayer = true,
 				MaxMoveTime = TimeSpan.Zero,
 				MinTickTime = TimeSpan.FromMilliseconds(50),
-				IronPythonEnabled = false,
+				IronPythonEnabled = ServerConfig.IronPythonEnabled,
 			};
 
 			this.LastSaveID = Guid.Empty;
