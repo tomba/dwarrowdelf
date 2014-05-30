@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class RenderViewXY : RenderViewBaseXY<RenderTile>
+	static class RenderResolver
 	{
-		static bool s_symbolToggler;
-
-		public RenderViewXY(DataGrid2D<TileControl.RenderTile> renderData)
-			: base(renderData)
+		/* How many levels to show */
+		const int MAXLEVEL = 4;
+#if asd
+		public RenderViewXY()
 		{
 			GameData.Data.Blink += OnBlink;
 		}
@@ -24,51 +24,33 @@ namespace Dwarrowdelf.Client
 		void OnBlink()
 		{
 			// XXX we should invalidate only the needed tiles
-			Invalidate();
+			//Invalidate();
 			s_symbolToggler = !s_symbolToggler;
 		}
-
-		protected override void MapChangedOverride(IntPoint3 ml)
-		{
-			Invalidate(ml);
-		}
-
-		public override bool Invalidate(IntPoint3 ml)
-		{
-			if (Contains(ml))
-			{
-				var p = MapLocationToRenderDataLocation(ml);
-				int idx = m_renderData.GetIdx(p);
-				m_renderData.Grid[idx].IsValid = false;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		public override void Resolve()
+#endif
+		public static void Resolve(EnvironmentObject env, DataGrid2D<TileControl.RenderTile> renderData,
+			bool isVisibilityCheckEnabled,
+			IntPoint3 baseLoc, IntVector3 xInc, IntVector3 yInc, bool symbolToggler)
 		{
 			//Debug.WriteLine("RenderView.Resolve");
 
 			//var sw = Stopwatch.StartNew();
 
-			var columns = m_renderData.Width;
-			var rows = m_renderData.Height;
+			var columns = renderData.Width;
+			var rows = renderData.Height;
 
 			// render everything when using LOS
-			if (m_environment != null && m_environment.VisibilityMode == VisibilityMode.LivingLOS)
-				m_renderData.Invalid = true;
+			if (env != null && env.VisibilityMode == VisibilityMode.LivingLOS)
+				renderData.Invalid = true;
 
-			if (m_renderData.Invalid)
+			if (renderData.Invalid)
 			{
 				//Debug.WriteLine("RenderView.Resolve All");
-				m_renderData.Clear();
-				m_renderData.Invalid = false;
+				renderData.Clear();
+				renderData.Invalid = false;
 			}
 
-			if (m_environment == null)
+			if (env == null)
 				return;
 
 #if NONPARALLEL
@@ -78,16 +60,17 @@ namespace Dwarrowdelf.Client
 			Parallel.For(0, rows, y =>
 #endif
 			{
-				int idx = m_renderData.GetIdx(0, y);
+				int idx = renderData.GetIdx(0, y);
+				var ml = baseLoc + yInc * y;
 
 				for (int x = 0; x < columns; ++x, ++idx)
 				{
-					if (m_renderData.Grid[idx].IsValid)
+					ml += xInc;
+
+					if (renderData.Grid[idx].IsValid)
 						continue;
 
-					var ml = RenderDataLocationToMapLocation(x, y);
-
-					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml, this.IsVisibilityCheckEnabled);
+					ResolveDetailed(out renderData.Grid[idx], env, ml, isVisibilityCheckEnabled, symbolToggler);
 				}
 			}
 #if !NONPARALLEL
@@ -98,7 +81,8 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void ResolveDetailed(out RenderTile tile, EnvironmentObject env, IntPoint3 ml, bool isVisibilityCheckEnabled)
+		static void ResolveDetailed(out RenderTile tile, EnvironmentObject env, IntPoint3 ml, bool isVisibilityCheckEnabled,
+			bool symbolToggler)
 		{
 			tile = new RenderTile();
 			tile.IsValid = true;
@@ -123,7 +107,7 @@ namespace Dwarrowdelf.Client
 
 				if (tile.Top.SymbolID == SymbolID.Undefined)
 				{
-					GetTopTile(p, env, ref tile.Top, s_symbolToggler);
+					GetTopTile(p, env, ref tile.Top, symbolToggler);
 
 					if (tile.Top.SymbolID != SymbolID.Undefined)
 						tile.TopDarknessLevel = darkness;
@@ -506,6 +490,120 @@ namespace Dwarrowdelf.Client
 				return 0;
 			else
 				return (byte)((level + 2) * 127 / (MAXLEVEL + 2));
+		}
+
+
+		static bool TileVisible(IntPoint3 ml, EnvironmentObject env)
+		{
+			switch (env.VisibilityMode)
+			{
+				case VisibilityMode.AllVisible:
+					return true;
+
+				case VisibilityMode.GlobalFOV:
+					return !env.GetHidden(ml);
+
+				case VisibilityMode.LivingLOS:
+
+					var controllables = env.World.Controllables;
+
+					switch (env.World.LivingVisionMode)
+					{
+						case LivingVisionMode.LOS:
+							foreach (var l in controllables)
+							{
+								if (l.Environment != env || l.Location.Z != ml.Z)
+									continue;
+
+								IntPoint2 vp = new IntPoint2(ml.X - l.Location.X, ml.Y - l.Location.Y);
+
+								if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange &&
+									l.VisionMap[vp] == true)
+									return true;
+							}
+
+							return false;
+
+						case LivingVisionMode.SquareFOV:
+							foreach (var l in controllables)
+							{
+								if (l.Environment != env || l.Location.Z != ml.Z)
+									continue;
+
+								IntPoint2 vp = new IntPoint2(ml.X - l.Location.X, ml.Y - l.Location.Y);
+
+								if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange)
+									return true;
+							}
+
+							return false;
+
+						default:
+							throw new Exception();
+					}
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		static SymbolID GetDesignationSymbolAt(Designation designation, IntPoint3 p)
+		{
+			var dt = designation.ContainsPoint(p);
+
+			switch (dt)
+			{
+				case DesignationType.None:
+					return SymbolID.Undefined;
+
+				case DesignationType.Mine:
+					return SymbolID.DesignationMine;
+
+				case DesignationType.CreateStairs:
+					return SymbolID.StairsUp;
+
+				case DesignationType.Channel:
+					return SymbolID.DesignationChannel;
+
+				case DesignationType.FellTree:
+					return SymbolID.Log;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		static SymbolID GetConstructSymbolAt(ConstructManager mgr, IntPoint3 p)
+		{
+			var dt = mgr.ContainsPoint(p);
+
+			switch (dt)
+			{
+				case ConstructMode.None:
+					return SymbolID.Undefined;
+
+				case ConstructMode.Pavement:
+					return SymbolID.Floor;
+
+				case ConstructMode.Floor:
+					return SymbolID.Floor;
+
+				case ConstructMode.Wall:
+					return SymbolID.Wall;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		static SymbolID GetInstallSymbolAt(InstallItemManager mgr, IntPoint3 p)
+		{
+			var item = mgr.ContainsPoint(p);
+
+			if (item == null)
+				return SymbolID.Undefined;
+
+			return item.SymbolID;
 		}
 	}
 }

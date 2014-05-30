@@ -76,7 +76,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="RenderViewBaseXY.cs" />
     <Compile Include="UI\MainWindow\MainWindowMouseStatusBar.xaml.cs">
       <DependentUpon>MainWindowMouseStatusBar.xaml</DependentUpon>
     </Compile>
@@ -324,8 +323,7 @@
     <Compile Include="UI\StockpileInfoControl.xaml.cs">
       <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RenderViewXY.cs" />
-    <Compile Include="RenderViewBase.cs" />
+    <Compile Include="RenderResolver.cs" />
     <Compile Include="UI\MainWindow\SingleTileInfoControl.xaml.cs">
       <DependentUpon>SingleTileInfoControl.xaml</DependentUpon>
     </Compile>

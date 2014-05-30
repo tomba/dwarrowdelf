@@ -24,7 +24,6 @@ namespace Dwarrowdelf.Client.UI
 	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged, IDisposable
 	{
 		bool m_initialized;
-		RenderViewXY m_renderView;
 		DataGrid2D<TileControl.RenderTile> m_renderData;
 		TileControl.SceneHostWPF m_renderer;
 		TileControl.TileMapScene m_scene;
@@ -35,7 +34,12 @@ namespace Dwarrowdelf.Client.UI
 
 		const double MINTILESIZE = 2;
 
+		bool m_isVisibilityCheckEnabled;
 		IntSize2 m_bufferSize;
+		IntGrid3 m_bounds;
+
+		/* How many levels to show */
+		const int MAXLEVEL = 4;
 
 		public MapControl()
 		{
@@ -78,7 +82,6 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			m_renderData = new DataGrid2D<TileControl.RenderTile>();
-			m_renderView = new RenderViewXY(m_renderData);
 			m_renderer = new TileControl.SceneHostWPF();
 			m_scene = new TileControl.TileMapScene();
 			m_renderer.Scene = m_scene;
@@ -90,7 +93,7 @@ namespace Dwarrowdelf.Client.UI
 
 			GameData.Data.IsVisibilityCheckEnabledChanged += v =>
 			{
-				m_renderView.IsVisibilityCheckEnabled = v;
+				m_isVisibilityCheckEnabled = v;
 				InvalidateTileData();
 			};
 
@@ -112,7 +115,7 @@ namespace Dwarrowdelf.Client.UI
 			if (bufferSize != m_bufferSize)
 			{
 				m_bufferSize = bufferSize;
-				m_renderView.SetMaxSize(bufferSize);
+				m_renderData.SetMaxSize(bufferSize);
 				m_scene.SetupTileBuffer(bufferSize);
 				m_renderer.SetRenderSize(new IntSize2((int)Math.Ceiling(arrangeBounds.Width), (int)Math.Ceiling(arrangeBounds.Height)));
 			}
@@ -133,9 +136,27 @@ namespace Dwarrowdelf.Client.UI
 
 			//System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
 
-			m_renderView.SetSize(gridSize);
+			if (gridSize != m_renderData.Size)
+			{
+				m_renderData.SetSize(gridSize);
+			}
 
-			m_renderView.CenterPos = ContentTileToMapLocation(centerPos);
+			if (!m_renderData.Invalid)
+			{
+				//var diff = value - m_centerPos;
+#warning scroll not working
+				//if (diff.Z != 0)
+				InvalidateRenderData();
+				//else
+				// Note: this is used to scroll the rendermap immediately when setting the centerpos.
+				// Could be used only when GetRenderMap is called
+				//m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
+			}
+
+			var cp = ContentTileToMapLocation(centerPos);
+			var s = gridSize;
+			m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+				new IntSize3(s, MAXLEVEL));
 
 			m_scene.SetTileSize((float)tileSize);
 			m_scene.SetRenderOffset((float)this.RenderOffset.X, (float)this.RenderOffset.Y);
@@ -148,7 +169,13 @@ namespace Dwarrowdelf.Client.UI
 
 			if (ctx.TileDataInvalid)
 			{
-				m_renderView.Resolve();
+				var baseLoc = ScreenTileToMapLocation(new System.Windows.Point(0, 0));
+				var xInc = new IntVector3(1, 0, 0);
+				var yInc = new IntVector3(0, 1, 0);
+				bool symbolToggler = false;
+				// XXX
+				RenderResolver.Resolve(m_env, m_renderData, m_isVisibilityCheckEnabled,
+					baseLoc, xInc, yInc, symbolToggler);
 
 				if (m_renderData.Size != ctx.RenderGridSize)
 					throw new Exception();
@@ -157,9 +184,6 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			m_renderer.Render(drawingContext);
-
-			//, ctx.RenderGridSize, (float)ctx.TileSize, ctx.RenderOffset,
-			//	ctx.TileDataInvalid);
 		}
 
 		/// <summary>
@@ -168,7 +192,7 @@ namespace Dwarrowdelf.Client.UI
 		/// </summary>
 		public void InvalidateRenderViewTiles()
 		{
-			m_renderView.Invalidate();
+			InvalidateRenderData();
 			InvalidateTileData();
 		}
 
@@ -178,9 +202,26 @@ namespace Dwarrowdelf.Client.UI
 		/// </summary>
 		public void InvalidateRenderViewTile(IntPoint3 ml)
 		{
-			if (m_renderView.Invalidate(ml))
+			if (InvalidateRenderData(ml))
 				InvalidateTileData();
 		}
+
+		void InvalidateRenderData()
+		{
+			m_renderData.Invalid = true;
+		}
+
+		bool InvalidateRenderData(IntPoint3 ml)
+		{
+			if (!m_bounds.Contains(ml))
+				return false;
+
+			var p = MapLocationToIntScreenTile(ml);
+			int idx = m_renderData.GetIdx(p);
+			m_renderData.Grid[idx].IsValid = false;
+			return true;
+		}
+
 
 		public EnvironmentObject Environment
 		{
@@ -199,7 +240,6 @@ namespace Dwarrowdelf.Client.UI
 				}
 
 				m_env = value;
-				m_renderView.Environment = value;
 
 				if (m_env != null)
 				{
@@ -208,6 +248,7 @@ namespace Dwarrowdelf.Client.UI
 					m_env.MapTileExtraChanged += OnMapTileExtraChanged;
 				}
 
+				InvalidateRenderData();
 				InvalidateTileData();
 
 				if (this.EnvironmentChanged != null)
@@ -262,6 +303,13 @@ namespace Dwarrowdelf.Client.UI
 			return new Point(p.X, p.Y);
 		}
 
+		public IntPoint2 MapLocationToIntScreenTile(IntPoint3 p)
+		{
+			var ct = MapLocationToContentTile(p);
+			var st = ContentTileToScreenTile(ct);
+			return new IntPoint2((int)Math.Round(st.X), (int)Math.Round(st.Y));
+		}
+
 		public int Z
 		{
 			get { return (int)GetValue(ZProperty); }
@@ -278,8 +326,12 @@ namespace Dwarrowdelf.Client.UI
 
 			var p = mc.CenterPos;
 
-			mc.m_renderView.CenterPos = mc.ContentTileToMapLocation(p, val);
+			var cp = mc.ContentTileToMapLocation(p, val);
+			var s = mc.m_bufferSize;
+			mc.m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+				new IntSize3(s, MAXLEVEL));
 
+			mc.InvalidateRenderData();
 			mc.InvalidateTileData();
 
 			if (mc.ZChanged != null)
@@ -289,25 +341,27 @@ namespace Dwarrowdelf.Client.UI
 
 		void MapChangedCallback(IntPoint3 l)
 		{
-			if (!m_renderView.Contains(l))
-				return;
+			//if (!InvalidateRenderData(l))
+			//	return;
 
+			InvalidateRenderData();
 			InvalidateTileData();
 		}
 
 		void MapObjectChangedCallback(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changetype)
 		{
-			if (!m_renderView.Contains(l))
-				return;
+			//if (!InvalidateRenderData(l))
+			//	return;
 
+			InvalidateRenderData();
 			InvalidateTileData();
 		}
 
 		void OnMapTileExtraChanged(IntPoint3 p)
 		{
-			if (!m_renderView.Contains(p))
-				return;
-
+			//if (!InvalidateRenderData(p))
+			//	return;
+			InvalidateRenderData();
 			InvalidateTileData();
 		}
 
