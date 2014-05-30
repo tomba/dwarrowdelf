@@ -62,6 +62,46 @@ namespace Dwarrowdelf.Client.UI
 
 			foreach (var map in m_mapList)
 				map.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
+
+			foreach (var map in m_mapList)
+				map.CenterPosChanged += map_CenterPosChanged;
+
+			foreach (var map in m_mapList)
+				map.ZChanged += map_ZChanged;
+		}
+
+		void map_ZChanged(MapControl mc, int z)
+		{
+			SyncPos(mc, mc.CenterPos, z);
+		}
+
+		void map_CenterPosChanged(TileControl.TileControlCore tc, Point p)
+		{
+			var mc = (MapControl)tc;
+
+			SyncPos(mc, p, mc.Z);
+		}
+
+		bool m_syncingPos;
+
+		void SyncPos(MapControl mc, Point p, int z)
+		{
+			if (m_syncingPos)
+				return;
+
+			m_syncingPos = true;
+
+			var ml = mc.ContentTileToMapPoint(p, z);
+
+			foreach (var map in m_mapList)
+			{
+				if (map == mc)
+					continue;
+
+				map.GoTo(ml);
+			}
+
+			m_syncingPos = false;
 		}
 
 		public void Blink()

@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Client.UI
 			m_scaleTransform.ScaleY = m_mapControl.TileSize / 10;
 		}
 
-		void OnZChanged(int z)
+		void OnZChanged(MapControl mc, int z)
 		{
 			foreach (FrameworkElement child in m_canvas.Children)
 			{

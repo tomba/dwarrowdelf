@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Client.UI
 			this.Selection = new MapSelection();
 		}
 
-		void OnZChanged(int z)
+		void OnZChanged(MapControl mc, int z)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
 

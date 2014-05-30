@@ -151,7 +151,7 @@ namespace Dwarrowdelf.Client.UI
 			UpdateHoverTileInfo(false);
 		}
 
-		void OnZChanged(int z)
+		void OnZChanged(MapControl mc, int z)
 		{
 			UpdateHoverTileInfo(false);
 		}
@@ -439,6 +439,14 @@ namespace Dwarrowdelf.Client.UI
 		public void GoTo(EnvironmentObject env, DoublePoint3 p)
 		{
 			this.Environment = env;
+			int z;
+			var ct = MapPointToContentTile(p, out z);
+			this.Z = z;
+			this.CenterPos = ct;
+		}
+
+		public void GoTo(DoublePoint3 p)
+		{
 			int z;
 			var ct = MapPointToContentTile(p, out z);
 			this.Z = z;

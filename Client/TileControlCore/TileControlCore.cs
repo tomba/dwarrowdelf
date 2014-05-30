@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Client.TileControl
 		/// </summary>
 		public event TileLayoutChangedDelegate TileLayoutChanged;
 
-		public event Action<Point> CenterPosChanged;
+		public event Action<TileControlCore, Point> CenterPosChanged;
 
 		enum DragState
 		{
@@ -113,7 +113,7 @@ namespace Dwarrowdelf.Client.TileControl
 			tc.UpdateTileLayout(tc.RenderSize);
 
 			if (tc.CenterPosChanged != null)
-				tc.CenterPosChanged(p);
+				tc.CenterPosChanged(tc, p);
 		}
 
 		void UpdateTileLayout(Size renderSize)

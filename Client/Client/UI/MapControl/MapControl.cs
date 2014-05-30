@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Client.UI
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;
-		public event Action<int> ZChanged;
+		public event Action<MapControl, int> ZChanged;
 
 		const double MINTILESIZE = 2;
 
@@ -482,7 +482,7 @@ namespace Dwarrowdelf.Client.UI
 			mc.InvalidateRenderViewTiles();
 
 			if (mc.ZChanged != null)
-				mc.ZChanged(val);
+				mc.ZChanged(mc, val);
 		}
 
 
