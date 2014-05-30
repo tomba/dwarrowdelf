@@ -146,7 +146,8 @@ namespace Dwarrowdelf.Client.UI
 				//var diff = value - m_centerPos;
 #warning scroll not working
 				//if (diff.Z != 0)
-				InvalidateRenderData();
+				//InvalidateRenderData();
+				InvalidateRenderViewTiles();
 				//else
 				// Note: this is used to scroll the rendermap immediately when setting the centerpos.
 				// Could be used only when GetRenderMap is called
@@ -192,7 +193,7 @@ namespace Dwarrowdelf.Client.UI
 		/// </summary>
 		public void InvalidateRenderViewTiles()
 		{
-			InvalidateRenderData();
+			m_renderData.Invalid = true;
 			InvalidateTileData();
 		}
 
@@ -202,26 +203,15 @@ namespace Dwarrowdelf.Client.UI
 		/// </summary>
 		public void InvalidateRenderViewTile(IntPoint3 ml)
 		{
-			if (InvalidateRenderData(ml))
-				InvalidateTileData();
-		}
-
-		void InvalidateRenderData()
-		{
-			m_renderData.Invalid = true;
-		}
-
-		bool InvalidateRenderData(IntPoint3 ml)
-		{
 			if (!m_bounds.Contains(ml))
-				return false;
+				return;
 
 			var p = MapLocationToIntScreenTile(ml);
 			int idx = m_renderData.GetIdx(p);
 			m_renderData.Grid[idx].IsValid = false;
-			return true;
-		}
 
+			InvalidateTileData();
+		}
 
 		public EnvironmentObject Environment
 		{
@@ -248,8 +238,7 @@ namespace Dwarrowdelf.Client.UI
 					m_env.MapTileExtraChanged += OnMapTileExtraChanged;
 				}
 
-				InvalidateRenderData();
-				InvalidateTileData();
+				InvalidateRenderViewTiles();
 
 				if (this.EnvironmentChanged != null)
 					this.EnvironmentChanged(value);
@@ -331,8 +320,7 @@ namespace Dwarrowdelf.Client.UI
 			mc.m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
 
-			mc.InvalidateRenderData();
-			mc.InvalidateTileData();
+			mc.InvalidateRenderViewTiles();
 
 			if (mc.ZChanged != null)
 				mc.ZChanged(val);
@@ -341,28 +329,17 @@ namespace Dwarrowdelf.Client.UI
 
 		void MapChangedCallback(IntPoint3 l)
 		{
-			//if (!InvalidateRenderData(l))
-			//	return;
-
-			InvalidateRenderData();
-			InvalidateTileData();
+			InvalidateRenderViewTile(l);
 		}
 
 		void MapObjectChangedCallback(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changetype)
 		{
-			//if (!InvalidateRenderData(l))
-			//	return;
-
-			InvalidateRenderData();
-			InvalidateTileData();
+			InvalidateRenderViewTile(l);
 		}
 
 		void OnMapTileExtraChanged(IntPoint3 p)
 		{
-			//if (!InvalidateRenderData(p))
-			//	return;
-			InvalidateRenderData();
-			InvalidateTileData();
+			InvalidateRenderViewTile(p);
 		}
 
 		protected void Notify(string name)
