@@ -267,12 +267,13 @@ namespace Dwarrowdelf.Client.UI
 		public Rect MapCubeToScreenPointRect(IntGrid3 grid)
 		{
 			var p1 = MapLocationToContentTile(grid.Corner1);
-			p1 -= new Vector(0.5, 0.5);
-			p1 = ContentTileToScreenPoint(p1);
-
 			var p2 = MapLocationToContentTile(grid.Corner2);
-			p2 += new Vector(0.5, 0.5);
-			p2 = ContentTileToScreenPoint(p2);
+
+			var r = new Rect(p1, p2);
+			r.Inflate(0.5, 0.5);
+
+			p1 = ContentTileToScreenPoint(r.TopLeft);
+			p2 = ContentTileToScreenPoint(r.BottomRight);
 
 			return new Rect(p1, p2);
 		}

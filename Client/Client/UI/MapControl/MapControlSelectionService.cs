@@ -241,13 +241,21 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			if (this.Selection.SelectionBox.Z1 > m_mapControl.Z || this.Selection.SelectionBox.Z2 < m_mapControl.Z)
+			var selBox = this.Selection.SelectionBox;
+
+			int z1;
+			m_mapControl.MapLocationToContentTile(selBox.Corner1, out z1);
+
+			int z2;
+			m_mapControl.MapLocationToContentTile(selBox.Corner2, out z2);
+
+			if (z1 > m_mapControl.Z || z2 < m_mapControl.Z)
 			{
 				m_selectionRect.Visibility = Visibility.Hidden;
 				return;
 			}
 
-			var r = m_mapControl.MapCubeToScreenPointRect(new IntGrid3(this.Selection.SelectionStart, this.Selection.SelectionEnd));
+			var r = m_mapControl.MapCubeToScreenPointRect(selBox);
 
 			Canvas.SetLeft(m_selectionRect, r.Left);
 			Canvas.SetTop(m_selectionRect, r.Top);
