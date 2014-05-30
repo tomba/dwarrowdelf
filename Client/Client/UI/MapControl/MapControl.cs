@@ -162,23 +162,22 @@ namespace Dwarrowdelf.Client.UI
 				m_renderData.SetSize(gridSize);
 			}
 
-			var cp = ContentTileToMapLocation(centerPos);
+			var intcp = new IntPoint3((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
 
 			if (!m_renderData.Invalid)
 			{
-				var diff = cp - m_oldCenterPos;
+				var diff = intcp - m_oldCenterPos;
 
 				// We should never hit this, as the renderdata is invalid when Z changes
-				//if (diff.Z != 0)
-				//	throw new Exception();
+				if (diff.Z != 0)
+					throw new Exception();
 
-#warning foo
-				InvalidateRenderViewTiles();
-				//m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
+				m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
 			}
 
-			m_oldCenterPos = cp;
+			m_oldCenterPos = intcp;
 
+			var cp = ContentTileToMapLocation(centerPos);
 			var s = gridSize;
 			m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
@@ -290,6 +289,7 @@ namespace Dwarrowdelf.Client.UI
 			var ct = ScreenPointToContentTile(p);
 
 #warning testing
+#if DEBUG
 			{
 				var t0 = new Point((int)Math.Round(ct.X), (int)Math.Round(ct.Y));
 				var t1 = ContentTileToMapLocation(ct, this.Z);
@@ -298,6 +298,7 @@ namespace Dwarrowdelf.Client.UI
 				if (t0 != t2 || this.Z != z)
 					throw new Exception();
 			}
+#endif
 
 			return ContentTileToMapLocation(ct);
 		}
@@ -432,10 +433,10 @@ namespace Dwarrowdelf.Client.UI
 
 			var p = mc.CenterPos;
 
+			var intcp = new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), val);
+			mc.m_oldCenterPos = intcp;
+
 			var cp = mc.ContentTileToMapLocation(p, val);
-
-			mc.m_oldCenterPos = cp;
-
 			var s = mc.GridSize;
 			mc.m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
