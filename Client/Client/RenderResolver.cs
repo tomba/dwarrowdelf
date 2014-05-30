@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 #endif
 		public static void Resolve(EnvironmentObject env, DataGrid2D<TileControl.RenderTile> renderData,
 			bool isVisibilityCheckEnabled,
-			IntPoint3 baseLoc, IntVector3 xInc, IntVector3 yInc, bool symbolToggler)
+			IntPoint3 baseLoc, IntVector3 xInc, IntVector3 yInc, IntVector3 zInc, bool symbolToggler)
 		{
 			//Debug.WriteLine("RenderView.Resolve");
 
@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Client
 					if (renderData.Grid[idx].IsValid)
 						continue;
 
-					ResolveDetailed(out renderData.Grid[idx], env, ml, isVisibilityCheckEnabled, symbolToggler);
+					ResolveDetailed(out renderData.Grid[idx], env, ml, isVisibilityCheckEnabled, symbolToggler, zInc);
 				}
 			}
 #if !NONPARALLEL
@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		static void ResolveDetailed(out RenderTile tile, EnvironmentObject env, IntPoint3 ml, bool isVisibilityCheckEnabled,
-			bool symbolToggler)
+			bool symbolToggler, IntVector3 zInc)
 		{
 			tile = new RenderTile();
 			tile.IsValid = true;
@@ -95,13 +95,13 @@ namespace Dwarrowdelf.Client
 			else
 				visible = TileVisible(ml, env);
 
-			for (int z = ml.Z; z > ml.Z - MAXLEVEL; --z)
+			for (int i = 0; i < MAXLEVEL; ++i)
 			{
 				bool seeThrough;
 
-				var p = new IntPoint3(ml.X, ml.Y, z);
+				var p = ml - zInc * i;
 
-				byte darkness = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+				byte darkness = GetDarknessForLevel(i + (visible ? 0 : 1));
 
 				if (tile.Top.SymbolID == SymbolID.Undefined)
 				{

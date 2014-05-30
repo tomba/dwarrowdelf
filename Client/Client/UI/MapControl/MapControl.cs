@@ -186,10 +186,11 @@ namespace Dwarrowdelf.Client.UI
 				var baseLoc = ScreenTileToMapLocation(new System.Windows.Point(0, 0));
 				var xInc = this.XInc;
 				var yInc = this.YInc;
+				var zInc = this.ZInc;
 				bool symbolToggler = false;
 				// XXX
 				RenderResolver.Resolve(m_env, m_renderData, m_isVisibilityCheckEnabled,
-					baseLoc, xInc, yInc, symbolToggler);
+					baseLoc, xInc, yInc, zInc, symbolToggler);
 
 				if (m_renderData.Size != ctx.RenderGridSize)
 					throw new Exception();
@@ -385,6 +386,24 @@ namespace Dwarrowdelf.Client.UI
 						return new IntVector3(0, 0, -1);
 					case MapControlOrientation.ZY:
 						return new IntVector3(0, 1, 0);
+					default:
+						throw new NotImplementedException();
+				}
+			}
+		}
+
+		IntVector3 ZInc
+		{
+			get
+			{
+				switch (this.Orientation)
+				{
+					case MapControlOrientation.XY:
+						return new IntVector3(0, 0, 1);
+					case MapControlOrientation.XZ:
+						return new IntVector3(0, 1, 0);
+					case MapControlOrientation.ZY:
+						return new IntVector3(-1, 0, 0);
 					default:
 						throw new NotImplementedException();
 				}
