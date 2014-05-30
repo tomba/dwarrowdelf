@@ -15,19 +15,7 @@ namespace Dwarrowdelf.Client
 	{
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
-#if asd
-		public RenderViewXY()
-		{
-			GameData.Data.Blink += OnBlink;
-		}
 
-		void OnBlink()
-		{
-			// XXX we should invalidate only the needed tiles
-			//Invalidate();
-			s_symbolToggler = !s_symbolToggler;
-		}
-#endif
 		public static void Resolve(EnvironmentObject env, DataGrid2D<TileControl.RenderTile> renderData,
 			bool isVisibilityCheckEnabled,
 			IntPoint3 baseLoc, IntVector3 xInc, IntVector3 yInc, IntVector3 zInc, bool symbolToggler)

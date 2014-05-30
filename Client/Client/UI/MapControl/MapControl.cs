@@ -107,9 +107,20 @@ namespace Dwarrowdelf.Client.UI
 				InvalidateTileData();
 			};
 
+			GameData.Data.Blink += OnBlink;
+
 			m_initialized = true;
 
 			base.OnInitialized(e);
+		}
+
+		bool m_symbolToggler;
+
+		void OnBlink()
+		{
+			// XXX we should invalidate only the needed tiles
+			InvalidateRenderViewTiles();
+			m_symbolToggler = !m_symbolToggler;
 		}
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
@@ -187,10 +198,9 @@ namespace Dwarrowdelf.Client.UI
 				var xInc = this.XInc;
 				var yInc = this.YInc;
 				var zInc = this.ZInc;
-				bool symbolToggler = false;
 				// XXX
 				RenderResolver.Resolve(m_env, m_renderData, m_isVisibilityCheckEnabled,
-					baseLoc, xInc, yInc, zInc, symbolToggler);
+					baseLoc, xInc, yInc, zInc, m_symbolToggler);
 
 				if (m_renderData.Size != ctx.RenderGridSize)
 					throw new Exception();
