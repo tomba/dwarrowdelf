@@ -129,6 +129,8 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTileRender();
 		}
 
+		IntPoint3 m_oldCenterPos;
+
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
 			if (!m_initialized)
@@ -141,20 +143,21 @@ namespace Dwarrowdelf.Client.UI
 				m_renderData.SetSize(gridSize);
 			}
 
+			var cp = ContentTileToMapLocation(centerPos);
+
 			if (!m_renderData.Invalid)
 			{
-				//var diff = value - m_centerPos;
-#warning scroll not working
-				//if (diff.Z != 0)
-				//InvalidateRenderData();
-				InvalidateRenderViewTiles();
-				//else
-				// Note: this is used to scroll the rendermap immediately when setting the centerpos.
-				// Could be used only when GetRenderMap is called
-				//m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
+				var diff = cp - m_oldCenterPos;
+
+				// We should never hit this, as the renderdata is invalid when Z changes
+				if (diff.Z != 0)
+					throw new Exception();
+
+				m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
 			}
 
-			var cp = ContentTileToMapLocation(centerPos);
+			m_oldCenterPos = cp;
+
 			var s = gridSize;
 			m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
