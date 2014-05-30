@@ -85,7 +85,7 @@ namespace Dwarrowdelf
 				bool currentlyBlocked = false;
 				double newStart = 0;
 
-				int lowY = (int)Math.Floor(startSlope * x);
+				int lowY = MyMath.Floor(startSlope * x);
 				int highY = MyMath.Ceiling(endSlope * x);
 
 				switch (octant)
