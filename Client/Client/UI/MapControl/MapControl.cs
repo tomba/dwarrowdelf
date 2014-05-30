@@ -227,10 +227,6 @@ namespace Dwarrowdelf.Client.UI
 		/// </summary>
 		public void InvalidateRenderViewTile(IntPoint3 ml)
 		{
-#warning foo
-			InvalidateRenderViewTiles();
-			return;
-
 			if (!m_bounds.Contains(ml))
 				return;
 
