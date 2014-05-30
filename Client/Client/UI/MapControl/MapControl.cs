@@ -37,6 +37,7 @@ namespace Dwarrowdelf.Client.UI
 		bool m_isVisibilityCheckEnabled;
 		IntSize2 m_bufferSize;
 		IntGrid3 m_bounds;
+		IntPoint3 m_oldCenterPos;
 
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
@@ -128,8 +129,6 @@ namespace Dwarrowdelf.Client.UI
 			m_scene.SetTileSet(GameData.Data.TileSet);
 			InvalidateTileRender();
 		}
-
-		IntPoint3 m_oldCenterPos;
 
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
@@ -319,6 +318,9 @@ namespace Dwarrowdelf.Client.UI
 			var p = mc.CenterPos;
 
 			var cp = mc.ContentTileToMapLocation(p, val);
+
+			mc.m_oldCenterPos = cp;
+
 			var s = mc.GridSize;
 			mc.m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
