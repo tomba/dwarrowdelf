@@ -247,9 +247,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			var ir = new IntGrid2(this.Selection.SelectionStart.ToIntPoint(), this.Selection.SelectionEnd.ToIntPoint());
-
-			var r = m_mapControl.MapRectToScreenPointRect(ir);
+			var r = m_mapControl.MapCubeToScreenPointRect(new IntGrid3(this.Selection.SelectionStart, this.Selection.SelectionEnd));
 
 			Canvas.SetLeft(m_selectionRect, r.Left);
 			Canvas.SetTop(m_selectionRect, r.Top);

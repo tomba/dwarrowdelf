@@ -81,7 +81,7 @@ namespace Dwarrowdelf.Client.UI
 		public void GoTo(EnvironmentObject env, IntPoint3 p)
 		{
 			foreach (var map in m_mapList)
-				map.ScrollToImmediate(env, p);
+				map.GoTo(env, p);
 		}
 
 		public void ScrollTo(MovableObject ob)
@@ -138,7 +138,7 @@ namespace Dwarrowdelf.Client.UI
 				ctxMenu.ItemsSource = obs;
 				ctxMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
 				ctxMenu.PlacementTarget = mapControl;
-				var rect = mapControl.MapRectToScreenPointRect(new IntGrid2(ml.ToIntPoint(), new IntSize2(1, 1)));
+				var rect = mapControl.MapCubeToScreenPointRect(new IntGrid3(ml, new IntSize3(1, 1, 1)));
 				ctxMenu.PlacementRectangle = rect;
 
 				ctxMenu.IsOpen = true;

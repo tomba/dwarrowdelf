@@ -110,7 +110,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var ml = m_hoverTileView.Location.Value;
 
-			var rect = m_mapControl.MapRectToScreenPointRect(new IntGrid2(ml.ToIntPoint(), new IntSize2(1, 1)));
+			var rect = m_mapControl.MapCubeToScreenPointRect(new IntGrid3(ml, new IntSize3(1, 1, 1)));
 
 			m_popup.PlacementRectangle = rect;
 			m_popup.IsOpen = true;

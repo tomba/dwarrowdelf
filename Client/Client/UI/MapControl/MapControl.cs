@@ -264,11 +264,17 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public Rect MapRectToScreenPointRect(IntGrid2 ir)
+		public Rect MapCubeToScreenPointRect(IntGrid3 grid)
 		{
-			Rect r = new Rect(ContentTileToScreenPoint(new Point(ir.X1 - 0.5, ir.Y1 - 0.5)),
-				new Size(ir.Columns * this.TileSize, ir.Rows * this.TileSize));
-			return r;
+			var p1 = MapLocationToContentTile(grid.Corner1);
+			p1 -= new Vector(0.5, 0.5);
+			p1 = ContentTileToScreenPoint(p1);
+
+			var p2 = MapLocationToContentTile(grid.Corner2);
+			p2 += new Vector(0.5, 0.5);
+			p2 = ContentTileToScreenPoint(p2);
+
+			return new Rect(p1, p2);
 		}
 
 		public IntPoint3 ScreenPointToMapLocation(Point p)
@@ -276,11 +282,14 @@ namespace Dwarrowdelf.Client.UI
 			var ct = ScreenPointToContentTile(p);
 
 #warning testing
-			var t0 = new Point((int)Math.Round(ct.X), (int)Math.Round(ct.Y));
-			var t1 = ContentTileToMapLocation(ct);
-			var t2 = MapLocationToContentTile(t1);
-			if (t0 != t2)
-				throw new Exception();
+			{
+				var t0 = new Point((int)Math.Round(ct.X), (int)Math.Round(ct.Y));
+				var t1 = ContentTileToMapLocation(ct, this.Z);
+				int z;
+				var t2 = MapLocationToContentTile(t1, out z);
+				if (t0 != t2 || this.Z != z)
+					throw new Exception();
+			}
 
 			return ContentTileToMapLocation(ct);
 		}
@@ -306,7 +315,7 @@ namespace Dwarrowdelf.Client.UI
 				case MapControlOrientation.XY:
 					return new IntPoint3(x, y, z);
 				case MapControlOrientation.XZ:
-					return new IntPoint3(x, z, this.GridSize.Height - y);
+					return new IntPoint3(x, z, -y);
 				case MapControlOrientation.ZY:
 					return new IntPoint3(z, y, x);
 				default:
@@ -316,13 +325,22 @@ namespace Dwarrowdelf.Client.UI
 
 		public Point MapLocationToContentTile(IntPoint3 p)
 		{
+			int z;
+			return MapLocationToContentTile(p, out z);
+		}
+
+		public Point MapLocationToContentTile(IntPoint3 p, out int z)
+		{
 			switch (this.Orientation)
 			{
 				case MapControlOrientation.XY:
+					z = p.Z;
 					return new Point(p.X, p.Y);
 				case MapControlOrientation.XZ:
-					return new Point(p.X, this.GridSize.Height - p.Z);
+					z = p.Y;
+					return new Point(p.X, -p.Z);
 				case MapControlOrientation.ZY:
+					z = p.X;
 					return new Point(p.Z, p.Y);
 				default:
 					throw new NotImplementedException();

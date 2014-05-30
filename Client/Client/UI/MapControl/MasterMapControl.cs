@@ -427,18 +427,22 @@ namespace Dwarrowdelf.Client.UI
 			this.CenterPos += p;
 		}
 
-		public void ScrollToImmediate(EnvironmentObject env, IntPoint3 p)
+		public void GoTo(EnvironmentObject env, IntPoint3 p)
 		{
 			this.Environment = env;
-			this.Z = p.Z;
-			this.CenterPos = new Point(p.X, p.Y);
+			int z;
+			var ct = MapLocationToContentTile(p, out z);
+			this.Z = z;
+			this.CenterPos = ct;
 		}
 
 		public void ScrollTo(EnvironmentObject env, IntPoint3 p)
 		{
 			this.Environment = env;
-			this.Z = p.Z;
-			ScrollTo(new Point(p.X, p.Y));
+			int z;
+			var ct = MapLocationToContentTile(p, out z);
+			this.Z = z;
+			ScrollTo(ct);
 		}
 
 		public void ScrollTo(Point target)
