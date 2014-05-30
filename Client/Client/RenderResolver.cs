@@ -63,10 +63,8 @@ namespace Dwarrowdelf.Client
 				int idx = renderData.GetIdx(0, y);
 				var ml = baseLoc + yInc * y;
 
-				for (int x = 0; x < columns; ++x, ++idx)
+				for (int x = 0; x < columns; ++x, ++idx, ml += xInc)
 				{
-					ml += xInc;
-
 					if (renderData.Grid[idx].IsValid)
 						continue;
 
