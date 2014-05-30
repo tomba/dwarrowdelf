@@ -100,11 +100,14 @@ namespace Dwarrowdelf.Client.TileControl
 			var p = (Point)e.NewValue;
 			var po = (Point)e.OldValue;
 
-			var x = Math.Round(p.X);
-			var y = Math.Round(p.Y);
+			var x = (int)Math.Round(p.X);
+			var y = (int)Math.Round(p.Y);
+			var oldx = (int)Math.Round(po.X);
+			var oldy = (int)Math.Round(po.Y);
+
 			tc.trace.TraceVerbose("CenterPos {0:F2}    {1},{2}", p, x, y);
 
-			if (Math.Round(p.X) != Math.Round(po.X) || Math.Round(p.Y) != Math.Round(po.Y))
+			if (x != oldx || y != oldy)
 				tc.InvalidateTileData();
 
 			tc.UpdateTileLayout(tc.RenderSize);
