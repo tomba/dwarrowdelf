@@ -89,6 +89,9 @@ namespace Dwarrowdelf.Client
 
 				var p = ml - zInc * i;
 
+				if (env.Contains(p) == false)
+					break;
+
 				byte darkness = GetDarknessForLevel(i + (visible ? 0 : 1));
 
 				if (tile.Top.SymbolID == SymbolID.Undefined)
