@@ -100,10 +100,10 @@ namespace Dwarrowdelf.Client.TileControl
 			var p = (Point)e.NewValue;
 			var po = (Point)e.OldValue;
 
-			var x = (int)Math.Round(p.X);
-			var y = (int)Math.Round(p.Y);
-			var oldx = (int)Math.Round(po.X);
-			var oldy = (int)Math.Round(po.Y);
+			var x = MyMath.Round(p.X);
+			var y = MyMath.Round(p.Y);
+			var oldx = MyMath.Round(po.X);
+			var oldy = MyMath.Round(po.Y);
 
 			tc.trace.TraceVerbose("CenterPos {0:F2}    {1},{2}", p, x, y);
 
@@ -136,13 +136,13 @@ namespace Dwarrowdelf.Client.TileControl
 			var renderOffsetX = (renderWidth - tileSize * this.GridSize.Width) / 2;
 			var renderOffsetY = (renderHeight - tileSize * this.GridSize.Height) / 2;
 
-			var cx = -(this.CenterPos.X - Math.Round(this.CenterPos.X)) * this.TileSize;
-			var cy = -(this.CenterPos.Y - Math.Round(this.CenterPos.Y)) * this.TileSize;
+			var cx = -(this.CenterPos.X - MyMath.Round(this.CenterPos.X)) * this.TileSize;
+			var cy = -(this.CenterPos.Y - MyMath.Round(this.CenterPos.Y)) * this.TileSize;
 
-			this.RenderOffset = new Point(Math.Round(renderOffsetX + cx), Math.Round(renderOffsetY + cy));
+			this.RenderOffset = new Point(MyMath.Round(renderOffsetX + cx), MyMath.Round(renderOffsetY + cy));
 
-			m_contentOffset = new Vector(Math.Round(this.CenterPos.X) - this.GridSize.Width / 2,
-				Math.Round(this.CenterPos.Y) - this.GridSize.Height / 2);
+			m_contentOffset = new Vector(MyMath.Round(this.CenterPos.X) - this.GridSize.Width / 2,
+				MyMath.Round(this.CenterPos.Y) - this.GridSize.Height / 2);
 
 			m_tileLayoutInvalid = true;
 
@@ -356,7 +356,7 @@ namespace Dwarrowdelf.Client.TileControl
 		public IntPoint2 ScreenPointToIntScreenTile(Point p)
 		{
 			var st = ScreenPointToScreenTile(p);
-			return new IntPoint2((int)Math.Round(st.X), (int)Math.Round(st.Y));
+			return new IntPoint2(MyMath.Round(st.X), MyMath.Round(st.Y));
 		}
 
 		public Point ScreenTileToScreenPoint(Point t)

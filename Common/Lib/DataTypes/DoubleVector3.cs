@@ -132,7 +132,7 @@ namespace Dwarrowdelf
 
 		public IntVector3 ToIntVector3()
 		{
-			return new IntVector3((int)Math.Round(this.X), (int)Math.Round(this.Y), (int)Math.Round(this.Z));
+			return new IntVector3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));
 		}
 
 		public override int GetHashCode()
@@ -154,9 +154,9 @@ namespace Dwarrowdelf
 
 			int d = 0;
 
-			int x = (int)Math.Round(v.X);
-			int y = (int)Math.Round(v.Y);
-			int z = (int)Math.Round(v.Z);
+			int x = MyMath.Round(v.X);
+			int y = MyMath.Round(v.Y);
+			int z = MyMath.Round(v.Z);
 
 			x = ((x + 1) ^ 1) - ((x + 1) >> 1);
 			y = ((y + 1) ^ 1) - ((y + 1) >> 1);

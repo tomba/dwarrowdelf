@@ -74,8 +74,8 @@ namespace Dwarrowdelf
 		public IntVector2 Normalize()
 		{
 			double len = this.Length;
-			var x = (int)Math.Round(this.X / len);
-			var y = (int)Math.Round(this.Y / len);
+			var x = MyMath.Round(this.X / len);
+			var y = MyMath.Round(this.Y / len);
 			return new IntVector2(x, y);
 		}
 
@@ -156,8 +156,8 @@ namespace Dwarrowdelf
 			double x = Math.Cos(rad) * this.X - Math.Sin(rad) * this.Y;
 			double y = Math.Sin(rad) * this.X + Math.Cos(rad) * this.Y;
 
-			var ix = (int)Math.Round(x);
-			var iy = (int)Math.Round(y);
+			var ix = MyMath.Round(x);
+			var iy = MyMath.Round(y);
 
 			return new IntVector2(ix, iy);
 		}

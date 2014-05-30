@@ -130,5 +130,13 @@ namespace Dwarrowdelf
 		{
 			return Math.Min(Min(v1, v2, v3), v4);
 		}
+
+		/// <summary>
+		/// Round double to integer. Note: uses different midpoint rounding than System.Math.Round()
+		/// </summary>
+		public static int Round(double val)
+		{
+			return val >= 0 ? (int)(val + 0.5) : (int)(val - 0.5);
+		}
 	}
 }

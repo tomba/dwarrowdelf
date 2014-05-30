@@ -228,13 +228,13 @@ namespace AStarTest
 		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
 			var ct = ScreenPointToContentTile(p);
-			return new IntPoint3((int)Math.Round(ct.X), (int)Math.Round(ct.Y), this.Z);
+			return new IntPoint3(MyMath.Round(ct.X), MyMath.Round(ct.Y), this.Z);
 		}
 
 		public IntPoint3 ScreenTileToMapLocation(IntPoint2 p)
 		{
 			var ct = ScreenTileToContentTile(new Point(p.X, p.Y));
-			var ml = new IntPoint3((int)Math.Round(ct.X), (int)Math.Round(ct.Y), m_z);
+			var ml = new IntPoint3(MyMath.Round(ct.X), MyMath.Round(ct.Y), m_z);
 			return ml;
 		}
 

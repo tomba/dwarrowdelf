@@ -162,7 +162,7 @@ namespace Dwarrowdelf.Client.UI
 				m_renderData.SetSize(gridSize);
 			}
 
-			var intcp = new IntPoint3((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
+			var intcp = new IntPoint3(MyMath.Round(centerPos.X), MyMath.Round(centerPos.Y), this.Z);
 
 			if (!m_renderData.Invalid)
 			{
@@ -291,7 +291,7 @@ namespace Dwarrowdelf.Client.UI
 #warning testing
 #if DEBUG
 			{
-				var t0 = new Point((int)Math.Round(ct.X), (int)Math.Round(ct.Y));
+				var t0 = new Point(MyMath.Round(ct.X), MyMath.Round(ct.Y));
 				var t1 = ContentTileToMapLocation(ct, this.Z);
 				int z;
 				var t2 = MapLocationToContentTile(t1, out z);
@@ -316,8 +316,8 @@ namespace Dwarrowdelf.Client.UI
 
 		public IntPoint3 ContentTileToMapLocation(Point p, int z)
 		{
-			int x = (int)Math.Round(p.X);
-			int y = (int)Math.Round(p.Y);
+			int x = MyMath.Round(p.X);
+			int y = MyMath.Round(p.Y);
 
 			switch (this.Orientation)
 			{
@@ -360,7 +360,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var ct = MapLocationToContentTile(p);
 			var st = ContentTileToScreenTile(ct);
-			return new IntPoint2((int)Math.Round(st.X), (int)Math.Round(st.Y));
+			return new IntPoint2(MyMath.Round(st.X), MyMath.Round(st.Y));
 		}
 
 		IntVector3 XInc
@@ -433,7 +433,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var p = mc.CenterPos;
 
-			var intcp = new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), val);
+			var intcp = new IntPoint3(MyMath.Round(p.X), MyMath.Round(p.Y), val);
 			mc.m_oldCenterPos = intcp;
 
 			var cp = mc.ContentTileToMapLocation(p, val);

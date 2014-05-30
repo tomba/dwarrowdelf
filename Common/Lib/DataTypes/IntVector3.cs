@@ -87,9 +87,9 @@ namespace Dwarrowdelf
 				return new IntVector3();
 
 			double len = this.Length;
-			var x = (int)Math.Round(this.X / len);
-			var y = (int)Math.Round(this.Y / len);
-			var z = (int)Math.Round(this.Z / len);
+			var x = MyMath.Round(this.X / len);
+			var y = MyMath.Round(this.Y / len);
+			var z = MyMath.Round(this.Z / len);
 			return new IntVector3(x, y, z);
 		}
 

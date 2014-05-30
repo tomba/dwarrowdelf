@@ -60,7 +60,7 @@ namespace Dwarrowdelf.TerrainGen
 						v *= m_size.Depth / 2;
 						v += m_size.Depth / 2 - 1;
 
-						m_data.SetSurfaceLevel(x, y, (int)Math.Round(v));
+						m_data.SetSurfaceLevel(x, y, MyMath.Round(v));
 					}
 				});
 		}
@@ -138,7 +138,7 @@ namespace Dwarrowdelf.TerrainGen
 							td.TerrainID = TerrainID.NaturalFloor;
 							td.InteriorID = InteriorID.NaturalWall;
 
-							int _z = (int)Math.Round(z + x * xk + y * yk);
+							int _z = MyMath.Round(z + x * xk + y * yk);
 
 							_z = _z % layers.Length;
 
