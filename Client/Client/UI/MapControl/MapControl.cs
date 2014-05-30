@@ -319,7 +319,7 @@ namespace Dwarrowdelf.Client.UI
 			var p = mc.CenterPos;
 
 			var cp = mc.ContentTileToMapLocation(p, val);
-			var s = mc.m_bufferSize;
+			var s = mc.GridSize;
 			mc.m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
 
