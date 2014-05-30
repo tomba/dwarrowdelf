@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public MapSelectionMode SelectionMode
 		{
-			get { return mapXY.SelectionMode; }
+			get { return m_mapList.First().SelectionMode; }
 
 			set
 			{
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public MapSelection Selection
 		{
-			get { return mapXY.Selection; }
+			get { return m_mapList.First().Selection; }
 
 			set
 			{
@@ -43,10 +43,10 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public EnvironmentObject Environment { get { return mapXY.Environment; } }
+		public EnvironmentObject Environment { get { return m_mapList.First().Environment; } }
 
-		public TileView HoverTileView { get { return mapXY.HoverTileView; } }
-		public TileAreaView SelectionTileAreaView { get { return mapXY.SelectionTileAreaView; } }
+		public TileView HoverTileView { get { return m_mapList.First().HoverTileView; } }
+		public TileAreaView SelectionTileAreaView { get { return m_mapList.First().SelectionTileAreaView; } }
 
 		public MainMapControl()
 		{

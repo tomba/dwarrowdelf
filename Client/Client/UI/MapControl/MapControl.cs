@@ -18,6 +18,13 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client.UI
 {
+	enum MapControlOrientation
+	{
+		XY,
+		XZ,
+		ZY,
+	}
+
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
@@ -27,6 +34,8 @@ namespace Dwarrowdelf.Client.UI
 		DataGrid2D<TileControl.RenderTile> m_renderData;
 		TileControl.SceneHostWPF m_renderer;
 		TileControl.TileMapScene m_scene;
+
+		public MapControlOrientation Orientation { get; set; }
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;
@@ -149,10 +158,12 @@ namespace Dwarrowdelf.Client.UI
 				var diff = cp - m_oldCenterPos;
 
 				// We should never hit this, as the renderdata is invalid when Z changes
-				if (diff.Z != 0)
-					throw new Exception();
+				//if (diff.Z != 0)
+				//	throw new Exception();
 
-				m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
+#warning foo
+				InvalidateRenderViewTiles();
+				//m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
 			}
 
 			m_oldCenterPos = cp;
@@ -173,8 +184,8 @@ namespace Dwarrowdelf.Client.UI
 			if (ctx.TileDataInvalid)
 			{
 				var baseLoc = ScreenTileToMapLocation(new System.Windows.Point(0, 0));
-				var xInc = new IntVector3(1, 0, 0);
-				var yInc = new IntVector3(0, 1, 0);
+				var xInc = this.XInc;
+				var yInc = this.YInc;
 				bool symbolToggler = false;
 				// XXX
 				RenderResolver.Resolve(m_env, m_renderData, m_isVisibilityCheckEnabled,
@@ -205,6 +216,10 @@ namespace Dwarrowdelf.Client.UI
 		/// </summary>
 		public void InvalidateRenderViewTile(IntPoint3 ml)
 		{
+#warning foo
+			InvalidateRenderViewTiles();
+			return;
+
 			if (!m_bounds.Contains(ml))
 				return;
 
@@ -286,12 +301,32 @@ namespace Dwarrowdelf.Client.UI
 			int x = (int)Math.Round(p.X);
 			int y = (int)Math.Round(p.Y);
 
-			return new IntPoint3(x, y, z);
+			switch (this.Orientation)
+			{
+				case MapControlOrientation.XY:
+					return new IntPoint3(x, y, z);
+				case MapControlOrientation.XZ:
+					return new IntPoint3(x, z, this.GridSize.Height - y);
+				case MapControlOrientation.ZY:
+					return new IntPoint3(z, y, x);
+				default:
+					throw new NotImplementedException();
+			}
 		}
 
 		public Point MapLocationToContentTile(IntPoint3 p)
 		{
-			return new Point(p.X, p.Y);
+			switch (this.Orientation)
+			{
+				case MapControlOrientation.XY:
+					return new Point(p.X, p.Y);
+				case MapControlOrientation.XZ:
+					return new Point(p.X, this.GridSize.Height - p.Z);
+				case MapControlOrientation.ZY:
+					return new Point(p.Z, p.Y);
+				default:
+					throw new NotImplementedException();
+			}
 		}
 
 		public IntPoint2 MapLocationToIntScreenTile(IntPoint3 p)
@@ -299,6 +334,42 @@ namespace Dwarrowdelf.Client.UI
 			var ct = MapLocationToContentTile(p);
 			var st = ContentTileToScreenTile(ct);
 			return new IntPoint2((int)Math.Round(st.X), (int)Math.Round(st.Y));
+		}
+
+		IntVector3 XInc
+		{
+			get
+			{
+				switch (this.Orientation)
+				{
+					case MapControlOrientation.XY:
+						return new IntVector3(1, 0, 0);
+					case MapControlOrientation.XZ:
+						return new IntVector3(1, 0, 0);
+					case MapControlOrientation.ZY:
+						return new IntVector3(0, 0, 1);
+					default:
+						throw new NotImplementedException();
+				}
+			}
+		}
+
+		IntVector3 YInc
+		{
+			get
+			{
+				switch (this.Orientation)
+				{
+					case MapControlOrientation.XY:
+						return new IntVector3(0, 1, 0);
+					case MapControlOrientation.XZ:
+						return new IntVector3(0, 0, -1);
+					case MapControlOrientation.ZY:
+						return new IntVector3(0, 1, 0);
+					default:
+						throw new NotImplementedException();
+				}
+			}
 		}
 
 		public int Z
