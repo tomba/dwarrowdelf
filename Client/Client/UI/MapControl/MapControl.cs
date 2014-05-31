@@ -172,7 +172,7 @@ namespace Dwarrowdelf.Client.UI
 				if (diff.Z != 0)
 					throw new Exception();
 
-				m_renderData.Scroll(new IntVector2(diff.X, diff.Y));
+				m_renderData.Scroll(diff.ToIntVector2());
 			}
 
 			m_oldCenterPos = intcp;
