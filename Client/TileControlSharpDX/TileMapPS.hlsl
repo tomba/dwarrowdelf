@@ -15,6 +15,7 @@ cbuffer PerFrame : register(b0)
 	float2 g_colrow;	/* columns, rows */
 	float2 g_renderOffset;
 	float g_tileSize;
+	bool g_rotate90;
 };
 
 StructuredBuffer<TileData> g_tileBuffer;
@@ -136,6 +137,12 @@ float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkn
 {
 	if (tileNum == 0)
 		return float4(0, 0, 0, 0.0f);
+
+	if (g_rotate90)
+	{
+		texpos.xy = texpos.yx;
+		texpos.y = 1.0f - texpos.y;
+	}
 
 	float4 c = g_tileTextures.Sample(linearSampler, float3(texpos, tileNum));
 

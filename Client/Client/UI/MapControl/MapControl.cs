@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Client.UI
 
 			m_renderData = new DataGrid2D<TileControl.RenderTile>();
 			m_renderer = new TileControl.SceneHostWPF();
-			m_scene = new TileControl.TileMapScene();
+			m_scene = new TileControl.TileMapScene(this.Orientation == MapControlOrientation.ZY ? true : false);
 			m_renderer.Scene = m_scene;
 
 			this.TileLayoutChanged += OnTileLayoutChanged;

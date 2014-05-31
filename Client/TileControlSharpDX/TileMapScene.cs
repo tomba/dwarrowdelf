@@ -31,6 +31,7 @@ namespace Dwarrowdelf.Client.TileControl
 			public Vector2 ColRow;	/* columns, rows */
 			public Vector2 RenderOffset;
 			public float TileSize;
+			public bool Rotate90Clockwise;
 		}
 
 		ShaderDataPerFrame m_shaderDataPerFrame;
@@ -46,8 +47,9 @@ namespace Dwarrowdelf.Client.TileControl
 		ShaderResourceView m_tileTextureView;
 		SamplerState m_sampler;
 
-		public TileMapScene()
+		public TileMapScene(bool rotate90 = false)
 		{
+			m_shaderDataPerFrame.Rotate90Clockwise = rotate90;
 		}
 
 		void IScene.Attach(ISceneHost host)
