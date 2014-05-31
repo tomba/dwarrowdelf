@@ -39,14 +39,14 @@
 
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="4*" />
+			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="1*" />
+			<ColumnDefinition Width="112" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="1*" />
+			<RowDefinition Height="112" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4*" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.Resources>
 			<Style x:Key="lineStyle" TargetType="Rectangle">
