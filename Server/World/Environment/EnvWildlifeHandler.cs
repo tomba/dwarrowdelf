@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Server
 
 			var center = m_env.GetRandomEnterableSurfaceLocation();
 
-			using (var iter = IntPoint2.SquareSpiral(center.ToIntPoint(), 20).GetEnumerator())
+			using (var iter = IntPoint2.SquareSpiral(center.ToIntPoint2(), 20).GetEnumerator())
 			{
 				for (int i = 0; i < numAnimals; ++i)
 				{

@@ -231,7 +231,7 @@ namespace Dwarrowdelf
 
 		public bool IsNull { get { return m_value == 0; } }
 
-		public IntVector2 ToIntVector()
+		public IntVector2 ToIntVector2()
 		{
 			return new IntVector2(this.X, this.Y);
 		}

@@ -125,7 +125,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static IntPoint3? GetLocNearEntry(EnvironmentObject env)
 		{
-			foreach (var p in IntPoint2.SquareSpiral(env.StartLocation.ToIntPoint(), env.Width / 2))
+			foreach (var p in IntPoint2.SquareSpiral(env.StartLocation.ToIntPoint2(), env.Width / 2))
 			{
 				if (env.Size.Plane.Contains(p) == false)
 					continue;

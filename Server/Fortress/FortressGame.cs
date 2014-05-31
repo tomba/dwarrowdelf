@@ -120,7 +120,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var center = pos;
 
-			foreach (var p in IntPoint2.SquareSpiral(center.ToIntPoint(), env.Width / 2))
+			foreach (var p in IntPoint2.SquareSpiral(center.ToIntPoint2(), env.Width / 2))
 			{
 				if (env.Size.Plane.Contains(p) == false)
 					continue;

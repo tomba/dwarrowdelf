@@ -109,7 +109,7 @@ namespace Dwarrowdelf
 			return Hash.Hash3D(this.X, this.Y, this.Z);
 		}
 
-		public IntPoint2 ToIntPoint()
+		public IntPoint2 ToIntPoint2()
 		{
 			return new IntPoint2(this.X, this.Y);
 		}

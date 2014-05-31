@@ -157,7 +157,7 @@ namespace Dwarrowdelf.TerrainGen
 				if (res.Status != AStarStatus.Found)
 					continue;
 
-				var riverPath = res.GetPathLocationsReverse().Select(p => p.ToIntPoint()).ToArray();
+				var riverPath = res.GetPathLocationsReverse().Select(p => p.ToIntPoint2()).ToArray();
 
 				if (riverPath.Length < 100)
 				{

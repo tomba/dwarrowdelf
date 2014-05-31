@@ -335,7 +335,7 @@ namespace Dwarrowdelf.Server
 
 			m_tileGrid[p.Z, p.Y, p.X] = data;
 
-			var p2d = p.ToIntPoint();
+			var p2d = p.ToIntPoint2();
 			int oldSurfaceLevel = GetSurfaceLevel(p2d);
 			int newSurfaceLevel = oldSurfaceLevel;
 

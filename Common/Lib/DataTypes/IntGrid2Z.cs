@@ -102,7 +102,7 @@ namespace Dwarrowdelf
 
 		public bool Contains(IntPoint3 l)
 		{
-			return m_grid.Contains(l.ToIntPoint()) && l.Z == m_z;
+			return m_grid.Contains(l.ToIntPoint2()) && l.Z == m_z;
 		}
 
 		public bool IntersectsWith(IntGrid2Z rect)
