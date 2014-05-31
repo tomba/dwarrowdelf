@@ -332,6 +332,26 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
+		public DoublePoint3 ContentTileToMapPoint(Point p)
+		{
+			return ContentTileToMapPoint(p, this.Z);
+		}
+
+		public DoublePoint3 ContentTileToMapPoint(Point p, int z)
+		{
+			switch (this.Orientation)
+			{
+				case MapControlOrientation.XY:
+					return new DoublePoint3(p.X, p.Y, z);
+				case MapControlOrientation.XZ:
+					return new DoublePoint3(p.X, z, -p.Y);
+				case MapControlOrientation.ZY:
+					return new DoublePoint3(z, p.Y, p.X);
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
 		public Point MapLocationToContentTile(IntPoint3 p)
 		{
 			int z;
@@ -350,6 +370,24 @@ namespace Dwarrowdelf.Client.UI
 					return new Point(p.X, -p.Z);
 				case MapControlOrientation.ZY:
 					z = p.X;
+					return new Point(p.Z, p.Y);
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		public Point MapPointToContentTile(DoublePoint3 p, out int z)
+		{
+			switch (this.Orientation)
+			{
+				case MapControlOrientation.XY:
+					z = MyMath.Round(p.Z);
+					return new Point(p.X, p.Y);
+				case MapControlOrientation.XZ:
+					z = MyMath.Round(p.Y);
+					return new Point(p.X, -p.Z);
+				case MapControlOrientation.ZY:
+					z = MyMath.Round(p.X);
 					return new Point(p.Z, p.Y);
 				default:
 					throw new NotImplementedException();

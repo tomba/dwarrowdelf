@@ -436,6 +436,15 @@ namespace Dwarrowdelf.Client.UI
 			this.CenterPos = ct;
 		}
 
+		public void GoTo(EnvironmentObject env, DoublePoint3 p)
+		{
+			this.Environment = env;
+			int z;
+			var ct = MapPointToContentTile(p, out z);
+			this.Z = z;
+			this.CenterPos = ct;
+		}
+
 		public void ScrollTo(EnvironmentObject env, IntPoint3 p)
 		{
 			this.Environment = env;
