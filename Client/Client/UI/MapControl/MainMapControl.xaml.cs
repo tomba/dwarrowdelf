@@ -121,10 +121,9 @@ namespace Dwarrowdelf.Client.UI
 		public void GoTo(EnvironmentObject env, IntPoint3 p)
 		{
 			foreach (var map in m_mapList)
-			{
 				map.Environment = env;
-				map.GoTo(p);
-			}
+
+			m_mapList.First().GoTo(p);
 		}
 
 		public void ScrollTo(MovableObject ob)
@@ -138,10 +137,9 @@ namespace Dwarrowdelf.Client.UI
 		public void ScrollTo(EnvironmentObject env, IntPoint3 p)
 		{
 			foreach (var map in m_mapList)
-			{
 				map.Environment = env;
-				map.ScrollTo(p);
-			}
+
+			m_mapList.First().ScrollTo(p);
 		}
 
 		public void Dispose()
