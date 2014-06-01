@@ -114,6 +114,11 @@ namespace Dwarrowdelf
 			return new IntPoint2(this.X, this.Y);
 		}
 
+		public DoublePoint3 ToDoublePoint3()
+		{
+			return new DoublePoint3(this.X, this.Y, this.Z);
+		}
+
 		public IntPoint3 Truncate(IntGrid3 box)
 		{
 			int x = Math.Min(Math.Max(this.X, box.X1), box.X2);
