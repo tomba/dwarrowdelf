@@ -249,6 +249,30 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
+		// Override the MapCenterPos property, so that we can stop the animation
+		public new DoublePoint3 MapCenterPos
+		{
+			get { return base.MapCenterPos; }
+
+			set
+			{
+				BeginAnimation(MapControl.MapCenterPosProperty, null);
+				base.MapCenterPos = value;
+			}
+		}
+
+		// Override the ScreenCenterPos property, so that we can stop the animation
+		public new DoublePoint3 ScreenCenterPos
+		{
+			get { return base.ScreenCenterPos; }
+
+			set
+			{
+				BeginAnimation(MapControl.MapCenterPosProperty, null);
+				base.ScreenCenterPos = value;
+			}
+		}
+
 		public void ZoomIn()
 		{
 			var ts = m_targetTileSize ?? this.TileSize;
