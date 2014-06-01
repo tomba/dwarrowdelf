@@ -72,6 +72,16 @@ namespace Dwarrowdelf
 			return new DoubleVector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
 		}
 
+		public static DoublePoint3 operator +(DoublePoint3 left, Direction right)
+		{
+			return left + new DoubleVector3(right);
+		}
+
+		public IntPoint3 ToIntPoint3()
+		{
+			return new IntPoint3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));
+		}
+
 		public override int GetHashCode()
 		{
 			throw new Exception("doubles shouldn't be hashed");
