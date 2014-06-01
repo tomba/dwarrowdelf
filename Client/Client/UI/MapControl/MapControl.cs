@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.UI
 {
@@ -28,7 +29,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged, IDisposable
+	class MapControl : TileControl.TileControlCoreNew, INotifyPropertyChanged, IDisposable
 	{
 		bool m_initialized;
 		DataGrid2D<TileControl.RenderTile> m_renderData;
@@ -150,7 +151,7 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTileRender();
 		}
 
-		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
+		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
 		{
 			if (!m_initialized)
 				return;
@@ -163,6 +164,8 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			var intcp = this.ScreenCenterPos.ToIntPoint3();
+
+			m_contentOffset = new Vector(intcp.X - gridSize.Width / 2, intcp.Y - gridSize.Height / 2);
 
 			if (!m_renderData.Invalid)
 			{
@@ -365,6 +368,33 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
+		/// <summary>
+		/// Offset between screen based tiles and content based tiles
+		/// </summary>
+		Vector m_contentOffset;
+
+		public Point ScreenTileToContentTile(Point st)
+		{
+			return st + m_contentOffset;
+		}
+
+		public Point ContentTileToScreenTile(Point mt)
+		{
+			return mt - m_contentOffset;
+		}
+
+		public Point ScreenPointToContentTile(Point p)
+		{
+			var st = ScreenPointToScreenTile(p);
+			return ScreenTileToContentTile(st);
+		}
+
+		public Point ContentTileToScreenPoint(Point mt)
+		{
+			var st = ContentTileToScreenTile(mt);
+			return ScreenTileToScreenPoint(st);
+		}
+
 		IntPoint2 MapLocationToIntScreenTile(IntPoint3 p)
 		{
 			var ct = MapLocationToContentTile(p);
@@ -500,35 +530,52 @@ namespace Dwarrowdelf.Client.UI
 		static void OnMapCenterPosChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var mc = (MapControl)d;
-			var _val = (System.Windows.Media.Media3D.Point3D)e.NewValue;
-			var mcp = new DoublePoint3(_val.X, _val.Y, _val.Z);
 
-			var scp = mc.MapToContent(mcp);
-
-			if (MyMath.Round(mc.m_oldZ) != MyMath.Round(scp.Z))
-				mc.InvalidateRenderViewTiles();
-
-			mc.CenterPos = new Point(scp.X, scp.Y);
-
-			var ml = new IntPoint3(MyMath.Round(mcp.X), MyMath.Round(mcp.Y), MyMath.Round(mcp.Z));
-			var s = mc.GridSize;
-			mc.m_bounds = new IntGrid3(new IntPoint3(ml.X - s.Width / 2, ml.Y - s.Height / 2, ml.Z - MAXLEVEL + 1),
-				new IntSize3(s, MAXLEVEL));
-
-			if (mc.MapCenterPosChanged != null)
-				mc.MapCenterPosChanged(mc, mcp);
-
-			if (mc.m_oldZ != scp.Z)
-			{
-				if (mc.ZChanged != null)
-					mc.ZChanged(mc, scp.Z);
-
-				mc.m_oldZ = scp.Z;
-			}
+			mc.HandleMapCenterPosChange(e);
 		}
 
-		// XXX remove
-		double m_oldZ;
+		void HandleMapCenterPosChange(DependencyPropertyChangedEventArgs e)
+		{
+			var _oldVal = (System.Windows.Media.Media3D.Point3D)e.OldValue;
+			var oldmcp = new DoublePoint3(_oldVal.X, _oldVal.Y, _oldVal.Z);
+
+			var _newVal = (System.Windows.Media.Media3D.Point3D)e.NewValue;
+			var mcp = new DoublePoint3(_newVal.X, _newVal.Y, _newVal.Z);
+			var imcp = mcp.ToIntPoint3();
+
+			var s = this.GridSize;
+			m_bounds = new IntGrid3(new IntPoint3(imcp.X - s.Width / 2, imcp.Y - s.Height / 2, imcp.Z - MAXLEVEL + 1),
+				new IntSize3(s, MAXLEVEL));
+
+
+			var scp = MapToContent(mcp);
+			var iscp = scp.ToIntPoint3();
+
+			var oldscp = MapToContent(oldmcp);
+			var ioldscp = oldscp.ToIntPoint3();
+
+			if (ioldscp != iscp)
+			{
+				if (ioldscp.Z != iscp.Z)
+					InvalidateRenderViewTiles();
+				else
+					InvalidateTileData();
+			}
+
+			m_contentOffset = new Vector(iscp.X - this.GridSize.Width / 2,
+				iscp.Y - this.GridSize.Height / 2);
+
+			this.Offset = new Vector(scp.X - iscp.X, scp.Y - iscp.Y);
+
+			if (this.MapCenterPosChanged != null)
+				this.MapCenterPosChanged(this, mcp);
+
+			if (ioldscp.Z != iscp.Z)
+			{
+				if (this.ZChanged != null)
+					this.ZChanged(this, scp.Z);
+			}
+		}
 
 		public event Action<MapControl, DoublePoint3> MapCenterPosChanged;
 

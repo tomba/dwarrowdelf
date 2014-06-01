@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Client.UI
 			UpdateElements();
 		}
 
-		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
+		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
 		{
 			UpdateTranslateTransform();
 			UpdateScaleTransform();

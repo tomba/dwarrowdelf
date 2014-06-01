@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TileControlCoreNew.cs" />
     <Compile Include="TileControlCore.cs" />
     <Compile Include="TileRenderContext.cs" />
     <AppDesigner Include="Properties\" />

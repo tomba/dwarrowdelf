@@ -198,7 +198,7 @@ namespace Dwarrowdelf.Client.UI
 				UpdateSelectionRect();
 		}
 
-		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
+		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
 		{
 			var pos = Mouse.GetPosition(m_mapControl);
 
