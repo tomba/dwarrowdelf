@@ -64,34 +64,17 @@ namespace Dwarrowdelf.Client.UI
 				map.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
 
 			foreach (var map in m_mapList)
-				map.CenterPosChanged += map_CenterPosChanged;
-
-			foreach (var map in m_mapList)
-				map.ZChanged += map_ZChanged;
-		}
-
-		void map_ZChanged(MapControl mc, int z)
-		{
-			SyncPos(mc, mc.CenterPos, z);
-		}
-
-		void map_CenterPosChanged(TileControl.TileControlCore tc, Point p)
-		{
-			var mc = (MapControl)tc;
-
-			SyncPos(mc, p, mc.Z);
+				map.MapCenterPosChanged += map_MapCenterPosChanged;
 		}
 
 		bool m_syncingPos;
 
-		void SyncPos(MapControl mc, Point p, int z)
+		void map_MapCenterPosChanged(MapControl mc, DoublePoint3 ml)
 		{
 			if (m_syncingPos)
 				return;
 
 			m_syncingPos = true;
-
-			var ml = mc.ContentTileToMapPoint(p, z);
 
 			foreach (var map in m_mapList)
 			{
@@ -103,6 +86,7 @@ namespace Dwarrowdelf.Client.UI
 
 			m_syncingPos = false;
 		}
+
 
 		public void Blink()
 		{

@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Client.UI
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;
-		public event Action<MapControl, int> ZChanged;
+		public event Action<MapControl, double> ZChanged;
 
 		const double MINTILESIZE = 2;
 
@@ -162,7 +162,7 @@ namespace Dwarrowdelf.Client.UI
 				m_renderData.SetSize(gridSize);
 			}
 
-			var intcp = new IntPoint3(MyMath.Round(centerPos.X), MyMath.Round(centerPos.Y), this.Z);
+			var intcp = this.ScreenCenterPos.ToIntPoint3();
 
 			if (!m_renderData.Invalid)
 			{
@@ -170,14 +170,15 @@ namespace Dwarrowdelf.Client.UI
 
 				// We should never hit this, as the renderdata is invalid when Z changes
 				if (diff.Z != 0)
-					throw new Exception();
-
-				m_renderData.Scroll(diff.ToIntVector2());
+					//throw new Exception();
+					InvalidateRenderViewTiles();
+				else
+					m_renderData.Scroll(diff.ToIntVector2());
 			}
 
 			m_oldCenterPos = intcp;
 
-			var cp = ContentTileToMapLocation(centerPos);
+			var cp = this.MapCenterPos.ToIntPoint3();
 			var s = gridSize;
 			m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
@@ -287,19 +288,6 @@ namespace Dwarrowdelf.Client.UI
 		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
 			var ct = ScreenPointToContentTile(p);
-
-#warning testing
-#if DEBUG
-			{
-				var t0 = new Point(MyMath.Round(ct.X), MyMath.Round(ct.Y));
-				var t1 = ContentTileToMapLocation(ct, this.Z);
-				int z;
-				var t2 = MapLocationToContentTile(t1, out z);
-				if (t0 != t2 || this.Z != z)
-					throw new Exception();
-			}
-#endif
-
 			return ContentTileToMapLocation(ct);
 		}
 
@@ -311,13 +299,14 @@ namespace Dwarrowdelf.Client.UI
 
 		public IntPoint3 ContentTileToMapLocation(Point p)
 		{
-			return ContentTileToMapLocation(p, this.Z);
+			return ContentTileToMapLocation(p, this.ScreenZ);
 		}
 
-		public IntPoint3 ContentTileToMapLocation(Point p, int z)
+		public IntPoint3 ContentTileToMapLocation(Point p, double _z)
 		{
 			int x = MyMath.Round(p.X);
 			int y = MyMath.Round(p.Y);
+			int z = MyMath.Round(_z);
 
 			switch (this.Orientation)
 			{
@@ -334,10 +323,10 @@ namespace Dwarrowdelf.Client.UI
 
 		public DoublePoint3 ContentTileToMapPoint(Point p)
 		{
-			return ContentTileToMapPoint(p, this.Z);
+			return ContentTileToMapPoint(p, this.ScreenZ);
 		}
 
-		public DoublePoint3 ContentTileToMapPoint(Point p, int z)
+		public DoublePoint3 ContentTileToMapPoint(Point p, double z)
 		{
 			switch (this.Orientation)
 			{
@@ -376,29 +365,61 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public Point MapPointToContentTile(DoublePoint3 p, out int z)
+		IntPoint2 MapLocationToIntScreenTile(IntPoint3 p)
+		{
+			var ct = MapLocationToContentTile(p);
+			var st = ContentTileToScreenTile(ct);
+			return new IntPoint2(MyMath.Round(st.X), MyMath.Round(st.Y));
+		}
+
+		public DoublePoint3 MapToContent(IntPoint3 p)
+		{
+			return MapToContent(p.ToDoublePoint3());
+		}
+
+		public DoublePoint3 MapToContent(DoublePoint3 p)
 		{
 			switch (this.Orientation)
 			{
 				case MapControlOrientation.XY:
-					z = MyMath.Round(p.Z);
-					return new Point(p.X, p.Y);
+					return p;
 				case MapControlOrientation.XZ:
-					z = MyMath.Round(p.Y);
-					return new Point(p.X, -p.Z);
+					return new DoublePoint3(p.X, -p.Z, p.Y);
 				case MapControlOrientation.ZY:
-					z = MyMath.Round(p.X);
-					return new Point(p.Z, p.Y);
+					return new DoublePoint3(p.Z, p.Y, p.X);
 				default:
 					throw new NotImplementedException();
 			}
 		}
 
-		public IntPoint2 MapLocationToIntScreenTile(IntPoint3 p)
+		public DoublePoint3 ContentToMap(DoublePoint3 p)
 		{
-			var ct = MapLocationToContentTile(p);
-			var st = ContentTileToScreenTile(ct);
-			return new IntPoint2(MyMath.Round(st.X), MyMath.Round(st.Y));
+			switch (this.Orientation)
+			{
+				case MapControlOrientation.XY:
+					return p;
+				case MapControlOrientation.XZ:
+					return new DoublePoint3(p.X, p.Z, -p.Y);
+				case MapControlOrientation.ZY:
+					return new DoublePoint3(p.Z, p.Y, p.X);
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		public DoubleVector3 ContentToMap(DoubleVector3 v)
+		{
+			switch (this.Orientation)
+			{
+				case MapControlOrientation.XY:
+					return v;
+				case MapControlOrientation.XZ:
+					return new DoubleVector3(v.X, v.Z, -v.Y);
+				case MapControlOrientation.ZY:
+					return new DoubleVector3(v.Z, v.Y, v.X);
+				default:
+					throw new NotImplementedException();
+			}
 		}
 
 		IntVector3 XInc
@@ -455,36 +476,61 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public int Z
+		public double ScreenZ
 		{
-			get { return (int)GetValue(ZProperty); }
-			set { SetValue(ZProperty, value); }
+			get { return this.ScreenCenterPos.Z; }
 		}
 
-		public static readonly DependencyProperty ZProperty =
-			DependencyProperty.Register("Z", typeof(int), typeof(MapControl), new UIPropertyMetadata(0, OnZChanged));
+		public DoublePoint3 ScreenCenterPos
+		{
+			get { return MapToContent(this.MapCenterPos); }
+			set { this.MapCenterPos = ContentToMap(value); }
+		}
 
-		static void OnZChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		public DoublePoint3 MapCenterPos
+		{
+			get { var p = (System.Windows.Media.Media3D.Point3D)GetValue(MapCenterPosProperty); return new DoublePoint3(p.X, p.Y, p.Z); }
+			set { var p = new System.Windows.Media.Media3D.Point3D(value.X, value.Y, value.Z); SetValue(MapCenterPosProperty, p); }
+		}
+
+		public static readonly DependencyProperty MapCenterPosProperty =
+			DependencyProperty.Register("MapCenterPos", typeof(System.Windows.Media.Media3D.Point3D), typeof(MapControl),
+			new PropertyMetadata(new System.Windows.Media.Media3D.Point3D(), OnMapCenterPosChanged));
+
+		static void OnMapCenterPosChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var mc = (MapControl)d;
-			var val = (int)e.NewValue;
+			var _val = (System.Windows.Media.Media3D.Point3D)e.NewValue;
+			var mcp = new DoublePoint3(_val.X, _val.Y, _val.Z);
 
-			var p = mc.CenterPos;
+			var scp = mc.MapToContent(mcp);
 
-			var intcp = new IntPoint3(MyMath.Round(p.X), MyMath.Round(p.Y), val);
-			mc.m_oldCenterPos = intcp;
+			if (MyMath.Round(mc.m_oldZ) != MyMath.Round(scp.Z))
+				mc.InvalidateRenderViewTiles();
 
-			var cp = mc.ContentTileToMapLocation(p, val);
+			mc.CenterPos = new Point(scp.X, scp.Y);
+
+			var ml = new IntPoint3(MyMath.Round(mcp.X), MyMath.Round(mcp.Y), MyMath.Round(mcp.Z));
 			var s = mc.GridSize;
-			mc.m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+			mc.m_bounds = new IntGrid3(new IntPoint3(ml.X - s.Width / 2, ml.Y - s.Height / 2, ml.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
 
-			mc.InvalidateRenderViewTiles();
+			if (mc.MapCenterPosChanged != null)
+				mc.MapCenterPosChanged(mc, mcp);
 
-			if (mc.ZChanged != null)
-				mc.ZChanged(mc, val);
+			if (mc.m_oldZ != scp.Z)
+			{
+				if (mc.ZChanged != null)
+					mc.ZChanged(mc, scp.Z);
+
+				mc.m_oldZ = scp.Z;
+			}
 		}
 
+		// XXX remove
+		double m_oldZ;
+
+		public event Action<MapControl, DoublePoint3> MapCenterPosChanged;
 
 		void MapChangedCallback(IntPoint3 l)
 		{

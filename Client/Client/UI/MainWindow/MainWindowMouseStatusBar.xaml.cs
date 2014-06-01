@@ -33,6 +33,12 @@ namespace Dwarrowdelf.Client.UI
 				return String.Format("{0:F2}, {1:F2}", p.X, p.Y);
 			}
 
+			if (value is System.Windows.Media.Media3D.Point3D)
+			{
+				var p = (System.Windows.Media.Media3D.Point3D)value;
+				return String.Format("{0:F2}, {1:F2}, {2:F2}", p.X, p.Y, p.Z);
+			}
+
 			if (value is IntPoint2)
 			{
 				var p = (IntPoint2)value;

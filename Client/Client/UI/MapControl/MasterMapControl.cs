@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Client.UI
 				m_overlayGrid.Children.Add(bar);
 
 				TextBlock textBlock = new TextBlock();
-				var binding = new Binding("CenterPos");
+				var binding = new Binding("MapCenterPos");
 				binding.Source = this;
 				binding.Converter = new CoordinateValueConverter();
 				textBlock.SetBinding(TextBlock.TextProperty, binding);
@@ -151,7 +151,7 @@ namespace Dwarrowdelf.Client.UI
 			UpdateHoverTileInfo(false);
 		}
 
-		void OnZChanged(MapControl mc, int z)
+		void OnZChanged(MapControl mc, double z)
 		{
 			UpdateHoverTileInfo(false);
 		}
@@ -286,9 +286,9 @@ namespace Dwarrowdelf.Client.UI
 			if (this.IsMouseCaptured || (Keyboard.Modifiers & ModifierKeys.Control) != 0)
 			{
 				if (e.Delta > 0)
-					this.Z--;
+					this.ScreenCenterPos += Direction.Down;
 				else
-					this.Z++;
+					this.ScreenCenterPos += Direction.Up;
 
 				return;
 			}
@@ -309,8 +309,6 @@ namespace Dwarrowdelf.Client.UI
 			if (targetTileSize == origTileSize)
 				return;
 
-
-
 			var p = e.GetPosition(this);
 
 			Vector v = p - new Point(this.ActualWidth / 2, this.ActualHeight / 2);
@@ -319,8 +317,10 @@ namespace Dwarrowdelf.Client.UI
 			var ct = ScreenPointToContentTile(p);
 			var targetCenterPos = ct - v;
 
+			var dp = ContentTileToMapPoint(targetCenterPos, this.ScreenCenterPos.Z);
+
 			ZoomTo(targetTileSize);
-			ScrollTo(targetCenterPos, targetTileSize);
+			ScrollTo(dp, targetTileSize);
 
 			//Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
 		}
@@ -410,68 +410,40 @@ namespace Dwarrowdelf.Client.UI
 			base.OnLostMouseCapture(e);
 		}
 
-		// Override the CenterPos property, so that we can stop the animation
-		public new Point CenterPos
-		{
-			get { return base.CenterPos; }
-
-			set
-			{
-				BeginAnimation(MapControl.CenterPosProperty, null);
-				base.CenterPos = value;
-			}
-		}
-
 		public void Pan(Vector p)
 		{
-			this.CenterPos += p;
+			var mp = this.MapCenterPos + ContentToMap(new DoubleVector3(p.X, p.Y, 0));
+			GoTo(mp);
 		}
 
 		public void GoTo(IntPoint3 p)
 		{
-			int z;
-			var ct = MapLocationToContentTile(p, out z);
-			this.Z = z;
-			this.CenterPos = ct;
+			GoTo(p.ToDoublePoint3());
 		}
 
 		public void GoTo(DoublePoint3 p)
 		{
-			int z;
-			var ct = MapPointToContentTile(p, out z);
-			this.Z = z;
-			this.CenterPos = ct;
+			this.MapCenterPos = p;
 		}
 
 		public void ScrollTo(IntPoint3 p)
 		{
-			int z;
-			var ct = MapLocationToContentTile(p, out z);
-			this.Z = z;
-			ScrollTo(ct);
+			ScrollTo(p.ToDoublePoint3());
 		}
 
-		public void ScrollTo(Point target)
+		void ScrollTo(DoublePoint3 p, double? targetTileSize = null)
 		{
 			StopScrollToDir();
 
-			if (this.CenterPos == target)
+			if (this.MapCenterPos == p)
 				return;
 
-			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
-			BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
-		}
+			var target = new System.Windows.Media.Media3D.Point3D(p.X, p.Y, p.Z);
 
-		void ScrollTo(Point target, double targetTileSize)
-		{
-			StopScrollToDir();
-
-			if (this.CenterPos == target)
-				return;
-
-			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
-			anim.EasingFunction = new MyEase(this.TileSize, targetTileSize);
-			BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			var anim = new Point3DAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
+			if (targetTileSize.HasValue)
+				anim.EasingFunction = new MyEase(this.TileSize, targetTileSize.Value);
+			BeginAnimation(MapControl.MapCenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		public void ScrollToDirection(IntVector2 vector)
@@ -495,15 +467,16 @@ namespace Dwarrowdelf.Client.UI
 			int m = (int)(Math.Sqrt(MAXTILESIZE / this.TileSize) * 32);
 			var v = m_scrollVector * m;
 
-			var cp = this.CenterPos + new Vector(v.X, v.Y);
+			var _p3d = this.MapCenterPos + ContentToMap(new DoubleVector3(v.X, v.Y, 0));
+			var p3d = new System.Windows.Media.Media3D.Point3D(_p3d.X, _p3d.Y, _p3d.Z);
 
-			var anim = new PointAnimation(cp, new Duration(TimeSpan.FromMilliseconds(1000)), FillBehavior.HoldEnd);
+			var anim = new Point3DAnimation(p3d, new Duration(TimeSpan.FromMilliseconds(1000)), FillBehavior.HoldEnd);
 			anim.Completed += (o, args) =>
 			{
 				if (m_scrollVector != new IntVector2())
 					BeginScrollToDir();
 			};
-			BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			BeginAnimation(MapControl.MapCenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		void StopScrollToDir()
@@ -511,9 +484,9 @@ namespace Dwarrowdelf.Client.UI
 			if (m_scrollVector != new IntVector2())
 			{
 				m_scrollVector = new IntVector2();
-				var cp = this.CenterPos;
-				BeginAnimation(MapControl.CenterPosProperty, null);
-				this.CenterPos = cp;
+				var cp = this.MapCenterPos;
+				BeginAnimation(MapControl.MapCenterPosProperty, null);
+				this.MapCenterPos = cp;
 			}
 		}
 

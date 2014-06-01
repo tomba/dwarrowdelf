@@ -158,11 +158,11 @@ namespace Dwarrowdelf.Client.UI
 					return true;
 
 				case Key.PageDown:
-					m_mapControl.Z--;
+					m_mapControl.ScreenCenterPos += Direction.Down;
 					return true;
 
 				case Key.PageUp:
-					m_mapControl.Z++;
+					m_mapControl.ScreenCenterPos += Direction.Up;
 					return true;
 
 				default:
@@ -238,11 +238,11 @@ namespace Dwarrowdelf.Client.UI
 					return true;
 
 				case Key.PageDown:
-					m_mapControl.Z--;
+					m_mapControl.ScreenCenterPos += Direction.Down;
 					return true;
 
 				case Key.PageUp:
-					m_mapControl.Z++;
+					m_mapControl.ScreenCenterPos += Direction.Up;
 					return true;
 
 				default:
@@ -270,11 +270,11 @@ namespace Dwarrowdelf.Client.UI
 			switch (text)
 			{
 				case ">":
-					m_mapControl.Z--;
+					m_mapControl.ScreenCenterPos += Direction.Down;
 					return true;
 
 				case "<":
-					m_mapControl.Z++;
+					m_mapControl.ScreenCenterPos += Direction.Up;
 					return true;
 
 				default:

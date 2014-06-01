@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Client.UI
 			this.Selection = new MapSelection();
 		}
 
-		void OnZChanged(MapControl mc, int z)
+		void OnZChanged(MapControl mc, double z)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
 
@@ -243,13 +243,12 @@ namespace Dwarrowdelf.Client.UI
 
 			var selBox = this.Selection.SelectionBox;
 
-			int z1;
-			m_mapControl.MapLocationToContentTile(selBox.Corner1, out z1);
+			double z1 = m_mapControl.MapToContent(selBox.Corner1).Z;
+			double z2 = m_mapControl.MapToContent(selBox.Corner2).Z;
 
-			int z2;
-			m_mapControl.MapLocationToContentTile(selBox.Corner2, out z2);
+			double z = m_mapControl.ScreenCenterPos.Z;
 
-			if (z1 > m_mapControl.Z || z2 < m_mapControl.Z)
+			if (z1 > z || z2 < z)
 			{
 				m_selectionRect.Visibility = Visibility.Hidden;
 				return;
