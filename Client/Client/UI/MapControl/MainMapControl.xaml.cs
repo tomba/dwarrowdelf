@@ -144,7 +144,7 @@ namespace Dwarrowdelf.Client.UI
 			if (env == null)
 				return;
 
-			var ml = mapControl.ScreenPointToMapLocation(ev.GetPosition(mapControl));
+			var ml = mapControl.RenderPointToMapLocation(ev.GetPosition(mapControl));
 
 			var obs = new List<object>();
 
@@ -166,7 +166,7 @@ namespace Dwarrowdelf.Client.UI
 				ctxMenu.ItemsSource = obs;
 				ctxMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
 				ctxMenu.PlacementTarget = mapControl;
-				var rect = mapControl.MapCubeToScreenPointRect(new IntGrid3(ml, new IntSize3(1, 1, 1)));
+				var rect = mapControl.MapCubeToRenderPointRect(new IntGrid3(ml, new IntSize3(1, 1, 1)));
 				ctxMenu.PlacementRectangle = rect;
 
 				ctxMenu.IsOpen = true;

@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnMouseClicked(object sender, MouseButtonEventArgs e)
 		{
-			var ml = m_mapControl.ScreenPointToMapLocation(e.GetPosition(m_mapControl));
+			var ml = m_mapControl.RenderPointToMapLocation(e.GetPosition(m_mapControl));
 			this.Selection = new MapSelection(ml, ml);
 			if (this.GotSelection != null)
 				this.GotSelection(this.Selection);
@@ -146,7 +146,7 @@ namespace Dwarrowdelf.Client.UI
 		void OnDragStarted(Point pos)
 		{
 			m_selecting = true;
-			var ml = m_mapControl.ScreenPointToMapLocation(pos);
+			var ml = m_mapControl.RenderPointToMapLocation(pos);
 			this.Selection = new MapSelection(ml, ml);
 		}
 
@@ -212,7 +212,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			IntPoint3 start;
 
-			var end = m_mapControl.ScreenPointToMapLocation(mousePos);
+			var end = m_mapControl.RenderPointToMapLocation(mousePos);
 
 			end = end.Truncate(new IntGrid3(this.m_mapControl.Environment.Size));
 
@@ -243,8 +243,8 @@ namespace Dwarrowdelf.Client.UI
 
 			var selBox = this.Selection.SelectionBox;
 
-			double z1 = m_mapControl.MapToContent(selBox.Corner1).Z;
-			double z2 = m_mapControl.MapToContent(selBox.Corner2).Z;
+			double z1 = m_mapControl.MapToScreen(selBox.Corner1).Z;
+			double z2 = m_mapControl.MapToScreen(selBox.Corner2).Z;
 
 			double z = m_mapControl.ScreenCenterPos.Z;
 
@@ -254,7 +254,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			var r = m_mapControl.MapCubeToScreenPointRect(selBox);
+			var r = m_mapControl.MapCubeToRenderPointRect(selBox);
 
 			Canvas.SetLeft(m_selectionRect, r.Left);
 			Canvas.SetTop(m_selectionRect, r.Top);

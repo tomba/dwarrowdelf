@@ -16,42 +16,42 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public DoublePoint3 MapCenterPos
 		{
-			get { return ContentToMap(this.ScreenCenterPos); }
-			set { this.ScreenCenterPos = MapToContent(value); }
+			get { return ScreenToMap(this.ScreenCenterPos); }
+			set { this.ScreenCenterPos = MapToScreen(value); }
 		}
 
-		public Rect MapCubeToScreenPointRect(IntGrid3 grid)
+		public Rect MapCubeToRenderPointRect(IntGrid3 grid)
 		{
-			var p1 = MapLocationToContentTile(grid.Corner1);
-			var p2 = MapLocationToContentTile(grid.Corner2);
+			var p1 = MapLocationToScreenTile(grid.Corner1);
+			var p2 = MapLocationToScreenTile(grid.Corner2);
 
 			var r = new Rect(p1, p2);
 			r.Inflate(0.5, 0.5);
 
-			p1 = ContentTileToScreenPoint(r.TopLeft);
-			p2 = ContentTileToScreenPoint(r.BottomRight);
+			p1 = ScreenToRenderPoint(r.TopLeft);
+			p2 = ScreenToRenderPoint(r.BottomRight);
 
 			return new Rect(p1, p2);
 		}
 
-		public IntPoint3 ScreenPointToMapLocation(Point p)
+		public IntPoint3 RenderPointToMapLocation(Point p)
 		{
-			var ct = ScreenPointToContentTile(p);
-			return ContentTileToMapLocation(ct);
+			var ct = RenderPointToScreen(p);
+			return ScreenTileToMapLocation(ct);
+		}
+
+		public IntPoint3 RenderTileToMapLocation(Point p)
+		{
+			var ct = RenderTileToScreen(p);
+			return ScreenTileToMapLocation(ct);
 		}
 
 		public IntPoint3 ScreenTileToMapLocation(Point p)
 		{
-			var ct = ScreenTileToContentTile(p);
-			return ContentTileToMapLocation(ct);
+			return ScreenTileToMapLocation(p, this.ScreenZ);
 		}
 
-		public IntPoint3 ContentTileToMapLocation(Point p)
-		{
-			return ContentTileToMapLocation(p, this.ScreenZ);
-		}
-
-		public IntPoint3 ContentTileToMapLocation(Point p, double _z)
+		public IntPoint3 ScreenTileToMapLocation(Point p, double _z)
 		{
 			int x = MyMath.Round(p.X);
 			int y = MyMath.Round(p.Y);
@@ -70,12 +70,12 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public DoublePoint3 ContentTileToMapPoint(Point p)
+		public DoublePoint3 ScreenTileToMapPoint(Point p)
 		{
-			return ContentTileToMapPoint(p, this.ScreenZ);
+			return ScreenTileToMapPoint(p, this.ScreenZ);
 		}
 
-		public DoublePoint3 ContentTileToMapPoint(Point p, double z)
+		public DoublePoint3 ScreenTileToMapPoint(Point p, double z)
 		{
 			switch (this.Orientation)
 			{
@@ -90,13 +90,13 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public Point MapLocationToContentTile(IntPoint3 p)
+		public Point MapLocationToScreenTile(IntPoint3 p)
 		{
 			int z;
-			return MapLocationToContentTile(p, out z);
+			return MapLocationToScreenTile(p, out z);
 		}
 
-		public Point MapLocationToContentTile(IntPoint3 p, out int z)
+		public Point MapLocationToScreenTile(IntPoint3 p, out int z)
 		{
 			switch (this.Orientation)
 			{
@@ -114,19 +114,19 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public IntPoint2 MapLocationToIntScreenTile(IntPoint3 p)
+		public IntPoint2 MapLocationToIntRenderTile(IntPoint3 p)
 		{
-			var ct = MapLocationToContentTile(p);
-			var st = ContentTileToScreenTile(ct);
+			var ct = MapLocationToScreenTile(p);
+			var st = ScreenToRenderTile(ct);
 			return new IntPoint2(MyMath.Round(st.X), MyMath.Round(st.Y));
 		}
 
-		public DoublePoint3 MapToContent(IntPoint3 p)
+		public DoublePoint3 MapToScreen(IntPoint3 p)
 		{
-			return MapToContent(p.ToDoublePoint3());
+			return MapToScreen(p.ToDoublePoint3());
 		}
 
-		public DoublePoint3 MapToContent(DoublePoint3 p)
+		public DoublePoint3 MapToScreen(DoublePoint3 p)
 		{
 			switch (this.Orientation)
 			{
@@ -141,7 +141,7 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public DoublePoint3 ContentToMap(DoublePoint3 p)
+		public DoublePoint3 ScreenToMap(DoublePoint3 p)
 		{
 			switch (this.Orientation)
 			{
@@ -156,7 +156,7 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public DoubleVector3 ContentToMap(DoubleVector3 v)
+		public DoubleVector3 ScreenToMap(DoubleVector3 v)
 		{
 			switch (this.Orientation)
 			{

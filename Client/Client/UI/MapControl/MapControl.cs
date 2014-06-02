@@ -187,7 +187,7 @@ namespace Dwarrowdelf.Client.UI
 
 			if (ctx.TileDataInvalid)
 			{
-				var baseLoc = ScreenTileToMapLocation(new System.Windows.Point(0, 0));
+				var baseLoc = RenderTileToMapLocation(new System.Windows.Point(0, 0));
 				var xInc = this.XInc;
 				var yInc = this.YInc;
 				var zInc = this.ZInc;
@@ -224,7 +224,7 @@ namespace Dwarrowdelf.Client.UI
 			if (!m_bounds.Contains(ml))
 				return;
 
-			var p = MapLocationToIntScreenTile(ml);
+			var p = MapLocationToIntRenderTile(ml);
 			int idx = m_renderData.GetIdx(p);
 			m_renderData.Grid[idx].IsValid = false;
 
@@ -321,7 +321,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void MapControl_ScreenCenterPosChanged(object ob, DoublePoint3 scp, IntVector3 diff)
 		{
-			var mcp = ContentToMap(scp);
+			var mcp = ScreenToMap(scp);
 			var imcp = mcp.ToIntPoint3();
 
 			var s = this.GridSize;

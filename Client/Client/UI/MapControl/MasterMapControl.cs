@@ -199,7 +199,7 @@ namespace Dwarrowdelf.Client.UI
 			else
 			{
 				p = Mouse.GetPosition(this);
-				var ml = ScreenPointToMapLocation(p);
+				var ml = RenderPointToMapLocation(p);
 
 				if (this.Environment != null && this.Environment.Contains(ml))
 				{
@@ -219,8 +219,8 @@ namespace Dwarrowdelf.Client.UI
 
 				data.ScreenPos = sp;
 				data.ScreenTile = RenderPointToRenderTile(sp);
-				data.MapTile = ScreenPointToContentTile(sp);
-				data.MapLocation = ScreenPointToMapLocation(sp);
+				data.MapTile = RenderPointToScreen(sp);
+				data.MapLocation = RenderPointToMapLocation(sp);
 				data.Update();
 			}
 
@@ -334,10 +334,10 @@ namespace Dwarrowdelf.Client.UI
 			Vector v = p - new Point(this.ActualWidth / 2, this.ActualHeight / 2);
 			v /= targetTileSize;
 
-			var ct = ScreenPointToContentTile(p);
+			var ct = RenderPointToScreen(p);
 			var targetCenterPos = ct - v;
 
-			var dp = ContentTileToMapPoint(targetCenterPos, this.ScreenCenterPos.Z);
+			var dp = ScreenTileToMapPoint(targetCenterPos, this.ScreenCenterPos.Z);
 
 			ZoomTo(targetTileSize);
 			ScrollTo(dp, targetTileSize);
@@ -432,7 +432,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public void Pan(Vector p)
 		{
-			var mp = this.MapCenterPos + ContentToMap(new DoubleVector3(p.X, p.Y, 0));
+			var mp = this.MapCenterPos + ScreenToMap(new DoubleVector3(p.X, p.Y, 0));
 			GoTo(mp);
 		}
 
@@ -458,7 +458,7 @@ namespace Dwarrowdelf.Client.UI
 			if (this.MapCenterPos == p)
 				return;
 
-			p = MapToContent(p);
+			p = MapToScreen(p);
 
 			var target = new System.Windows.Media.Media3D.Point3D(p.X, p.Y, p.Z);
 

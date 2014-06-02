@@ -80,25 +80,25 @@ namespace Dwarrowdelf.Client.TileControl
 				this.ScreenCenterPosChanged(this, scp, diff);
 		}
 
-		public Point ScreenTileToContentTile(Point st)
+		public Point RenderTileToScreen(Point st)
 		{
 			return st + m_contentOffset;
 		}
 
-		public Point ContentTileToScreenTile(Point mt)
+		public Point ScreenToRenderTile(Point mt)
 		{
 			return mt - m_contentOffset;
 		}
 
-		public Point ScreenPointToContentTile(Point p)
+		public Point RenderPointToScreen(Point p)
 		{
 			var st = RenderPointToRenderTile(p);
-			return ScreenTileToContentTile(st);
+			return RenderTileToScreen(st);
 		}
 
-		public Point ContentTileToScreenPoint(Point mt)
+		public Point ScreenToRenderPoint(Point mt)
 		{
-			var st = ContentTileToScreenTile(mt);
+			var st = ScreenToRenderTile(mt);
 			return RenderTileToRenderPoint(st);
 		}
 	}
