@@ -19,10 +19,6 @@
 		<TextBlock Text="{Binding ScreenTile, Converter={StaticResource conv}, FallbackValue=0.0}" />
 		<Separator />
 
-		<TextBlock>IST</TextBlock>
-		<TextBlock Text="{Binding IntScreenTile, Converter={StaticResource conv}, FallbackValue=0.0}" />
-		<Separator />
-
 		<TextBlock>MT</TextBlock>
 		<TextBlock Text="{Binding MapTile, Converter={StaticResource conv}, FallbackValue=0.0}" />
 		<Separator />

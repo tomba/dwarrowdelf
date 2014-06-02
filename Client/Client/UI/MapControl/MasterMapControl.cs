@@ -189,19 +189,16 @@ namespace Dwarrowdelf.Client.UI
 		void _UpdateHoverTileInfo()
 		{
 			Point p;
-			IntPoint2 sl;
 
 			if (!this.IsMouseOver || !m_hoverTileMouseMove)
 			{
 				p = new Point();
-				sl = new IntPoint2();
 
 				this.HoverTileView.ClearTarget();
 			}
 			else
 			{
 				p = Mouse.GetPosition(this);
-				sl = ScreenPointToIntScreenTile(p);
 				var ml = ScreenPointToMapLocation(p);
 
 				if (this.Environment != null && this.Environment.Contains(ml))
@@ -221,8 +218,7 @@ namespace Dwarrowdelf.Client.UI
 				var sp = Mouse.GetPosition(this);
 
 				data.ScreenPos = sp;
-				data.ScreenTile = ScreenPointToScreenTile(sp);
-				data.IntScreenTile = ScreenPointToIntScreenTile(sp);
+				data.ScreenTile = RenderPointToRenderTile(sp);
 				data.MapTile = ScreenPointToContentTile(sp);
 				data.MapLocation = ScreenPointToMapLocation(sp);
 				data.Update();

@@ -92,14 +92,14 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public Point ScreenPointToContentTile(Point p)
 		{
-			var st = ScreenPointToScreenTile(p);
+			var st = RenderPointToRenderTile(p);
 			return ScreenTileToContentTile(st);
 		}
 
 		public Point ContentTileToScreenPoint(Point mt)
 		{
 			var st = ContentTileToScreenTile(mt);
-			return ScreenTileToScreenPoint(st);
+			return RenderTileToRenderPoint(st);
 		}
 	}
 }

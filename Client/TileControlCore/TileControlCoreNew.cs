@@ -312,22 +312,16 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 		/**
-		 * Screen coordinate functions
+		 * Render coordinate functions
 		 */
 
-		public Point ScreenPointToScreenTile(Point p)
+		public Point RenderPointToRenderTile(Point p)
 		{
 			p -= m_renderOffset;
 			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
 		}
 
-		public IntPoint2 ScreenPointToIntScreenTile(Point p)
-		{
-			var st = ScreenPointToScreenTile(p);
-			return new IntPoint2(MyMath.Round(st.X), MyMath.Round(st.Y));
-		}
-
-		public Point ScreenTileToScreenPoint(Point t)
+		public Point RenderTileToRenderPoint(Point t)
 		{
 			var p = new Point((t.X + 0.5) * this.TileSize, (t.Y + 0.5) * this.TileSize);
 			return p + m_renderOffset;
