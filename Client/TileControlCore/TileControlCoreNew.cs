@@ -13,7 +13,8 @@ namespace Dwarrowdelf.Client.TileControl
 	public abstract class TileControlCoreNew : FrameworkElement
 	{
 		public IntSize2 GridSize { get; private set; }
-		public Point RenderOffset { get; private set; }
+
+		Vector m_renderOffset;
 
 		Size m_oldRenderSize;
 
@@ -58,7 +59,8 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 		public static readonly DependencyProperty TileSizeProperty =
-				DependencyProperty.Register("TileSize", typeof(double), typeof(TileControlCoreNew), new UIPropertyMetadata(16.0, OnTileSizeChanged, OnCoerceTileSize));
+				DependencyProperty.Register("TileSize", typeof(double), typeof(TileControlCoreNew),
+				new UIPropertyMetadata(16.0, OnTileSizeChanged, OnCoerceTileSize));
 
 		static void OnTileSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
@@ -96,17 +98,15 @@ namespace Dwarrowdelf.Client.TileControl
 			var renderOffsetX = (renderWidth - tileSize * this.GridSize.Width) / 2;
 			var renderOffsetY = (renderHeight - tileSize * this.GridSize.Height) / 2;
 
-			var vc = -m_offset * this.TileSize;
+			renderOffsetX -= m_offset.X * tileSize;
+			renderOffsetY -= m_offset.Y * tileSize;
 
-			var cx = vc.X;
-			var cy = vc.Y;
-
-			this.RenderOffset = new Point(MyMath.Round(renderOffsetX + cx), MyMath.Round(renderOffsetY + cy));
+			m_renderOffset = new Vector(MyMath.Round(renderOffsetX), MyMath.Round(renderOffsetY));
 
 			m_tileLayoutInvalid = true;
 
 			trace.TraceVerbose("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, this.GridSize, tileSize,
-				this.RenderOffset, this.GridSize);
+				m_renderOffset, this.GridSize);
 
 			InvalidateTileRender();
 		}
@@ -164,7 +164,7 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				TileSize = this.TileSize,
 				RenderGridSize = this.GridSize,
-				RenderOffset = this.RenderOffset,
+				RenderOffset = m_renderOffset,
 				TileDataInvalid = m_tileDataInvalid,
 				TileRenderInvalid = m_tileRenderInvalid,
 			};
@@ -319,7 +319,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public Point ScreenPointToScreenTile(Point p)
 		{
-			p -= new Vector(this.RenderOffset.X, this.RenderOffset.Y);
+			p -= m_renderOffset;
 			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
 		}
 
@@ -332,7 +332,7 @@ namespace Dwarrowdelf.Client.TileControl
 		public Point ScreenTileToScreenPoint(Point t)
 		{
 			var p = new Point((t.X + 0.5) * this.TileSize, (t.Y + 0.5) * this.TileSize);
-			return p + new Vector(this.RenderOffset.X, this.RenderOffset.Y);
+			return p + m_renderOffset;
 		}
 	}
 }

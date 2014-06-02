@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Client.UI
 				m_overlayGrid.Children.Add(bar);
 
 				TextBlock textBlock = new TextBlock();
-				var binding = new Binding("MapCenterPos");
+				var binding = new Binding("ScreenCenterPos");
 				binding.Source = this;
 				binding.Converter = new CoordinateValueConverter();
 				textBlock.SetBinding(TextBlock.TextProperty, binding);

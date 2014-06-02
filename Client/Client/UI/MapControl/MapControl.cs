@@ -178,7 +178,6 @@ namespace Dwarrowdelf.Client.UI
 				new IntSize3(s, MAXLEVEL));
 
 			m_scene.SetTileSize((float)tileSize);
-			m_scene.SetRenderOffset((float)this.RenderOffset.X, (float)this.RenderOffset.Y);
 		}
 
 		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileRenderContext ctx)
@@ -202,6 +201,7 @@ namespace Dwarrowdelf.Client.UI
 				m_scene.SendMapData(m_renderData.Grid, m_renderData.Width, m_renderData.Height);
 			}
 
+			m_scene.SetRenderOffset((float)ctx.RenderOffset.X, (float)ctx.RenderOffset.Y);
 			m_renderer.Render(drawingContext);
 		}
 
