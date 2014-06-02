@@ -126,14 +126,12 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			trace.TraceVerbose("ArrangeOverride({0})", arrangeBounds);
 
-			var renderSize = arrangeBounds;
-			var renderWidth = MyMath.Ceiling(renderSize.Width);
-			var renderHeight = MyMath.Ceiling(renderSize.Height);
-
 			if (m_oldRenderSize != arrangeBounds)
-				UpdateTileLayout(renderSize);
+			{
+				UpdateTileLayout(arrangeBounds);
 
-			m_oldRenderSize = arrangeBounds;
+				m_oldRenderSize = arrangeBounds;
+			}
 
 			var ret = base.ArrangeOverride(arrangeBounds);
 
