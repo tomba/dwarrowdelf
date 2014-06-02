@@ -91,17 +91,13 @@ namespace Dwarrowdelf.Client.TileControl
 			var gridSize = new IntSize2(columns, rows);
 
 			if (gridSize != this.GridSize)
+			{
 				InvalidateTileData();
 
-			this.GridSize = gridSize;
+				this.GridSize = gridSize;
+			}
 
-			var renderOffsetX = (renderWidth - tileSize * this.GridSize.Width) / 2;
-			var renderOffsetY = (renderHeight - tileSize * this.GridSize.Height) / 2;
-
-			renderOffsetX -= m_offset.X * tileSize;
-			renderOffsetY -= m_offset.Y * tileSize;
-
-			m_renderOffset = new Vector(MyMath.Round(renderOffsetX), MyMath.Round(renderOffsetY));
+			UpdateRenderOffset(renderSize, tileSize, gridSize);
 
 			m_tileLayoutInvalid = true;
 
@@ -118,8 +114,21 @@ namespace Dwarrowdelf.Client.TileControl
 			set
 			{
 				m_offset = value;
-				UpdateTileLayout(this.RenderSize);
+				trace.TraceVerbose("Offset = {0}", value);
+				UpdateRenderOffset(this.RenderSize, this.TileSize, this.GridSize);
+				InvalidateTileRender();
 			}
+		}
+
+		void UpdateRenderOffset(Size renderSize, double tileSize, IntSize2 gridSize)
+		{
+			var renderOffsetX = (MyMath.Ceiling(renderSize.Width) - tileSize * gridSize.Width) / 2;
+			var renderOffsetY = (MyMath.Ceiling(renderSize.Height) - tileSize * gridSize.Height) / 2;
+
+			renderOffsetX -= m_offset.X * tileSize;
+			renderOffsetY -= m_offset.Y * tileSize;
+
+			m_renderOffset = new Vector(MyMath.Round(renderOffsetX), MyMath.Round(renderOffsetY));
 		}
 
 		protected override Size ArrangeOverride(Size arrangeBounds)

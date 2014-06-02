@@ -37,9 +37,8 @@ namespace Dwarrowdelf.Client.UI
 		const double MINTILESIZE = 2;
 
 		bool m_isVisibilityCheckEnabled;
-		IntSize2 m_bufferSize;
+		IntSize2 m_maxBufferSize;
 		IntGrid3 m_bounds;
-		IntPoint3 m_oldCenterPos;
 
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
@@ -125,15 +124,18 @@ namespace Dwarrowdelf.Client.UI
 			var maxColumns = MyMath.Ceiling(arrangeBounds.Width / MINTILESIZE + 1) | 1;
 			var maxRows = MyMath.Ceiling(arrangeBounds.Height / MINTILESIZE + 1) | 1;
 
-			var bufferSize = new IntSize2(maxColumns, maxRows);
+			var maxBufferSize = new IntSize2(maxColumns, maxRows);
 
-			if (bufferSize != m_bufferSize)
+			if (maxBufferSize != m_maxBufferSize)
 			{
-				m_bufferSize = bufferSize;
-				m_renderData.SetMaxSize(bufferSize);
-				m_scene.SetupTileBuffer(bufferSize);
-				m_renderer.SetRenderSize(new IntSize2(MyMath.Ceiling(arrangeBounds.Width), MyMath.Ceiling(arrangeBounds.Height)));
+				m_maxBufferSize = maxBufferSize;
+				m_renderData.SetMaxSize(maxBufferSize);
+				m_scene.SetupTileBuffer(maxBufferSize);
+				InvalidateRenderViewTiles();
 			}
+
+			var renderSize = new IntSize2(MyMath.Ceiling(arrangeBounds.Width), MyMath.Ceiling(arrangeBounds.Height));
+			m_renderer.SetRenderSize(renderSize);
 
 			return base.ArrangeOverride(arrangeBounds);
 		}
@@ -149,35 +151,19 @@ namespace Dwarrowdelf.Client.UI
 			if (!m_initialized)
 				return;
 
-			//System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
-
 			if (gridSize != m_renderData.Size)
 			{
 				m_renderData.SetSize(gridSize);
+				UpdateBounds(this.MapCenterPos.ToIntPoint3(), gridSize);
 			}
+		}
 
-			var intcp = this.ScreenCenterPos.ToIntPoint3();
-
-			if (!m_renderData.Invalid)
-			{
-				var diff = intcp - m_oldCenterPos;
-
-				// We should never hit this, as the renderdata is invalid when Z changes
-				if (diff.Z != 0)
-					//throw new Exception();
-					InvalidateRenderViewTiles();
-				else
-					m_renderData.Scroll(diff.ToIntVector2());
-			}
-
-			m_oldCenterPos = intcp;
-
-			var cp = this.MapCenterPos.ToIntPoint3();
+		void UpdateBounds(IntPoint3 mapCenterPos, IntSize2 gridSize)
+		{
+			var cp = mapCenterPos;
 			var s = gridSize;
 			m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
-
-			m_scene.SetTileSize((float)tileSize);
 		}
 
 		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileRenderContext ctx)
@@ -195,21 +181,20 @@ namespace Dwarrowdelf.Client.UI
 				RenderResolver.Resolve(m_env, m_renderData, m_isVisibilityCheckEnabled,
 					baseLoc, xInc, yInc, zInc, m_symbolToggler);
 
-				if (m_renderData.Size != ctx.RenderGridSize)
-					throw new Exception();
+				Debug.Assert(m_renderData.Size == ctx.RenderGridSize);
 
 				m_scene.SendMapData(m_renderData.Grid, m_renderData.Width, m_renderData.Height);
 			}
 
+			m_scene.SetTileSize((float)ctx.TileSize);
 			m_scene.SetRenderOffset((float)ctx.RenderOffset.X, (float)ctx.RenderOffset.Y);
 			m_renderer.Render(drawingContext);
 		}
 
 		/// <summary>
 		/// Mark the all tile's datacontent as invalid.
-		/// Use when tile's visual changes from other reason than normal TileData change.
 		/// </summary>
-		public void InvalidateRenderViewTiles()
+		void InvalidateRenderViewTiles()
 		{
 			m_renderData.Invalid = true;
 			InvalidateTileData();
@@ -217,9 +202,8 @@ namespace Dwarrowdelf.Client.UI
 
 		/// <summary>
 		/// Mark the tile's datacontent as invalid.
-		/// Use when tile's visual changes from other reason than normal TileData change.
 		/// </summary>
-		public void InvalidateRenderViewTile(IntPoint3 ml)
+		void InvalidateRenderViewTile(IntPoint3 ml)
 		{
 			if (!m_bounds.Contains(ml))
 				return;
@@ -324,12 +308,20 @@ namespace Dwarrowdelf.Client.UI
 			var mcp = ScreenToMap(scp);
 			var imcp = mcp.ToIntPoint3();
 
-			var s = this.GridSize;
-			m_bounds = new IntGrid3(new IntPoint3(imcp.X - s.Width / 2, imcp.Y - s.Height / 2, imcp.Z - MAXLEVEL + 1),
-				new IntSize3(s, MAXLEVEL));
+			UpdateBounds(imcp, this.GridSize);
 
-			//if (diff.Z != 0)
-			//	InvalidateRenderViewTiles();
+			if (!diff.IsNull)
+			{
+				if (diff.Z != 0)
+				{
+					InvalidateRenderViewTiles();
+				}
+				else
+				{
+					m_renderData.Scroll(diff.ToIntVector2());
+					InvalidateTileData();
+				}
+			}
 
 			if (this.MapCenterPosChanged != null)
 				this.MapCenterPosChanged(this, mcp);

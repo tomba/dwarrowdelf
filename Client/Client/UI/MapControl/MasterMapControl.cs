@@ -506,9 +506,9 @@ namespace Dwarrowdelf.Client.UI
 			if (m_scrollVector != new IntVector2())
 			{
 				m_scrollVector = new IntVector2();
-				var cp = this.MapCenterPos;
+				var cp = this.ScreenCenterPos;
 				BeginAnimation(MapControl.ScreenCenterPosProperty, null);
-				this.MapCenterPos = cp;
+				this.ScreenCenterPos = cp;
 			}
 		}
 
