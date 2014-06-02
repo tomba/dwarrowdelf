@@ -16,27 +16,19 @@ using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using Dwarrowdelf.Client.TileControl;
 
 namespace Dwarrowdelf.Client.UI
 {
-	enum MapControlOrientation
-	{
-		XY,
-		XZ,
-		ZY,
-	}
-
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControl : TileControl.TileControlCoreNew, INotifyPropertyChanged, IDisposable
+	class MapControl : TileControlCoreMap3D, INotifyPropertyChanged, IDisposable
 	{
 		bool m_initialized;
-		DataGrid2D<TileControl.RenderTile> m_renderData;
-		TileControl.SceneHostWPF m_renderer;
-		TileControl.TileMapScene m_scene;
-
-		public MapControlOrientation Orientation { get; set; }
+		DataGrid2D<RenderTile> m_renderData;
+		SceneHostWPF m_renderer;
+		TileMapScene m_scene;
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;
@@ -54,6 +46,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public MapControl()
 		{
+			base.ScreenCenterPosChanged += MapControl_ScreenCenterPosChanged;
 		}
 
 		#region IDisposable
@@ -92,9 +85,9 @@ namespace Dwarrowdelf.Client.UI
 			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
 
-			m_renderData = new DataGrid2D<TileControl.RenderTile>();
-			m_renderer = new TileControl.SceneHostWPF();
-			m_scene = new TileControl.TileMapScene(this.Orientation == MapControlOrientation.ZY ? true : false);
+			m_renderData = new DataGrid2D<RenderTile>();
+			m_renderer = new SceneHostWPF();
+			m_scene = new TileMapScene(this.Orientation == TileControlOrientation.ZY ? true : false);
 			m_renderer.Scene = m_scene;
 
 			this.TileLayoutChanged += OnTileLayoutChanged;
@@ -165,8 +158,6 @@ namespace Dwarrowdelf.Client.UI
 
 			var intcp = this.ScreenCenterPos.ToIntPoint3();
 
-			m_contentOffset = new Vector(intcp.X - gridSize.Width / 2, intcp.Y - gridSize.Height / 2);
-
 			if (!m_renderData.Invalid)
 			{
 				var diff = intcp - m_oldCenterPos;
@@ -190,7 +181,7 @@ namespace Dwarrowdelf.Client.UI
 			m_scene.SetRenderOffset((float)this.RenderOffset.X, (float)this.RenderOffset.Y);
 		}
 
-		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileControl.TileRenderContext ctx)
+		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileRenderContext ctx)
 		{
 			if (!m_initialized)
 				return;
@@ -274,195 +265,17 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public Rect MapCubeToScreenPointRect(IntGrid3 grid)
-		{
-			var p1 = MapLocationToContentTile(grid.Corner1);
-			var p2 = MapLocationToContentTile(grid.Corner2);
-
-			var r = new Rect(p1, p2);
-			r.Inflate(0.5, 0.5);
-
-			p1 = ContentTileToScreenPoint(r.TopLeft);
-			p2 = ContentTileToScreenPoint(r.BottomRight);
-
-			return new Rect(p1, p2);
-		}
-
-		public IntPoint3 ScreenPointToMapLocation(Point p)
-		{
-			var ct = ScreenPointToContentTile(p);
-			return ContentTileToMapLocation(ct);
-		}
-
-		public IntPoint3 ScreenTileToMapLocation(Point p)
-		{
-			var ct = ScreenTileToContentTile(p);
-			return ContentTileToMapLocation(ct);
-		}
-
-		public IntPoint3 ContentTileToMapLocation(Point p)
-		{
-			return ContentTileToMapLocation(p, this.ScreenZ);
-		}
-
-		public IntPoint3 ContentTileToMapLocation(Point p, double _z)
-		{
-			int x = MyMath.Round(p.X);
-			int y = MyMath.Round(p.Y);
-			int z = MyMath.Round(_z);
-
-			switch (this.Orientation)
-			{
-				case MapControlOrientation.XY:
-					return new IntPoint3(x, y, z);
-				case MapControlOrientation.XZ:
-					return new IntPoint3(x, z, -y);
-				case MapControlOrientation.ZY:
-					return new IntPoint3(z, y, x);
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		public DoublePoint3 ContentTileToMapPoint(Point p)
-		{
-			return ContentTileToMapPoint(p, this.ScreenZ);
-		}
-
-		public DoublePoint3 ContentTileToMapPoint(Point p, double z)
-		{
-			switch (this.Orientation)
-			{
-				case MapControlOrientation.XY:
-					return new DoublePoint3(p.X, p.Y, z);
-				case MapControlOrientation.XZ:
-					return new DoublePoint3(p.X, z, -p.Y);
-				case MapControlOrientation.ZY:
-					return new DoublePoint3(z, p.Y, p.X);
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		public Point MapLocationToContentTile(IntPoint3 p)
-		{
-			int z;
-			return MapLocationToContentTile(p, out z);
-		}
-
-		public Point MapLocationToContentTile(IntPoint3 p, out int z)
-		{
-			switch (this.Orientation)
-			{
-				case MapControlOrientation.XY:
-					z = p.Z;
-					return new Point(p.X, p.Y);
-				case MapControlOrientation.XZ:
-					z = p.Y;
-					return new Point(p.X, -p.Z);
-				case MapControlOrientation.ZY:
-					z = p.X;
-					return new Point(p.Z, p.Y);
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		/// <summary>
-		/// Offset between screen based tiles and content based tiles
-		/// </summary>
-		Vector m_contentOffset;
-
-		public Point ScreenTileToContentTile(Point st)
-		{
-			return st + m_contentOffset;
-		}
-
-		public Point ContentTileToScreenTile(Point mt)
-		{
-			return mt - m_contentOffset;
-		}
-
-		public Point ScreenPointToContentTile(Point p)
-		{
-			var st = ScreenPointToScreenTile(p);
-			return ScreenTileToContentTile(st);
-		}
-
-		public Point ContentTileToScreenPoint(Point mt)
-		{
-			var st = ContentTileToScreenTile(mt);
-			return ScreenTileToScreenPoint(st);
-		}
-
-		IntPoint2 MapLocationToIntScreenTile(IntPoint3 p)
-		{
-			var ct = MapLocationToContentTile(p);
-			var st = ContentTileToScreenTile(ct);
-			return new IntPoint2(MyMath.Round(st.X), MyMath.Round(st.Y));
-		}
-
-		public DoublePoint3 MapToContent(IntPoint3 p)
-		{
-			return MapToContent(p.ToDoublePoint3());
-		}
-
-		public DoublePoint3 MapToContent(DoublePoint3 p)
-		{
-			switch (this.Orientation)
-			{
-				case MapControlOrientation.XY:
-					return p;
-				case MapControlOrientation.XZ:
-					return new DoublePoint3(p.X, -p.Z, p.Y);
-				case MapControlOrientation.ZY:
-					return new DoublePoint3(p.Z, p.Y, p.X);
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		public DoublePoint3 ContentToMap(DoublePoint3 p)
-		{
-			switch (this.Orientation)
-			{
-				case MapControlOrientation.XY:
-					return p;
-				case MapControlOrientation.XZ:
-					return new DoublePoint3(p.X, p.Z, -p.Y);
-				case MapControlOrientation.ZY:
-					return new DoublePoint3(p.Z, p.Y, p.X);
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		public DoubleVector3 ContentToMap(DoubleVector3 v)
-		{
-			switch (this.Orientation)
-			{
-				case MapControlOrientation.XY:
-					return v;
-				case MapControlOrientation.XZ:
-					return new DoubleVector3(v.X, v.Z, -v.Y);
-				case MapControlOrientation.ZY:
-					return new DoubleVector3(v.Z, v.Y, v.X);
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
 		IntVector3 XInc
 		{
 			get
 			{
 				switch (this.Orientation)
 				{
-					case MapControlOrientation.XY:
+					case TileControlOrientation.XY:
 						return new IntVector3(1, 0, 0);
-					case MapControlOrientation.XZ:
+					case TileControlOrientation.XZ:
 						return new IntVector3(1, 0, 0);
-					case MapControlOrientation.ZY:
+					case TileControlOrientation.ZY:
 						return new IntVector3(0, 0, 1);
 					default:
 						throw new NotImplementedException();
@@ -476,11 +289,11 @@ namespace Dwarrowdelf.Client.UI
 			{
 				switch (this.Orientation)
 				{
-					case MapControlOrientation.XY:
+					case TileControlOrientation.XY:
 						return new IntVector3(0, 1, 0);
-					case MapControlOrientation.XZ:
+					case TileControlOrientation.XZ:
 						return new IntVector3(0, 0, -1);
-					case MapControlOrientation.ZY:
+					case TileControlOrientation.ZY:
 						return new IntVector3(0, 1, 0);
 					default:
 						throw new NotImplementedException();
@@ -494,11 +307,11 @@ namespace Dwarrowdelf.Client.UI
 			{
 				switch (this.Orientation)
 				{
-					case MapControlOrientation.XY:
+					case TileControlOrientation.XY:
 						return new IntVector3(0, 0, 1);
-					case MapControlOrientation.XZ:
+					case TileControlOrientation.XZ:
 						return new IntVector3(0, 1, 0);
-					case MapControlOrientation.ZY:
+					case TileControlOrientation.ZY:
 						return new IntVector3(-1, 0, 0);
 					default:
 						throw new NotImplementedException();
@@ -506,71 +319,22 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public double ScreenZ
+		void MapControl_ScreenCenterPosChanged(object ob, DoublePoint3 scp, IntVector3 diff)
 		{
-			get { return this.ScreenCenterPos.Z; }
-		}
-
-		public DoublePoint3 ScreenCenterPos
-		{
-			get { return MapToContent(this.MapCenterPos); }
-			set { this.MapCenterPos = ContentToMap(value); }
-		}
-
-		public DoublePoint3 MapCenterPos
-		{
-			get { var p = (System.Windows.Media.Media3D.Point3D)GetValue(MapCenterPosProperty); return new DoublePoint3(p.X, p.Y, p.Z); }
-			set { var p = new System.Windows.Media.Media3D.Point3D(value.X, value.Y, value.Z); SetValue(MapCenterPosProperty, p); }
-		}
-
-		public static readonly DependencyProperty MapCenterPosProperty =
-			DependencyProperty.Register("MapCenterPos", typeof(System.Windows.Media.Media3D.Point3D), typeof(MapControl),
-			new PropertyMetadata(new System.Windows.Media.Media3D.Point3D(), OnMapCenterPosChanged));
-
-		static void OnMapCenterPosChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var mc = (MapControl)d;
-
-			mc.HandleMapCenterPosChange(e);
-		}
-
-		void HandleMapCenterPosChange(DependencyPropertyChangedEventArgs e)
-		{
-			var _oldVal = (System.Windows.Media.Media3D.Point3D)e.OldValue;
-			var oldmcp = new DoublePoint3(_oldVal.X, _oldVal.Y, _oldVal.Z);
-
-			var _newVal = (System.Windows.Media.Media3D.Point3D)e.NewValue;
-			var mcp = new DoublePoint3(_newVal.X, _newVal.Y, _newVal.Z);
+			var mcp = ContentToMap(scp);
 			var imcp = mcp.ToIntPoint3();
 
 			var s = this.GridSize;
 			m_bounds = new IntGrid3(new IntPoint3(imcp.X - s.Width / 2, imcp.Y - s.Height / 2, imcp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
 
-
-			var scp = MapToContent(mcp);
-			var iscp = scp.ToIntPoint3();
-
-			var oldscp = MapToContent(oldmcp);
-			var ioldscp = oldscp.ToIntPoint3();
-
-			if (ioldscp != iscp)
-			{
-				if (ioldscp.Z != iscp.Z)
-					InvalidateRenderViewTiles();
-				else
-					InvalidateTileData();
-			}
-
-			m_contentOffset = new Vector(iscp.X - this.GridSize.Width / 2,
-				iscp.Y - this.GridSize.Height / 2);
-
-			this.Offset = new Vector(scp.X - iscp.X, scp.Y - iscp.Y);
+			//if (diff.Z != 0)
+			//	InvalidateRenderViewTiles();
 
 			if (this.MapCenterPosChanged != null)
 				this.MapCenterPosChanged(this, mcp);
 
-			if (ioldscp.Z != iscp.Z)
+			if (diff.Z != 0)
 			{
 				if (this.ZChanged != null)
 					this.ZChanged(this, scp.Z);

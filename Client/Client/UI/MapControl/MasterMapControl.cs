@@ -256,7 +256,7 @@ namespace Dwarrowdelf.Client.UI
 
 			set
 			{
-				BeginAnimation(MapControl.MapCenterPosProperty, null);
+				BeginAnimation(MapControl.ScreenCenterPosProperty, null);
 				base.MapCenterPos = value;
 			}
 		}
@@ -268,7 +268,7 @@ namespace Dwarrowdelf.Client.UI
 
 			set
 			{
-				BeginAnimation(MapControl.MapCenterPosProperty, null);
+				BeginAnimation(MapControl.ScreenCenterPosProperty, null);
 				base.ScreenCenterPos = value;
 			}
 		}
@@ -462,12 +462,14 @@ namespace Dwarrowdelf.Client.UI
 			if (this.MapCenterPos == p)
 				return;
 
+			p = MapToContent(p);
+
 			var target = new System.Windows.Media.Media3D.Point3D(p.X, p.Y, p.Z);
 
 			var anim = new Point3DAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
 			if (targetTileSize.HasValue)
 				anim.EasingFunction = new MyEase(this.TileSize, targetTileSize.Value);
-			BeginAnimation(MapControl.MapCenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			BeginAnimation(MapControl.ScreenCenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		public void ScrollToDirection(IntVector2 vector)
@@ -491,7 +493,7 @@ namespace Dwarrowdelf.Client.UI
 			int m = (int)(Math.Sqrt(MAXTILESIZE / this.TileSize) * 32);
 			var v = m_scrollVector * m;
 
-			var _p3d = this.MapCenterPos + ContentToMap(new DoubleVector3(v.X, v.Y, 0));
+			var _p3d = this.ScreenCenterPos + new DoubleVector3(v.X, v.Y, 0);
 			var p3d = new System.Windows.Media.Media3D.Point3D(_p3d.X, _p3d.Y, _p3d.Z);
 
 			var anim = new Point3DAnimation(p3d, new Duration(TimeSpan.FromMilliseconds(1000)), FillBehavior.HoldEnd);
@@ -500,7 +502,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_scrollVector != new IntVector2())
 					BeginScrollToDir();
 			};
-			BeginAnimation(MapControl.MapCenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			BeginAnimation(MapControl.ScreenCenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		void StopScrollToDir()
@@ -509,7 +511,7 @@ namespace Dwarrowdelf.Client.UI
 			{
 				m_scrollVector = new IntVector2();
 				var cp = this.MapCenterPos;
-				BeginAnimation(MapControl.MapCenterPosProperty, null);
+				BeginAnimation(MapControl.ScreenCenterPosProperty, null);
 				this.MapCenterPos = cp;
 			}
 		}

@@ -112,7 +112,7 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 		Vector m_offset;
-		public Vector Offset
+		protected Vector Offset
 		{
 			get { return m_offset; }
 			set
