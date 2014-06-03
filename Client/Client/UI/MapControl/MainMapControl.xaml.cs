@@ -58,7 +58,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			m_mapList.Add(mapXY);
 			m_mapList.Add(mapXZ);
-			m_mapList.Add(mapYZ);
+			m_mapList.Add(mapZY);
 
 			foreach (var map in m_mapList)
 				map.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };

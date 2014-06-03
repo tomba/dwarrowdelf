@@ -60,7 +60,7 @@
 							 MouseClicked="OnMapMouseClicked" Orientation="XZ" />
 		<ui:MasterMapControl UseLayoutRounding="True" x:Name="mapXY" Grid.Column="0" Grid.Row="2"
 							 MouseClicked="OnMapMouseClicked" Orientation="XY" />
-		<ui:MasterMapControl UseLayoutRounding="True" x:Name="mapYZ" Grid.Column="2" Grid.Row="2"
+		<ui:MasterMapControl UseLayoutRounding="True" x:Name="mapZY" Grid.Column="2" Grid.Row="2"
 							 MouseClicked="OnMapMouseClicked" Orientation="ZY" />
 
 		<Rectangle Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" Style="{StaticResource lineStyle}" Height="1" HorizontalAlignment="Stretch" />
