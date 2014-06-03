@@ -9,6 +9,7 @@ using System.Windows.Input;
 namespace Dwarrowdelf.Client.TileControl
 {
 	public delegate void TileLayoutChangedNewDelegate(IntSize2 gridSize, double tileSize);
+	public delegate void TileSizeChangedDelegate(object ob, double tileSize);
 
 	public abstract class TileControlCoreNew : FrameworkElement
 	{
@@ -27,6 +28,8 @@ namespace Dwarrowdelf.Client.TileControl
 		/// Called before render if grid size, tilesize have changed
 		/// </summary>
 		public event TileLayoutChangedNewDelegate TileLayoutChanged;
+
+		public event TileSizeChangedDelegate TileSizeChanged;
 
 		enum DragState
 		{
@@ -69,6 +72,9 @@ namespace Dwarrowdelf.Client.TileControl
 			tc.trace.TraceVerbose("TileSize = {0}", ts);
 
 			tc.UpdateTileLayout(tc.RenderSize);
+
+			if (tc.TileSizeChanged != null)
+				tc.TileSizeChanged(tc, ts);
 		}
 
 		static object OnCoerceTileSize(DependencyObject d, Object baseValue)

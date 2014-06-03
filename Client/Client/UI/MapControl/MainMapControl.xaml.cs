@@ -65,6 +65,29 @@ namespace Dwarrowdelf.Client.UI
 
 			foreach (var map in m_mapList)
 				map.MapCenterPosChanged += map_MapCenterPosChanged;
+
+			foreach (var map in m_mapList)
+				map.TileSizeChanged += map_TileSizeChanged;
+		}
+
+		bool m_syncingTileSize;
+
+		void map_TileSizeChanged(object ob, double tileSize)
+		{
+			if (m_syncingTileSize)
+				return;
+
+			m_syncingTileSize = true;
+
+			foreach (var map in m_mapList)
+			{
+				if (map == ob)
+					continue;
+
+				map.TileSize = tileSize;
+			}
+
+			m_syncingTileSize = false;
 		}
 
 		bool m_syncingPos;
