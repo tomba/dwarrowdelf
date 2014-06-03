@@ -37,8 +37,6 @@ namespace AStarTest
 		const int MapHeight = 400;
 		const int MapDepth = 10;
 
-		int m_z;
-
 		int m_state;
 		IntPoint3 m_from, m_to;
 
@@ -87,11 +85,22 @@ namespace AStarTest
 
 			m_renderer = new Renderer(m_renderData);
 
-			this.TileLayoutChanged += OnTileArrangementChanged;
+			this.GridSizeChanged += MapControl_GridSizeChanged;
+			this.ScreenCenterPosChanged += MapControl_ScreenCenterPosChanged;
 
 			base.OnInitialized(e);
 
 			base.ScreenCenterPos = new DoublePoint3(19, 12, 0);
+		}
+
+		void MapControl_GridSizeChanged(object ob, IntSize2 gridSize)
+		{
+			m_renderData.SetGridSize(gridSize);
+		}
+
+		void MapControl_ScreenCenterPosChanged(object arg1, DoublePoint3 arg2, IntVector3 arg3)
+		{
+			UpdateCurrentTileInfo(Mouse.GetPosition(this));
 		}
 
 		void ClearMap()
@@ -99,11 +108,6 @@ namespace AStarTest
 			m_path = null;
 			m_nodes = null;
 			InvalidateTileData();
-		}
-
-		void OnTileArrangementChanged(IntSize2 gridSize, double tileSize)
-		{
-			m_renderData.SetGridSize(gridSize);
 		}
 
 		protected override void OnRenderTiles(DrawingContext drawingContext, Size renderSize, TileRenderContext ctx)
@@ -173,23 +177,6 @@ namespace AStarTest
 			}
 		}
 
-		public int Z
-		{
-			get { return m_z; }
-
-			set
-			{
-				if (m_z == value)
-					return;
-
-				m_z = value;
-				InvalidateTileData();
-				var old = this.CurrentTileInfo.Location;
-				this.CurrentTileInfo.Location = new IntPoint3(old.X, old.Y, m_z);
-				Notify("CurrentTileInfo");
-			}
-		}
-
 		void OnMouseClicked(object sender, MouseButtonEventArgs e)
 		{
 			var pos = e.GetPosition(this);
@@ -227,22 +214,19 @@ namespace AStarTest
 
 		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
-			var ct = RenderPointToScreen(p);
-			return new IntPoint3(MyMath.Round(ct.X), MyMath.Round(ct.Y), this.Z);
+			var rt = RenderPointToRenderTile(p);
+			var st3 = RenderTileToScreen3(rt);
+			return st3.ToIntPoint3();
 		}
 
-		public IntPoint3 ScreenTileToMapLocation(IntPoint2 p)
+		public IntPoint3 ScreenTileToMapLocation(IntPoint2 st)
 		{
-			var ct = RenderTileToScreen(new Point(p.X, p.Y));
-			var ml = new IntPoint3(MyMath.Round(ct.X), MyMath.Round(ct.Y), m_z);
-			return ml;
+			var p = RenderTileToScreen3(new Point(st.X, st.Y));
+			return p.ToIntPoint3();
 		}
 
-		protected override void OnMouseMove(MouseEventArgs e)
+		void UpdateCurrentTileInfo(Point pos)
 		{
-			base.OnMouseMove(e);
-
-			var pos = e.GetPosition(this);
 			var ml = ScreenPointToMapLocation(pos);
 
 			if (this.CurrentTileInfo.Location != ml)
@@ -250,9 +234,20 @@ namespace AStarTest
 				this.CurrentTileInfo.Location = ml;
 				Notify("CurrentTileInfo");
 			}
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			base.OnMouseMove(e);
+
+			var pos = e.GetPosition(this);
+
+			UpdateCurrentTileInfo(pos);
 
 			if (e.RightButton == MouseButtonState.Pressed)
 			{
+				var ml = ScreenPointToMapLocation(pos);
+
 				if (!m_map.Bounds.Contains(ml))
 				{
 					Console.Beep();

@@ -114,7 +114,7 @@ namespace AStarTest
 			}
 
 			e.Handled = true;
-			map.Z += new IntVector3(dir).Z;
+			map.ScreenCenterPos += new DoubleVector3(dir);
 		}
 
 		private void Button_Click_Test1(object sender, RoutedEventArgs e)
