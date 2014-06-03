@@ -17,43 +17,43 @@ namespace Dwarrowdelf.Client.TileControl
 	[StructLayout(LayoutKind.Sequential)]
 	public struct RenderTile
 	{
-		public RenderTileLayer Terrain;
-		public RenderTileLayer Interior;
-		public RenderTileLayer Object;
-		public RenderTileLayer Top;
+		public RenderTileLayer Layer0;
+		public RenderTileLayer Layer1;
+		public RenderTileLayer Layer2;
+		public RenderTileLayer Layer3;
 
 		uint m_packedValidAndDarkness;
 
 
 
-		const int TerrainShift = 0;
-		const int InteriorShift = 7;
-		const int ObjectShift = 14;
-		const int TopShift = 21;
+		const int Layer0Shift = 0;
+		const int Layer1Shift = 7;
+		const int Layer2Shift = 14;
+		const int Layer3Shift = 21;
 		const int ValidShift = 28;
 
-		public byte TerrainDarknessLevel
+		public byte Layer0DarknessLevel
 		{
-			get { return (byte)((m_packedValidAndDarkness >> TerrainShift) & 0x7fu); }
-			set { m_packedValidAndDarkness &= ~(0x7fu << TerrainShift); m_packedValidAndDarkness |= (value & 0x7fu) << TerrainShift; }
+			get { return (byte)((m_packedValidAndDarkness >> Layer0Shift) & 0x7fu); }
+			set { m_packedValidAndDarkness &= ~(0x7fu << Layer0Shift); m_packedValidAndDarkness |= (value & 0x7fu) << Layer0Shift; }
 		}
 
-		public byte InteriorDarknessLevel
+		public byte Layer1DarknessLevel
 		{
-			get { return (byte)((m_packedValidAndDarkness >> InteriorShift) & 0x7fu); }
-			set { m_packedValidAndDarkness &= ~(0x7fu << InteriorShift); m_packedValidAndDarkness |= (value & 0x7fu) << InteriorShift; }
+			get { return (byte)((m_packedValidAndDarkness >> Layer1Shift) & 0x7fu); }
+			set { m_packedValidAndDarkness &= ~(0x7fu << Layer1Shift); m_packedValidAndDarkness |= (value & 0x7fu) << Layer1Shift; }
 		}
 
-		public byte ObjectDarknessLevel
+		public byte Layer2DarknessLevel
 		{
-			get { return (byte)((m_packedValidAndDarkness >> ObjectShift) & 0x7fu); }
-			set { m_packedValidAndDarkness &= ~(0x7fu << ObjectShift); m_packedValidAndDarkness |= (value & 0x7fu) << ObjectShift; }
+			get { return (byte)((m_packedValidAndDarkness >> Layer2Shift) & 0x7fu); }
+			set { m_packedValidAndDarkness &= ~(0x7fu << Layer2Shift); m_packedValidAndDarkness |= (value & 0x7fu) << Layer2Shift; }
 		}
 
-		public byte TopDarknessLevel
+		public byte Layer3DarknessLevel
 		{
-			get { return (byte)((m_packedValidAndDarkness >> TopShift) & 0x7fu); }
-			set { m_packedValidAndDarkness &= ~(0x7fu << TopShift); m_packedValidAndDarkness |= (value & 0x7fu) << TopShift; }
+			get { return (byte)((m_packedValidAndDarkness >> Layer3Shift) & 0x7fu); }
+			set { m_packedValidAndDarkness &= ~(0x7fu << Layer3Shift); m_packedValidAndDarkness |= (value & 0x7fu) << Layer3Shift; }
 		}
 
 		public bool IsValid

@@ -94,50 +94,50 @@ namespace Dwarrowdelf.Client
 
 				byte darkness = GetDarknessForLevel(i + (visible ? 0 : 1));
 
-				if (tile.Top.SymbolID == SymbolID.Undefined)
+				if (tile.Layer3.SymbolID == SymbolID.Undefined)
 				{
-					GetTopTile(p, env, ref tile.Top, symbolToggler);
+					GetTopTile(p, env, ref tile.Layer3, symbolToggler);
 
-					if (tile.Top.SymbolID != SymbolID.Undefined)
-						tile.TopDarknessLevel = darkness;
+					if (tile.Layer3.SymbolID != SymbolID.Undefined)
+						tile.Layer3DarknessLevel = darkness;
 				}
 
-				if (tile.Object.SymbolID == SymbolID.Undefined)
+				if (tile.Layer2.SymbolID == SymbolID.Undefined)
 				{
-					GetObjectTile(p, env, ref tile.Object);
+					GetObjectTile(p, env, ref tile.Layer2);
 
-					if (tile.Object.SymbolID != SymbolID.Undefined)
-						tile.ObjectDarknessLevel = darkness;
+					if (tile.Layer2.SymbolID != SymbolID.Undefined)
+						tile.Layer2DarknessLevel = darkness;
 				}
 
-				if (tile.Interior.SymbolID == SymbolID.Undefined)
+				if (tile.Layer1.SymbolID == SymbolID.Undefined)
 				{
-					GetInteriorTile(p, env, ref tile.Interior, out seeThrough);
+					GetInteriorTile(p, env, ref tile.Layer1, out seeThrough);
 
-					if (tile.Interior.SymbolID != SymbolID.Undefined)
-						tile.InteriorDarknessLevel = darkness;
+					if (tile.Layer1.SymbolID != SymbolID.Undefined)
+						tile.Layer1DarknessLevel = darkness;
 
 					if (!seeThrough)
 						break;
 				}
 
-				GetTerrainTile(p, env, ref tile.Terrain, out seeThrough);
+				GetTerrainTile(p, env, ref tile.Layer0, out seeThrough);
 
-				if (tile.Terrain.SymbolID != SymbolID.Undefined)
-					tile.TerrainDarknessLevel = darkness;
+				if (tile.Layer0.SymbolID != SymbolID.Undefined)
+					tile.Layer0DarknessLevel = darkness;
 
 				if (!seeThrough)
 					break;
 			}
 
-			if (tile.ObjectDarknessLevel == 0)
-				tile.ObjectDarknessLevel = tile.TopDarknessLevel;
+			if (tile.Layer2DarknessLevel == 0)
+				tile.Layer2DarknessLevel = tile.Layer3DarknessLevel;
 
-			if (tile.InteriorDarknessLevel == 0)
-				tile.InteriorDarknessLevel = tile.ObjectDarknessLevel;
+			if (tile.Layer1DarknessLevel == 0)
+				tile.Layer1DarknessLevel = tile.Layer2DarknessLevel;
 
-			if (tile.TerrainDarknessLevel == 0)
-				tile.TerrainDarknessLevel = tile.InteriorDarknessLevel;
+			if (tile.Layer0DarknessLevel == 0)
+				tile.Layer0DarknessLevel = tile.Layer1DarknessLevel;
 		}
 
 		static void GetTerrainTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)

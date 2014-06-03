@@ -197,26 +197,26 @@ namespace TileControlD3DWinFormsTest
 
 					renderData.Grid[idx] = new RenderTile()
 					{
-						Terrain = new RenderTileLayer()
+						Layer0 = new RenderTileLayer()
 						{
 							SymbolID = s_terrainSymbols[r.Next(s_terrainSymbols.Length)],
 							Color = s_colors[r.Next(s_colors.Length)],
 							BgColor = s_colors[r.Next(s_colors.Length)],
 						},
 
-						Interior = new RenderTileLayer()
+						Layer1 = new RenderTileLayer()
 						{
 							SymbolID = s_interiorSymbols[r.Next(s_interiorSymbols.Length)],
 							Color = s_colors[r.Next(s_colors.Length)],
 						},
 
-						Object = new RenderTileLayer()
+						Layer2 = new RenderTileLayer()
 						{
 							SymbolID = s_objectSymbols[r.Next(s_objectSymbols.Length)],
 							Color = s_colors[r.Next(s_colors.Length)],
 						},
 
-						Top = new RenderTileLayer()
+						Layer3 = new RenderTileLayer()
 						{
 							SymbolID = s_topSymbols[r.Next(s_topSymbols.Length)],
 							Color = s_colors[r.Next(s_colors.Length)],
