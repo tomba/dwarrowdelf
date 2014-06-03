@@ -10,6 +10,7 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public delegate void TileLayoutChangedNewDelegate(IntSize2 gridSize, double tileSize);
 	public delegate void TileSizeChangedDelegate(object ob, double tileSize);
+	public delegate void GridSizeChangedDelegate(object ob, IntSize2 gridSize);
 
 	public abstract class TileControlCoreNew : FrameworkElement
 	{
@@ -30,6 +31,8 @@ namespace Dwarrowdelf.Client.TileControl
 		public event TileLayoutChangedNewDelegate TileLayoutChanged;
 
 		public event TileSizeChangedDelegate TileSizeChanged;
+
+		public event GridSizeChangedDelegate GridSizeChanged;
 
 		enum DragState
 		{
@@ -87,7 +90,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			var tileSize = this.TileSize;
 
-			UpdateGridSize(renderSize, tileSize);
+			bool gridSizeChanged = UpdateGridSize(renderSize, tileSize);
 
 			UpdateRenderOffset(renderSize, tileSize);
 
@@ -98,9 +101,15 @@ namespace Dwarrowdelf.Client.TileControl
 
 			if (TileLayoutChanged != null)
 				TileLayoutChanged(this.GridSize, tileSize);
+
+			if (gridSizeChanged)
+			{
+				if (this.GridSizeChanged != null)
+					this.GridSizeChanged(this, this.GridSize);
+			}
 		}
 
-		void UpdateGridSize(Size renderSize, double tileSize)
+		bool UpdateGridSize(Size renderSize, double tileSize)
 		{
 			var renderWidth = MyMath.Ceiling(renderSize.Width);
 			var renderHeight = MyMath.Ceiling(renderSize.Height);
@@ -114,6 +123,11 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				this.GridSize = newGridSize;
 				InvalidateTileData();
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
 

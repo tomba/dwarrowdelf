@@ -46,6 +46,7 @@ namespace Dwarrowdelf.Client.UI
 		public MapControl()
 		{
 			base.ScreenCenterPosChanged += MapControl_ScreenCenterPosChanged;
+			base.GridSizeChanged += MapControl_GridSizeChanged;
 		}
 
 		#region IDisposable
@@ -88,8 +89,6 @@ namespace Dwarrowdelf.Client.UI
 			m_renderer = new SceneHostWPF();
 			m_scene = new TileMapScene(this.Orientation == TileControlOrientation.ZY ? true : false);
 			m_renderer.Scene = m_scene;
-
-			this.TileLayoutChanged += OnTileLayoutChanged;
 
 			m_scene.SetTileSet(GameData.Data.TileSet);
 			GameData.Data.TileSetChanged += OnTileSetChanged;
@@ -146,7 +145,7 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTileRender();
 		}
 
-		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
+		void MapControl_GridSizeChanged(object ob, IntSize2 gridSize)
 		{
 			if (!m_initialized)
 				return;
