@@ -81,22 +81,9 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			var tileSize = this.TileSize;
 
-			var renderWidth = MyMath.Ceiling(renderSize.Width);
-			var renderHeight = MyMath.Ceiling(renderSize.Height);
+			UpdateGridSize(renderSize, tileSize);
 
-			var columns = MyMath.Ceiling(renderSize.Width / tileSize + 1) | 1;
-			var rows = MyMath.Ceiling(renderSize.Height / tileSize + 1) | 1;
-
-			var gridSize = new IntSize2(columns, rows);
-
-			if (gridSize != this.GridSize)
-			{
-				InvalidateTileData();
-
-				this.GridSize = gridSize;
-			}
-
-			UpdateRenderOffset(renderSize, tileSize, gridSize);
+			UpdateRenderOffset(renderSize, tileSize);
 
 			trace.TraceVerbose("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, this.GridSize, tileSize,
 				m_renderOffset, this.GridSize);
@@ -104,31 +91,54 @@ namespace Dwarrowdelf.Client.TileControl
 			InvalidateTileRender();
 
 			if (TileLayoutChanged != null)
-				TileLayoutChanged(gridSize, tileSize);
+				TileLayoutChanged(this.GridSize, tileSize);
 		}
 
-		Vector m_offset;
-		protected Vector Offset
+		void UpdateGridSize(Size renderSize, double tileSize)
 		{
-			get { return m_offset; }
-			set
+			var renderWidth = MyMath.Ceiling(renderSize.Width);
+			var renderHeight = MyMath.Ceiling(renderSize.Height);
+
+			var columns = MyMath.Ceiling(renderSize.Width / tileSize + 1) | 1;
+			var rows = MyMath.Ceiling(renderSize.Height / tileSize + 1) | 1;
+
+			var newGridSize = new IntSize2(columns, rows);
+
+			if (this.GridSize != newGridSize)
 			{
-				m_offset = value;
-				trace.TraceVerbose("Offset = {0}", value);
-				UpdateRenderOffset(this.RenderSize, this.TileSize, this.GridSize);
-				InvalidateTileRender();
+				this.GridSize = newGridSize;
+				InvalidateTileData();
 			}
 		}
 
-		void UpdateRenderOffset(Size renderSize, double tileSize, IntSize2 gridSize)
+		void UpdateRenderOffset(Size renderSize, double tileSize)
 		{
+			var gridSize = this.GridSize;
+
 			var renderOffsetX = (MyMath.Ceiling(renderSize.Width) - tileSize * gridSize.Width) / 2;
 			var renderOffsetY = (MyMath.Ceiling(renderSize.Height) - tileSize * gridSize.Height) / 2;
 
-			renderOffsetX -= m_offset.X * tileSize;
-			renderOffsetY -= m_offset.Y * tileSize;
+			renderOffsetX -= m_tileOffset.X * tileSize;
+			renderOffsetY -= m_tileOffset.Y * tileSize;
 
 			m_renderOffset = new Vector(MyMath.Round(renderOffsetX), MyMath.Round(renderOffsetY));
+		}
+
+		Vector m_tileOffset;
+		protected Vector TileOffset
+		{
+			get { return m_tileOffset; }
+
+			set
+			{
+				if (m_tileOffset == value)
+					return;
+
+				m_tileOffset = value;
+				trace.TraceVerbose("Offset = {0}", value);
+				UpdateRenderOffset(this.RenderSize, this.TileSize);
+				InvalidateTileRender();
+			}
 		}
 
 		protected override Size ArrangeOverride(Size arrangeBounds)

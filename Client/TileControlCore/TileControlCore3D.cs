@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_contentOffset = new Vector(iscp.X - this.GridSize.Width / 2,
 				iscp.Y - this.GridSize.Height / 2);
 
-			this.Offset = new Vector(scp.X - iscp.X, scp.Y - iscp.Y);
+			this.TileOffset = new Vector(scp.X - iscp.X, scp.Y - iscp.Y);
 
 			if (this.ScreenCenterPosChanged != null)
 				this.ScreenCenterPosChanged(this, scp, diff);
