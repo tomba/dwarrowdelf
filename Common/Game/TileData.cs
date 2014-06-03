@@ -226,5 +226,10 @@ namespace Dwarrowdelf
 				}
 			}
 		}
+
+		/// <summary>
+		/// Tile flags has Subterranean set
+		/// </summary>
+		public bool IsSubterranean { get { return (this.Flags & TileFlags.Subterranean) != 0; } }
 	}
 }
