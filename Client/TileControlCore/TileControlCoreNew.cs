@@ -18,7 +18,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 		Size m_oldRenderSize;
 
-		bool m_tileLayoutInvalid;
 		bool m_tileDataInvalid;
 		bool m_tileRenderInvalid;
 
@@ -99,12 +98,13 @@ namespace Dwarrowdelf.Client.TileControl
 
 			UpdateRenderOffset(renderSize, tileSize, gridSize);
 
-			m_tileLayoutInvalid = true;
-
 			trace.TraceVerbose("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, this.GridSize, tileSize,
 				m_renderOffset, this.GridSize);
 
 			InvalidateTileRender();
+
+			if (TileLayoutChanged != null)
+				TileLayoutChanged(gridSize, tileSize);
 		}
 
 		Vector m_offset;
@@ -159,14 +159,6 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			trace.TraceVerbose("OnRender");
 
-			var renderSize = this.RenderSize;
-
-			if (m_tileLayoutInvalid)
-			{
-				if (TileLayoutChanged != null)
-					TileLayoutChanged(this.GridSize, this.TileSize);
-			}
-
 			var ctx = new TileControl.TileRenderContext()
 			{
 				TileSize = this.TileSize,
@@ -176,9 +168,8 @@ namespace Dwarrowdelf.Client.TileControl
 				TileRenderInvalid = m_tileRenderInvalid,
 			};
 
-			OnRenderTiles(drawingContext, renderSize, ctx);
+			OnRenderTiles(drawingContext, this.RenderSize, ctx);
 
-			m_tileLayoutInvalid = false;
 			m_tileDataInvalid = false;
 			m_tileRenderInvalid = false;
 
