@@ -39,6 +39,7 @@ namespace Dwarrowdelf.Client.UI
 			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
 			m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
 			m_mapControl.ZChanged += OnZChanged;
+			m_mapControl.ScreenCenterPosChanged += OnScreenCenterPosChanged;
 
 			OnEnvironmentChanged(m_mapControl.Environment);
 		}
@@ -54,6 +55,12 @@ namespace Dwarrowdelf.Client.UI
 				((INotifyCollectionChanged)m_env.AreaElements).CollectionChanged += OnElementCollectionChanged;
 
 			UpdateElements();
+		}
+
+		void OnScreenCenterPosChanged(object arg1, DoublePoint3 arg2, IntVector3 arg3)
+		{
+			UpdateTranslateTransform();
+			UpdateScaleTransform();
 		}
 
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
