@@ -32,7 +32,6 @@ namespace Dwarrowdelf.Client.UI
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;
-		public event Action<MapControl, double> ZChanged;
 
 		const double MINTILESIZE = 2;
 
@@ -323,16 +322,10 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			if (this.MapCenterPosChanged != null)
-				this.MapCenterPosChanged(this, mcp);
-
-			if (diff.Z != 0)
-			{
-				if (this.ZChanged != null)
-					this.ZChanged(this, scp.Z);
-			}
+				this.MapCenterPosChanged(this, mcp, ScreenToMap(diff));
 		}
 
-		public event Action<MapControl, DoublePoint3> MapCenterPosChanged;
+		public event CenterPosChanged MapCenterPosChanged;
 
 		void MapChangedCallback(IntPoint3 l)
 		{

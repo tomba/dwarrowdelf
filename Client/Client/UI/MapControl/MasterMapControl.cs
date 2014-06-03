@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			base.OnInitialized(e);
 
-			this.ZChanged += OnZChanged;
+			this.ScreenCenterPosChanged += OnScreenCenterPosChanged;
 			this.EnvironmentChanged += OnEnvironmentChanged;
 			this.TileLayoutChanged += OnTileLayoutChanged;
 			this.MouseMove += OnMouseMove;
@@ -151,9 +151,10 @@ namespace Dwarrowdelf.Client.UI
 			UpdateHoverTileInfo(false);
 		}
 
-		void OnZChanged(MapControl mc, double z)
+		void OnScreenCenterPosChanged(object control, DoublePoint3 centerPos, IntVector3 diff)
 		{
-			UpdateHoverTileInfo(false);
+			if (diff.Z != 0)
+				UpdateHoverTileInfo(false);
 		}
 
 		void OnMouseLeave(object sender, MouseEventArgs e)

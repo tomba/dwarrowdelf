@@ -38,7 +38,6 @@ namespace Dwarrowdelf.Client.UI
 
 			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
 			m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
-			m_mapControl.ZChanged += OnZChanged;
 			m_mapControl.ScreenCenterPosChanged += OnScreenCenterPosChanged;
 
 			OnEnvironmentChanged(m_mapControl.Environment);
@@ -57,10 +56,25 @@ namespace Dwarrowdelf.Client.UI
 			UpdateElements();
 		}
 
-		void OnScreenCenterPosChanged(object arg1, DoublePoint3 arg2, IntVector3 arg3)
+		void OnScreenCenterPosChanged(object mc, DoublePoint3 center, IntVector3 diff)
 		{
 			UpdateTranslateTransform();
 			UpdateScaleTransform();
+
+			// XXX doesn't work with different map orientations
+
+			if (diff.Z != 0)
+			{
+				int z = MyMath.Round(center.Z);
+
+				foreach (FrameworkElement child in m_canvas.Children)
+				{
+					if (GetElementZ(child) != z)
+						child.Visibility = System.Windows.Visibility.Hidden;
+					else
+						child.Visibility = System.Windows.Visibility.Visible;
+				}
+			}
 		}
 
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
@@ -80,19 +94,6 @@ namespace Dwarrowdelf.Client.UI
 		{
 			m_scaleTransform.ScaleX = m_mapControl.TileSize / 10;
 			m_scaleTransform.ScaleY = m_mapControl.TileSize / 10;
-		}
-
-		void OnZChanged(MapControl mc, double _z)
-		{
-			int z = MyMath.Round(_z);
-
-			foreach (FrameworkElement child in m_canvas.Children)
-			{
-				if (GetElementZ(child) != z)
-					child.Visibility = System.Windows.Visibility.Hidden;
-				else
-					child.Visibility = System.Windows.Visibility.Visible;
-			}
 		}
 
 		void AddElement(IAreaElement element)

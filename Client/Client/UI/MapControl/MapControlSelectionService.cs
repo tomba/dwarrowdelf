@@ -78,7 +78,7 @@ namespace Dwarrowdelf.Client.UI
 						m_mapControl.DragAborted -= OnDragAborted;
 
 						m_mapControl.TileLayoutChanged -= OnTileLayoutChanged;
-						m_mapControl.ZChanged -= OnZChanged;
+						m_mapControl.ScreenCenterPosChanged -= OnScreenCenterPosChanged;
 
 						break;
 
@@ -101,7 +101,7 @@ namespace Dwarrowdelf.Client.UI
 						m_mapControl.DragAborted += OnDragAborted;
 
 						m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
-						m_mapControl.ZChanged += OnZChanged;
+						m_mapControl.ScreenCenterPosChanged += OnScreenCenterPosChanged;
 
 						break;
 
@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Client.UI
 			this.Selection = new MapSelection();
 		}
 
-		void OnZChanged(MapControl mc, double z)
+		void OnScreenCenterPosChanged(object control, DoublePoint3 centerPos, IntVector3 diff)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
 

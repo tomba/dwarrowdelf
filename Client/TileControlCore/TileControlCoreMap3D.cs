@@ -170,5 +170,20 @@ namespace Dwarrowdelf.Client.TileControl
 					throw new NotImplementedException();
 			}
 		}
+
+		public IntVector3 ScreenToMap(IntVector3 v)
+		{
+			switch (this.Orientation)
+			{
+				case TileControlOrientation.XY:
+					return v;
+				case TileControlOrientation.XZ:
+					return new IntVector3(v.X, v.Z, -v.Y);
+				case TileControlOrientation.ZY:
+					return new IntVector3(v.Z, v.Y, v.X);
+				default:
+					throw new NotImplementedException();
+			}
+		}
 	}
 }

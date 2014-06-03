@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Client.UI
 
 		bool m_syncingPos;
 
-		void map_MapCenterPosChanged(MapControl mc, DoublePoint3 ml)
+		void map_MapCenterPosChanged(object mc, DoublePoint3 ml, IntVector3 diff)
 		{
 			if (m_syncingPos)
 				return;

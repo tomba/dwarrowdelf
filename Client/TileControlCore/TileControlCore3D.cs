@@ -8,6 +8,8 @@ using System.Windows.Media.Media3D; // XXX remove when Point3D not used
 
 namespace Dwarrowdelf.Client.TileControl
 {
+	public delegate void CenterPosChanged(object control, DoublePoint3 centerPos, IntVector3 diff);
+
 	public abstract class TileControlCore3D : TileControlCore
 	{
 		/// <summary>
@@ -15,7 +17,7 @@ namespace Dwarrowdelf.Client.TileControl
 		/// </summary>
 		Vector m_contentOffset;
 
-		public event Action<object, DoublePoint3, IntVector3> ScreenCenterPosChanged;
+		public event CenterPosChanged ScreenCenterPosChanged;
 
 		protected TileControlCore3D()
 		{
