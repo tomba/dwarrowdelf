@@ -24,7 +24,7 @@ using Dwarrowdelf.Client.TileControl;
 
 namespace AStarTest
 {
-	class MapControl : Dwarrowdelf.Client.TileControl.TileControlCore, INotifyPropertyChanged
+	class MapControl : Dwarrowdelf.Client.TileControl.TileControlCore3D, INotifyPropertyChanged
 	{
 		public class TileInfo
 		{
@@ -91,7 +91,7 @@ namespace AStarTest
 
 			base.OnInitialized(e);
 
-			base.CenterPos = new Point(19, 12);
+			base.ScreenCenterPos = new DoublePoint3(19, 12, 0);
 		}
 
 		void ClearMap()
@@ -101,7 +101,7 @@ namespace AStarTest
 			InvalidateTileData();
 		}
 
-		void OnTileArrangementChanged(IntSize2 gridSize, double tileSize, Point centerPos)
+		void OnTileArrangementChanged(IntSize2 gridSize, double tileSize)
 		{
 			m_renderData.SetGridSize(gridSize);
 		}
@@ -227,13 +227,13 @@ namespace AStarTest
 
 		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
-			var ct = ScreenPointToContentTile(p);
+			var ct = RenderPointToScreen(p);
 			return new IntPoint3(MyMath.Round(ct.X), MyMath.Round(ct.Y), this.Z);
 		}
 
 		public IntPoint3 ScreenTileToMapLocation(IntPoint2 p)
 		{
-			var ct = ScreenTileToContentTile(new Point(p.X, p.Y));
+			var ct = RenderTileToScreen(new Point(p.X, p.Y));
 			var ml = new IntPoint3(MyMath.Round(ct.X), MyMath.Round(ct.Y), m_z);
 			return ml;
 		}
@@ -485,7 +485,7 @@ namespace AStarTest
 			m_oldDragPos = pos;
 
 			var tileOffset = v / this.TileSize;
-			this.CenterPos += tileOffset;
+			this.ScreenCenterPos += new DoubleVector3(tileOffset.X, tileOffset.Y, 0);
 		}
 
 		void OnDragAborted()

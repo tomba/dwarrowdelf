@@ -67,15 +67,14 @@ namespace AStarTest
 			return true;
 		}
 
-
 		void Window_PreKeyDown(object sender, KeyEventArgs e)
 		{
 			if (KeyIsDir(e.Key))
 			{
 				e.Handled = true;
 				Direction dir = KeyToDir(e.Key);
-				var v = new IntVector2(dir);
-				map.CenterPos += new Vector(v.X, v.Y);
+				var v = new DoubleVector3(dir);
+				map.ScreenCenterPos += v;
 			}
 			else if (e.Key == Key.Add)
 			{

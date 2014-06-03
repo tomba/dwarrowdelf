@@ -63,6 +63,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var diff = iscp - ioldscp;
 
+			if (diff.IsNull == false)
+				base.InvalidateTileData();
+
 			m_contentOffset = new Vector(iscp.X - this.GridSize.Width / 2,
 				iscp.Y - this.GridSize.Height / 2);
 
