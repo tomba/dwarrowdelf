@@ -54,7 +54,7 @@
     </Compile>
     <Compile Include="TileControlCore3D.cs" />
     <Compile Include="TileControlCoreMap3D.cs" />
-    <Compile Include="TileControlCoreNew.cs" />
+    <Compile Include="TileControlCore.cs" />
     <Compile Include="TileRenderContext.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>

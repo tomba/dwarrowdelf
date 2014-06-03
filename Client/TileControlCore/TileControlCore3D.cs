@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D; // XXX remove when Point3D not used
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public abstract class TileControlCore3D : TileControlCoreNew
+	public abstract class TileControlCore3D : TileControlCore
 	{
 		/// <summary>
 		/// Offset between screen based tiles and content based tiles

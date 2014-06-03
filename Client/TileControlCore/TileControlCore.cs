@@ -8,11 +8,11 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public delegate void TileLayoutChangedNewDelegate(IntSize2 gridSize, double tileSize);
+	public delegate void TileLayoutChangedDelegate(IntSize2 gridSize, double tileSize);
 	public delegate void TileSizeChangedDelegate(object ob, double tileSize);
 	public delegate void GridSizeChangedDelegate(object ob, IntSize2 gridSize);
 
-	public abstract class TileControlCoreNew : FrameworkElement
+	public abstract class TileControlCore : FrameworkElement
 	{
 		public IntSize2 GridSize { get; private set; }
 
@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client.TileControl
 		/// <summary>
 		/// Called before render if grid size, tilesize have changed
 		/// </summary>
-		public event TileLayoutChangedNewDelegate TileLayoutChanged;
+		public event TileLayoutChangedDelegate TileLayoutChanged;
 
 		public event TileSizeChangedDelegate TileSizeChanged;
 
@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client.TileControl
 		public event Action<Point> DragEnded;
 		public event Action DragAborted;
 
-		protected TileControlCoreNew()
+		protected TileControlCore()
 		{
 			m_dragState = DragState.None;
 
@@ -64,12 +64,12 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 		public static readonly DependencyProperty TileSizeProperty =
-				DependencyProperty.Register("TileSize", typeof(double), typeof(TileControlCoreNew),
+				DependencyProperty.Register("TileSize", typeof(double), typeof(TileControlCore),
 				new UIPropertyMetadata(16.0, OnTileSizeChanged, OnCoerceTileSize));
 
 		static void OnTileSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			var tc = (TileControlCoreNew)d;
+			var tc = (TileControlCore)d;
 			var ts = (double)e.NewValue;
 
 			tc.trace.TraceVerbose("TileSize = {0}", ts);
@@ -237,7 +237,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 		public static readonly RoutedEvent MouseClickedEvent =
-			EventManager.RegisterRoutedEvent("MouseClicked", RoutingStrategy.Bubble, typeof(MouseButtonEventHandler), typeof(TileControlCoreNew));
+			EventManager.RegisterRoutedEvent("MouseClicked", RoutingStrategy.Bubble, typeof(MouseButtonEventHandler), typeof(TileControlCore));
 
 		public event MouseButtonEventHandler MouseClicked
 		{
@@ -280,7 +280,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 					var newEvent = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left)
 					{
-						RoutedEvent = TileControlCoreNew.MouseClickedEvent
+						RoutedEvent = TileControlCore.MouseClickedEvent
 					};
 					RaiseEvent(newEvent);
 
