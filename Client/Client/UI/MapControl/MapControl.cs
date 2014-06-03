@@ -32,6 +32,7 @@ namespace Dwarrowdelf.Client.UI
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;
+		public event CenterPosChanged MapCenterPosChanged;
 
 		const double MINTILESIZE = 2;
 
@@ -44,8 +45,8 @@ namespace Dwarrowdelf.Client.UI
 
 		public MapControl()
 		{
-			base.ScreenCenterPosChanged += MapControl_ScreenCenterPosChanged;
-			base.GridSizeChanged += MapControl_GridSizeChanged;
+			base.ScreenCenterPosChanged += OnScreenCenterPosChanged;
+			base.GridSizeChanged += OnGridSizeChanged;
 		}
 
 		#region IDisposable
@@ -144,7 +145,7 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTileRender();
 		}
 
-		void MapControl_GridSizeChanged(object ob, IntSize2 gridSize)
+		void OnGridSizeChanged(object ob, IntSize2 gridSize)
 		{
 			if (!m_initialized)
 				return;
@@ -301,7 +302,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void MapControl_ScreenCenterPosChanged(object ob, DoublePoint3 scp, IntVector3 diff)
+		void OnScreenCenterPosChanged(object ob, DoublePoint3 scp, IntVector3 diff)
 		{
 			var mcp = ScreenToMap(scp);
 			var imcp = mcp.ToIntPoint3();
@@ -324,8 +325,6 @@ namespace Dwarrowdelf.Client.UI
 			if (this.MapCenterPosChanged != null)
 				this.MapCenterPosChanged(this, mcp, ScreenToMap(diff));
 		}
-
-		public event CenterPosChanged MapCenterPosChanged;
 
 		void MapChangedCallback(IntPoint3 l)
 		{
