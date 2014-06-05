@@ -58,6 +58,14 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
+		/// Clamp a double between 0 and 1
+		/// </summary>
+		public static double Clamp(double value)
+		{
+			return value > 1 ? 1 : (value < 0 ? 0 : value);
+		}
+
+		/// <summary>
 		/// 2^n
 		/// </summary>
 		public static int Pow2(int n)
@@ -156,6 +164,71 @@ namespace Dwarrowdelf
 		public static int Floor(double val)
 		{
 			return (int)val;
+		}
+
+		/// <summary>
+		/// Quadratic Bezier with control points [0, x1, 1]
+		/// </summary>
+		public static double QuadraticBezier(double x1, double t)
+		{
+			t = Clamp(t);
+
+			var b = 2 * (1 - t) * t * x1;
+			var c = t * t;
+
+			return b + c;
+		}
+
+		/// <summary>
+		/// Cubic Bezier with control points [0, x1, x2, 1]
+		/// </summary>
+		public static double CubicBezier(double x1, double x2, double t)
+		{
+			t = Clamp(t);
+
+			var b = 3 * (1 - t) * (1 - t) * t * x1;
+			var c = 3 * (1 - t) * t * t * x2;
+			var d = t * t * t;
+
+			return b + c + d;
+		}
+
+		/// <summary>
+		/// Linear Interpolation, t between 0 and 1, returns value between y0 and y1
+		/// </summary>
+		public static double LinearInterpolation(double y0, double y1, double t)
+		{
+			t = Clamp(t);
+
+			// Imprecise method which does not guarantee v = v1 when t = 1,
+			// due to floating-point arithmetic error.
+			return y0 + t * (y1 - y0);
+		}
+
+		/// <summary>
+		/// Linear Interpolation, x between x0 and x1, returns value between y0 and y1
+		/// </summary>
+		public static double LinearInterpolation(double x0, double x1, double y0, double y1, double x)
+		{
+			x = Normalize(x0, x1, x);
+			return y0 + (y1 - y0) * x;
+		}
+
+		/// <summary>
+		/// Smooth Step, x between x0 and x1, returns between 0 and 1
+		/// </summary>
+		public static double SmoothStep(double x0, double x1, double x)
+		{
+			x = Normalize(x0, x1, x);
+			return x * x * (3 - 2 * x);
+		}
+
+		/// <summary>
+		/// Scale, bias and saturate x to 0..1 range
+		/// </summary>
+		public static double Normalize(double x0, double x1, double x)
+		{
+			return Clamp((x - x0) / (x1 - x0));
 		}
 	}
 }
