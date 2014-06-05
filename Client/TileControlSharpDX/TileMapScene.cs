@@ -118,7 +118,10 @@ namespace Dwarrowdelf.Client.TileControl
 			/* Texture sampler */
 			m_sampler = new SamplerState(m_device, new SamplerStateDescription()
 			{
-				/* Use point filtering as linear filtering causes artifacts */
+				/* Use point filtering as linear and anisotropic filtering causes artifacts:
+				 * at some (uneven) zoom levels the tiles have artifacts in the edges.
+				 * Sampling goes over limits?
+				 */
 				Filter = Filter.MinMagMipPoint,
 				AddressU = TextureAddressMode.Wrap,
 				AddressV = TextureAddressMode.Wrap,
