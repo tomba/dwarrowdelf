@@ -86,6 +86,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			m_renderData = new DataGrid2D<RenderTile>();
+			m_renderData.SetMaxSize(new IntSize2(1, 1));
 			m_renderer = new SceneHostWPF();
 			m_scene = new TileMapScene(this.Orientation == TileControlOrientation.ZY ? true : false);
 			m_renderer.Scene = m_scene;
