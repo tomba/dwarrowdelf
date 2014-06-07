@@ -82,23 +82,51 @@ namespace TileControlD3DWinFormsTest
 				tileDataInvalid = true;
 			};
 
+			float xoffset = 0;
+			float yoffset = 0;
+
 			form.KeyPress += (s, e) =>
 			{
+				const float move = 1f;
+				const float zoom = 1.333f;
+
 				float ts = tilesize;
 
-				if (e.KeyChar == '+')
-					ts += 2;
-				else if (e.KeyChar == '-')
-					ts -= 2;
+				switch (e.KeyChar)
+				{
+					case '+':
+						ts += zoom;
+						break;
+
+					case '-':
+						ts -= zoom;
+						break;
+
+					case 'a':
+						xoffset += move;
+						break;
+
+					case 'd':
+						xoffset -= move;
+						break;
+
+					case 'w':
+						yoffset += move;
+						break;
+
+					case 's':
+						yoffset -= move;
+						break;
+
+					default:
+						return;
+				}
 
 				if (ts < 2)
 					ts = 2;
 
 				if (ts > 512)
 					ts = 512;
-
-				if (tilesize == ts)
-					return;
 
 				tilesize = ts;
 
@@ -163,7 +191,7 @@ namespace TileControlD3DWinFormsTest
 				int offsetX = MyMath.Ceiling((renderSize.Width - renderData.Size.Width * tilesize) / 2);
 				int offsetY = MyMath.Ceiling((renderSize.Height - renderData.Size.Height * tilesize) / 2);
 
-				scene.SetRenderOffset(offsetX, offsetY);
+				scene.SetRenderOffset(offsetX + (xoffset % tilesize), offsetY + (yoffset % tilesize));
 
 				if (tileDataInvalid)
 				{
@@ -194,7 +222,7 @@ namespace TileControlD3DWinFormsTest
 		static void RecreateRenderData(DataGrid2D<RenderTile> renderData, ArrayGrid2D<RenderTile> mapData)
 		{
 			var xo = mapData.Width / 2 - renderData.Width / 2;
-			var yo = mapData.Height / 2 - renderData.Height/ 2;
+			var yo = mapData.Height / 2 - renderData.Height / 2;
 
 			for (int y = 0; y < renderData.Height; ++y)
 			{
