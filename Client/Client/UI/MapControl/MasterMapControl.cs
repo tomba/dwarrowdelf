@@ -60,6 +60,21 @@ namespace Dwarrowdelf.Client.UI
 			this.SelectionTileAreaView = new TileAreaView();
 
 			m_keyHandler = new KeyHandler(this);
+
+			this.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			/* for testing */
+			if (e.Key == Key.D1)
+				ScrollTo(new DoublePoint3(0, 0, this.MapCenterPos.Z));
+			else if (e.Key == Key.D2)
+				ScrollTo(new DoublePoint3(this.Environment.Size.Width - 1, 0, this.MapCenterPos.Z));
+			else if (e.Key == Key.D3)
+				ScrollTo(new DoublePoint3(this.Environment.Size.Width - 1, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
+			else if (e.Key == Key.D4)
+				ScrollTo(new DoublePoint3(0, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
 		}
 
 		VisualCollection m_vc;
