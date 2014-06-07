@@ -57,33 +57,25 @@ namespace Dwarrowdelf.Client.TileControl
 			this.MinWidth = 64;
 		}
 
+		double m_tileSize = 16.0;
 		public double TileSize
 		{
-			get { return (double)GetValue(TileSizeProperty); }
-			set { SetValue(TileSizeProperty, value); }
-		}
+			get { return m_tileSize; }
 
-		public static readonly DependencyProperty TileSizeProperty =
-				DependencyProperty.Register("TileSize", typeof(double), typeof(TileControlCore),
-				new UIPropertyMetadata(16.0, OnTileSizeChanged, OnCoerceTileSize));
+			set
+			{
+				if (value == m_tileSize)
+					return;
 
-		static void OnTileSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var tc = (TileControlCore)d;
-			var ts = (double)e.NewValue;
+				trace.TraceVerbose("TileSize = {0}", value);
 
-			tc.trace.TraceVerbose("TileSize = {0}", ts);
+				m_tileSize = Math.Max(value, 1);
 
-			tc.UpdateTileLayout(tc.RenderSize);
+				UpdateTileLayout(this.RenderSize);
 
-			if (tc.TileSizeChanged != null)
-				tc.TileSizeChanged(tc, ts);
-		}
-
-		static object OnCoerceTileSize(DependencyObject d, Object baseValue)
-		{
-			var ts = (double)baseValue;
-			return Math.Max(ts, 1);
+				if (this.TileSizeChanged != null)
+					this.TileSizeChanged(this, value);
+			}
 		}
 
 		void UpdateTileLayout(Size renderSize)

@@ -33,10 +33,12 @@ namespace Dwarrowdelf.Client.UI
 		Canvas m_selectionCanvas;
 		Canvas m_elementCanvas;
 
-		const int ANIM_TIME_MS = 200;
+		const double ANIM_TIME = 0.2;
 
 		double? m_targetTileSize;
-		IntVector2 m_scrollVector;
+
+		AnimBase<DoublePoint3> m_scrollAnim;
+		AnimBase<double> m_cameraZAnim;
 
 		MapControlToolTipService m_toolTipService;
 		MapControlSelectionService m_selectionService;
@@ -64,6 +66,19 @@ namespace Dwarrowdelf.Client.UI
 			this.KeyDown += OnKeyDown;
 		}
 
+		double TileSizeToCameraZ(double tileSize)
+		{
+			return MAXTILESIZE * MIN_CAMERA_Z / tileSize;
+		}
+
+		double CameraZToTileSize(double cameraZ)
+		{
+			return MAXTILESIZE * MIN_CAMERA_Z / cameraZ;
+		}
+
+		const double MIN_CAMERA_Z = 4;
+		const double MAX_CAMERA_Z = MIN_CAMERA_Z / (MINTILESIZE / MAXTILESIZE);
+
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
 			/* for testing */
@@ -75,6 +90,99 @@ namespace Dwarrowdelf.Client.UI
 				ScrollTo(new DoublePoint3(this.Environment.Size.Width - 1, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
 			else if (e.Key == Key.D4)
 				ScrollTo(new DoublePoint3(0, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
+			else if (e.Key == Key.D5)
+				ScrollTo(new DoublePoint3(this.Environment.Size.Width / 2, this.Environment.Size.Height / 2, this.MapCenterPos.Z));
+		}
+
+		bool m_renderingRegistered;
+
+		void SetScrollAnim(AnimBase<DoublePoint3> anim)
+		{
+			if (!m_renderingRegistered)
+			{
+				CompositionTarget.Rendering += CompositionTarget_Rendering;
+				m_renderingRegistered = true;
+			}
+
+			m_scrollAnim = anim;
+		}
+
+		void SetCameraAnim(AnimBase<double> anim)
+		{
+			if (!m_renderingRegistered)
+			{
+				CompositionTarget.Rendering += CompositionTarget_Rendering;
+				m_renderingRegistered = true;
+			}
+
+			m_cameraZAnim = anim;
+		}
+
+		TimeSpan m_lastRender;
+
+		void CompositionTarget_Rendering(object sender, EventArgs e)
+		{
+			var args = (RenderingEventArgs)e;
+
+			if (args.RenderingTime == m_lastRender)
+				return;
+
+			var diff = args.RenderingTime - m_lastRender;
+
+			/*
+			// Skip every other frame
+			if (diff.TotalMilliseconds < 20)
+				return;
+			*/
+
+			m_lastRender = args.RenderingTime;
+			var now = args.RenderingTime;
+
+			if (m_scrollAnim != null)
+			{
+				var anim = m_scrollAnim;
+
+				if (anim.Initialized == false)
+					anim.Init(now);
+
+				var p = anim.GetValue(now);
+
+				this.ScreenCenterPos = p;
+
+				if (anim.Finished(now))
+					m_scrollAnim = null;
+			}
+
+			if (m_cameraZAnim != null)
+			{
+				var anim = m_cameraZAnim;
+
+				if (anim.Initialized == false)
+					anim.Init(now);
+
+				var z = anim.GetValue(now);
+
+				this.TileSize = CameraZToTileSize(z);
+
+				if (anim.Finished(now))
+					m_cameraZAnim = null;
+			}
+
+			if (m_scrollAnim == null && m_cameraZAnim == null)
+			{
+				CompositionTarget.Rendering -= CompositionTarget_Rendering;
+				m_renderingRegistered = false;
+			}
+		}
+
+		public void Zoom(double zoom)
+		{
+			zoom *= 60;
+
+			if (zoom == 0)
+				m_cameraZAnim = null;
+			else
+				SetCameraAnim(new Continuous1DAnim(this) { Zoom = zoom });
 		}
 
 		VisualCollection m_vc;
@@ -246,45 +354,6 @@ namespace Dwarrowdelf.Client.UI
 		public int Columns { get { return this.GridSize.Width; } }
 		public int Rows { get { return this.GridSize.Height; } }
 
-		// Override the TileSize property, so that we can stop the animation
-		public new double TileSize
-		{
-			get { return base.TileSize; }
-
-			set
-			{
-				m_targetTileSize = null;
-				BeginAnimation(MapControl.TileSizeProperty, null);
-
-				value = MyMath.Clamp(value, MAXTILESIZE, MINTILESIZE);
-				base.TileSize = value;
-			}
-		}
-
-		// Override the MapCenterPos property, so that we can stop the animation
-		public new DoublePoint3 MapCenterPos
-		{
-			get { return base.MapCenterPos; }
-
-			set
-			{
-				BeginAnimation(MapControl.ScreenCenterPosProperty, null);
-				base.MapCenterPos = value;
-			}
-		}
-
-		// Override the ScreenCenterPos property, so that we can stop the animation
-		public new DoublePoint3 ScreenCenterPos
-		{
-			get { return base.ScreenCenterPos; }
-
-			set
-			{
-				BeginAnimation(MapControl.ScreenCenterPosProperty, null);
-				base.ScreenCenterPos = value;
-			}
-		}
-
 		public void ZoomIn()
 		{
 			var ts = m_targetTileSize ?? this.TileSize;
@@ -303,10 +372,12 @@ namespace Dwarrowdelf.Client.UI
 		{
 			tileSize = MyMath.Clamp(tileSize, MAXTILESIZE, MINTILESIZE);
 
+			if (tileSize == this.TileSize)
+				return;
+
 			m_targetTileSize = tileSize;
 
-			var anim = new DoubleAnimation(tileSize, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
-			BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			SetCameraAnim(new Linear1DAnim(TileSizeToCameraZ(this.TileSize), TileSizeToCameraZ(tileSize), ANIM_TIME));
 		}
 
 		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
@@ -329,71 +400,49 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			// Zoom so that the position under the mouse stays under the mouse
-
-			var origTileSize = m_targetTileSize ?? this.TileSize;
-
-			double targetTileSize = origTileSize;
-
-			if (e.Delta > 0)
-				targetTileSize *= 2;
-			else
-				targetTileSize /= 2;
-
-			targetTileSize = MyMath.Clamp(targetTileSize, MAXTILESIZE, MINTILESIZE);
-
-			if (targetTileSize == origTileSize)
-				return;
-
 			var p = e.GetPosition(this);
-
-			Vector v = p - new Point(this.ActualWidth / 2, this.ActualHeight / 2);
-			v /= targetTileSize;
-
-			var ct = RenderPointToScreen(p);
-			var targetCenterPos = ct - v;
-
-			var dp = ScreenTileToMapPoint(targetCenterPos, this.ScreenCenterPos.Z);
-
-			ZoomTo(targetTileSize);
-			ScrollTo(dp, targetTileSize);
-
-			//Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
+			ZoomToMouse(p, e.Delta);
 		}
 
 		/// <summary>
-		/// Easing function to adjust map centerpos according to the tilesize change
+		/// Zoom so that the same map position stays under the given screen position
 		/// </summary>
-		sealed class MyEase : EasingFunctionBase
+		void ZoomToMouse(Point p, int delta)
 		{
-			double t0;
-			double tn;
+			p = RenderPointToScreen(p);
 
-			public MyEase(double tileSizeStart, double tileSizeEnd)
-			{
-				t0 = tileSizeStart;
-				tn = tileSizeEnd;
-			}
+			double currentCameraZ = TileSizeToCameraZ(this.TileSize);
+			double destinationCameraZ = currentCameraZ;
 
-			protected override double EaseInCore(double normalizedTime)
-			{
-				if (t0 == tn)
-					return normalizedTime;
+			var oldAnim = m_cameraZAnim as Linear1DAnim;
+			if (oldAnim != null)
+				destinationCameraZ = oldAnim.Destination;
 
-				normalizedTime = 1.0 - normalizedTime;
+			if (delta > 0)
+				destinationCameraZ /= 2;
+			else
+				destinationCameraZ *= 2;
 
-				double left = 1.0 / t0 - 1.0 / tn;
-				double right = 1.0 / t0 - 1.0 / (t0 + (tn - t0) * normalizedTime);
+			destinationCameraZ = MyMath.Clamp(destinationCameraZ, MAX_CAMERA_Z, MIN_CAMERA_Z);
 
-				double res = right / left;
+			if (destinationCameraZ == currentCameraZ)
+				return;
 
-				return 1.0 - res;
-			}
+			var src = new DoublePoint3(this.ScreenCenterPos.X, this.ScreenCenterPos.Y, currentCameraZ);
+			var dst = new DoublePoint3(p.X, p.Y, 0);
 
-			protected override Freezable CreateInstanceCore()
-			{
-				return new MyEase(t0, tn);
-			}
+			// Vector from eye to the surface
+			var v = dst - src;
+
+			// Vector from eye to the targetZ level
+			v *= (currentCameraZ - destinationCameraZ) / currentCameraZ;
+
+			var scrollDestination = new DoublePoint3(src.X + v.X, src.Y + v.Y, this.ScreenCenterPos.Z);
+
+			var duration = ANIM_TIME;
+
+			SetScrollAnim(new Linear3DAnim(this.ScreenCenterPos, scrollDestination, duration));
+			SetCameraAnim(new Linear1DAnim(currentCameraZ, destinationCameraZ, duration));
 		}
 
 		public MapSelectionMode SelectionMode
@@ -442,7 +491,8 @@ namespace Dwarrowdelf.Client.UI
 		protected override void OnLostMouseCapture(MouseEventArgs e)
 		{
 			m_toolTipService.IsToolTipEnabled = true;
-			StopScrollToDir();
+			m_scrollAnim = null;
+			m_cameraZAnim = null;
 			base.OnLostMouseCapture(e);
 		}
 
@@ -467,65 +517,46 @@ namespace Dwarrowdelf.Client.UI
 			ScrollTo(p.ToDoublePoint3());
 		}
 
-		void ScrollTo(DoublePoint3 p, double? targetTileSize = null)
+		void ScrollTo(DoublePoint3 p)
 		{
-			StopScrollToDir();
+			//StopScrollToDir();
 
 			if (this.MapCenterPos == p)
 				return;
 
-			p = MapToScreen(p);
+			var src = this.ScreenCenterPos;
+			var dst = MapToScreen(p);
+			var v = dst - src;
+			var duration = MyMath.LinearInterpolation(4, 128, 0.1, 2, v.Length);
 
-			var target = new System.Windows.Media.Media3D.Point3D(p.X, p.Y, p.Z);
+			SetScrollAnim(new Linear3DAnim(src, dst, duration));
 
-			var anim = new Point3DAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
-			if (targetTileSize.HasValue)
-				anim.EasingFunction = new MyEase(this.TileSize, targetTileSize.Value);
-			BeginAnimation(MapControl.ScreenCenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			var currentCameraZ = TileSizeToCameraZ(this.TileSize);
+
+			var m = MyMath.LinearInterpolation(4, 128, 1, 8, v.Length);
+			var maxZ = Math.Min(MAX_CAMERA_Z, currentCameraZ * m);
+
+			SetCameraAnim(new Pow1DAnim(currentCameraZ, maxZ, duration));
 		}
 
 		public void ScrollToDirection(IntVector2 vector)
 		{
-			if (vector == m_scrollVector)
+			if (vector.IsNull)
+			{
+				m_scrollAnim = null;
 				return;
-
-			if (vector == new IntVector2())
-			{
-				StopScrollToDir();
 			}
-			else
+
+			var v = new DoubleVector3(vector.X, vector.Y, 0);
+
+			var anim = m_scrollAnim as Continuous3DAnim;
+			if (anim == null)
 			{
-				m_scrollVector = vector;
-				BeginScrollToDir();
+				anim = new Continuous3DAnim(this);
+				SetScrollAnim(anim);
 			}
-		}
 
-		void BeginScrollToDir()
-		{
-			int m = (int)(Math.Sqrt(MAXTILESIZE / this.TileSize) * 32);
-			var v = m_scrollVector * m;
-
-			var _p3d = this.ScreenCenterPos + new DoubleVector3(v.X, v.Y, 0);
-			var p3d = new System.Windows.Media.Media3D.Point3D(_p3d.X, _p3d.Y, _p3d.Z);
-
-			var anim = new Point3DAnimation(p3d, new Duration(TimeSpan.FromMilliseconds(1000)), FillBehavior.HoldEnd);
-			anim.Completed += (o, args) =>
-			{
-				if (m_scrollVector != new IntVector2())
-					BeginScrollToDir();
-			};
-			BeginAnimation(MapControl.ScreenCenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
-		}
-
-		void StopScrollToDir()
-		{
-			if (m_scrollVector != new IntVector2())
-			{
-				m_scrollVector = new IntVector2();
-				var cp = this.ScreenCenterPos;
-				BeginAnimation(MapControl.ScreenCenterPosProperty, null);
-				this.ScreenCenterPos = cp;
-			}
+			anim.Direction = v;
 		}
 
 		string m_tileSet = "Char";
@@ -562,6 +593,203 @@ namespace Dwarrowdelf.Client.UI
 
 				Notify("TileSet");
 				 */
+			}
+		}
+
+		abstract class AnimBase<T>
+		{
+			public TimeSpan StartTime { get; private set; }
+			public bool Initialized { get; private set; }
+
+			protected AnimBase()
+			{
+			}
+
+			public void Init(TimeSpan startTime)
+			{
+				this.StartTime = startTime;
+				this.Initialized = true;
+			}
+
+			public virtual bool Finished(TimeSpan now)
+			{
+				return false;
+			}
+
+			public abstract T GetValue(TimeSpan now);
+		}
+
+		class Continuous1DAnim : AnimBase<double>
+		{
+			public double Zoom { get; set; }
+			MasterMapControl m_mapControl;
+			TimeSpan m_last;
+
+			public Continuous1DAnim(MasterMapControl mapControl)
+			{
+				m_mapControl = mapControl;
+			}
+
+			public override double GetValue(TimeSpan now)
+			{
+				double t;
+
+				if (m_last.Ticks == 0)
+					t = 1.0 / 60;
+				else
+					t = (now - m_last).TotalSeconds;
+
+				m_last = now;
+
+				var v = this.Zoom;
+
+				v *= t;
+
+				var z = m_mapControl.TileSizeToCameraZ(m_mapControl.TileSize) - v;
+				z = MyMath.Clamp(z, MAX_CAMERA_Z, MIN_CAMERA_Z);
+
+				return z;
+			}
+		}
+
+		class Continuous3DAnim : AnimBase<DoublePoint3>
+		{
+			public DoubleVector3 Direction { get; set; }
+			MapControl m_mapControl;
+			TimeSpan m_last;
+
+			public Continuous3DAnim(MapControl mapControl)
+			{
+				m_mapControl = mapControl;
+			}
+
+			public override DoublePoint3 GetValue(TimeSpan now)
+			{
+				double t;
+
+				if (m_last.Ticks == 0)
+					t = 1.0 / 60;
+				else
+					t = (now - m_last).TotalSeconds;
+
+				m_last = now;
+
+
+				var v = this.Direction;
+#if !ALT
+				double tilesPerSec = Math.Sqrt(MAXTILESIZE / m_mapControl.TileSize) * 32;
+#elif !TILES_PER_SEC
+				double tilesPerSec = 60;
+#else // PIXELS_PER_SEC
+				const double pixPerSec = 256;
+				double tilesPerSec = pixPerSec / this.TileSize;
+#endif
+				v *= tilesPerSec;
+				v *= t;
+
+				return m_mapControl.ScreenCenterPos + v;
+			}
+		}
+
+		abstract class FinishableAnimBase<T> : AnimBase<T>
+		{
+			public double Duration { get; private set; }
+
+			protected FinishableAnimBase(double duration)
+			{
+				this.Duration = duration;
+			}
+
+			public override bool Finished(TimeSpan now)
+			{
+				var t = (now - this.StartTime).TotalSeconds / this.Duration;
+				return t >= 1;
+			}
+
+			public override T GetValue(TimeSpan now)
+			{
+				Debug.Assert(this.Initialized);
+
+				var t = (now - this.StartTime).TotalSeconds / this.Duration;
+				return GetValue(t);
+			}
+
+			protected abstract T GetValue(double t);
+		}
+
+		class Linear3DAnim : FinishableAnimBase<DoublePoint3>
+		{
+			public DoublePoint3 Source { get; private set; }
+			public DoublePoint3 Destination { get; private set; }
+
+			public Linear3DAnim(DoublePoint3 src, DoublePoint3 dst, double duration)
+				: base(duration)
+			{
+				this.Source = src;
+				this.Destination = dst;
+			}
+
+			protected override DoublePoint3 GetValue(double t)
+			{
+				if (t >= 1)
+					return this.Destination;
+
+				var v = this.Destination - this.Source;
+
+				var p = this.Source + v * t;
+
+				return p;
+			}
+		}
+
+		class Linear1DAnim : FinishableAnimBase<double>
+		{
+			public double Source { get; private set; }
+			public double Destination { get; private set; }
+
+			public Linear1DAnim(double src, double dst, double duration)
+				: base(duration)
+			{
+				this.Source = src;
+				this.Destination = dst;
+			}
+
+			protected override double GetValue(double t)
+			{
+				if (t >= 1)
+					return this.Destination;
+
+				var v = this.Destination - this.Source;
+
+				var p = this.Source + v * t;
+
+				return p;
+			}
+		}
+
+		class Pow1DAnim : FinishableAnimBase<double>
+		{
+			public double Min { get; private set; }
+			public double Max { get; private set; }
+
+			public Pow1DAnim(double min, double max, double duration)
+				: base(duration)
+			{
+				this.Min = min;
+				this.Max = max;
+			}
+
+			protected override double GetValue(double t)
+			{
+				if (t >= 1)
+					return this.Min;
+
+				// y = [0,1]
+				var y = -Math.Pow(t * 2 - 1, 2) + 1;
+
+				y = MyMath.LinearInterpolation(this.Min, this.Max, y);
+
+				return y;
 			}
 		}
 	}

@@ -33,9 +33,9 @@ namespace Dwarrowdelf.Client.UI
 				return String.Format("{0:F2}, {1:F2}", p.X, p.Y);
 			}
 
-			if (value is System.Windows.Media.Media3D.Point3D)
+			if (value is DoublePoint3)
 			{
-				var p = (System.Windows.Media.Media3D.Point3D)value;
+				var p = (DoublePoint3)value;
 				return String.Format("{0:F2}, {1:F2}, {2:F2}", p.X, p.Y, p.Z);
 			}
 

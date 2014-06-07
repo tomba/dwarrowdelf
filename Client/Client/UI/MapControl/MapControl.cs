@@ -46,7 +46,13 @@ namespace Dwarrowdelf.Client.UI
 		public MapControl()
 		{
 			base.ScreenCenterPosChanged += OnScreenCenterPosChanged;
+			this.TileSizeChanged += OnTileSizeChanged;
 			base.GridSizeChanged += OnGridSizeChanged;
+		}
+
+		void OnTileSizeChanged(object ob, double tileSize)
+		{
+			Notify("TileSize");
 		}
 
 		#region IDisposable
@@ -325,6 +331,8 @@ namespace Dwarrowdelf.Client.UI
 
 			if (this.MapCenterPosChanged != null)
 				this.MapCenterPosChanged(this, mcp, ScreenToMap(diff));
+
+			Notify("ScreenCenterPos");
 		}
 
 		void MapChangedCallback(IntPoint3 l)

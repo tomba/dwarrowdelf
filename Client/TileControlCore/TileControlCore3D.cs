@@ -36,45 +36,37 @@ namespace Dwarrowdelf.Client.TileControl
 			get { return this.ScreenCenterPos.Z; }
 		}
 
+		DoublePoint3 m_screenCenterPos;
 		public DoublePoint3 ScreenCenterPos
 		{
-			get { var p = (Point3D)GetValue(ScreenCenterPosProperty); return new DoublePoint3(p.X, p.Y, p.Z); }
-			set { var p = new Point3D(value.X, value.Y, value.Z); SetValue(ScreenCenterPosProperty, p); }
-		}
+			get { return m_screenCenterPos; }
 
-		public static readonly DependencyProperty ScreenCenterPosProperty =
-			DependencyProperty.Register("ScreenCenterPos", typeof(Point3D), typeof(TileControlCore3D),
-			new PropertyMetadata(new Point3D(), OnScreenCenterPosChanged));
+			set
+			{
+				if (m_screenCenterPos == value)
+					return;
 
-		static void OnScreenCenterPosChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var mc = (TileControlCore3D)d;
+				var oldscp = m_screenCenterPos;
+				var scp = value;
 
-			mc.HandleScreenCenterPosChange(e);
-		}
+				m_screenCenterPos = scp;
 
-		void HandleScreenCenterPosChange(DependencyPropertyChangedEventArgs e)
-		{
-			var _oldVal = (Point3D)e.OldValue;
-			var oldscp = new DoublePoint3(_oldVal.X, _oldVal.Y, _oldVal.Z);
-			var ioldscp = oldscp.ToIntPoint3();
+				var ioldscp = oldscp.ToIntPoint3();
+				var iscp = scp.ToIntPoint3();
 
-			var _newVal = (Point3D)e.NewValue;
-			var scp = new DoublePoint3(_newVal.X, _newVal.Y, _newVal.Z);
-			var iscp = scp.ToIntPoint3();
+				var diff = iscp - ioldscp;
 
-			var diff = iscp - ioldscp;
+				if (diff.IsNull == false)
+					base.InvalidateTileData();
 
-			if (diff.IsNull == false)
-				base.InvalidateTileData();
+				m_contentOffset = new Vector(iscp.X - this.GridSize.Width / 2,
+					iscp.Y - this.GridSize.Height / 2);
 
-			m_contentOffset = new Vector(iscp.X - this.GridSize.Width / 2,
-				iscp.Y - this.GridSize.Height / 2);
+				this.TileOffset = new Vector(scp.X - iscp.X, scp.Y - iscp.Y);
 
-			this.TileOffset = new Vector(scp.X - iscp.X, scp.Y - iscp.Y);
-
-			if (this.ScreenCenterPosChanged != null)
-				this.ScreenCenterPosChanged(this, scp, diff);
+				if (this.ScreenCenterPosChanged != null)
+					this.ScreenCenterPosChanged(this, scp, diff);
+			}
 		}
 
 		public Point RenderTileToScreen(Point st)

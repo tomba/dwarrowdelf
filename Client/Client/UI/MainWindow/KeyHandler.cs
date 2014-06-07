@@ -222,7 +222,13 @@ namespace Dwarrowdelf.Client.UI
 				SetScrollDirection();
 				return true;
 			}
-
+			/*
+			if (KeyIsZoom(e.Key))
+			{
+				SetZoom();
+				return true;
+			}
+			*/
 			switch (e.Key)
 			{
 				case Key.OemPeriod:
@@ -257,10 +263,15 @@ namespace Dwarrowdelf.Client.UI
 				SetScrollDirection();
 				return true;
 			}
-			else
+			/*
+			if (KeyIsZoom(e.Key))
 			{
-				return false;
+				SetZoom();
+				return true;
 			}
+			*/
+
+			return false;
 		}
 
 		bool HandleTextInputMap(TextCompositionEventArgs e)
@@ -299,12 +310,24 @@ namespace Dwarrowdelf.Client.UI
 				case Key.NumPad7:
 				case Key.NumPad8:
 				case Key.NumPad9:
-					break;
-
+					return true;
 				default:
 					return false;
 			}
-			return true;
+		}
+
+		static bool KeyIsZoom(Key key)
+		{
+			switch (key)
+			{
+				case Key.Add:
+				case Key.Subtract:
+				case Key.OemPlus:
+				case Key.OemMinus:
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		static Direction KeyToDir(Key key)
@@ -364,6 +387,18 @@ namespace Dwarrowdelf.Client.UI
 				v *= 4;
 
 			m_mapControl.ScrollToDirection(v);
+		}
+
+		void SetZoom()
+		{
+			double zoom = 0;
+
+			if (Keyboard.IsKeyDown(Key.Add) || Keyboard.IsKeyDown(Key.OemPlus))
+				zoom = 1;
+			else if (Keyboard.IsKeyDown(Key.Subtract) || Keyboard.IsKeyDown(Key.OemMinus))
+				zoom = -1;
+
+			m_mapControl.Zoom(zoom);
 		}
 	}
 }
