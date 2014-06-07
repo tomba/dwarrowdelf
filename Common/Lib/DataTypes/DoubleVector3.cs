@@ -130,6 +130,11 @@ namespace Dwarrowdelf
 			return new DoubleVector3(v.X / number, v.Y / number, v.Z / number);
 		}
 
+		public DoubleVector3 Round()
+		{
+			return new DoubleVector3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));
+		}
+
 		public IntVector3 ToIntVector3()
 		{
 			return new IntVector3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));

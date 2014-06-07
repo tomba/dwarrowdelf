@@ -77,6 +77,11 @@ namespace Dwarrowdelf
 			return left + new DoubleVector3(right);
 		}
 
+		public DoublePoint3 Round()
+		{
+			return new DoublePoint3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));
+		}
+
 		public IntPoint3 ToIntPoint3()
 		{
 			return new IntPoint3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));
