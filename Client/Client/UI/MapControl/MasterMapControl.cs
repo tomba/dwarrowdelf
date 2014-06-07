@@ -212,7 +212,7 @@ namespace Dwarrowdelf.Client.UI
 				}
 			}
 
-			if (ClientConfig.ShowMouseDebug)
+			if (this.IsMouseOver && ClientConfig.ShowMouseDebug)
 			{
 				var data = MapControlDebugData.Data;
 
