@@ -29,7 +29,10 @@ namespace TileControlD3DWinFormsTest
 			SceneHostHwnd renderer = new SceneHostHwnd(form.Handle);
 			var scene = new TileMapScene();
 			var cube = new TestScene();
-			var slist = new SceneList(new IScene[] { scene, cube });
+			var list = new IScene[] { scene
+			//	, cube
+			};
+			var slist = new SceneList(list);
 			renderer.Scene = slist;
 
 			scene.SetTileSet(tileset);
@@ -41,6 +44,9 @@ namespace TileControlD3DWinFormsTest
 			bool tileDataInvalid = true;
 
 			scene.SetTileSize(tilesize);
+
+			ArrayGrid2D<RenderTile> mapData = new ArrayGrid2D<RenderTile>(1024, 1024);
+			CreateMapData(mapData);
 
 			form.MouseWheel += (s, e) =>
 			{
@@ -69,7 +75,7 @@ namespace TileControlD3DWinFormsTest
 
 				renderData.SetSize(new IntSize2(columns, rows));
 
-				RecreateMap(renderData);
+				RecreateRenderData(renderData, mapData);
 
 				scene.SetTileSize(tilesize);
 
@@ -103,7 +109,7 @@ namespace TileControlD3DWinFormsTest
 
 				renderData.SetSize(new IntSize2(columns, rows));
 
-				RecreateMap(renderData);
+				RecreateRenderData(renderData, mapData);
 
 				scene.SetTileSize(tilesize);
 
@@ -127,7 +133,7 @@ namespace TileControlD3DWinFormsTest
 
 				renderData.SetSize(new IntSize2(columns, rows));
 
-				RecreateMap(renderData);
+				RecreateRenderData(renderData, mapData);
 
 				renderSize = size;
 
@@ -185,17 +191,40 @@ namespace TileControlD3DWinFormsTest
 		static SymbolID[] s_objectSymbols = new SymbolID[] { SymbolID.Player, SymbolID.Wolf, SymbolID.Sheep, SymbolID.Orc };
 		static SymbolID[] s_topSymbols = new SymbolID[] { SymbolID.Empty, SymbolID.Water };
 
-		static void RecreateMap(DataGrid2D<RenderTile> renderData)
+		static void RecreateRenderData(DataGrid2D<RenderTile> renderData, ArrayGrid2D<RenderTile> mapData)
 		{
+			var xo = mapData.Width / 2 - renderData.Width / 2;
+			var yo = mapData.Height / 2 - renderData.Height/ 2;
+
 			for (int y = 0; y < renderData.Height; ++y)
 			{
 				for (int x = 0; x < renderData.Width; ++x)
 				{
 					int idx = renderData.GetIdx(x, y);
 
+					int mx = x + xo;
+					int my = y + yo;
+
+					if (mx < 0 || mx >= mapData.Width || my < 0 || my >= mapData.Height)
+					{
+						renderData.Grid[idx] = new RenderTile();
+						continue;
+					}
+
+					renderData.Grid[idx] = mapData[mx, my];
+				}
+			}
+		}
+
+		static void CreateMapData(ArrayGrid2D<RenderTile> mapData)
+		{
+			for (int y = 0; y < mapData.Height; ++y)
+			{
+				for (int x = 0; x < mapData.Width; ++x)
+				{
 					var r = new MWCRandom(new IntPoint2(x, y), 123);
 
-					renderData.Grid[idx] = new RenderTile()
+					mapData[x, y] = new RenderTile()
 					{
 						Layer0 = new RenderTileLayer()
 						{
