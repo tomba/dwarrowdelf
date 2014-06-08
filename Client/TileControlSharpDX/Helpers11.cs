@@ -23,6 +23,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 	static class Helpers11
 	{
+		public const int MAX_MIPMAP_TILE_SIZE = 64;
+
 		/// <summary>
 		/// Create a Texture2D array which contains mipmapped versions of all symbol drawings
 		/// </summary>
@@ -31,7 +33,7 @@ namespace Dwarrowdelf.Client.TileControl
 			var numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
 			const int bytesPerPixel = 4;
-			int maxTileSize = 64;
+			int maxTileSize = MAX_MIPMAP_TILE_SIZE;
 			int mipLevels = 4; // 64, 32, 16, 8
 
 			var atlasTexture = new Texture2D(device, new Texture2DDescription()

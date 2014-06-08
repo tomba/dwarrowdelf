@@ -15,6 +15,7 @@ cbuffer PerFrame : register(b0)
 	float2 g_colrow;	/* columns, rows */
 	float2 g_renderOffset;
 	float g_tileSize;
+	float g_mipmapLOD;
 	bool g_rotate90;
 };
 
@@ -144,7 +145,7 @@ float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkn
 		texpos.y = 1.0f - texpos.y;
 	}
 
-	float4 c = g_tileTextures.Sample(linearSampler, float3(texpos, tileNum));
+	float4 c = g_tileTextures.SampleLevel(linearSampler, float3(texpos, tileNum), g_mipmapLOD);
 
 	if (colorNum != 0)
 	{
@@ -174,9 +175,10 @@ float4 PS( float4 pin : SV_POSITION ) : SV_Target
 	if (xy.x < 0 || xy.y < 0 || xy.x >= g_colrow.x * g_tileSize || xy.y >= g_colrow.y * g_tileSize)
 		return float4(1.0f, 0, 0, 1.0f);
 
-	float2 tilepos = floor(xy / g_tileSize);
+	float2 tilepos = xy / g_tileSize;
+	int2 itilepos = floor(tilepos);
 	
-	TileData td = g_tileBuffer[tilepos.y * g_colrow.x + tilepos.x];
+	TileData td = g_tileBuffer[itilepos.y * g_colrow.x + itilepos.x];
 
 	uint t1 = (td.tile1 >> 0) & 0xffff;
 	uint t2 = (td.tile2 >> 0) & 0xffff;
@@ -199,7 +201,7 @@ float4 PS( float4 pin : SV_POSITION ) : SV_Target
 	float d3 = ((darkness >> 14) & 0x7f) / 127.0f;
 	float d4 = ((darkness >> 21) & 0x7f) / 127.0f;
 
-	float2 texpos = xy / g_tileSize;
+	float2 texpos = frac(tilepos);
 
 	float4 c1, c2, c3, c4;
 

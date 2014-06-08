@@ -31,6 +31,7 @@ namespace Dwarrowdelf.Client.TileControl
 			public Vector2 ColRow;	/* columns, rows */
 			public Vector2 RenderOffset;
 			public float TileSize;
+			public float MipmapLOD;
 			public bool Rotate90Clockwise;
 		}
 
@@ -118,14 +119,10 @@ namespace Dwarrowdelf.Client.TileControl
 			/* Texture sampler */
 			m_sampler = new SamplerState(m_device, new SamplerStateDescription()
 			{
-				/* Use point filtering as linear and anisotropic filtering causes artifacts:
-				 * at some (uneven) zoom levels the tiles have artifacts in the edges.
-				 * Sampling goes over limits?
-				 */
-				Filter = Filter.MinMagMipPoint,
-				AddressU = TextureAddressMode.Wrap,
-				AddressV = TextureAddressMode.Wrap,
-				AddressW = TextureAddressMode.Wrap,
+				Filter = Filter.MinMagMipLinear,
+				AddressU = TextureAddressMode.Clamp,
+				AddressV = TextureAddressMode.Clamp,
+				AddressW = TextureAddressMode.Clamp,
 				BorderColor = new Color4(0),
 				ComparisonFunction = Comparison.Never,
 				MipLodBias = 0,
@@ -202,6 +199,9 @@ namespace Dwarrowdelf.Client.TileControl
 		public void SetTileSize(float tileSize)
 		{
 			m_shaderDataPerFrame.TileSize = tileSize;
+			// We calculate the mipmap lod level, as the automatic calculation causes artifacts on the edges:
+			// For some reason the smallest mipmap is blended with the edges.
+			m_shaderDataPerFrame.MipmapLOD = (float)(Math.Log(Helpers11.MAX_MIPMAP_TILE_SIZE, 2) - Math.Log(tileSize, 2));
 		}
 
 		public void SetRenderOffset(float offsetX, float offsetY)
