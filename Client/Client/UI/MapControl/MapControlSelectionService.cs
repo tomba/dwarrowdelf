@@ -177,7 +177,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var v = new IntVector2(dx, dy);
 
-			m_mapControl.ScrollToDirection(v);
+			m_mapControl.ScrollToDirection(v.ToDirection(), 0.2);
 
 			UpdateSelection(pos);
 		}

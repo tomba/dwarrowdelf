@@ -217,7 +217,7 @@ namespace Dwarrowdelf.Client.UI
 
 		bool HandleKeyDownMap(KeyEventArgs e)
 		{
-			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
+			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift || e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
 			{
 				SetScrollDirection();
 				return true;
@@ -258,7 +258,7 @@ namespace Dwarrowdelf.Client.UI
 
 		bool HandleKeyUpMap(KeyEventArgs e)
 		{
-			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
+			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift | e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
 			{
 				SetScrollDirection();
 				return true;
@@ -379,14 +379,14 @@ namespace Dwarrowdelf.Client.UI
 			else if (Keyboard.IsKeyDown(Key.Right) || Keyboard.IsKeyDown(Key.NumPad6))
 				dir |= Direction.East;
 
-			var fast = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
+			double speed = 1;
 
-			var v = new IntVector2(dir);
+			if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
+				speed = 4;
+			else if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
+				speed = 0.1;
 
-			if (fast)
-				v *= 4;
-
-			m_mapControl.ScrollToDirection(v);
+			m_mapControl.ScrollToDirection(dir, speed);
 		}
 
 		void SetZoom()

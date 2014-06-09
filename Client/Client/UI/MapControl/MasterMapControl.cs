@@ -540,15 +540,17 @@ namespace Dwarrowdelf.Client.UI
 			SetCameraAnim(new Pow1DAnim(currentCameraZ, maxZ, duration));
 		}
 
-		public void ScrollToDirection(IntVector2 vector)
+		public void ScrollToDirection(Direction dir, double speed)
 		{
-			if (vector.IsNull)
+			if (dir == Direction.None)
 			{
 				m_scrollAnim = null;
 				return;
 			}
 
-			var v = new DoubleVector3(vector.X, vector.Y, 0);
+			var v = new DoubleVector3(dir);
+
+			v *= speed;
 
 			var anim = m_scrollAnim as Continuous3DAnim;
 			if (anim == null)
