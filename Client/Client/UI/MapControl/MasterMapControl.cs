@@ -92,6 +92,8 @@ namespace Dwarrowdelf.Client.UI
 				ScrollTo(new DoublePoint3(0, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
 			else if (e.Key == Key.D5)
 				ScrollTo(new DoublePoint3(this.Environment.Size.Width / 2, this.Environment.Size.Height / 2, this.MapCenterPos.Z));
+			else if (e.Key == Key.D0)
+				SetScrollAnim(new ContinuousCircle3DAnim(this.ScreenCenterPos, 50));
 		}
 
 		bool m_renderingRegistered;
@@ -790,6 +792,28 @@ namespace Dwarrowdelf.Client.UI
 				y = MyMath.LinearInterpolation(this.Min, this.Max, y);
 
 				return y;
+			}
+		}
+
+		class ContinuousCircle3DAnim : AnimBase<DoublePoint3>
+		{
+			DoublePoint3 m_center;
+			double m_radius;
+
+			public ContinuousCircle3DAnim(DoublePoint3 center, double radius)
+			{
+				m_center = center;
+				m_radius = radius;
+			}
+
+			public override DoublePoint3 GetValue(TimeSpan now)
+			{
+				double t = (now - this.StartTime).TotalSeconds;
+
+				double x = Math.Cos(t) * m_radius;
+				double y = Math.Sin(t) * m_radius;
+
+				return new DoublePoint3(m_center.X + x, m_center.Y + y, m_center.Z);
 			}
 		}
 	}
