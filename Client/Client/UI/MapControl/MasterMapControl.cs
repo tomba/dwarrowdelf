@@ -528,13 +528,13 @@ namespace Dwarrowdelf.Client.UI
 			var src = this.ScreenCenterPos;
 			var dst = MapToScreen(p);
 			var v = dst - src;
-			var duration = MyMath.LinearInterpolation(4, 128, 0.1, 2, v.Length);
+			var duration = MyMath.LinearInterpolation(4, 256, 0.1, 2, v.Length);
 
 			SetScrollAnim(new Linear3DAnim(src, dst, duration));
 
 			var currentCameraZ = TileSizeToCameraZ(this.TileSize);
 
-			var m = MyMath.LinearInterpolation(4, 128, 1, 8, v.Length);
+			var m = MyMath.LinearInterpolation(4, 256, 1, 4, v.Length);
 			var maxZ = Math.Min(MAX_CAMERA_Z, currentCameraZ * m);
 
 			SetCameraAnim(new Pow1DAnim(currentCameraZ, maxZ, duration));
