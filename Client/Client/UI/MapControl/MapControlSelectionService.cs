@@ -194,8 +194,8 @@ namespace Dwarrowdelf.Client.UI
 
 			if (m_selecting)
 				UpdateSelection(pos);
-			else
-				UpdateSelectionRect();
+
+			UpdateSelectionRect();
 		}
 
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
