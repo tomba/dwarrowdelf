@@ -1,4 +1,6 @@
 ﻿//#define NONPARALLEL
+//#define PERF_MEASURE
+//#define RESOLV_MEASURE
 
 using System;
 using System.Collections.Generic;
@@ -22,8 +24,9 @@ namespace Dwarrowdelf.Client
 		{
 			//Debug.WriteLine("RenderView.Resolve");
 
-			//var sw = Stopwatch.StartNew();
-
+#if PERF_MEASURE
+			var sw = Stopwatch.StartNew();
+#endif
 			var columns = renderData.Width;
 			var rows = renderData.Height;
 
@@ -41,6 +44,10 @@ namespace Dwarrowdelf.Client
 			if (env == null)
 				return;
 
+#if RESOLV_MEASURE
+			int count = 0;
+#endif
+
 #if NONPARALLEL
 			for(int y = 0; y < rows; ++y)
 #else
@@ -56,6 +63,9 @@ namespace Dwarrowdelf.Client
 					if (renderData.Grid[idx].IsValid)
 						continue;
 
+#if RESOLV_MEASURE
+					count++;
+#endif
 					ResolveDetailed(out renderData.Grid[idx], env, ml, isVisibilityCheckEnabled, symbolToggler, zInc);
 				}
 			}
@@ -63,8 +73,13 @@ namespace Dwarrowdelf.Client
 );
 #endif
 
-			//sw.Stop();
-			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
+#if PERF_MEASURE
+			sw.Stop();
+			Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
+#endif
+#if RESOLV_MEASURE
+			Trace.WriteLine(String.Format("Resolved {0} tiles", count));
+#endif
 		}
 
 		static void ResolveDetailed(out RenderTile tile, EnvironmentObject env, IntPoint3 ml, bool isVisibilityCheckEnabled,
