@@ -9,5 +9,6 @@ namespace Dwarrowdelf.Server
 	{
 		public static bool DisableSaving = false;
 		public static bool IronPythonEnabled = true;
+		public static bool AllPlayersSeeAll = false;
 	}
 }
