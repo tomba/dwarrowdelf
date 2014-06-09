@@ -121,7 +121,7 @@ namespace Dwarrowdelf.Client.UI
 			if (ob == null)
 				return false;
 
-			var dir = KeyToDir(e.Key);
+			var dir = KeyHelpers.KeyToDir(e.Key);
 
 			if (dir != Direction.None)
 			{
@@ -217,19 +217,21 @@ namespace Dwarrowdelf.Client.UI
 
 		bool HandleKeyDownMap(KeyEventArgs e)
 		{
-			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift || e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+			var key = e.Key;
+
+			if (KeyHelpers.KeyIsDir(key) || KeyHelpers.KeyIsShift(key) || KeyHelpers.KeyIsControl(key))
 			{
 				SetScrollDirection();
 				return true;
 			}
 			/*
-			if (KeyIsZoom(e.Key))
+			if (KeyIsZoom(key))
 			{
 				SetZoom();
 				return true;
 			}
 			*/
-			switch (e.Key)
+			switch (key)
 			{
 				case Key.OemPeriod:
 					GameData.Data.SendProceedTurn();
@@ -258,13 +260,15 @@ namespace Dwarrowdelf.Client.UI
 
 		bool HandleKeyUpMap(KeyEventArgs e)
 		{
-			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift | e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+			var key = e.Key;
+
+			if (KeyHelpers.KeyIsDir(key) || KeyHelpers.KeyIsShift(key) || KeyHelpers.KeyIsControl(key))
 			{
 				SetScrollDirection();
 				return true;
 			}
 			/*
-			if (KeyIsZoom(e.Key))
+			if (KeyIsZoom(key))
 			{
 				SetZoom();
 				return true;
@@ -293,29 +297,6 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		static bool KeyIsDir(Key key)
-		{
-			switch (key)
-			{
-				case Key.Up:
-				case Key.Down:
-				case Key.Left:
-				case Key.Right:
-				case Key.NumPad1:
-				case Key.NumPad2:
-				case Key.NumPad3:
-				case Key.NumPad4:
-				case Key.NumPad5:
-				case Key.NumPad6:
-				case Key.NumPad7:
-				case Key.NumPad8:
-				case Key.NumPad9:
-					return true;
-				default:
-					return false;
-			}
-		}
-
 		static bool KeyIsZoom(Key key)
 		{
 			switch (key)
@@ -327,31 +308,6 @@ namespace Dwarrowdelf.Client.UI
 					return true;
 				default:
 					return false;
-			}
-		}
-
-		static Direction KeyToDir(Key key)
-		{
-			switch (key)
-			{
-				case Key.NumPad8:
-				case Key.Up:
-					return Direction.North;
-				case Key.NumPad2:
-				case Key.Down:
-					return Direction.South;
-				case Key.NumPad4:
-				case Key.Left:
-					return Direction.West;
-				case Key.NumPad6:
-				case Key.Right:
-					return Direction.East;
-
-				case Key.NumPad7: return Direction.NorthWest;
-				case Key.NumPad1: return Direction.SouthWest;
-				case Key.NumPad9: return Direction.NorthEast;
-				case Key.NumPad3: return Direction.SouthEast;
-				default: return Direction.None;
 			}
 		}
 
