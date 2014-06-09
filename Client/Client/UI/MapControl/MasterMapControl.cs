@@ -413,12 +413,11 @@ namespace Dwarrowdelf.Client.UI
 		{
 			p = RenderPointToScreen(p);
 
+			if (m_cameraZAnim != null)
+				return;
+
 			double currentCameraZ = TileSizeToCameraZ(this.TileSize);
 			double destinationCameraZ = currentCameraZ;
-
-			var oldAnim = m_cameraZAnim as Linear1DAnim;
-			if (oldAnim != null)
-				destinationCameraZ = oldAnim.Destination;
 
 			if (delta > 0)
 				destinationCameraZ /= 2;
