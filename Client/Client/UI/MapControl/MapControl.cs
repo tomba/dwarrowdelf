@@ -148,6 +148,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnTileSetChanged()
 		{
+			// XXX we should use the same D3D tileset atlas for all MapControl's with the same tileset
 			m_scene.SetTileSet(GameData.Data.TileSet);
 			InvalidateTileRender();
 		}
