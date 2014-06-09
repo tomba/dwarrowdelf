@@ -161,6 +161,7 @@ namespace Dwarrowdelf.Client.UI
 			{
 				m_renderData.SetSize(gridSize);
 				UpdateBounds(this.MapCenterPos.ToIntPoint3(), gridSize);
+				InvalidateTileData();
 			}
 		}
 

@@ -35,12 +35,15 @@ namespace Dwarrowdelf
 			if (this.Size == size)
 				return;
 
+			var oldSize = this.Size;
+
 			int len = size.Width * size.Height;
 			if (len > this.Grid.Length)
 				throw new Exception();
 
 			this.Size = size;
-			this.Invalid = true;
+
+			Scale(oldSize, size);
 		}
 
 		public int GetIdx(int x, int y)
@@ -61,6 +64,59 @@ namespace Dwarrowdelf
 		public void Clear()
 		{
 			Array.Clear(this.Grid, 0, this.Size.Width * this.Size.Height);
+		}
+
+		void Scale(IntSize2 oldSize, IntSize2 newSize)
+		{
+			if (newSize.Width <= oldSize.Width && newSize.Height <= oldSize.Height)
+			{
+				var xdiff = oldSize.Width - newSize.Width;
+				var ydiff = oldSize.Height - newSize.Height;
+
+				xdiff /= 2;
+				ydiff /= 2;
+
+				var grid = this.Grid;
+
+				for (int y = 0; y < newSize.Height; ++y)
+				{
+					Array.Copy(grid, (y + ydiff) * oldSize.Width + xdiff,
+						grid, y * newSize.Width + 0, newSize.Width);
+				}
+			}
+			else if (newSize.Width >= oldSize.Width && newSize.Height >= oldSize.Height)
+			{
+				var xdiff = oldSize.Width - newSize.Width;
+				var ydiff = oldSize.Height - newSize.Height;
+
+				xdiff /= -2;
+				ydiff /= -2;
+
+				var grid = this.Grid;
+
+				for (int y = oldSize.Height - 1; y >= 0; --y)
+				{
+					Array.Copy(grid, y * oldSize.Width + 0,
+						grid, (y + ydiff) * newSize.Width + xdiff, oldSize.Width);
+				}
+
+				// clear top rows
+				Array.Clear(grid, 0, ydiff * newSize.Width);
+
+				// clear bottom rows
+				Array.Clear(grid, (newSize.Height - ydiff) * newSize.Width, ydiff * newSize.Width);
+
+				// clear the edges
+				for (int y = ydiff; y < newSize.Height - ydiff; ++y)
+				{
+					Array.Clear(grid, y * newSize.Width, xdiff);
+					Array.Clear(grid, y * newSize.Width + newSize.Width - xdiff, xdiff);
+				}
+			}
+			else
+			{
+				this.Invalid = true;
+			}
 		}
 
 		public void Scroll(IntVector2 scrollVector)
