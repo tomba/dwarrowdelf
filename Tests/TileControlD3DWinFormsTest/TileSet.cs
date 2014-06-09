@@ -62,6 +62,11 @@ namespace TileControlD3DWinFormsTest
 
 		public int RawBitmapWidth { get { return m_rawBitmapWidth; } }
 
+		public bool HasTileSize(int tileSize)
+		{
+			return m_tileSizeMap.ContainsKey(tileSize);
+		}
+
 		public int GetTileXOffset(int tileSize)
 		{
 			int xOffset;

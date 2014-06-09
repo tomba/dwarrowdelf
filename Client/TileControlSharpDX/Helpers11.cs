@@ -17,6 +17,7 @@ namespace Dwarrowdelf.Client.TileControl
 		byte[] GetRawBitmap();
 		int RawBitmapWidth { get; }
 
+		bool HasTileSize(int tileSize);
 		int GetTileXOffset(int tileSize);
 		int GetTileYOffset(SymbolID symbolID);
 	}
@@ -34,7 +35,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			const int bytesPerPixel = 4;
 			int maxTileSize = MAX_MIPMAP_TILE_SIZE;
-			int mipLevels = 4; // 64, 32, 16, 8
+			int mipLevels = 6; // 64, 32, 16, 8, 4, 2
 
 			var atlasTexture = new Texture2D(device, new Texture2DDescription()
 			{
@@ -54,11 +55,19 @@ namespace Dwarrowdelf.Client.TileControl
 			var bmpRaw = tileSet.GetRawBitmap();
 			int bmpWidth = tileSet.RawBitmapWidth;
 
+			int autoGenMipLevel = 0;
+
 			using (var dataStream = DataStream.Create(bmpRaw, true, false))
 			{
 				for (int mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
 				{
 					int tileSize = maxTileSize >> mipLevel;
+
+					if (tileSet.HasTileSize(tileSize) == false)
+					{
+						autoGenMipLevel = mipLevel - 1;
+						break;
+					}
 
 					for (int i = 0; i < numDistinctBitmaps; ++i)
 					{
@@ -76,6 +85,9 @@ namespace Dwarrowdelf.Client.TileControl
 					}
 				}
 			}
+
+			// Generate mipmaps for the smallest tiles
+			atlasTexture.FilterTexture(device.ImmediateContext, autoGenMipLevel, FilterFlags.Triangle);
 
 			return atlasTexture;
 		}

@@ -58,6 +58,11 @@ namespace Dwarrowdelf.Client
 
 		public int RawBitmapWidth { get { return this.Atlas.PixelWidth; } }
 
+		public bool HasTileSize(int tileSize)
+		{
+			return m_tileSizeMap.ContainsKey(tileSize);
+		}
+
 		public int GetTileXOffset(int tileSize)
 		{
 			int xOffset;
