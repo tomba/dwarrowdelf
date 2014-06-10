@@ -128,6 +128,33 @@ namespace Dwarrowdelf
 				rect.Z1 <= this.Z1 && rect.Z2 >= this.Z1;
 		}
 
+		public IntGrid3 Intersect(IntGrid3 other)
+		{
+			int x1 = Math.Max(this.X, other.X);
+			int x2 = Math.Min(this.X + this.Columns, other.X + other.Columns);
+			int y1 = Math.Max(this.Y, other.Y);
+			int y2 = Math.Min(this.Y + this.Rows, other.Y + other.Rows);
+			int z1 = Math.Max(this.Z, other.Z);
+			int z2 = Math.Min(this.Z + this.Depth, other.Z + other.Depth);
+
+			if (x2 > x1 && y2 > y1 && z2 > z1)
+				return new IntGrid3(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
+
+			return new IntGrid3();
+		}
+
+		public IntGrid3 Union(IntGrid3 other)
+		{
+			int x1 = Math.Min(this.X, other.X);
+			int x2 = Math.Max(this.X + this.Columns, other.X + other.Columns);
+			int y1 = Math.Min(this.Y, other.Y);
+			int y2 = Math.Max(this.Y + this.Rows, other.Y + other.Rows);
+			int z1 = Math.Min(this.Z, other.Z);
+			int z2 = Math.Max(this.Z + this.Depth, other.Z + other.Depth);
+
+			return new IntGrid3(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
+		}
+
 		public IntGrid3 Inflate(int columns, int rows, int depth)
 		{
 			return new IntGrid3(this.X, this.Y, this.Z, this.Columns + columns, this.Rows + rows, this.Depth + depth);

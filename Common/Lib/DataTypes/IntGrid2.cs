@@ -134,6 +134,29 @@ namespace Dwarrowdelf
 			return grid.X1 <= this.X2 && grid.X2 >= this.X1 && grid.Y1 <= this.Y2 && grid.Y2 >= this.Y1;
 		}
 
+		public IntGrid2 Intersect(IntGrid2 other)
+		{
+			int x1 = Math.Max(this.X, other.X);
+			int x2 = Math.Min(this.X + this.Columns, other.X + other.Columns);
+			int y1 = Math.Max(this.Y, other.Y);
+			int y2 = Math.Min(this.Y + this.Rows, other.Y + other.Rows);
+
+			if (x2 > x1 && y2 > y1)
+				return new IntGrid2(x1, y1, x2 - x1, y2 - y1);
+
+			return new IntGrid2();
+		}
+
+		public IntGrid2 Union(IntGrid2 other)
+		{
+			int x1 = Math.Min(this.X, other.X);
+			int x2 = Math.Max(this.X + this.Columns, other.X + other.Columns);
+			int y1 = Math.Min(this.Y, other.Y);
+			int y2 = Math.Max(this.Y + this.Rows, other.Y + other.Rows);
+
+			return new IntGrid2(x1, y1, x2 - x1, y2 - y1);
+		}
+
 		public IEnumerable<IntPoint2> Range()
 		{
 			for (int y = this.Y; y < this.Y + this.Rows; ++y)
