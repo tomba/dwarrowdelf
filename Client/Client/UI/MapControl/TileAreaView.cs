@@ -11,6 +11,7 @@ namespace Dwarrowdelf.Client.UI
 	{
 		EnvironmentObject m_environment;
 		IntGrid3 m_box;
+		IntGrid3 m_adjustedBox;
 		MovableObjectCollection m_objects;
 
 		public TileAreaView()
@@ -62,6 +63,10 @@ namespace Dwarrowdelf.Client.UI
 				var old = m_box;
 
 				m_box = value;
+				if (m_box.IsNull || this.Environment == null)
+					m_adjustedBox = m_box;
+				else
+					m_adjustedBox = m_box.Intersect(new IntGrid3(this.Environment.Size));
 
 				Notify("Box");
 				NotifyTileTerrainChanges();
@@ -86,7 +91,8 @@ namespace Dwarrowdelf.Client.UI
 			if (this.Environment == null)
 				return;
 
-			var obs = m_box.Range().SelectMany(p => m_environment.GetContents(p));
+			var obs = m_adjustedBox.Range().
+				SelectMany(m_environment.GetContents);
 			foreach (var ob in obs)
 				m_objects.Add(ob);
 		}
@@ -154,7 +160,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return null;
 
-				return m_box.Range().
+				return m_adjustedBox.Range().
 					Select(p => Tuple.Create(m_environment.GetInterior(p), m_environment.GetInteriorMaterial(p))).
 					Distinct();
 			}
@@ -167,7 +173,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return null;
 
-				return m_box.Range().
+				return m_adjustedBox.Range().
 					Select(p => Tuple.Create(m_environment.GetTerrain(p), m_environment.GetTerrainMaterial(p))).
 					Distinct();
 			}
@@ -180,7 +186,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return null;
 
-				return m_box.Range().
+				return m_adjustedBox.Range().
 					Select(p => m_environment.GetWaterLevel(p)).
 					Distinct();
 			}
@@ -193,7 +199,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return null;
 
-				return m_box.Range().
+				return m_adjustedBox.Range().
 					Select(p => m_environment.GetElementAt(p)).
 					Where(b => b != null).
 					Distinct();
@@ -207,7 +213,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return TileFlags.None;
 
-				return m_box.Range()
+				return m_adjustedBox.Range()
 					.Select(p => m_environment.GetTileFlags(p))
 					.Aggregate(TileFlags.None, (f, v) => f |= v);
 			}
