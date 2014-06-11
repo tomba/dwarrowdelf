@@ -567,6 +567,48 @@ namespace Dwarrowdelf.Client.UI
 			m_scrollAnim = null;
 		}
 
+		/// <summary>
+		/// Scroll, if necessary, so that the given map position is on the screen
+		/// </summary>
+		public void KeepOnScreen(IntPoint3 p)
+		{
+			var cp = this.MapCenterPos.ToIntPoint3();
+			var s = this.GridSize;
+			var rect = new IntGrid2Z(new IntPoint2(cp.X - s.Width / 2 + 1, cp.Y - s.Height / 2 + 1),
+				new IntSize2(s.Width - 2, s.Height - 2),
+				cp.Z);
+
+			if (rect.Contains(p))
+				return;
+
+			const int amount = 4;
+
+			int xdiff, ydiff, zdiff;
+
+			if (p.X < rect.X1)
+				xdiff = p.X - rect.X1 - amount;
+			else if (p.X > rect.X2)
+				xdiff = p.X - rect.X2 + amount;
+			else
+				xdiff = 0;
+
+			if (p.Y < rect.Y1)
+				ydiff = p.Y - rect.Y1 - amount;
+			else if (p.Y > rect.Y2)
+				ydiff = p.Y - rect.Y2 + amount;
+			else
+				ydiff = 0;
+
+			if (p.Z != rect.Z)
+				zdiff = p.Z - rect.Z;
+			else
+				zdiff = 0;
+
+			var v = new IntVector3(xdiff, ydiff, zdiff);
+
+			this.MapCenterPos = (cp + v).ToDoublePoint3();
+		}
+
 		string m_tileSet = "Char";
 		public string TileSet
 		{
