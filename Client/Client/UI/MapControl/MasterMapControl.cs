@@ -562,6 +562,11 @@ namespace Dwarrowdelf.Client.UI
 			anim.Direction = v;
 		}
 
+		public void ScrollStop()
+		{
+			m_scrollAnim = null;
+		}
+
 		string m_tileSet = "Char";
 		public string TileSet
 		{

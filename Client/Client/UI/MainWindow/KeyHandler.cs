@@ -219,7 +219,15 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var key = e.Key;
 
-			if (KeyHelpers.KeyIsDir(key) || KeyHelpers.KeyIsShift(key) || KeyHelpers.KeyIsControl(key))
+			if (KeyHelpers.KeyIsDir(key) && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+			{
+				m_mapControl.ScrollStop();
+				var dir = KeyHelpers.KeyToDir(key);
+				m_mapControl.ScreenCenterPos += dir;
+				return true;
+			}
+
+			if (KeyHelpers.KeyIsDir(key) || KeyHelpers.KeyIsShift(key))
 			{
 				SetScrollDirection();
 				return true;
@@ -262,7 +270,13 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var key = e.Key;
 
-			if (KeyHelpers.KeyIsDir(key) || KeyHelpers.KeyIsShift(key) || KeyHelpers.KeyIsControl(key))
+			if (KeyHelpers.KeyIsDir(key) && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+			{
+				m_mapControl.ScrollStop();
+				return true;
+			}
+
+			if (KeyHelpers.KeyIsDir(key) || KeyHelpers.KeyIsShift(key))
 			{
 				SetScrollDirection();
 				return true;
@@ -339,8 +353,6 @@ namespace Dwarrowdelf.Client.UI
 
 			if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
 				speed = 4;
-			else if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
-				speed = 0.1;
 
 			m_mapControl.ScrollToDirection(dir, speed);
 		}
