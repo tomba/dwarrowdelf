@@ -45,14 +45,37 @@ namespace Dwarrowdelf.Client.UI
 
 		public MapControl()
 		{
-			base.ScreenCenterPosChanged += OnScreenCenterPosChanged;
-			this.TileSizeChanged += OnTileSizeChanged;
-			base.GridSizeChanged += OnGridSizeChanged;
 		}
 
-		void OnTileSizeChanged(object ob, double tileSize)
+		protected override void OnInitialized(EventArgs e)
 		{
-			Notify("TileSize");
+			base.OnInitialized(e);
+
+			if (DesignerProperties.GetIsInDesignMode(this))
+				return;
+
+			base.ScreenCenterPosChanged += OnScreenCenterPosChanged;
+			base.TileSizeChanged += OnTileSizeChanged;
+			base.GridSizeChanged += OnGridSizeChanged;
+
+			m_renderData = new DataGrid2D<RenderTile>();
+			m_renderData.SetMaxSize(new IntSize2(1, 1));
+			m_renderer = new SceneHostWPF();
+			m_scene = new TileMapScene(this.Orientation == TileControlOrientation.ZY ? true : false);
+			m_renderer.Scene = m_scene;
+
+			m_scene.SetTileSet(GameData.Data.TileSet);
+			GameData.Data.TileSetChanged += OnTileSetChanged;
+
+			GameData.Data.IsVisibilityCheckEnabledChanged += v =>
+			{
+				m_isVisibilityCheckEnabled = v;
+				InvalidateTileData();
+			};
+
+			GameData.Data.Blink += OnBlink;
+
+			m_initialized = true;
 		}
 
 		#region IDisposable
@@ -86,31 +109,9 @@ namespace Dwarrowdelf.Client.UI
 		}
 		#endregion
 
-		protected override void OnInitialized(EventArgs e)
+		void OnTileSizeChanged(object ob, double tileSize)
 		{
-			if (DesignerProperties.GetIsInDesignMode(this))
-				return;
-
-			m_renderData = new DataGrid2D<RenderTile>();
-			m_renderData.SetMaxSize(new IntSize2(1, 1));
-			m_renderer = new SceneHostWPF();
-			m_scene = new TileMapScene(this.Orientation == TileControlOrientation.ZY ? true : false);
-			m_renderer.Scene = m_scene;
-
-			m_scene.SetTileSet(GameData.Data.TileSet);
-			GameData.Data.TileSetChanged += OnTileSetChanged;
-
-			GameData.Data.IsVisibilityCheckEnabledChanged += v =>
-			{
-				m_isVisibilityCheckEnabled = v;
-				InvalidateTileData();
-			};
-
-			GameData.Data.Blink += OnBlink;
-
-			m_initialized = true;
-
-			base.OnInitialized(e);
+			Notify("TileSize");
 		}
 
 		bool m_symbolToggler;

@@ -21,10 +21,16 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected TileControlCore3D()
 		{
-			base.TileLayoutChanged += TileControlCore3D_TileLayoutChanged;
 		}
 
-		void TileControlCore3D_TileLayoutChanged(IntSize2 gridSize, double tileSize)
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+
+			base.TileLayoutChanged += OnTileLayoutChanged;
+		}
+
+		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
 		{
 			var iscp = this.ScreenCenterPos.ToIntPoint3();
 

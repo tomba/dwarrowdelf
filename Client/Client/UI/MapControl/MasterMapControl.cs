@@ -56,12 +56,73 @@ namespace Dwarrowdelf.Client.UI
 		public MasterMapControl()
 		{
 			m_vc = new VisualCollection(this);
+		}
+
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
 
 			this.Focusable = true;
 
 			this.SelectionTileAreaView = new TileAreaView();
 
+			this.ScreenCenterPosChanged += OnScreenCenterPosChanged;
+			this.EnvironmentChanged += OnEnvironmentChanged;
+			this.TileLayoutChanged += OnTileLayoutChanged;
+			this.MouseMove += OnMouseMove;
+			this.MouseLeave += OnMouseLeave;
+
+			this.TileSize = INITIALTILESIZE;
+
+			this.HoverTileView = new TileView();
+
+			m_overlayGrid = new Grid();
+			m_overlayGrid.ClipToBounds = true;
+			AddVisualChild(m_overlayGrid);
+
+			m_elementCanvas = new Canvas();
+			m_overlayGrid.Children.Add(m_elementCanvas);
+
+			m_selectionCanvas = new Canvas();
+			m_overlayGrid.Children.Add(m_selectionCanvas);
+
+			m_toolTipService = new MapControlToolTipService(this, this.HoverTileView);
+			m_toolTipService.IsToolTipEnabled = true;
+
+			m_selectionService = new MapControlSelectionService(this, m_selectionCanvas);
+			m_selectionService.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
+			m_selectionService.SelectionChanged += OnSelectionChanged;
+
+			m_elementsService = new MapControlElementsService(this, m_elementCanvas);
+
+			m_dragService = new MapControlDragService(this);
+			m_dragService.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
+
 			m_keyHandler = new KeyHandler(this);
+
+			if (ClientConfig.ShowMapDebug)
+			{
+				var bar = new System.Windows.Controls.Primitives.StatusBar();
+				bar.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
+				bar.VerticalAlignment = System.Windows.VerticalAlignment.Bottom;
+				m_overlayGrid.Children.Add(bar);
+
+				TextBlock textBlock = new TextBlock();
+				var binding = new Binding("ScreenCenterPos");
+				binding.Source = this;
+				binding.Converter = new CoordinateValueConverter();
+				textBlock.SetBinding(TextBlock.TextProperty, binding);
+				bar.Items.Add(textBlock);
+
+				bar.Items.Add(new Separator());
+
+				textBlock = new TextBlock();
+				binding = new Binding("TileSize");
+				binding.Source = this;
+				binding.StringFormat = "{0:F2}";
+				textBlock.SetBinding(TextBlock.TextProperty, binding);
+				bar.Items.Add(textBlock);
+			}
 
 			this.KeyDown += OnKeyDown;
 		}
@@ -207,67 +268,6 @@ namespace Dwarrowdelf.Client.UI
 			m_overlayGrid.Arrange(new Rect(arrangeBounds));
 
 			return base.ArrangeOverride(arrangeBounds);
-		}
-
-		protected override void OnInitialized(EventArgs e)
-		{
-			base.OnInitialized(e);
-
-			this.ScreenCenterPosChanged += OnScreenCenterPosChanged;
-			this.EnvironmentChanged += OnEnvironmentChanged;
-			this.TileLayoutChanged += OnTileLayoutChanged;
-			this.MouseMove += OnMouseMove;
-			this.MouseLeave += OnMouseLeave;
-
-			this.TileSize = INITIALTILESIZE;
-
-			this.HoverTileView = new TileView();
-
-			m_overlayGrid = new Grid();
-			m_overlayGrid.ClipToBounds = true;
-			AddVisualChild(m_overlayGrid);
-
-			m_elementCanvas = new Canvas();
-			m_overlayGrid.Children.Add(m_elementCanvas);
-
-			m_selectionCanvas = new Canvas();
-			m_overlayGrid.Children.Add(m_selectionCanvas);
-
-			m_toolTipService = new MapControlToolTipService(this, this.HoverTileView);
-			m_toolTipService.IsToolTipEnabled = true;
-
-			m_selectionService = new MapControlSelectionService(this, m_selectionCanvas);
-			m_selectionService.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
-			m_selectionService.SelectionChanged += OnSelectionChanged;
-
-			m_elementsService = new MapControlElementsService(this, m_elementCanvas);
-
-			m_dragService = new MapControlDragService(this);
-			m_dragService.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
-
-			if (ClientConfig.ShowMapDebug)
-			{
-				var bar = new System.Windows.Controls.Primitives.StatusBar();
-				bar.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
-				bar.VerticalAlignment = System.Windows.VerticalAlignment.Bottom;
-				m_overlayGrid.Children.Add(bar);
-
-				TextBlock textBlock = new TextBlock();
-				var binding = new Binding("ScreenCenterPos");
-				binding.Source = this;
-				binding.Converter = new CoordinateValueConverter();
-				textBlock.SetBinding(TextBlock.TextProperty, binding);
-				bar.Items.Add(textBlock);
-
-				bar.Items.Add(new Separator());
-
-				textBlock = new TextBlock();
-				binding = new Binding("TileSize");
-				binding.Source = this;
-				binding.StringFormat = "{0:F2}";
-				textBlock.SetBinding(TextBlock.TextProperty, binding);
-				bar.Items.Add(textBlock);
-			}
 		}
 
 		void OnEnvironmentChanged(EnvironmentObject env)

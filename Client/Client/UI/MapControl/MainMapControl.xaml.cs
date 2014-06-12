@@ -50,12 +50,13 @@ namespace Dwarrowdelf.Client.UI
 
 		public MainMapControl()
 		{
-			this.Initialized += MainMapControl_Initialized;
 			InitializeComponent();
 		}
 
-		void MainMapControl_Initialized(object sender, EventArgs e)
+		protected override void OnInitialized(EventArgs e)
 		{
+			base.OnInitialized(e);
+
 			m_mapList.Add(mapXY);
 			m_mapList.Add(mapXZ);
 			m_mapList.Add(mapZY);
