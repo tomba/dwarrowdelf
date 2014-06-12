@@ -6,7 +6,8 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="300" d:DesignWidth="300">
+			 d:DesignHeight="300" d:DesignWidth="300"
+			 KeyboardNavigation.TabNavigation="Cycle">
 	<UserControl.Resources>
 		<Image Width="24" Height="24" x:Key="menuItemIconImage" x:Shared="False">
 			<Image.Source>
@@ -68,8 +69,8 @@
 		<Rectangle Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Style="{StaticResource lineStyle}" Height="1" HorizontalAlignment="Stretch" />
 		<Rectangle Grid.Column="2" Grid.Row="2" Grid.RowSpan="1" Style="{StaticResource lineStyle}" Width="1" VerticalAlignment="Stretch" />
 
-		<GridSplitter Grid.Column="1" Grid.RowSpan="3" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
-		<GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Height="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+		<GridSplitter Grid.Column="1" Grid.RowSpan="3" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" Focusable="False" />
+		<GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Height="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" Focusable="False" />
 
 	</Grid>
 </UserControl>
