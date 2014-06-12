@@ -83,7 +83,6 @@
       <DependentUpon>MainMapControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MapControl\MapControlDebugData.cs" />
-    <Compile Include="UI\MapControl\MapControlCursorService.cs" />
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>

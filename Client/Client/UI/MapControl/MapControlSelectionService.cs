@@ -21,18 +21,28 @@ namespace Dwarrowdelf.Client.UI
 
 	sealed class MapControlSelectionService
 	{
+		MasterMapControl m_mapControl;
+		Canvas m_canvas;
+		Rectangle m_selectionRectangle;
+		Rectangle m_cursorRectangle;
+
 		MapSelection m_selection;
-		Rectangle m_selectionRect;
 
 		MapSelectionMode m_selectionMode;
 
-		MasterMapControl m_mapControl;
-		Canvas m_canvas;
-
-		bool m_selecting;
+		public IntPoint3 CursorPosition { get; private set; }
 
 		public event Action<MapSelection> SelectionChanged;
 		public event Action<MapSelection> GotSelection;
+
+		enum State
+		{
+			None,
+			SelectingWithKeyboard,
+			SelectingWithMouse,
+		}
+
+		State m_state;
 
 		public MapControlSelectionService(MasterMapControl mapControl, Canvas canvas)
 		{
@@ -46,17 +56,22 @@ namespace Dwarrowdelf.Client.UI
 			brush.StartPoint = new Point(0.5, 0);
 			brush.EndPoint = new Point(0.5, 1);
 
-			m_selectionRect = new Rectangle();
-			m_selectionRect.Visibility = Visibility.Hidden;
-			m_selectionRect.Stroke = new SolidColorBrush(Colors.Blue);
-			m_selectionRect.Stroke.Opacity = 0.6;
-			m_selectionRect.Stroke.Freeze();
-			m_selectionRect.StrokeThickness = 1;
-			m_selectionRect.Fill = brush;
-			m_selectionRect.Fill.Opacity = 0.2;
-			m_selectionRect.Fill.Freeze();
-			m_selectionRect.IsHitTestVisible = false;
-			m_canvas.Children.Add(m_selectionRect);
+			m_selectionRectangle = new Rectangle();
+			m_selectionRectangle.Visibility = Visibility.Hidden;
+			m_selectionRectangle.Stroke = Brushes.Blue;
+			m_selectionRectangle.Stroke.Freeze();
+			m_selectionRectangle.Fill = brush;
+			m_selectionRectangle.Fill.Opacity = 0.2;
+			m_selectionRectangle.Fill.Freeze();
+			m_selectionRectangle.IsHitTestVisible = false;
+			m_canvas.Children.Add(m_selectionRectangle);
+
+			m_cursorRectangle = new Rectangle();
+			m_cursorRectangle.Visibility = Visibility.Hidden;
+			m_cursorRectangle.Stroke = Brushes.Yellow;
+			m_cursorRectangle.Stroke.Freeze();
+			m_cursorRectangle.IsHitTestVisible = false;
+			m_canvas.Children.Add(m_cursorRectangle);
 		}
 
 		public MapSelectionMode SelectionMode
@@ -79,11 +94,13 @@ namespace Dwarrowdelf.Client.UI
 
 						m_mapControl.TileLayoutChanged -= OnTileLayoutChanged;
 						m_mapControl.ScreenCenterPosChanged -= OnScreenCenterPosChanged;
+						m_mapControl.KeyDown -= OnKeyDown;
 
 						break;
 
 					case MapSelectionMode.Point:
 						m_mapControl.MouseClicked -= OnMouseClicked;
+						m_mapControl.KeyDown -= OnKeyDown;
 						break;
 				}
 
@@ -102,22 +119,84 @@ namespace Dwarrowdelf.Client.UI
 
 						m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
 						m_mapControl.ScreenCenterPosChanged += OnScreenCenterPosChanged;
+						m_mapControl.KeyDown += OnKeyDown;
+
+						this.CursorPosition = m_mapControl.MapCenterPos.ToIntPoint3();
 
 						break;
 
 					case MapSelectionMode.Point:
 						m_mapControl.MouseClicked += OnMouseClicked;
+						m_mapControl.KeyDown += OnKeyDown;
+
+						this.CursorPosition = m_mapControl.MapCenterPos.ToIntPoint3();
+
 						break;
 				}
+
+				UpdateCursorRectangle();
 			}
 		}
 
-		void OnMouseClicked(object sender, MouseButtonEventArgs e)
+		void OnKeyDown(object sender, KeyEventArgs e)
 		{
-			var ml = m_mapControl.RenderPointToMapLocation(e.GetPosition(m_mapControl));
-			this.Selection = new MapSelection(ml, ml);
-			if (this.GotSelection != null)
-				this.GotSelection(this.Selection);
+			if (m_state == State.SelectingWithMouse)
+				return;
+
+			var key = e.Key;
+
+			if (KeyHelpers.KeyIsDir(key))
+			{
+				m_mapControl.ScrollStop();
+				var dir = KeyHelpers.KeyToDir(key);
+
+				if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+				{
+					m_mapControl.ScreenCenterPos += dir;
+				}
+				else
+				{
+					int m = 1;
+
+					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
+						m = 5;
+
+					this.CursorPosition += new IntVector3(dir) * m;
+
+					m_mapControl.KeepOnScreen(this.CursorPosition);
+					UpdateCursorRectangle();
+
+					if (m_state == State.SelectingWithKeyboard)
+						UpdateSelection(this.CursorPosition);
+				}
+
+				e.Handled = true;
+			}
+			else if (e.Key == Key.Enter)
+			{
+				if (this.SelectionMode == MapSelectionMode.Point)
+				{
+					StartSelection(this.CursorPosition, State.SelectingWithKeyboard);
+					EndSelection(this.CursorPosition);
+				}
+				else
+				{
+					if (m_state == State.None)
+					{
+						StartSelection(this.CursorPosition, State.SelectingWithKeyboard);
+					}
+					else if (m_state == State.SelectingWithKeyboard)
+					{
+						EndSelection(this.CursorPosition);
+					}
+					else
+					{
+						throw new Exception();
+					}
+				}
+
+				e.Handled = true;
+			}
 		}
 
 		public MapSelection Selection
@@ -136,29 +215,93 @@ namespace Dwarrowdelf.Client.UI
 
 				m_selection = value;
 
-				UpdateSelectionRect();
+				UpdateSelectionRectangle();
 
 				if (this.SelectionChanged != null)
 					this.SelectionChanged(m_selection);
 			}
 		}
 
-		void OnDragStarted(Point pos)
+		void StartSelection(IntPoint3 p, State state)
 		{
-			m_selecting = true;
-			var ml = m_mapControl.RenderPointToMapLocation(pos);
-			this.Selection = new MapSelection(ml, ml);
+			m_state = state;
+			UpdateCursorRectangle();
+			this.Selection = new MapSelection(p, p);
 		}
 
-		void OnDragEnded(Point pos)
+		void UpdateSelection(IntPoint3 p)
 		{
-			m_selecting = false;
+			IntPoint3 start;
+
+			var end = p.Truncate(new IntGrid3(this.m_mapControl.Environment.Size));
+
+			switch (m_selectionMode)
+			{
+				case MapSelectionMode.Rectangle:
+					start = new IntPoint3(this.Selection.SelectionStart.ToIntPoint2(), end.Z);
+					break;
+
+				case MapSelectionMode.Box:
+					start = this.Selection.SelectionStart;
+					break;
+
+				case MapSelectionMode.Point:
+					start = this.Selection.SelectionStart;
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			this.Selection = new MapSelection(start, end);
+		}
+
+		void EndSelection(IntPoint3 p)
+		{
+			m_state = State.None;
+			UpdateSelection(p);
+			UpdateCursorRectangle();
 			if (this.GotSelection != null)
 				this.GotSelection(this.Selection);
 		}
 
+		void AbortSelection()
+		{
+			m_state = State.None;
+			this.Selection = new MapSelection();
+			UpdateCursorRectangle();
+		}
+
+		void OnMouseClicked(object sender, MouseButtonEventArgs e)
+		{
+			var ml = m_mapControl.RenderPointToMapLocation(e.GetPosition(m_mapControl));
+			StartSelection(ml, State.SelectingWithMouse);
+			EndSelection(ml);
+		}
+
+		void OnDragStarted(Point pos)
+		{
+			if (m_state == State.SelectingWithKeyboard)
+				return;
+
+			var ml = m_mapControl.RenderPointToMapLocation(pos);
+			StartSelection(ml, State.SelectingWithMouse);
+		}
+
+		void OnDragEnded(Point pos)
+		{
+			if (m_state != State.SelectingWithMouse)
+				return;
+
+			var ml = m_mapControl.RenderPointToMapLocation(pos);
+			EndSelection(ml);
+		}
+
 		void OnDragging(Point pos)
 		{
+			if (m_state != State.SelectingWithMouse)
+				return;
+
 			int limit = 4;
 			int speed = 1;
 
@@ -179,65 +322,40 @@ namespace Dwarrowdelf.Client.UI
 
 			m_mapControl.ScrollToDirection(v.ToDirection(), 0.2);
 
-			UpdateSelection(pos);
+			var ml = m_mapControl.RenderPointToMapLocation(pos);
+
+			UpdateSelection(ml);
 		}
 
 		void OnDragAborted()
 		{
-			m_selecting = false;
-			this.Selection = new MapSelection();
+			if (m_state != State.SelectingWithMouse)
+				return;
+
+			AbortSelection();
 		}
 
 		void OnScreenCenterPosChanged(object control, DoublePoint3 centerPos, IntVector3 diff)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
 
-			if (m_selecting)
-				UpdateSelection(pos);
-
-			UpdateSelectionRect();
+			UpdateSelectionRectangle();
+			UpdateCursorRectangle();
 		}
 
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
 		{
 			var pos = Mouse.GetPosition(m_mapControl);
 
-			if (m_selecting)
-				UpdateSelection(pos);
-
-			UpdateSelectionRect();
+			UpdateSelectionRectangle();
+			UpdateCursorRectangle();
 		}
 
-		void UpdateSelection(Point mousePos)
-		{
-			IntPoint3 start;
-
-			var end = m_mapControl.RenderPointToMapLocation(mousePos);
-
-			end = end.Truncate(new IntGrid3(this.m_mapControl.Environment.Size));
-
-			switch (m_selectionMode)
-			{
-				case MapSelectionMode.Rectangle:
-					start = new IntPoint3(this.Selection.SelectionStart.ToIntPoint2(), end.Z);
-					break;
-
-				case MapSelectionMode.Box:
-					start = this.Selection.SelectionStart;
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			this.Selection = new MapSelection(start, end);
-		}
-
-		void UpdateSelectionRect()
+		void UpdateSelectionRectangle()
 		{
 			if (!this.Selection.IsSelectionValid)
 			{
-				m_selectionRect.Visibility = Visibility.Hidden;
+				m_selectionRectangle.Visibility = Visibility.Hidden;
 				return;
 			}
 
@@ -250,18 +368,47 @@ namespace Dwarrowdelf.Client.UI
 
 			if (z1 > z || z2 < z)
 			{
-				m_selectionRect.Visibility = Visibility.Hidden;
+				m_selectionRectangle.Visibility = Visibility.Hidden;
 				return;
 			}
 
 			var r = m_mapControl.MapCubeToRenderPointRect(selBox);
 
-			Canvas.SetLeft(m_selectionRect, r.Left);
-			Canvas.SetTop(m_selectionRect, r.Top);
-			m_selectionRect.Width = r.Width;
-			m_selectionRect.Height = r.Height;
+			var thickness = Math.Max(2, m_mapControl.TileSize / 8);
 
-			m_selectionRect.Visibility = Visibility.Visible;
+			Canvas.SetLeft(m_selectionRectangle, r.Left - thickness);
+			Canvas.SetTop(m_selectionRectangle, r.Top - thickness);
+			m_selectionRectangle.Width = r.Width + thickness * 2;
+			m_selectionRectangle.Height = r.Height + thickness * 2;
+
+			m_selectionRectangle.StrokeThickness = thickness;
+
+			m_selectionRectangle.Visibility = Visibility.Visible;
+		}
+
+		void UpdateCursorRectangle()
+		{
+			if (this.SelectionMode == MapSelectionMode.None || m_state == State.SelectingWithMouse)
+			{
+				m_cursorRectangle.Visibility = Visibility.Hidden;
+				return;
+			}
+
+			var thickness = Math.Max(2, m_mapControl.TileSize / 8);
+
+			var p = m_mapControl.MapLocationToScreenTile(this.CursorPosition);
+			p -= new Vector(0.5, 0.5);
+			p = m_mapControl.ScreenToRenderPoint(p);
+			p -= new Vector(thickness, thickness);
+
+			Canvas.SetLeft(m_cursorRectangle, p.X);
+			Canvas.SetTop(m_cursorRectangle, p.Y);
+			m_cursorRectangle.Width = m_mapControl.TileSize + thickness * 2;
+			m_cursorRectangle.Height = m_mapControl.TileSize + thickness * 2;
+
+			m_cursorRectangle.StrokeThickness = thickness;
+
+			m_cursorRectangle.Visibility = Visibility.Visible;
 		}
 	}
 
