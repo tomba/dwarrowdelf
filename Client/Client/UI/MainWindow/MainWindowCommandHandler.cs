@@ -17,11 +17,17 @@ namespace Dwarrowdelf.Client.UI
 
 		public void AddCommandBindings(GameMode mode)
 		{
+			m_mainWindow.CommandBindings.AddRange(new CommandBinding[] {
+				new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler),
+				new CommandBinding(ClientCommands.OpenFocusDebugCommand, OpenFocusDebugHandler),
+			});
+
+			if (mode == GameMode.Undefined)
+				return;
+
 			// add common bindings
 			m_mainWindow.CommandBindings.AddRange(new CommandBinding[] {
 				new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler),
-				new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler),
-				new CommandBinding(ClientCommands.OpenFocusDebugCommand, OpenFocusDebugHandler),
 			});
 
 			// add mode specific bindings

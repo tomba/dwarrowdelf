@@ -76,6 +76,9 @@ namespace Dwarrowdelf.Client.UI
 			KeyboardNavigation.SetDirectionalNavigation(this, KeyboardNavigationMode.Once);
 
 			mainWindowTools.SetClientTools(this.ClientTools);
+
+			// add default commands
+			m_cmdHandler.AddCommandBindings(GameMode.Undefined);
 		}
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e)
@@ -348,9 +351,6 @@ namespace Dwarrowdelf.Client.UI
 		void OnGameModeChanged(GameMode mode)
 		{
 			this.CommandBindings.Clear();
-
-			if (mode == GameMode.Undefined)
-				return;
 
 			m_cmdHandler.AddCommandBindings(mode);
 		}
