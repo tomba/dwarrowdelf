@@ -5,6 +5,8 @@
 		WindowStartupLocation="CenterOwner"
 		ResizeMode="NoResize"
 		WindowStyle="None"
+		Focusable="False"
+		ShowActivated="False"
 		ShowInTaskbar="False"
 		Title="LogOnDialog" Height="200" Width="200">
 	<Border BorderThickness="4" Padding="10">
@@ -21,7 +23,7 @@
 			</RadialGradientBrush>
 		</Border.Background>
 
-		<TextBox Name="textBox" TextAlignment="Center" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
+		<TextBox Name="textBox" Focusable="False" TextAlignment="Center" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
 
 	</Border>
 </Window>

@@ -357,13 +357,12 @@ namespace Dwarrowdelf.Client.UI
 
 		public LogOnDialog OpenLogOnDialog()
 		{
+			// disabling main window loses its focus, so we need to re-enable it after dialog closes
 			this.IsEnabled = false;
 
 			var logOnDialog = new LogOnDialog();
 			logOnDialog.Owner = this;
 			logOnDialog.Closed += (s, e) => { this.IsEnabled = true; Focus(); };
-			logOnDialog.Focusable = false;
-			logOnDialog.ShowActivated = false;
 			logOnDialog.Show();
 
 			return logOnDialog;
