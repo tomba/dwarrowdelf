@@ -44,6 +44,7 @@ namespace Dwarrowdelf.Client.UI
 		MapControlSelectionService m_selectionService;
 		MapControlElementsService m_elementsService;
 		MapControlDragService m_dragService;
+		MapControlCursorService m_cursorService;
 
 		public event Action<MapSelection> GotSelection;
 
@@ -99,6 +100,10 @@ namespace Dwarrowdelf.Client.UI
 			m_dragService.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
 
 			m_keyHandler = new KeyHandler(this);
+			m_keyHandler.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
+
+			m_cursorService = new MapControlCursorService(this, m_selectionCanvas);
+			m_cursorService.IsEnabled = m_selectionService.SelectionMode != MapSelectionMode.None;
 
 			if (ClientConfig.ShowMapDebug)
 			{
@@ -452,6 +457,8 @@ namespace Dwarrowdelf.Client.UI
 			set
 			{
 				m_dragService.IsEnabled = value == MapSelectionMode.None;
+				m_keyHandler.IsEnabled = value == MapSelectionMode.None;
+				m_cursorService.IsEnabled = value != MapSelectionMode.None;
 				m_selectionService.SelectionMode = value;
 
 				if (value == MapSelectionMode.None)

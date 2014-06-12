@@ -19,6 +19,8 @@ namespace Dwarrowdelf.Client.UI
 	{
 		MasterMapControl m_mapControl;
 
+		public bool IsEnabled { get; set; }
+
 		public KeyHandler(MasterMapControl mapControl)
 		{
 			m_mapControl = mapControl;
@@ -48,10 +50,13 @@ namespace Dwarrowdelf.Client.UI
 			this.Mode = KeyHandlerMode.None;
 		}
 
-		public KeyHandlerMode Mode { get; set; }
+		public KeyHandlerMode Mode { get; private set; }
 
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
+			if (!this.IsEnabled)
+				return;
+
 			bool handled;
 
 			switch (this.Mode)
@@ -73,6 +78,9 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnKeyUp(object sender, KeyEventArgs e)
 		{
+			if (!this.IsEnabled)
+				return;
+
 			bool handled;
 
 			switch (this.Mode)
@@ -94,6 +102,9 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnTextInput(object sender, TextCompositionEventArgs e)
 		{
+			if (!this.IsEnabled)
+				return;
+
 			bool handled;
 
 			switch (this.Mode)
