@@ -11,7 +11,7 @@
 		TextOptions.TextFormattingMode="Display"
 		Icon="/Dwarrowdelf.Client;component/Images/MainWindow.png"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
-		FocusManager.FocusedElement="{Binding ElementName=map}">
+		FocusManager.FocusedElement="{Binding ElementName=map, Path=DefaultMap}">
 
 	<Window.Resources>
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems" />

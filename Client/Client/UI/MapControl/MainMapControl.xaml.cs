@@ -48,9 +48,12 @@ namespace Dwarrowdelf.Client.UI
 		public TileView HoverTileView { get { return m_mapList.First().HoverTileView; } }
 		public TileAreaView SelectionTileAreaView { get { return m_mapList.First().SelectionTileAreaView; } }
 
+		public MasterMapControl DefaultMap { get { return m_mapList.First(); } }
+
 		public MainMapControl()
 		{
 			InitializeComponent();
+			this.Focusable = false;
 		}
 
 		protected override void OnInitialized(EventArgs e)
