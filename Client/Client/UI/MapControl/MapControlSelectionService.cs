@@ -30,10 +30,9 @@ namespace Dwarrowdelf.Client.UI
 
 		MapSelectionMode m_selectionMode;
 
-		public IntPoint3 CursorPosition { get; private set; }
-
 		public event Action<MapSelection> SelectionChanged;
 		public event Action<MapSelection> GotSelection;
+		public event Action<IntPoint3> CursorPositionChanged;
 
 		enum State
 		{
@@ -73,6 +72,25 @@ namespace Dwarrowdelf.Client.UI
 			m_cursorRectangle.IsHitTestVisible = false;
 			m_canvas.Children.Add(m_cursorRectangle);
 		}
+
+		IntPoint3 m_cursorPosition;
+
+		public IntPoint3 CursorPosition
+		{
+			get { return m_cursorPosition; }
+
+			private set
+			{
+				if (value == m_cursorPosition)
+					return;
+
+				m_cursorPosition = value;
+
+				if (this.CursorPositionChanged != null)
+					this.CursorPositionChanged(value);
+			}
+		}
+
 
 		public MapSelectionMode SelectionMode
 		{
