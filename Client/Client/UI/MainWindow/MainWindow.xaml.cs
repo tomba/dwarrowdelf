@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public GameData Data { get { return GameData.Data; } }
 
-		public TileView FocusedTileView { get; private set; }
+		public TileAreaView FocusedTileView { get; private set; }
 
 		public MainWindow()
 		{
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client.UI
 			this.Closing += MainWindow_Closing;
 			this.Closed += MainWindow_Closed;
 
-			this.FocusedTileView = new TileView();
+			this.FocusedTileView = new TileAreaView();
 
 			InitializeComponent();
 		}

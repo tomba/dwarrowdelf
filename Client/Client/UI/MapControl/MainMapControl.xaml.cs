@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public EnvironmentObject Environment { get { return m_mapList.First().Environment; } }
 
-		public TileView HoverTileView { get { return m_mapList.First().HoverTileView; } }
+		public TileAreaView HoverTileView { get { return m_mapList.First().HoverTileView; } }
 		public TileAreaView SelectionTileAreaView { get { return m_mapList.First().SelectionTileAreaView; } }
 
 		public MasterMapControl DefaultMap { get { return m_mapList.First(); } }

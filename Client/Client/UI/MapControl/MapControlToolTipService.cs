@@ -15,14 +15,14 @@ namespace Dwarrowdelf.Client.UI
 	sealed class MapControlToolTipService
 	{
 		MapControl m_mapControl;
-		TileView m_hoverTileView;
+		TileAreaView m_hoverTileView;
 
 		bool m_isToolTipEnabled;
 
 		ToolTip m_popup;
 		TileToolTipControl m_content;
 
-		public MapControlToolTipService(MapControl mapControl, TileView tileView)
+		public MapControlToolTipService(MapControl mapControl, TileAreaView tileView)
 		{
 			m_mapControl = mapControl;
 			m_hoverTileView = tileView;
@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Client.UI
 			switch (e.PropertyName)
 			{
 				case "Location":
-				case "AreaElement":
+				case "AreaElements":
 				case "IsEnabled":
 					UpdateToolTip();
 					break;
@@ -89,14 +89,16 @@ namespace Dwarrowdelf.Client.UI
 
 		void UpdateToolTip()
 		{
-			if (m_hoverTileView.IsEnabled == false)
+			if (m_hoverTileView.IsNotEmpty == false)
 			{
 				CloseToolTip();
 				return;
 			}
 
+			//XXX don't use hovertileview
+
 			bool hasObjects = m_hoverTileView.Objects.Count > 0;
-			var hasElement = m_hoverTileView.AreaElement != null;
+			var hasElement = m_hoverTileView.AreaElements.FirstOrDefault() != null;
 
 			if (!hasObjects && !hasElement)
 			{
@@ -108,7 +110,7 @@ namespace Dwarrowdelf.Client.UI
 			m_content.elementBox.Visibility = hasElement ? Visibility.Visible : Visibility.Collapsed;
 			m_content.separator.Visibility = hasObjects && hasElement ? Visibility.Visible : Visibility.Collapsed;
 
-			var ml = m_hoverTileView.Location.Value;
+			var ml = m_hoverTileView.Box.Corner1;
 
 			var rect = m_mapControl.MapCubeToRenderPointRect(new IntGrid3(ml, new IntSize3(1, 1, 1)));
 

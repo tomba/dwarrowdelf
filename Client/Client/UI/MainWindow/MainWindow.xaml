@@ -127,15 +127,15 @@
 				<!-- Focused Controllable -->
 				<GroupBox Header="Current"
 						  DataContext="{Binding Path=FocusedTileView, ElementName=mainWindow, Mode=OneTime}"
-						Visibility="{Binding Location,Converter={StaticResource nullToVisConverter}}">
-					<ui:SingleTileInfoControl Margin="2" />
+						Visibility="{Binding IsNotEmpty,Converter={StaticResource boolToVisConverter}}">
+					<ui:MultiTileInfoControl Margin="2" />
 				</GroupBox>
 
 				<!-- Hover -->
 				<GroupBox Header="Hover"
 						  DataContext="{Binding Path=HoverTileView, ElementName=map, Mode=OneTime}"
-						  Visibility="{Binding Location,Converter={StaticResource nullToVisConverter}}">
-					<ui:SingleTileInfoControl Margin="2" />
+						  Visibility="{Binding IsNotEmpty,Converter={StaticResource boolToVisConverter}}">
+					<ui:MultiTileInfoControl Margin="2" />
 				</GroupBox>
 
 				<!-- Selection -->

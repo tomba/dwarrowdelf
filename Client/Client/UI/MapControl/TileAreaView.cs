@@ -27,6 +27,13 @@ namespace Dwarrowdelf.Client.UI
 			SetTarget(null, new IntGrid3());
 		}
 
+		public IntGrid3 Box { get { return m_box; } }
+
+		public void SetTarget(EnvironmentObject env, IntPoint3 p)
+		{
+			SetTarget(env, new IntGrid3(p, new IntSize3(1, 1, 1)));
+		}
+
 		public void SetTarget(EnvironmentObject env, IntGrid3 box)
 		{
 			if (env == m_environment && m_box == box)
