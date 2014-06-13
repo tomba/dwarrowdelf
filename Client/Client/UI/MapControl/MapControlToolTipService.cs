@@ -77,18 +77,30 @@ namespace Dwarrowdelf.Client.UI
 				case "Location":
 				case "AreaElements":
 				case "IsEnabled":
-					UpdateToolTip();
+					if (m_updateQueued == false)
+					{
+						m_mapControl.Dispatcher.BeginInvoke(new Action(UpdateToolTip));
+						m_updateQueued = true;
+					}
 					break;
 			}
 		}
 
 		void OnHoverTileView_ObjectCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			UpdateToolTip();
+			if (m_updateQueued == false)
+			{
+				m_mapControl.Dispatcher.BeginInvoke(new Action(UpdateToolTip));
+				m_updateQueued = true;
+			}
 		}
+
+		bool m_updateQueued;
 
 		void UpdateToolTip()
 		{
+			m_updateQueued = false;
+
 			if (m_hoverTileView.IsNotEmpty == false)
 			{
 				CloseToolTip();
