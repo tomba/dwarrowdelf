@@ -47,6 +47,10 @@ namespace Dwarrowdelf.Client.UI
 					this.infoButton.IsChecked = true;
 					break;
 
+				case ClientToolMode.View:
+					this.viewButton.IsChecked = true;
+					break;
+
 				case ClientToolMode.DesignationRemove:
 				case ClientToolMode.DesignationMine:
 				case ClientToolMode.DesignationStairs:

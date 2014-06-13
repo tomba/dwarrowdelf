@@ -52,6 +52,10 @@
 			<RadioButton Name="infoButton" ContentTemplate="{StaticResource singleToolTemplate}"
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[Info]}" />
 
+			<!-- View -->
+			<RadioButton Name="viewButton" ContentTemplate="{StaticResource singleToolTemplate}"
+						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[View]}" />
+
 			<Separator/>
 
 			<!-- Designation -->

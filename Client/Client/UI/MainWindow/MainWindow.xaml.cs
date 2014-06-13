@@ -143,6 +143,10 @@ namespace Dwarrowdelf.Client.UI
 					this.MapControl.SelectionMode = MapSelectionMode.None;
 					break;
 
+				case ClientToolMode.View:
+					this.MapControl.SelectionMode = MapSelectionMode.Point;
+					break;
+
 				case ClientToolMode.CreateItem:
 				case ClientToolMode.DesignationMine:
 				case ClientToolMode.DesignationStairs:
@@ -182,6 +186,10 @@ namespace Dwarrowdelf.Client.UI
 
 			switch (this.ClientTools.ToolMode)
 			{
+				case ClientToolMode.View:
+					MapControl.ShowObjectsPopup(selection.SelectionPoint);
+					break;
+
 				case ClientToolMode.DesignationRemove:
 					env.Designations.RemoveArea(selection.SelectionBox);
 					break;

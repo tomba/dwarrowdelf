@@ -166,27 +166,42 @@ namespace Dwarrowdelf.Client.UI
 
 			var mapControl = sender as MapControl;
 
+			var p = mapControl.RenderPointToMapLocation(ev.GetPosition(mapControl));
+
+			ShowObjectsPopup(mapControl, p);
+
+			ev.Handled = true;
+		}
+
+		public void ShowObjectsPopup(IntPoint3 p)
+		{
+			ShowObjectsPopup(m_mapList.First(), p);
+		}
+
+		void ShowObjectsPopup(MapControl mapControl, IntPoint3 ml)
+		{
 			var env = this.Environment;
 
 			if (env == null)
 				return;
 
-			var ml = mapControl.RenderPointToMapLocation(ev.GetPosition(mapControl));
-
 			var obs = new List<object>();
 
 			var elem = env.GetElementAt(ml);
 			if (elem != null)
-				obs.Add(env.GetElementAt(ml));
+				obs.Add(elem);
 
 			obs.AddRange(env.GetContents(ml));
+
+			if (obs.Count == 0)
+				return;
 
 			if (obs.Count == 1)
 			{
 				object ob = obs[0];
 				ShowObjectInDialog(ob);
 			}
-			else if (obs.Count > 0)
+			else
 			{
 				var ctxMenu = (ContextMenu)this.FindResource("objectSelectorContextMenu");
 
@@ -198,8 +213,6 @@ namespace Dwarrowdelf.Client.UI
 
 				ctxMenu.IsOpen = true;
 			}
-
-			ev.Handled = true;
 		}
 
 		void OnObjectSelectContextMenuClick(object sender, RoutedEventArgs e)

@@ -21,6 +21,8 @@ namespace Dwarrowdelf.Client.UI
 
 			add(new ToolData(ClientToolMode.Info, "Info", "", Key.Escape));
 
+			add(new ToolData(ClientToolMode.View, "View", "", Key.V));
+
 			add(new ToolData(ClientToolMode.DesignationMine, "Mine", "Designate", Key.M));
 			add(new ToolData(ClientToolMode.DesignationStairs, "Mine stairs", "Designate", Key.S));
 			add(new ToolData(ClientToolMode.DesignationChannel, "Channel", "Designate", Key.C));
@@ -63,6 +65,7 @@ namespace Dwarrowdelf.Client.UI
 		None = 0,
 
 		Info,
+		View,
 
 		DesignationRemove,
 		DesignationMine,
