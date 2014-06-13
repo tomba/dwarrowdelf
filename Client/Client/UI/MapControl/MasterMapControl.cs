@@ -473,13 +473,11 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (!selection.IsSelectionValid)
 			{
-				this.SelectionTileAreaView.Environment = null;
-				this.SelectionTileAreaView.Box = new IntGrid3();
+				this.SelectionTileAreaView.ClearTarget();
 			}
 			else
 			{
-				this.SelectionTileAreaView.Environment = this.Environment;
-				this.SelectionTileAreaView.Box = selection.SelectionBox;
+				this.SelectionTileAreaView.SetTarget(this.Environment, selection.SelectionBox);
 			}
 
 			Notify("Selection");

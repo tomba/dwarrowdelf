@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Client.UI
 	{
 		EnvironmentObject m_environment;
 		IntGrid3 m_box;
-		IntGrid3 m_adjustedBox;
+		IntGrid3 m_adjustedBox;	// adjusted to fit inside env
 		MovableObjectCollection m_objects;
 
 		public TileAreaView()
@@ -20,24 +20,27 @@ namespace Dwarrowdelf.Client.UI
 			this.Objects = new ReadOnlyMovableObjectCollection(m_objects);
 		}
 
-		public bool IsNotEmpty { get { return !m_box.IsNull; } }
+		public bool IsNotEmpty { get { return m_environment != null && !m_box.IsNull; } }
 
-		public EnvironmentObject Environment
+		public void ClearTarget()
 		{
-			get { return m_environment; }
+			SetTarget(null, new IntGrid3());
+		}
 
-			set
+		public void SetTarget(EnvironmentObject env, IntGrid3 box)
+		{
+			if (env == m_environment && m_box == box)
+				return;
+
+			if (env != m_environment)
 			{
-				if (m_environment == value)
-					return;
-
 				if (m_environment != null)
 				{
 					m_environment.MapTileTerrainChanged -= OnMapTerrainChanged;
 					m_environment.MapTileObjectChanged -= OnMapObjectChanged;
 				}
 
-				m_environment = value;
+				m_environment = env;
 
 				if (m_environment != null)
 				{
@@ -46,33 +49,25 @@ namespace Dwarrowdelf.Client.UI
 				}
 
 				Notify("Environment");
-				NotifyTileTerrainChanges();
 				NotifyTileObjectChanges();
 			}
-		}
 
-		public IntGrid3 Box
-		{
-			get { return m_box; }
-
-			set
+			if (box != m_box)
 			{
-				if (m_box == value)
-					return;
-
 				var old = m_box;
 
-				m_box = value;
-				if (m_box.IsNull || this.Environment == null)
+				m_box = box;
+				if (m_box.IsNull || m_environment == null)
 					m_adjustedBox = m_box;
 				else
-					m_adjustedBox = m_box.Intersect(new IntGrid3(this.Environment.Size));
+					m_adjustedBox = m_box.Intersect(new IntGrid3(m_environment.Size));
 
 				Notify("Box");
-				NotifyTileTerrainChanges();
 				NotifyTileObjectChanges(old, m_box);
-				Notify("IsNotEmpty");
 			}
+
+			NotifyTileTerrainChanges();
+			Notify("IsNotEmpty");
 		}
 
 		void NotifyTileTerrainChanges()
@@ -88,7 +83,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			m_objects.Clear();
 
-			if (this.Environment == null)
+			if (m_environment == null)
 				return;
 
 			var obs = m_adjustedBox.Range().
@@ -99,20 +94,20 @@ namespace Dwarrowdelf.Client.UI
 
 		void NotifyTileObjectChanges(IntGrid3 oldGrid, IntGrid3 newGrid)
 		{
-			if (this.Environment == null)
+			if (m_environment == null)
 			{
 				m_objects.Clear();
 				return;
 			}
 
 			var rm = oldGrid.Range().Except(newGrid.Range())
-				.SelectMany(p => this.Environment.GetContents(p));
+				.SelectMany(p => m_environment.GetContents(p));
 
 			foreach (var ob in rm)
 				m_objects.Remove(ob);
 
 			var add = newGrid.Range().Except(oldGrid.Range())
-				.SelectMany(p => this.Environment.GetContents(p));
+				.SelectMany(p => m_environment.GetContents(p));
 
 			foreach (var ob in add)
 				m_objects.Add(ob);
