@@ -95,20 +95,18 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			//XXX don't use hovertileview
-
 			bool hasObjects = m_hoverTileView.Objects.Count > 0;
-			var hasElement = m_hoverTileView.AreaElements.FirstOrDefault() != null;
+			bool hasElements = m_hoverTileView.AreaElements.Any();
 
-			if (!hasObjects && !hasElement)
+			if (!hasObjects && !hasElements)
 			{
 				CloseToolTip();
 				return;
 			}
 
 			m_content.objectBox.Visibility = hasObjects ? Visibility.Visible : Visibility.Collapsed;
-			m_content.elementBox.Visibility = hasElement ? Visibility.Visible : Visibility.Collapsed;
-			m_content.separator.Visibility = hasObjects && hasElement ? Visibility.Visible : Visibility.Collapsed;
+			m_content.elementBox.Visibility = hasElements ? Visibility.Visible : Visibility.Collapsed;
+			m_content.separator.Visibility = hasObjects && hasElements ? Visibility.Visible : Visibility.Collapsed;
 
 			var ml = m_hoverTileView.Box.Corner1;
 
