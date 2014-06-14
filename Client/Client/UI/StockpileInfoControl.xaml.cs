@@ -30,11 +30,11 @@ namespace Dwarrowdelf.Client.UI
 		public DesignStockpileSample()
 		{
 			var c = new StockpileCriteriaEditable();
-
+			/*
 			c.ItemIDs.Add(ItemID.Log);
 			c.ItemIDs.Add(ItemID.Door);
 			c.MaterialCategories.Add(MaterialCategory.Wood);
-
+			*/
 			this.Criteria = c.ToItemFilter();
 		}
 	}

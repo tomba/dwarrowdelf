@@ -85,6 +85,17 @@ namespace Dwarrowdelf.Client
 			this.Items.CollectionChanged += Items_CollectionChanged;
 		}
 
+		public SelectableCollection(TValue value, IEnumerable<TItem> items)
+			: base(value)
+		{
+			this.Items = new ObservableCollection<TItem>(items);
+			this.IsSelectedChanged += OnIsSelectedChanged;
+			this.Items.CollectionChanged += Items_CollectionChanged;
+
+			foreach (var item in this.Items)
+				item.IsSelectedChanged += ItemIsSelectedChanged;
+		}
+
 		void OnIsSelectedChanged()
 		{
 			if (this.IsSelected.HasValue)

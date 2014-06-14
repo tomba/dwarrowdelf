@@ -16,6 +16,8 @@
 	d:DataContext="{d:DesignInstance Type=ui:DesignStockpileSample, IsDesignTimeCreatable=True}">
 
 	<UserControl.Resources>
+		<ui:StockpileEditControlMockData x:Key="DesignViewModel"/>
+
 		<ObjectDataProvider x:Key="itemIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
 			<ObjectDataProvider.MethodParameters>
 				<x:Type TypeName="common:ItemID" />
@@ -42,17 +44,14 @@
 	</UserControl.Resources>
 
 	<DockPanel>
-		<UniformGrid DockPanel.Dock="Top" Columns="2">
-			<TextBlock><Run Text="Area"/></TextBlock>
-			<TextBlock Text="{Binding Area}" />
+		<UniformGrid DockPanel.Dock="Bottom" Columns="2">
 			<Button Click="Destruct_Button_Click">Destruct</Button>
-			<Button Click="Apply_Button_Click">Apply</Button>
+			<Button Click="Apply_Button_Click" IsDefault="True">Apply</Button>
 		</UniformGrid>
 
-		<Grid DataContext="{Binding Criteria, ElementName=root}">
+		<Grid DataContext="{Binding Criteria, ElementName=root}"
+			  d:DataContext="{StaticResource DesignViewModel}">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-				<ColumnDefinition />
 				<ColumnDefinition />
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
@@ -62,19 +61,56 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<TextBlock Grid.Column="0" Grid.Row="0" Text="ItemIDs" Padding="4" />
-			<TextBlock Grid.Column="1" Grid.Row="0" Text="ItemClassess" Padding="4" />
-			<TextBlock Grid.Column="2" Grid.Row="0" Text="MaterialIDs" Padding="4" />
-			<TextBlock Grid.Column="3" Grid.Row="0" Text="MaterialClasses" Padding="4" />
+			<Grid.Resources>
+				<HierarchicalDataTemplate ItemsSource="{Binding Items}" DataType="{x:Type ui:SelectableMaterialCategory}">
+					<StackPanel Orientation="Horizontal">
+						<CheckBox IsChecked="{Binding IsSelected}" Focusable="False" VerticalAlignment="Center" />
+						<ContentPresenter Content="{Binding Value, Mode=OneTime}" Margin="2,0" />
+					</StackPanel>
+				</HierarchicalDataTemplate>
 
-			<ListBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding Source={StaticResource itemIDs}}" SelectionMode="Multiple"
-					 wpfbase:ListBoxHelper.SelectedItems="{Binding ItemIDs}" />
-			<ListBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={StaticResource itemCategories}}" SelectionMode="Multiple"
-					 wpfbase:ListBoxHelper.SelectedItems="{Binding ItemCategories}" />
-			<ListBox Grid.Column="2" Grid.Row="1" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectionMode="Multiple"
-					 wpfbase:ListBoxHelper.SelectedItems="{Binding MaterialIDs}" />
-			<ListBox Grid.Column="3" Grid.Row="1" ItemsSource="{Binding Source={StaticResource materialCategories}}" SelectionMode="Multiple"
-					 wpfbase:ListBoxHelper.SelectedItems="{Binding MaterialCategories}" />
+				<DataTemplate DataType="{x:Type ui:SelectableMaterialID}">
+					<StackPanel Orientation="Horizontal">
+						<CheckBox IsChecked="{Binding IsSelected}" Focusable="False" VerticalAlignment="Center" />
+						<ContentPresenter Content="{Binding Value, Mode=OneTime}" Margin="2,0" />
+					</StackPanel>
+				</DataTemplate>
+
+				<HierarchicalDataTemplate ItemsSource="{Binding Items}" DataType="{x:Type ui:SelectableItemCategory}">
+					<StackPanel Orientation="Horizontal">
+						<CheckBox IsChecked="{Binding IsSelected}" Focusable="False" VerticalAlignment="Center" />
+						<ContentPresenter Content="{Binding Value, Mode=OneTime}" Margin="2,0" />
+					</StackPanel>
+				</HierarchicalDataTemplate>
+
+				<DataTemplate DataType="{x:Type ui:SelectableItemID}">
+					<StackPanel Orientation="Horizontal">
+						<CheckBox IsChecked="{Binding IsSelected}" Focusable="False" VerticalAlignment="Center" />
+						<ContentPresenter Content="{Binding Value, Mode=OneTime}" Margin="2,0" />
+					</StackPanel>
+				</DataTemplate>
+			</Grid.Resources>
+
+			<TextBlock Grid.Column="0" Grid.Row="0" Text="Item Types" Padding="4" />
+			<TextBlock Grid.Column="1" Grid.Row="0" Text="Material Types" Padding="4" />
+
+			<TreeView Grid.Column="0" Grid.Row="1" ItemsSource="{Binding Path=ItemsList}"  TabIndex="0">
+				<TreeView.ItemContainerStyle>
+					<Style TargetType="{x:Type TreeViewItem}">
+						<!-- <Setter Property="IsExpanded" Value="True"/> -->
+						<EventSetter Event="KeyDown" Handler="OnItemKeyDown" />
+					</Style>
+				</TreeView.ItemContainerStyle>
+			</TreeView>
+
+			<TreeView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=MaterialsList}" IsEnabled="False">
+				<TreeView.ItemContainerStyle>
+					<Style TargetType="{x:Type TreeViewItem}">
+						<!-- <Setter Property="IsExpanded" Value="True"/> -->
+						<EventSetter Event="KeyDown" Handler="OnItemKeyDown" />
+					</Style>
+				</TreeView.ItemContainerStyle>
+			</TreeView>
 
 		</Grid>
 	</DockPanel>
