@@ -114,7 +114,7 @@ namespace Client3D
 		private void LoadCube()
 		{
 			// build the cube geometry and mark it disposable when content will be uploaded
-			m_cube = ToDisposeContent(GeometricPrimitive.Cube.New(GraphicsDevice));
+			m_cube = ToDisposeContent(GeometricPrimitive.Cube.New(GraphicsDevice, 1, toLeftHanded: true));
 
 			// load the texture using game's content manager
 			m_cubeTexture = Content.Load<Texture2D>("logo_large");
@@ -129,13 +129,13 @@ namespace Client3D
 		private void LoadPlane()
 		{
 			// build the plane geometry of the specified size and subdivision segments
-			m_plane = ToDisposeContent(GeometricPrimitive.Plane.New(GraphicsDevice, 50f, 50f));
+			m_plane = ToDisposeContent(GeometricPrimitive.Plane.New(GraphicsDevice, 50f, 50f, toLeftHanded: true));
 
 			// load the texture using game's content manager
 			m_planeTexture = Content.Load<Texture2D>("GeneticaMortarlessBlocks");
 
-			// rotate the plane horizontally and move it down a bit
-			m_planeTransform = Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0f, -5f, 0f);
+			// move it down a bit
+			m_planeTransform = Matrix.Translation(0f, 0f, -5f);
 		}
 	}
 }
