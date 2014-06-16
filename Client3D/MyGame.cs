@@ -38,6 +38,22 @@ namespace Client3D
 			m_fpsClock = new Stopwatch();
 		}
 
+		protected override void OnWindowCreated()
+		{
+			base.OnWindowCreated();
+
+			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+			form.Width = 1024;
+			form.Height = 800;
+			form.Location = new System.Drawing.Point(300, 0);
+			form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+
+			var debugForm = new DebugForm();
+			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
+			debugForm.SetScene(m_testRenderer);
+			debugForm.Show();
+		}
+
 		protected override void Initialize()
 		{
 			base.Initialize();
@@ -46,6 +62,7 @@ namespace Client3D
 
 			this.Window.ClientSizeChanged += (s, e) =>
 					m_cameraProvider.SetAspect((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height);
+
 		}
 
 		protected override void BeginRun()

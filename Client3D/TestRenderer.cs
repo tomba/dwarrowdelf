@@ -30,6 +30,12 @@ namespace Client3D
 		GameMap m_map;
 		public GameMap Map { get { return m_map; } }
 
+		public bool DisableVSync { get; set; }
+		public bool IsRotationEnabled { get; set; }
+		public bool ShowBorders { get; set; }
+		public int VerticesRendered { get; private set; }
+		public int ChunkRecalcs { get; private set; }
+
 		public TestRenderer(Game game)
 			: base(game)
 		{
@@ -113,6 +119,10 @@ namespace Client3D
 			renderPass.Apply();
 
 			m_chunkManager.Render();
+
+			this.VerticesRendered = m_chunkManager.VerticesRendered;
+			if (m_chunkManager.ChunkRecalcs > 0)
+				this.ChunkRecalcs = m_chunkManager.ChunkRecalcs;
 		}
 
 		IntPoint3 m_viewCorner1;
