@@ -82,6 +82,30 @@ namespace Client3D
 				this.ypCutTrackBar.Value = scene.ViewCorner2.Y;
 				this.viewCorner2TextBox.Text = scene.ViewCorner2.ToString();
 			};
+
+			this.checkBox1.CheckedChanged += checkBox_CheckedChanged;
+			this.checkBox2.CheckedChanged += checkBox_CheckedChanged;
+		}
+
+		void checkBox_CheckedChanged(object sender, EventArgs e)
+		{
+			bool disableCull = checkBox1.Checked;
+			bool wire = checkBox2.Checked;
+
+			SharpDX.Toolkit.Graphics.RasterizerState state;
+
+			if (!disableCull && !wire)
+				state = m_scene.Game.GraphicsDevice.RasterizerStates.CullBack;
+			else if (disableCull && !wire)
+				state = m_scene.Game.GraphicsDevice.RasterizerStates.CullNone;
+			else if (!disableCull && wire)
+				state = m_scene.Game.GraphicsDevice.RasterizerStates.WireFrame;
+			else if (disableCull && wire)
+				state = m_scene.Game.GraphicsDevice.RasterizerStates.WireFrameCullNone;
+			else
+				throw new Exception();
+
+			m_scene.RasterizerState = state;
 		}
 
 		void timer_Tick(object sender, EventArgs e)

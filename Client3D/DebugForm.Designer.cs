@@ -29,34 +29,38 @@
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.camPosTextBox = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.camPosTextBox = new System.Windows.Forms.TextBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.vertRendTextBox = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.chunkRecalcsTextBox = new System.Windows.Forms.TextBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.vertRendTextBox = new System.Windows.Forms.TextBox();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.viewCorner1TextBox = new System.Windows.Forms.TextBox();
-			this.zCutTrackBar = new System.Windows.Forms.TrackBar();
-			this.xnCutTrackBar = new System.Windows.Forms.TrackBar();
-			this.label4 = new System.Windows.Forms.Label();
-			this.viewCorner2TextBox = new System.Windows.Forms.TextBox();
-			this.xpCutTrackBar = new System.Windows.Forms.TrackBar();
-			this.label6 = new System.Windows.Forms.Label();
 			this.ypCutTrackBar = new System.Windows.Forms.TrackBar();
 			this.label7 = new System.Windows.Forms.Label();
 			this.ynCutTrackBar = new System.Windows.Forms.TrackBar();
 			this.label8 = new System.Windows.Forms.Label();
+			this.xpCutTrackBar = new System.Windows.Forms.TrackBar();
+			this.label6 = new System.Windows.Forms.Label();
+			this.xnCutTrackBar = new System.Windows.Forms.TrackBar();
+			this.label4 = new System.Windows.Forms.Label();
+			this.viewCorner2TextBox = new System.Windows.Forms.TextBox();
+			this.zCutTrackBar = new System.Windows.Forms.TrackBar();
+			this.label5 = new System.Windows.Forms.Label();
+			this.viewCorner1TextBox = new System.Windows.Forms.TextBox();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.checkBox2 = new System.Windows.Forms.CheckBox();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.zCutTrackBar)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.xnCutTrackBar)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.xpCutTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ypCutTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ynCutTrackBar)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.xpCutTrackBar)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.xnCutTrackBar)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.zCutTrackBar)).BeginInit();
+			this.groupBox4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -70,14 +74,6 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Camera";
 			// 
-			// camPosTextBox
-			// 
-			this.camPosTextBox.Location = new System.Drawing.Point(56, 19);
-			this.camPosTextBox.Name = "camPosTextBox";
-			this.camPosTextBox.ReadOnly = true;
-			this.camPosTextBox.Size = new System.Drawing.Size(198, 20);
-			this.camPosTextBox.TabIndex = 0;
-			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
@@ -86,6 +82,14 @@
 			this.label1.Size = new System.Drawing.Size(44, 13);
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Position";
+			// 
+			// camPosTextBox
+			// 
+			this.camPosTextBox.Location = new System.Drawing.Point(56, 19);
+			this.camPosTextBox.Name = "camPosTextBox";
+			this.camPosTextBox.ReadOnly = true;
+			this.camPosTextBox.Size = new System.Drawing.Size(198, 20);
+			this.camPosTextBox.TabIndex = 0;
 			// 
 			// groupBox2
 			// 
@@ -99,23 +103,6 @@
 			this.groupBox2.TabIndex = 3;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Scene";
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(6, 22);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(95, 13);
-			this.label2.TabIndex = 1;
-			this.label2.Text = "Vertices Rendered";
-			// 
-			// vertRendTextBox
-			// 
-			this.vertRendTextBox.Location = new System.Drawing.Point(107, 19);
-			this.vertRendTextBox.Name = "vertRendTextBox";
-			this.vertRendTextBox.ReadOnly = true;
-			this.vertRendTextBox.Size = new System.Drawing.Size(147, 20);
-			this.vertRendTextBox.TabIndex = 0;
 			// 
 			// label3
 			// 
@@ -133,6 +120,23 @@
 			this.chunkRecalcsTextBox.ReadOnly = true;
 			this.chunkRecalcsTextBox.Size = new System.Drawing.Size(147, 20);
 			this.chunkRecalcsTextBox.TabIndex = 2;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(6, 22);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(95, 13);
+			this.label2.TabIndex = 1;
+			this.label2.Text = "Vertices Rendered";
+			// 
+			// vertRendTextBox
+			// 
+			this.vertRendTextBox.Location = new System.Drawing.Point(107, 19);
+			this.vertRendTextBox.Name = "vertRendTextBox";
+			this.vertRendTextBox.ReadOnly = true;
+			this.vertRendTextBox.Size = new System.Drawing.Size(147, 20);
+			this.vertRendTextBox.TabIndex = 0;
 			// 
 			// groupBox3
 			// 
@@ -154,70 +158,6 @@
 			this.groupBox3.TabIndex = 4;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Map View Area";
-			// 
-			// label5
-			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(11, 48);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(14, 13);
-			this.label5.TabIndex = 1;
-			this.label5.Text = "Z";
-			// 
-			// viewCorner1TextBox
-			// 
-			this.viewCorner1TextBox.Location = new System.Drawing.Point(6, 19);
-			this.viewCorner1TextBox.Name = "viewCorner1TextBox";
-			this.viewCorner1TextBox.ReadOnly = true;
-			this.viewCorner1TextBox.Size = new System.Drawing.Size(118, 20);
-			this.viewCorner1TextBox.TabIndex = 0;
-			// 
-			// zCutTrackBar
-			// 
-			this.zCutTrackBar.Location = new System.Drawing.Point(31, 45);
-			this.zCutTrackBar.Name = "zCutTrackBar";
-			this.zCutTrackBar.Size = new System.Drawing.Size(176, 45);
-			this.zCutTrackBar.TabIndex = 2;
-			// 
-			// xnCutTrackBar
-			// 
-			this.xnCutTrackBar.Location = new System.Drawing.Point(31, 96);
-			this.xnCutTrackBar.Name = "xnCutTrackBar";
-			this.xnCutTrackBar.Size = new System.Drawing.Size(176, 45);
-			this.xnCutTrackBar.TabIndex = 5;
-			// 
-			// label4
-			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(11, 102);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(17, 13);
-			this.label4.TabIndex = 4;
-			this.label4.Text = "X-";
-			// 
-			// viewCorner2TextBox
-			// 
-			this.viewCorner2TextBox.Location = new System.Drawing.Point(130, 19);
-			this.viewCorner2TextBox.Name = "viewCorner2TextBox";
-			this.viewCorner2TextBox.ReadOnly = true;
-			this.viewCorner2TextBox.Size = new System.Drawing.Size(118, 20);
-			this.viewCorner2TextBox.TabIndex = 3;
-			// 
-			// xpCutTrackBar
-			// 
-			this.xpCutTrackBar.Location = new System.Drawing.Point(31, 147);
-			this.xpCutTrackBar.Name = "xpCutTrackBar";
-			this.xpCutTrackBar.Size = new System.Drawing.Size(176, 45);
-			this.xpCutTrackBar.TabIndex = 8;
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(11, 153);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(20, 13);
-			this.label6.TabIndex = 7;
-			this.label6.Text = "X+";
 			// 
 			// ypCutTrackBar
 			// 
@@ -251,11 +191,107 @@
 			this.label8.TabIndex = 10;
 			this.label8.Text = "Y-";
 			// 
+			// xpCutTrackBar
+			// 
+			this.xpCutTrackBar.Location = new System.Drawing.Point(31, 147);
+			this.xpCutTrackBar.Name = "xpCutTrackBar";
+			this.xpCutTrackBar.Size = new System.Drawing.Size(176, 45);
+			this.xpCutTrackBar.TabIndex = 8;
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(11, 153);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(20, 13);
+			this.label6.TabIndex = 7;
+			this.label6.Text = "X+";
+			// 
+			// xnCutTrackBar
+			// 
+			this.xnCutTrackBar.Location = new System.Drawing.Point(31, 96);
+			this.xnCutTrackBar.Name = "xnCutTrackBar";
+			this.xnCutTrackBar.Size = new System.Drawing.Size(176, 45);
+			this.xnCutTrackBar.TabIndex = 5;
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(11, 102);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(17, 13);
+			this.label4.TabIndex = 4;
+			this.label4.Text = "X-";
+			// 
+			// viewCorner2TextBox
+			// 
+			this.viewCorner2TextBox.Location = new System.Drawing.Point(130, 19);
+			this.viewCorner2TextBox.Name = "viewCorner2TextBox";
+			this.viewCorner2TextBox.ReadOnly = true;
+			this.viewCorner2TextBox.Size = new System.Drawing.Size(118, 20);
+			this.viewCorner2TextBox.TabIndex = 3;
+			// 
+			// zCutTrackBar
+			// 
+			this.zCutTrackBar.Location = new System.Drawing.Point(31, 45);
+			this.zCutTrackBar.Name = "zCutTrackBar";
+			this.zCutTrackBar.Size = new System.Drawing.Size(176, 45);
+			this.zCutTrackBar.TabIndex = 2;
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(11, 48);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(14, 13);
+			this.label5.TabIndex = 1;
+			this.label5.Text = "Z";
+			// 
+			// viewCorner1TextBox
+			// 
+			this.viewCorner1TextBox.Location = new System.Drawing.Point(6, 19);
+			this.viewCorner1TextBox.Name = "viewCorner1TextBox";
+			this.viewCorner1TextBox.ReadOnly = true;
+			this.viewCorner1TextBox.Size = new System.Drawing.Size(118, 20);
+			this.viewCorner1TextBox.TabIndex = 0;
+			// 
+			// groupBox4
+			// 
+			this.groupBox4.Controls.Add(this.checkBox2);
+			this.groupBox4.Controls.Add(this.checkBox1);
+			this.groupBox4.Location = new System.Drawing.Point(12, 477);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(260, 97);
+			this.groupBox4.TabIndex = 5;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "RasterizerState";
+			// 
+			// checkBox2
+			// 
+			this.checkBox2.AutoSize = true;
+			this.checkBox2.Location = new System.Drawing.Point(6, 43);
+			this.checkBox2.Name = "checkBox2";
+			this.checkBox2.Size = new System.Drawing.Size(74, 17);
+			this.checkBox2.TabIndex = 1;
+			this.checkBox2.Text = "Wireframe";
+			this.checkBox2.UseVisualStyleBackColor = true;
+			// 
+			// checkBox1
+			// 
+			this.checkBox1.AutoSize = true;
+			this.checkBox1.Location = new System.Drawing.Point(6, 20);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(95, 17);
+			this.checkBox1.TabIndex = 0;
+			this.checkBox1.Text = "Disable Culling";
+			this.checkBox1.UseVisualStyleBackColor = true;
+			// 
 			// DebugForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(284, 533);
+			this.ClientSize = new System.Drawing.Size(284, 629);
+			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
@@ -270,11 +306,13 @@
 			this.groupBox2.PerformLayout();
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox3.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.zCutTrackBar)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.xnCutTrackBar)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.xpCutTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ypCutTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ynCutTrackBar)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.xpCutTrackBar)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.xnCutTrackBar)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.zCutTrackBar)).EndInit();
+			this.groupBox4.ResumeLayout(false);
+			this.groupBox4.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -302,6 +340,9 @@
 		private System.Windows.Forms.Label label7;
 		internal System.Windows.Forms.TrackBar ynCutTrackBar;
 		private System.Windows.Forms.Label label8;
+		private System.Windows.Forms.GroupBox groupBox4;
+		private System.Windows.Forms.CheckBox checkBox2;
+		private System.Windows.Forms.CheckBox checkBox1;
 
 	}
 }
