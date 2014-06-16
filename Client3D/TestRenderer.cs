@@ -72,7 +72,7 @@ namespace Client3D
 			string[] texFiles = System.IO.Directory.GetFiles("Content/BlockTextures");
 			int numTextures = texFiles.Length;
 
-			var format = SharpDX.DXGI.Format.B8G8R8A8_UNorm;
+			var format = SharpDX.DXGI.Format.R8G8B8A8_UNorm; //.B8G8R8A8_UNorm;
 			int w = 1024;
 			int h = 1024;
 			int mipLevels = 8;
@@ -104,6 +104,17 @@ namespace Client3D
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
+
+			var tTime = (float)gameTime.TotalGameTime.TotalSeconds;
+
+			if (IsRotationEnabled)
+			{
+				Matrix m = Matrix.Identity;
+				m *= Matrix.RotationX(tTime);
+				m *= Matrix.RotationY(tTime * 1.1f);
+				m *= Matrix.RotationZ(tTime * 0.7f);
+				this.DirectionalLight.LightDirection = Vector3.TransformNormal(Vector3.Normalize(new Vector3(1, 1, 1)), m);
+			}
 		}
 
 		public DirectionalLight DirectionalLight { get; private set; }
