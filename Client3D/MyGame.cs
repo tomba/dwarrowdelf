@@ -5,6 +5,7 @@ using System.Text;
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Input;
+using System.Diagnostics;
 
 namespace Client3D
 {
@@ -18,6 +19,9 @@ namespace Client3D
 
 		KeyboardState m_keyboardState;
 
+		int m_frameCount;
+		readonly Stopwatch m_fpsClock;
+
 		public MyGame()
 		{
 			this.IsMouseVisible = true;
@@ -30,6 +34,8 @@ namespace Client3D
 			m_keyboardManager = new KeyboardManager(this);
 
 			Content.RootDirectory = "Content";
+
+			m_fpsClock = new Stopwatch();
 		}
 
 		protected override void Initialize()
@@ -42,8 +48,32 @@ namespace Client3D
 					m_cameraProvider.SetAspect((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height);
 		}
 
+		protected override void BeginRun()
+		{
+			base.BeginRun();
+
+			m_fpsClock.Start();
+		}
+
+		protected override void EndRun()
+		{
+			m_fpsClock.Stop();
+
+			base.EndRun();
+		}
+
 		protected override void Update(GameTime gameTime)
 		{
+			m_frameCount++;
+			if (m_fpsClock.ElapsedMilliseconds > 1000.0f)
+			{
+				var fpsText = string.Format("{0:F2} FPS", (float)m_frameCount * 1000 / m_fpsClock.ElapsedMilliseconds);
+				m_frameCount = 0;
+				m_fpsClock.Restart();
+
+				this.Window.Title = fpsText;
+			}
+
 			m_keyboardState = m_keyboardManager.GetState();
 
 			base.Update(gameTime);
