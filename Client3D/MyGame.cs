@@ -14,6 +14,7 @@ namespace Client3D
 		readonly SceneRenderer m_sceneRenderer;
 		readonly CameraProvider m_cameraProvider;
 		readonly KeyboardManager m_keyboardManager;
+		readonly TestRenderer m_testRenderer;
 
 		KeyboardState m_keyboardState;
 
@@ -22,6 +23,8 @@ namespace Client3D
 			this.IsMouseVisible = true;
 
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
+			this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
+			m_testRenderer = new TestRenderer(this);
 			m_sceneRenderer = new SceneRenderer(this);
 			m_cameraProvider = new CameraProvider(this);
 			m_keyboardManager = new KeyboardManager(this);
@@ -52,7 +55,7 @@ namespace Client3D
 			const float rotSpeed = MathUtil.PiOverTwo;
 			float dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-			GraphicsDevice.Clear(Color.CornflowerBlue);
+			this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			if (m_keyboardState.IsKeyDown(Keys.F4) && m_keyboardState.IsKeyDown(Keys.LeftAlt))
 				this.Exit();

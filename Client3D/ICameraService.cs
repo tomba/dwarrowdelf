@@ -2,19 +2,14 @@
 
 namespace Client3D
 {
-	/// <summary>
-	/// Provides camera information, like view and projection matrices
-	/// </summary>
 	interface ICameraService
 	{
-		/// <summary>
-		/// The camera's view matrix
-		/// </summary>
+		Vector3 Position { get; }
+
 		Matrix View { get; }
 
-		/// <summary>
-		/// The camera's projection matrix
-		/// </summary>
 		Matrix Projection { get; }
+
+		BoundingFrustum Frustum { get; }
 	}
 }
