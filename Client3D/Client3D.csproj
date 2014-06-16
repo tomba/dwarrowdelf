@@ -100,7 +100,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneRenderer.cs" />
-    <Compile Include="TestRenderer.cs" />
+    <Compile Include="TerrainRenderer.cs" />
     <EmbeddedResource Include="DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -129,7 +129,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ToolkitFxc Include="Content\TestEffect.fx" />
+    <ToolkitFxc Include="Content\TerrainEffect.fx" />
   </ItemGroup>
   <ItemGroup>
     <ToolkitTexture Include="Content\GeneticaMortarlessBlocks.jpg" />

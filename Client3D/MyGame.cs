@@ -15,7 +15,7 @@ namespace Client3D
 		readonly SceneRenderer m_sceneRenderer;
 		readonly CameraProvider m_cameraProvider;
 		readonly KeyboardManager m_keyboardManager;
-		readonly TestRenderer m_testRenderer;
+		readonly TerrainRenderer m_terrainRenderer;
 
 		KeyboardState m_keyboardState;
 
@@ -28,7 +28,7 @@ namespace Client3D
 
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
 			this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
-			m_testRenderer = new TestRenderer(this);
+			m_terrainRenderer = new TerrainRenderer(this);
 			m_sceneRenderer = new SceneRenderer(this);
 			m_cameraProvider = new CameraProvider(this);
 			m_keyboardManager = new KeyboardManager(this);
@@ -50,7 +50,7 @@ namespace Client3D
 
 			var debugForm = new DebugForm();
 			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
-			debugForm.SetScene(m_testRenderer);
+			debugForm.SetScene(m_terrainRenderer);
 			debugForm.Show();
 		}
 

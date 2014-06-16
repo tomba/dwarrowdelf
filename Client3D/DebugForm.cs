@@ -12,7 +12,7 @@ namespace Client3D
 {
 	internal partial class DebugForm : Form
 	{
-		TestRenderer m_scene;
+		TerrainRenderer m_scene;
 		Timer m_timer;
 
 		public DebugForm()
@@ -32,7 +32,7 @@ namespace Client3D
 			base.OnClosing(e);
 		}
 
-		public void SetScene(TestRenderer scene)
+		public void SetScene(TerrainRenderer scene)
 		{
 			m_scene = scene;
 

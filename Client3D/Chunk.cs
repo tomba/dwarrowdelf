@@ -112,7 +112,7 @@ namespace Client3D
 			}
 		}
 
-		public void Render(TestRenderer scene)
+		public void Render(TerrainRenderer scene)
 		{
 			var device = scene.Game.GraphicsDevice;
 
@@ -172,7 +172,7 @@ namespace Client3D
 			}
 		}
 
-		void GenerateVertices(VertexDataBuffer vertexData, TestRenderer scene)
+		void GenerateVertices(VertexDataBuffer vertexData, TerrainRenderer scene)
 		{
 			IntPoint3 cutn = scene.ViewCorner1;
 			IntPoint3 cutp = scene.ViewCorner2;
@@ -263,7 +263,7 @@ namespace Client3D
 			AddVertices(s_floorCoords, p, texID, vertexData);
 		}
 
-		void CreateCubicBlock(IntPoint3 p, VertexDataBuffer vertexData, TestRenderer scene, TextureID texId)
+		void CreateCubicBlock(IntPoint3 p, VertexDataBuffer vertexData, TerrainRenderer scene, TextureID texId)
 		{
 			/*
 			 * 0 up

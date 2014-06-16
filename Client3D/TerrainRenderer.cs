@@ -20,7 +20,7 @@ namespace Client3D
 		public Vector3 LightDirection;
 	}
 
-	class TestRenderer : GameSystem
+	class TerrainRenderer : GameSystem
 	{
 		public Effect Effect { get { return m_effect; } }
 		Effect m_effect;
@@ -36,7 +36,7 @@ namespace Client3D
 		public int VerticesRendered { get; private set; }
 		public int ChunkRecalcs { get; private set; }
 
-		public TestRenderer(Game game)
+		public TerrainRenderer(Game game)
 			: base(game)
 		{
 			this.Visible = true;
@@ -67,7 +67,7 @@ namespace Client3D
 
 			var device = this.Game.GraphicsDevice;
 
-			m_effect = this.Content.Load<Effect>("TestEffect");
+			m_effect = this.Content.Load<Effect>("TerrainEffect");
 
 			m_textures = this.Content.Load<Texture2D>("TileTextureArray");
 

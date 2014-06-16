@@ -13,12 +13,12 @@ namespace Client3D
 	{
 		Chunk[] m_chunks;
 
-		TestRenderer m_scene;
+		TerrainRenderer m_scene;
 
 		public int VerticesRendered { get; private set; }
 		public int ChunkRecalcs { get; private set; }
 
-		public ChunkManager(TestRenderer scene)
+		public ChunkManager(TerrainRenderer scene)
 		{
 			m_scene = scene;
 
