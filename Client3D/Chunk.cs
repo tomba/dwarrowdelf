@@ -194,27 +194,27 @@ namespace Client3D
 					for (int x = x0; x <= x1; ++x)
 					{
 						var p = new IntPoint3(x, y, z);
-						var b = m_map.Grid[p.Z, p.Y, p.X];
+						var td = m_map.Grid[p.Z, p.Y, p.X];
 
-						if (b.IsEmpty)
+						if (td.IsEmpty)
 							continue;
 
-						if (b.IsUndefined)
+						if (td.IsUndefined)
 						{
 							CreateCubicBlock(p, vertexData, scene, TextureID.Undefined);
 							continue;
 						}
 
-						switch (b.InteriorID)
+						switch (td.InteriorID)
 						{
 							case InteriorID.NaturalWall:
 								CreateCubicBlock(p, vertexData, scene, TextureID.Tex2);
 								continue;
 						}
 
-						TextureID texID = GetFloorTexture(b);
+						TextureID texID = GetFloorTexture(td);
 
-						switch (b.TerrainID)
+						switch (td.TerrainID)
 						{
 							case TerrainID.NaturalFloor:
 								CreateFloorBlock(p, vertexData, texID);
