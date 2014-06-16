@@ -241,23 +241,6 @@ namespace Client3D
 			}
 		}
 
-		// angle in 45 degree units
-		void AddVertices(Vertex3002[] vertices, IntPoint3 p, TextureID texId, VertexDataBuffer vertexData, int angle)
-		{
-			var qua = Quaternion.RotationAxis(Vector3.UnitZ, MathUtil.DegreesToRadians(angle * 45));
-
-			var offset = p.ToVector3();
-			offset += new Vector3(0.5f);
-
-			for (int i = 0; i < vertices.Length; ++i)
-			{
-				var vd = new Vertex3003(vertices[i].Pos, new Vector3(vertices[i].Tex, (int)texId));
-				vd.Position = Vector3.Transform(vd.Position, qua);
-				vd.Position += offset;
-				vertexData.Add(vd);
-			}
-		}
-
 		void CreateFloorBlock(IntPoint3 p, VertexDataBuffer vertexData, TextureID texID)
 		{
 			AddVertices(s_floorCoords, p, texID, vertexData);
