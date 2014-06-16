@@ -69,30 +69,7 @@ namespace Client3D
 
 			m_effect = this.Content.Load<Effect>("TestEffect");
 
-			string[] texFiles = System.IO.Directory.GetFiles("Content/BlockTextures");
-			int numTextures = texFiles.Length;
-
-			var format = SharpDX.DXGI.Format.R8G8B8A8_UNorm; //.B8G8R8A8_UNorm;
-			int w = 1024;
-			int h = 1024;
-			int mipLevels = 8;
-
-			// XXX need RenderTarget to be able to generate mipmaps
-			m_textures = Texture2D.New(device, w, h, mipLevels, format, arraySize: numTextures,
-				flags: TextureFlags.RenderTarget | TextureFlags.ShaderResource);
-
-			for (int texNum = 0; texNum < numTextures; ++texNum)
-			{
-				var texName = System.IO.Path.Combine("BlockTextures", System.IO.Path.GetFileNameWithoutExtension(texFiles[texNum]));
-
-				using (var tex = this.Content.Load<Texture2D>(texName))
-				{
-					var data = tex.GetData<Color>();
-					m_textures.SetData(data, texNum, 0);
-				}
-			}
-
-			m_textures.GenerateMipMaps();
+			m_textures = this.Content.Load<Texture2D>("TileTextureArray");
 
 			m_effect.Parameters["blockTextures"].SetResource(m_textures);
 

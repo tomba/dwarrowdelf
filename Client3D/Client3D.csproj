@@ -113,6 +113,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <ToolkitTexture Include="Content\TileTextureArray.dds" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -139,15 +140,6 @@
       <Project>{37d55ac1-bdae-4c0c-8856-8867fe772b2b}</Project>
       <Name>Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ToolkitTexture Include="Content\BlockTextures\0_tex.jpg" />
-    <ToolkitTexture Include="Content\BlockTextures\1_tilable-IMG_0044-dark.png" />
-    <ToolkitTexture Include="Content\BlockTextures\2_Tileable1f.png" />
-    <ToolkitTexture Include="Content\BlockTextures\3_wall.jpg" />
-    <ToolkitTexture Include="Content\BlockTextures\4_wall2.jpg" />
-    <ToolkitTexture Include="Content\BlockTextures\5_wall3.jpg" />
-    <ToolkitTexture Include="Content\BlockTextures\6_Undefined.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
