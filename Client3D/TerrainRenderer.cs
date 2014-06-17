@@ -51,7 +51,7 @@ namespace Client3D
 				AmbientColor = new Vector4(new Vector3(0.4f), 1.0f),
 				DiffuseColor = new Vector4(new Vector3(0.6f), 1.0f),
 				SpecularColor = new Vector4(new Vector3(0.6f), 1.0f),
-				LightDirection = Vector3.Normalize(new Vector3(1, 1, -4)),
+				LightDirection = Vector3.Normalize(new Vector3(1, 2, -4)),
 			};
 
 			m_chunkManager = ToDispose(new ChunkManager(this));
