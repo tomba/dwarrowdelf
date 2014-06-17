@@ -24,7 +24,7 @@ namespace Client3D
 
 		public GameMap()
 		{
-			this.Size = new IntSize3(64, 64, 32);
+			this.Size = new IntSize3(32, 32, 32);
 
 			string file = Path.Combine(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath), "map.dat");
 
@@ -133,12 +133,20 @@ namespace Client3D
 			//ClearTerrain(terrainData);
 			//CreateSlopeTest1(terrainData);
 			//CreateSlopeTest2(terrainData);
-			CreateRealTerrain(terrainData);
+			//CreateRealTerrain(terrainData);
+			CreateBallTerrain(terrainData);
 
 			TileData[, ,] grid;
 			terrainData.GetData(out grid, out m_levelMap);
 			this.Grid = grid;
 
+			//CreateExtraStuff();
+
+			UndefineNonvisible(terrainData);
+		}
+
+		void CreateExtraStuff()
+		{
 			var sl = FindStartLocation();
 			if (sl.HasValue == false)
 				throw new Exception();
@@ -183,8 +191,6 @@ namespace Client3D
 					InteriorID = InteriorID.Empty,
 				});
 			}
-
-			UndefineNonvisible(terrainData);
 		}
 
 		void SetTerrain(IntPoint3 p, TileData td)
@@ -281,6 +287,11 @@ namespace Client3D
 						{
 							grid[z, y, x].TerrainID = TerrainID.NaturalFloor;
 							grid[z, y, x].InteriorID = InteriorID.NaturalWall;
+						}
+						else
+						{
+							grid[z, y, x].TerrainID = TerrainID.Empty;
+							grid[z, y, x].InteriorID = InteriorID.Empty;
 						}
 					}
 		}
