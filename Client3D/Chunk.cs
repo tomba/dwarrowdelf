@@ -16,6 +16,21 @@ namespace Client3D
 {
 	class Chunk : Component
 	{
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		struct TerrainVertex
+		{
+			[VertexElement("POSITION")]
+			public Vector3 Position;
+			[VertexElement("TEXCOORD0")]
+			public Vector3 Tex;
+
+			public TerrainVertex(Vector3 pos, Vector3 tex)
+			{
+				this.Position = pos;
+				this.Tex = tex;
+			}
+		}
+
 		public const int CHUNK_SIZE = 8;
 		const int MAX_TILES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
 		const int MAX_VERTICES_PER_TILE = 36;
@@ -27,7 +42,7 @@ namespace Client3D
 
 		static VertexDataBuffer s_vertexData = new VertexDataBuffer(CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * MAX_VERTICES_PER_TILE);
 
-		Buffer<Vertex3003> m_vertexBuffer;
+		Buffer<TerrainVertex> m_vertexBuffer;
 		VertexInputLayout m_layout;
 
 		public IntVector3 ChunkOffset { get; private set; }
@@ -44,16 +59,16 @@ namespace Client3D
 
 		class VertexDataBuffer
 		{
-			public Vertex3003[] Data { get; private set; }
+			public TerrainVertex[] Data { get; private set; }
 			public int Count { get; private set; }
 
 			public VertexDataBuffer(int size)
 			{
-				this.Data = new Vertex3003[size];
+				this.Data = new TerrainVertex[size];
 				this.Count = 0;
 			}
 
-			public void Add(Vertex3003 data)
+			public void Add(TerrainVertex data)
 			{
 				this.Data[this.Count++] = data;
 			}
@@ -93,7 +108,7 @@ namespace Client3D
 
 		public void Setup(GraphicsDevice device)
 		{
-			m_vertexBuffer = Buffer.New<Vertex3003>(device, m_maxVertices, BufferFlags.VertexBuffer);
+			m_vertexBuffer = Buffer.New<TerrainVertex>(device, m_maxVertices, BufferFlags.VertexBuffer);
 			m_layout = VertexInputLayout.FromBuffer(0, m_vertexBuffer);
 		}
 
@@ -236,7 +251,7 @@ namespace Client3D
 
 			for (int i = 0; i < vertices.Length; ++i)
 			{
-				var vd = new Vertex3003(vertices[i].Pos + offset, new Vector3(vertices[i].Tex, (int)texId));
+				var vd = new TerrainVertex(vertices[i].Pos + offset, new Vector3(vertices[i].Tex, (int)texId));
 				vertexData.Add(vd);
 			}
 		}
