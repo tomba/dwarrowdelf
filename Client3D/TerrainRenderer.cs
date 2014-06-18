@@ -103,7 +103,7 @@ namespace Client3D
 			base.Draw(gameTime);
 
 			this.GraphicsDevice.SetRasterizerState(this.RasterizerState);
-			
+
 			m_effect.Parameters["ambientColor"].SetValue(this.DirectionalLight.AmbientColor);
 			m_effect.Parameters["diffuseColor"].SetValue(this.DirectionalLight.DiffuseColor);
 			m_effect.Parameters["specularColor"].SetValue(this.DirectionalLight.SpecularColor);

@@ -28,10 +28,11 @@ namespace Client3D
 
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
 			this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
+			m_keyboardManager = new KeyboardManager(this);
+			m_cameraProvider = new CameraProvider(this);
+
 			m_terrainRenderer = new TerrainRenderer(this);
 			m_sceneRenderer = new SceneRenderer(this);
-			m_cameraProvider = new CameraProvider(this);
-			m_keyboardManager = new KeyboardManager(this);
 
 			Content.RootDirectory = "Content";
 
@@ -42,16 +43,19 @@ namespace Client3D
 		{
 			base.OnWindowCreated();
 
-			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
-			form.Width = 1024;
-			form.Height = 800;
-			form.Location = new System.Drawing.Point(300, 0);
-			form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			if (m_terrainRenderer != null)
+			{
+				var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+				form.Width = 1024;
+				form.Height = 800;
+				form.Location = new System.Drawing.Point(300, 0);
+				form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 
-			var debugForm = new DebugForm();
-			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
-			debugForm.SetScene(m_terrainRenderer);
-			debugForm.Show();
+				var debugForm = new DebugForm();
+				debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
+				debugForm.SetScene(m_terrainRenderer);
+				debugForm.Show();
+			}
 		}
 
 		protected override void Initialize()
