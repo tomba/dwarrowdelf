@@ -33,7 +33,7 @@ namespace Client3D
 
 		public const int CHUNK_SIZE = 8;
 		const int MAX_TILES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
-		const int MAX_VERTICES_PER_TILE = 36;
+		const int MAX_VERTICES_PER_TILE = 6 * 4;
 		const int FLOATS_PER_VERTEX = 5;
 
 		static IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
@@ -165,7 +165,7 @@ namespace Client3D
 			{
 				device.SetVertexBuffer(m_vertexBuffer);
 				device.SetVertexInputLayout(m_layout);
-				device.Draw(PrimitiveType.TriangleList, this.VertexCount);
+				device.Draw(PrimitiveType.LineListWithAdjacency, this.VertexCount);
 			}
 		}
 
@@ -329,8 +329,6 @@ namespace Client3D
 			new Vertex3002( 1.0f,   1.0f,  -1.0f,  1.0f,  1.0f),
 			new Vertex3002(-1.0f,   1.0f,  -1.0f,  0.0f,  1.0f),
 			new Vertex3002( 1.0f,  -1.0f,  -1.0f,  1.0f,  0.0f),
-			new Vertex3002( 1.0f,  -1.0f,  -1.0f,  1.0f,  0.0f),
-			new Vertex3002(-1.0f,   1.0f,  -1.0f,  0.0f,  1.0f),
 			new Vertex3002(-1.0f,  -1.0f,  -1.0f,  0.0f,  0.0f),
 		};
 
@@ -354,8 +352,6 @@ namespace Client3D
 				new Vertex3002(-1.0f,   1.0f,   1.0f,  0.0f,  0.0f),
 				new Vertex3002( 1.0f,   1.0f,   1.0f,  1.0f,  0.0f),
 				new Vertex3002(-1.0f,   1.0f,  -1.0f,  0.0f,  1.0f),
-				new Vertex3002(-1.0f,   1.0f,  -1.0f,  0.0f,  1.0f),
-				new Vertex3002( 1.0f,   1.0f,   1.0f,  1.0f,  0.0f),
 				new Vertex3002( 1.0f,   1.0f,  -1.0f,  1.0f,  1.0f),
 			};
 
@@ -373,9 +369,9 @@ namespace Client3D
 
 			for (int side = 0; side < 6; ++side)
 			{
-				Vertex3002[] face = new Vertex3002[6];
+				Vertex3002[] face = new Vertex3002[4];
 
-				for (int vn = 0; vn < 6; ++vn)
+				for (int vn = 0; vn < 4; ++vn)
 				{
 					face[vn].Pos = Vector3.Transform(south[vn].Pos, rotQs[side]) / 2.0f;
 					face[vn].Tex = south[vn].Tex;

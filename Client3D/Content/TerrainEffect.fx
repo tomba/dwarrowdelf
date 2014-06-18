@@ -5,6 +5,13 @@ struct VS_IN
 	float3 tex : TEXCOORD0;
 };
 
+struct GS_IN
+{
+	float4 pos : SV_POSITION;
+	float3 posW : POSITION;
+	float3 tex : TEXCOORD0;
+};
+
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
@@ -37,9 +44,9 @@ cbuffer PerObjectBuffer
 	matrix worldMatrix;
 };
 
-PS_IN VSMain(VS_IN input)
+GS_IN VSMain(VS_IN input)
 {
-	PS_IN output = (PS_IN)0;
+	GS_IN output = (GS_IN)0;
 
 	// Change the position vector to be 4 units for proper matrix calculations.
 	float4 pos = float4(input.pos, 1.0f);
@@ -51,6 +58,48 @@ PS_IN VSMain(VS_IN input)
 	output.tex = input.tex;
 
 	return output;
+}
+
+[maxvertexcount(6)]
+void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
+{
+	PS_IN output = (PS_IN)0;
+
+	float texID = input[0].tex.z;
+
+	/* FIRST */
+	output.pos = input[0].pos;
+	output.posW = input[0].posW;
+	output.tex = float3(0, 0, texID);
+	OutputStream.Append(output);
+
+	output.pos = input[1].pos;
+	output.posW = input[1].posW;
+	output.tex = float3(1, 0, texID);
+	OutputStream.Append(output);
+
+	output.pos = input[2].pos;
+	output.posW = input[2].posW;
+	output.tex = float3(0, 1, texID);
+	OutputStream.Append(output);
+
+	/* SECOND */
+	output.pos = input[1].pos;
+	output.posW = input[1].posW;
+	output.tex = float3(1, 0, texID);
+	OutputStream.Append(output);
+
+	output.pos = input[2].pos;
+	output.posW = input[2].posW;
+	output.tex = float3(0, 1, texID);
+	OutputStream.Append(output);
+
+	output.pos = input[3].pos;
+	output.posW = input[3].posW;
+	output.tex = float3(1, 1, texID);
+	OutputStream.Append(output);
+
+	OutputStream.RestartStrip();
 }
 
 float4 PSMain(PS_IN input) : SV_Target
@@ -108,6 +157,7 @@ technique
 	{
 		Profile = 10.0;
 		VertexShader = VSMain;
+		GeometryShader = GSMain;
 		PixelShader = PSMain;
 	}
 }
