@@ -99,6 +99,7 @@
     <Compile Include="MyGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestRenderer.cs" />
     <Compile Include="SceneRenderer.cs" />
     <Compile Include="TerrainRenderer.cs" />
     <EmbeddedResource Include="DebugForm.resx">
@@ -140,6 +141,9 @@
       <Project>{37d55ac1-bdae-4c0c-8856-8867fe772b2b}</Project>
       <Name>Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ToolkitFxc Include="Content\TestEffect.fx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
