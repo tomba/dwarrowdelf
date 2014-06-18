@@ -52,6 +52,10 @@ namespace Client3D
 				form.Height = 800;
 				form.Location = new System.Drawing.Point(300, 0);
 				form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+				form.MouseDown += (s, e) =>
+				{
+					m_terrainRenderer.ClickPos = new Dwarrowdelf.IntPoint2(e.X, e.Y);
+				};
 
 				var debugForm = new DebugForm();
 				debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;

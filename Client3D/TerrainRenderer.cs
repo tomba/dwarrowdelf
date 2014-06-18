@@ -78,6 +78,8 @@ namespace Client3D
 			this.RasterizerState = this.GraphicsDevice.RasterizerStates.CullBack;
 		}
 
+		public IntPoint2? ClickPos;
+
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
@@ -92,6 +94,80 @@ namespace Client3D
 				m *= Matrix.RotationZ(tTime * 0.7f);
 				this.DirectionalLight.LightDirection = Vector3.TransformNormal(Vector3.Normalize(new Vector3(1, 1, 1)), m);
 			}
+
+			if (this.ClickPos != null)
+			{
+				var buf = this.GraphicsDevice.DepthStencilBuffer;
+				var p = this.ClickPos.Value;
+
+				// XXX this copies the whole buffer
+				var arr = buf.GetData<uint>();
+				uint v = arr[p.Y * buf.Width + p.X];
+
+				if (buf.DepthFormat != DepthFormat.Depth24Stencil8)
+					throw new Exception();
+
+				// 24 bit depth
+
+				float d = (float)(v & 0xffffff);
+				d /= 0xffffff;
+
+				var wp = ScreenToWorld(p, d);
+
+				Console.WriteLine("{0} -> ({1}, {2}, {3})", new Vector3(p.X, p.Y, d), 
+					Math.Floor(wp.X), Math.Floor(wp.Y), Math.Floor(wp.Z));
+
+				/*
+				using (var img = this.GraphicsDevice.DepthStencilBuffer.GetDataAsImage())
+				{
+					var pixbuf = img.GetPixelBuffer(0, 0);
+					var pix = pixbuf.GetPixel<uint>(this.ClickPos.Value.X, this.ClickPos.Value.Y);
+					float p = (float)(pix >> 8);
+					Console.WriteLine("GOT {0:X}, {1}", pix, p);
+				}
+				*/
+				/*
+					context.CopyResource(m_depthBuffer, m_stagingBuffer);
+
+					var box = context.MapSubresource(m_stagingBuffer, 0, MapMode.Read, SharpDX.Direct3D11.MapFlags.None);
+
+					float f = Utilities.Read<float>(box.DataPointer + p.X * 4 + p.Y * box.RowPitch);
+					var wp = ScreenToWorld(p, f);
+					Debug.Print("{0} -> ({1}, {2}, {3})", new Vector3(p.X, p.Y, f), Math.Floor(wp.X), Math.Floor(wp.Y), Math.Floor(wp.Z));
+
+					context.UnmapSubresource(m_stagingBuffer, 0);
+				*/
+
+				this.ClickPos = null;
+			}
+		}
+
+		Vector3 ScreenToWorld(IntPoint2 sp, float d)
+		{
+			if (d == 1.0f)
+				return new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+
+			float w = this.Game.Window.ClientBounds.Width;
+			float h = this.Game.Window.ClientBounds.Height;
+
+			var buf = this.GraphicsDevice.DepthStencilBuffer;
+			if (buf.Width != w || buf.Height != h)
+				throw new Exception();
+
+			float px = (sp.X - 0.5f * w) / w * 2;
+			float py = (h - 0.5f * h - sp.Y) / h * 2;
+
+			var cameraService = this.Services.GetService<ICameraService>();
+
+			var projInverse = Matrix.Invert(cameraService.Projection);
+			var viewInverse = Matrix.Invert(cameraService.View);
+
+			var pp = new Vector3(px, py, d);
+
+			var p1 = Vector3.TransformCoordinate(pp, projInverse);
+			var p2 = Vector3.TransformCoordinate(p1, viewInverse);
+
+			return p2;
 		}
 
 		public DirectionalLight DirectionalLight { get; private set; }
