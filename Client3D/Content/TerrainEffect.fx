@@ -2,21 +2,22 @@
 struct VS_IN
 {
 	float3 pos : POSITION;
-	float3 tex : TEXCOORD0;
+	int texID : TEXID;
 };
 
 struct GS_IN
 {
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
-	float3 tex : TEXCOORD0;
+	int texID : TEXID;
 };
 
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
-	float3 tex : TEXCOORD0;
+	float2 tex : TEXCOORD0;
+	nointerpolation int texID : TEXID;
 };
 
 Texture2DArray blockTextures;
@@ -55,7 +56,7 @@ GS_IN VSMain(VS_IN input)
 	output.posW = output.pos.xyz;
 	output.pos = mul(output.pos, g_viewProjMatrix);
 
-	output.tex = input.tex;
+	output.texID = input.texID;
 
 	return output;
 }
@@ -65,38 +66,44 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 {
 	PS_IN output = (PS_IN)0;
 
-	float texID = input[0].tex.z;
+	float texID = input[0].texID;
 
 	/* FIRST */
 	output.pos = input[0].pos;
 	output.posW = input[0].posW;
-	output.tex = float3(0, 0, texID);
+	output.tex = float2(0, 0);
+
+	output.texID = texID;
+
 	OutputStream.Append(output);
 
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
-	output.tex = float3(1, 0, texID);
+	output.tex = float2(1, 0);
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
-	output.tex = float3(0, 1, texID);
+	output.tex = float2(0, 1);
 	OutputStream.Append(output);
 
 	/* SECOND */
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
-	output.tex = float3(1, 0, texID);
+	output.tex = float2(1, 0);
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
-	output.tex = float3(0, 1, texID);
+	output.tex = float2(0, 1);
 	OutputStream.Append(output);
 
 	output.pos = input[3].pos;
 	output.posW = input[3].posW;
-	output.tex = float3(1, 1, texID);
+	output.tex = float2(1, 1);
+
+	output.texID = texID;
+
 	OutputStream.Append(output);
 
 	OutputStream.RestartStrip();
@@ -133,7 +140,7 @@ float4 PSMain(PS_IN input) : SV_Target
 
 	float4 litColor = ambient + diffuse + specular;
 
-	float4 textureColor = blockTextures.Sample(blockSampler, float3(input.tex));
+	float4 textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
 
 	float4 color = litColor * textureColor;
 

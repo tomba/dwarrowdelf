@@ -21,20 +21,19 @@ namespace Client3D
 		{
 			[VertexElement("POSITION")]
 			public Vector3 Position;
-			[VertexElement("TEXCOORD0")]
-			public Vector3 Tex;
+			[VertexElement("TEXID")]
+			public int TexID;
 
-			public TerrainVertex(Vector3 pos, Vector3 tex)
+			public TerrainVertex(Vector3 pos, int texID)
 			{
 				this.Position = pos;
-				this.Tex = tex;
+				this.TexID = texID;
 			}
 		}
 
 		public const int CHUNK_SIZE = 8;
 		const int MAX_TILES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
 		const int MAX_VERTICES_PER_TILE = 6 * 4;
-		const int FLOATS_PER_VERTEX = 5;
 
 		static IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
@@ -244,14 +243,14 @@ namespace Client3D
 			}
 		}
 
-		void AddVertices(Vertex3002[] vertices, IntPoint3 p, TextureID texId, VertexDataBuffer vertexData)
+		void AddVertices(Vector3[] vertices, IntPoint3 p, TextureID texId, VertexDataBuffer vertexData)
 		{
 			var offset = p.ToVector3();
 			offset += new Vector3(0.5f);
 
 			for (int i = 0; i < vertices.Length; ++i)
 			{
-				var vd = new TerrainVertex(vertices[i].Pos + offset, new Vector3(vertices[i].Tex, (int)texId));
+				var vd = new TerrainVertex(vertices[i] + offset, (int)texId);
 				vertexData.Add(vd);
 			}
 		}
@@ -322,20 +321,20 @@ namespace Client3D
 			}
 		}
 
-		static Vertex3002[][] s_cubeFaces;
+		static Vector3[][] s_cubeFaces;
 
-		static Vertex3002[] s_floorCoords = new[]
+		static Vector3[] s_floorCoords = new[]
 		{
-			new Vertex3002( 1.0f,   1.0f,  -1.0f,  1.0f,  1.0f),
-			new Vertex3002(-1.0f,   1.0f,  -1.0f,  0.0f,  1.0f),
-			new Vertex3002( 1.0f,  -1.0f,  -1.0f,  1.0f,  0.0f),
-			new Vertex3002(-1.0f,  -1.0f,  -1.0f,  0.0f,  0.0f),
+			new Vector3(-1.0f,  -1.0f,  -1.0f),
+			new Vector3( 1.0f,  -1.0f,  -1.0f),
+			new Vector3(-1.0f,   1.0f,  -1.0f),
+			new Vector3( 1.0f,   1.0f,  -1.0f),
 		};
 
-		static void HalvePositions(Vertex3002[] arr)
+		static void HalvePositions(Vector3[] arr)
 		{
 			for (int i = 0; i < arr.Length; ++i)
-				arr[i].Pos /= 2;
+				arr[i] /= 2;
 		}
 
 		static Chunk()
@@ -348,11 +347,11 @@ namespace Client3D
 		static void CreateCubeFaces()
 		{
 			/*  south */
-			var south = new Vertex3002[] {
-				new Vertex3002(-1.0f,   1.0f,   1.0f,  0.0f,  0.0f),
-				new Vertex3002( 1.0f,   1.0f,   1.0f,  1.0f,  0.0f),
-				new Vertex3002(-1.0f,   1.0f,  -1.0f,  0.0f,  1.0f),
-				new Vertex3002( 1.0f,   1.0f,  -1.0f,  1.0f,  1.0f),
+			var south = new Vector3[] {
+				new Vector3(-1.0f,   1.0f,   1.0f),
+				new Vector3( 1.0f,   1.0f,   1.0f),
+				new Vector3(-1.0f,   1.0f,  -1.0f),
+				new Vector3( 1.0f,   1.0f,  -1.0f),
 			};
 
 			var rotQs = new Quaternion[]
@@ -365,21 +364,19 @@ namespace Client3D
 				Quaternion.RotationAxis(Vector3.UnitX, -MathUtil.PiOverTwo),
 			};
 
-			s_cubeFaces = new Vertex3002[6][];
+			s_cubeFaces = new Vector3[6][];
 
 			for (int side = 0; side < 6; ++side)
 			{
-				Vertex3002[] face = new Vertex3002[4];
+				Vector3[] face = new Vector3[4];
 
 				for (int vn = 0; vn < 4; ++vn)
 				{
-					face[vn].Pos = Vector3.Transform(south[vn].Pos, rotQs[side]) / 2.0f;
-					face[vn].Tex = south[vn].Tex;
+					face[vn] = Vector3.Transform(south[vn], rotQs[side]) / 2.0f;
 				}
 
 				s_cubeFaces[side] = face;
 			}
 		}
-
 	}
 }
