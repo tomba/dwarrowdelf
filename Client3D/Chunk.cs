@@ -23,11 +23,14 @@ namespace Client3D
 			public Vector3 Position;
 			[VertexElement("TEXID")]
 			public int TexID;
+			[VertexElement("OCCLUSION")]
+			public float Occlusion;
 
 			public TerrainVertex(Vector3 pos, int texID)
 			{
 				this.Position = pos;
 				this.TexID = texID;
+				this.Occlusion = 0;
 			}
 		}
 

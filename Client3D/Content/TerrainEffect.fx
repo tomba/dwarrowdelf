@@ -3,6 +3,7 @@ struct VS_IN
 {
 	float3 pos : POSITION;
 	int texID : TEXID;
+	float occlusion : OCCLUSION;
 };
 
 struct GS_IN
@@ -10,6 +11,7 @@ struct GS_IN
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
 	int texID : TEXID;
+	float occlusion : OCCLUSION;
 };
 
 struct PS_IN
@@ -18,6 +20,7 @@ struct PS_IN
 	float3 posW : POSITION;
 	float2 tex : TEXCOORD0;
 	nointerpolation int texID : TEXID;
+	nointerpolation float occlusion[4] : OCCLUSION;
 };
 
 Texture2DArray blockTextures;
@@ -57,6 +60,7 @@ GS_IN VSMain(VS_IN input)
 	output.pos = mul(output.pos, g_viewProjMatrix);
 
 	output.texID = input.texID;
+	output.occlusion = input.occlusion;
 
 	return output;
 }
@@ -74,6 +78,11 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.tex = float2(0, 0);
 
 	output.texID = texID;
+
+	output.occlusion[0] = input[0].occlusion;
+	output.occlusion[1] = input[1].occlusion;
+	output.occlusion[2] = input[2].occlusion;
+	output.occlusion[3] = input[3].occlusion;
 
 	OutputStream.Append(output);
 
@@ -103,6 +112,11 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.tex = float2(1, 1);
 
 	output.texID = texID;
+
+	output.occlusion[0] = input[0].occlusion;
+	output.occlusion[1] = input[1].occlusion;
+	output.occlusion[2] = input[2].occlusion;
+	output.occlusion[3] = input[3].occlusion;
 
 	OutputStream.Append(output);
 
@@ -139,6 +153,12 @@ float4 PSMain(PS_IN input) : SV_Target
 	}
 
 	float4 litColor = ambient + diffuse + specular;
+
+	float4 o1 = lerp(input.occlusion[0], input.occlusion[1], input.tex.x);
+	float4 o2 = lerp(input.occlusion[2], input.occlusion[3], input.tex.x);
+	float4 occlusion = lerp(o1, o2, input.tex.y);
+
+	litColor *= (1.0f - occlusion);
 
 	float4 textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
 
