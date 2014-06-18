@@ -26,6 +26,9 @@ struct PS_IN
 Texture2DArray blockTextures;
 sampler blockSampler;
 
+bool g_disableLight;
+bool g_showBorders;
+
 cbuffer PerFrame
 {
 	matrix g_viewProjMatrix;
@@ -37,7 +40,6 @@ cbuffer PerFrame
 	float _pad0;
 	float3 g_eyePos;
 	float _pad1;
-	bool g_showBorders;
 	float _pad2;
 	float _pad3;
 	float _pad4;
@@ -153,6 +155,9 @@ float4 PSMain(PS_IN input) : SV_Target
 	}
 
 	float4 litColor = ambient + diffuse + specular;
+
+	if (g_disableLight)
+		litColor = 1.0f;
 
 	float4 o1 = lerp(input.occlusion[0], input.occlusion[1], input.tex.x);
 	float4 o2 = lerp(input.occlusion[2], input.occlusion[3], input.tex.x);

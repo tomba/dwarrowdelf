@@ -52,6 +52,8 @@
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
+			this.checkBox3 = new System.Windows.Forms.CheckBox();
+			this.checkBox4 = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -257,11 +259,13 @@
 			// 
 			// groupBox4
 			// 
+			this.groupBox4.Controls.Add(this.checkBox4);
+			this.groupBox4.Controls.Add(this.checkBox3);
 			this.groupBox4.Controls.Add(this.checkBox2);
 			this.groupBox4.Controls.Add(this.checkBox1);
 			this.groupBox4.Location = new System.Drawing.Point(12, 477);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(260, 97);
+			this.groupBox4.Size = new System.Drawing.Size(260, 140);
 			this.groupBox4.TabIndex = 5;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "RasterizerState";
@@ -285,6 +289,26 @@
 			this.checkBox1.TabIndex = 0;
 			this.checkBox1.Text = "Disable Culling";
 			this.checkBox1.UseVisualStyleBackColor = true;
+			// 
+			// checkBox3
+			// 
+			this.checkBox3.AutoSize = true;
+			this.checkBox3.Location = new System.Drawing.Point(6, 67);
+			this.checkBox3.Name = "checkBox3";
+			this.checkBox3.Size = new System.Drawing.Size(98, 17);
+			this.checkBox3.TabIndex = 2;
+			this.checkBox3.Text = "Enable Borders";
+			this.checkBox3.UseVisualStyleBackColor = true;
+			// 
+			// checkBox4
+			// 
+			this.checkBox4.AutoSize = true;
+			this.checkBox4.Location = new System.Drawing.Point(6, 91);
+			this.checkBox4.Name = "checkBox4";
+			this.checkBox4.Size = new System.Drawing.Size(87, 17);
+			this.checkBox4.TabIndex = 3;
+			this.checkBox4.Text = "Disable Light";
+			this.checkBox4.UseVisualStyleBackColor = true;
 			// 
 			// DebugForm
 			// 
@@ -343,6 +367,8 @@
 		private System.Windows.Forms.GroupBox groupBox4;
 		private System.Windows.Forms.CheckBox checkBox2;
 		private System.Windows.Forms.CheckBox checkBox1;
+		private System.Windows.Forms.CheckBox checkBox4;
+		private System.Windows.Forms.CheckBox checkBox3;
 
 	}
 }
