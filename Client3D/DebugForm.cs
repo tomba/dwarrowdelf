@@ -88,6 +88,7 @@ namespace Client3D
 
 			this.checkBox3.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_showBorders"].SetValue(checkBox3.Checked);
 			this.checkBox4.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_disableLight"].SetValue(checkBox4.Checked);
+			this.checkBox5.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_disableOcclusion"].SetValue(checkBox5.Checked);
 		}
 
 		void checkBox_CheckedChanged(object sender, EventArgs e)

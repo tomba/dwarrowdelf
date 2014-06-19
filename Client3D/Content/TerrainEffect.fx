@@ -28,6 +28,7 @@ sampler blockSampler;
 
 bool g_disableLight;
 bool g_showBorders;
+bool g_disableOcclusion;
 
 cbuffer PerFrame
 {
@@ -127,47 +128,48 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float d = 0.01f;
+	float4 litColor = float4(1, 1, 1, 1);
 
-	float3 toEye = normalize(g_eyePos - input.posW);
-
-	// Invert the light direction for calculations.
-	float3 lightDir = -lightDirection;
-
-	float4 ambient, diffuse, specular;
-
-	ambient = ambientColor;
-
-	float3 normal = cross(ddy(input.posW.xyz), ddx(input.posW.xyz));
-	normal = -normalize(normal);
-
-	float lightIntensity = dot(normal, lightDir);
-
-	diffuse = specular = 0;
-
-	if (lightIntensity > 0.0f)
+	if (!g_disableLight)
 	{
-		diffuse = lightIntensity * diffuseColor;
+		float3 toEye = normalize(g_eyePos - input.posW);
 
-		float3 v = reflect(-lightDir, normal);
-			float specFactor = pow(max(dot(v, toEye), 0.0f), 64);
-		specular = specFactor * specularColor;
+		// Invert the light direction for calculations.
+		float3 lightDir = -lightDirection;
+
+		float4 ambient, diffuse, specular;
+
+		ambient = ambientColor;
+
+		float3 normal = cross(ddy(input.posW.xyz), ddx(input.posW.xyz));
+		normal = -normalize(normal);
+
+		float lightIntensity = dot(normal, lightDir);
+
+		diffuse = specular = 0;
+
+		if (lightIntensity > 0.0f)
+		{
+			diffuse = lightIntensity * diffuseColor;
+
+			float3 v = reflect(-lightDir, normal);
+				float specFactor = pow(max(dot(v, toEye), 0.0f), 64);
+			specular = specFactor * specularColor;
+		}
+
+		litColor = ambient + diffuse + specular;
 	}
 
-	float4 litColor = ambient + diffuse + specular;
+	float occlusion = 1.0f;
 
-	if (g_disableLight)
-		litColor = 1.0f;
+	if (!g_disableOcclusion)
+	{
+		float o1 = lerp(input.occlusion[0], input.occlusion[1], input.tex.x);
+		float o2 = lerp(input.occlusion[2], input.occlusion[3], input.tex.x);
+		occlusion = 1.0f - lerp(o1, o2, input.tex.y);
+	}
 
-	float4 o1 = lerp(input.occlusion[0], input.occlusion[1], input.tex.x);
-	float4 o2 = lerp(input.occlusion[2], input.occlusion[3], input.tex.x);
-	float4 occlusion = lerp(o1, o2, input.tex.y);
-
-	litColor *= (1.0f - occlusion);
-
-	float4 textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
-
-	float4 color = litColor * textureColor;
+	float border = 1.0f;
 
 	if (g_showBorders)
 	{
@@ -175,10 +177,12 @@ float4 PSMain(PS_IN input) : SV_Target
 		val = min(val, (1.0f - input.tex.x));
 		val = min(val, (1.0f - input.tex.y));
 
-		val = smoothstep(0, 0.1f, val) * 0.3f + 0.7f;
-
-		color *= val;
+		border = smoothstep(0, 0.1f, val) * 0.3f + 0.7f;
 	}
+
+	float4 textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
+
+	float4 color = litColor * textureColor * occlusion * border;
 
 	return color;
 }
