@@ -28,7 +28,7 @@ namespace Client3D
 			this.IsMouseVisible = true;
 
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
-			this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
+			//this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
 			m_keyboardManager = new KeyboardManager(this);
 			m_cameraProvider = new CameraProvider(this);
 
