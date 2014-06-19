@@ -24,7 +24,7 @@ namespace Client3D
 
 		public GameMap()
 		{
-			this.Size = new IntSize3(32, 32, 32);
+			this.Size = new IntSize3(64, 64, 32);
 
 			string file = Path.Combine(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath), "map.dat");
 
@@ -133,8 +133,8 @@ namespace Client3D
 			//ClearTerrain(terrainData);
 			//CreateSlopeTest1(terrainData);
 			//CreateSlopeTest2(terrainData);
-			//CreateRealTerrain(terrainData);
-			CreateBallTerrain(terrainData);
+			CreateRealTerrain(terrainData);
+			//CreateBallTerrain(terrainData);
 
 			TileData[, ,] grid;
 			terrainData.GetData(out grid, out m_levelMap);
