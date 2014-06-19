@@ -26,11 +26,11 @@ namespace Client3D
 			[VertexElement("OCCLUSION")]
 			public float Occlusion;
 
-			public TerrainVertex(Vector3 pos, int texID)
+			public TerrainVertex(Vector3 pos, TextureID texID, float occlusion)
 			{
 				this.Position = pos;
-				this.TexID = texID;
-				this.Occlusion = 0;
+				this.TexID = (int)texID;
+				this.Occlusion = occlusion;
 			}
 		}
 
@@ -246,21 +246,20 @@ namespace Client3D
 			}
 		}
 
-		void AddVertices(Vector3[] vertices, IntPoint3 p, TextureID texId, VertexDataBuffer vertexData)
+		void CreateFloorBlock(IntPoint3 p, VertexDataBuffer vertexData, TextureID texID)
 		{
+			var vertices = s_floorCoords;
+
 			var offset = p.ToVector3();
 			offset += new Vector3(0.5f);
 
 			for (int i = 0; i < vertices.Length; ++i)
 			{
-				var vd = new TerrainVertex(vertices[i] + offset, (int)texId);
+				float occ = GetOcclusionForFaceVertex(p + Direction.Down, FaceDirection.PositiveZ, s_cubeIndices[i]);
+
+				var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, texID, occ);
 				vertexData.Add(vd);
 			}
-		}
-
-		void CreateFloorBlock(IntPoint3 p, VertexDataBuffer vertexData, TextureID texID)
-		{
-			AddVertices(s_floorCoords, p, texID, vertexData);
 		}
 
 		void CreateCubicBlock(IntPoint3 p, VertexDataBuffer vertexData, TerrainRenderer scene, TextureID texId)
@@ -313,48 +312,111 @@ namespace Client3D
 			CreateCube(p, vertexData, sides, texId);
 		}
 
+		bool IsBlocker(IntPoint3 p)
+		{
+			if (m_map.Size.Contains(p) == false)
+				return false;
+
+			var grid = m_map.Grid;
+
+			var td = grid[p.Z, p.Y, p.X];
+
+			if (td.IsUndefined)
+				return true;
+
+			return !td.IsSeeThrough;
+		}
+
+		float GetOcclusionForFaceVertex(IntPoint3 p, FaceDirection face, int vertexNum)
+		{
+			/*
+			 * For each corner of the face, make a vector from the center of the cube through the corner and
+			 * through the middles of the side edges. These vectors point to three cubes that cause occlusion.
+			 */
+
+			var cp = p.ToVector3();
+
+			var cubeface = s_cubeFaces[(int)face];
+
+			// corner
+			var corner = cubeface[vertexNum];
+			// middle of edge1
+			var edge1 = (cubeface[MyMath.Wrap(vertexNum - 1, 4)] + corner) / 2;
+			// middle of edge2
+			var edge2 = (cubeface[MyMath.Wrap(vertexNum + 1, 4)] + corner) / 2;
+
+			// the cube vertex coordinates are 0.5 units, so multiply by 2
+			corner *= 2;
+			edge1 *= 2;
+			edge2 *= 2;
+
+			bool b_corner = IsBlocker(p + corner.ToIntVector3());
+			bool b_edge1 = IsBlocker(p + edge1.ToIntVector3());
+			bool b_edge2 = IsBlocker(p + edge2.ToIntVector3());
+
+			int occlusion = 0;
+
+			if (b_edge1 && b_edge2)
+				occlusion = 3;
+			else
+			{
+				if (b_edge1)
+					occlusion++;
+				if (b_edge2)
+					occlusion++;
+				if (b_corner)
+					occlusion++;
+			}
+
+			return occlusion * 0.3f;
+		}
+
 		void CreateCube(IntPoint3 p, VertexDataBuffer vertexData, int sides, TextureID texId)
 		{
+			var grid = m_map.Grid;
+
 			for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
 			{
 				if ((sides & 1) == 0)
 					continue;
 
-				AddVertices(s_cubeFaces[side], p, texId, vertexData);
+				var vertices = s_cubeFaces[side];
+
+				var offset = p.ToVector3();
+				offset += new Vector3(0.5f);
+
+				for (int i = 0; i < 4; ++i)
+				{
+					float occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
+
+					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, texId, occ);
+					vertexData.Add(vd);
+				}
 			}
 		}
 
 		static Vector3[][] s_cubeFaces;
+		static int[] s_cubeIndices = { 0, 1, 3, 2 };
 
-		static Vector3[] s_floorCoords = new[]
-		{
-			new Vector3(-1.0f,  -1.0f,  -1.0f),
-			new Vector3( 1.0f,  -1.0f,  -1.0f),
-			new Vector3(-1.0f,   1.0f,  -1.0f),
-			new Vector3( 1.0f,   1.0f,  -1.0f),
-		};
-
-		static void HalvePositions(Vector3[] arr)
-		{
-			for (int i = 0; i < arr.Length; ++i)
-				arr[i] /= 2;
-		}
+		static Vector3[] s_floorCoords;
 
 		static Chunk()
 		{
 			CreateCubeFaces();
 
-			HalvePositions(s_floorCoords);
+			s_floorCoords = s_cubeFaces[(int)FaceDirection.PositiveZ]
+				.Select(v => v + new Vector3(0, 0, -1))
+				.ToArray();
 		}
 
 		static void CreateCubeFaces()
 		{
-			/*  south */
+			/*  south face */
 			var south = new Vector3[] {
-				new Vector3(-1.0f,   1.0f,   1.0f),
-				new Vector3( 1.0f,   1.0f,   1.0f),
-				new Vector3(-1.0f,   1.0f,  -1.0f),
-				new Vector3( 1.0f,   1.0f,  -1.0f),
+				new Vector3(-1,  1,  1),
+				new Vector3( 1,  1,  1),
+				new Vector3( 1,  1, -1),
+				new Vector3(-1,  1, -1),
 			};
 
 			var rotQs = new Quaternion[]
