@@ -19,5 +19,10 @@ namespace Client3D
 		{
 			return new Vector3(v.X, v.Y, v.Z);
 		}
+
+		public static IntVector3 ToIntVector3(this Vector3 v)
+		{
+			return new IntVector3(MyMath.Round(v.X), MyMath.Round(v.Y), MyMath.Round(v.Z));
+		}
 	}
 }
