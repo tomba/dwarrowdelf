@@ -12,75 +12,67 @@ namespace Client3D
 {
 	internal partial class DebugForm : Form
 	{
+		MyGame m_game;
 		TerrainRenderer m_scene;
 		Timer m_timer;
 
-		public DebugForm()
+		public DebugForm(MyGame game)
 		{
+			m_game = game;
+			m_scene = game.TerrainRenderer;
+
 			InitializeComponent();
 
 			m_timer = new Timer();
 			m_timer.Tick += timer_Tick;
 			m_timer.Interval = 1000;
 			m_timer.Start();
-		}
 
-		protected override void OnClosing(CancelEventArgs e)
-		{
-			m_timer.Stop();
+			this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
+			this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 
-			base.OnClosing(e);
-		}
-
-		public void SetScene(TerrainRenderer scene)
-		{
-			m_scene = scene;
-
-			this.viewCorner1TextBox.Text = scene.ViewCorner1.ToString();
-			this.viewCorner2TextBox.Text = scene.ViewCorner2.ToString();
-
-			this.zCutTrackBar.Maximum = scene.Map.Depth - 1;
-			this.zCutTrackBar.Value = scene.ViewCorner2.Z;
+			this.zCutTrackBar.Maximum = m_scene.Map.Depth - 1;
+			this.zCutTrackBar.Value = m_scene.ViewCorner2.Z;
 			this.zCutTrackBar.ValueChanged += (s, e) =>
 			{
-				scene.ViewCorner2 = scene.ViewCorner2.SetZ(this.zCutTrackBar.Value);
-				this.viewCorner2TextBox.Text = scene.ViewCorner2.ToString();
+				m_scene.ViewCorner2 = m_scene.ViewCorner2.SetZ(this.zCutTrackBar.Value);
+				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 			};
 
-			this.xnCutTrackBar.Maximum = scene.Map.Width - 1;
-			this.xnCutTrackBar.Value = scene.ViewCorner1.X;
+			this.xnCutTrackBar.Maximum = m_scene.Map.Width - 1;
+			this.xnCutTrackBar.Value = m_scene.ViewCorner1.X;
 			this.xnCutTrackBar.ValueChanged += (s, e) =>
 			{
-				scene.ViewCorner1 = scene.ViewCorner1.SetX(this.xnCutTrackBar.Value);
-				this.xnCutTrackBar.Value = scene.ViewCorner1.X;
-				this.viewCorner1TextBox.Text = scene.ViewCorner1.ToString();
+				m_scene.ViewCorner1 = m_scene.ViewCorner1.SetX(this.xnCutTrackBar.Value);
+				this.xnCutTrackBar.Value = m_scene.ViewCorner1.X;
+				this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
 			};
 
-			this.xpCutTrackBar.Maximum = scene.Map.Width - 1;
-			this.xpCutTrackBar.Value = scene.ViewCorner2.X;
+			this.xpCutTrackBar.Maximum = m_scene.Map.Width - 1;
+			this.xpCutTrackBar.Value = m_scene.ViewCorner2.X;
 			this.xpCutTrackBar.ValueChanged += (s, e) =>
 			{
-				scene.ViewCorner2 = scene.ViewCorner2.SetX(this.xpCutTrackBar.Value);
-				this.xpCutTrackBar.Value = scene.ViewCorner2.X;
-				this.viewCorner2TextBox.Text = scene.ViewCorner2.ToString();
+				m_scene.ViewCorner2 = m_scene.ViewCorner2.SetX(this.xpCutTrackBar.Value);
+				this.xpCutTrackBar.Value = m_scene.ViewCorner2.X;
+				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 			};
 
-			this.ynCutTrackBar.Maximum = scene.Map.Width - 1;
-			this.ynCutTrackBar.Value = scene.ViewCorner1.Y;
+			this.ynCutTrackBar.Maximum = m_scene.Map.Width - 1;
+			this.ynCutTrackBar.Value = m_scene.ViewCorner1.Y;
 			this.ynCutTrackBar.ValueChanged += (s, e) =>
 			{
-				scene.ViewCorner1 = scene.ViewCorner1.SetY(this.ynCutTrackBar.Value);
-				this.ynCutTrackBar.Value = scene.ViewCorner1.Y;
-				this.viewCorner1TextBox.Text = scene.ViewCorner1.ToString();
+				m_scene.ViewCorner1 = m_scene.ViewCorner1.SetY(this.ynCutTrackBar.Value);
+				this.ynCutTrackBar.Value = m_scene.ViewCorner1.Y;
+				this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
 			};
 
-			this.ypCutTrackBar.Maximum = scene.Map.Width - 1;
-			this.ypCutTrackBar.Value = scene.ViewCorner2.Y;
+			this.ypCutTrackBar.Maximum = m_scene.Map.Width - 1;
+			this.ypCutTrackBar.Value = m_scene.ViewCorner2.Y;
 			this.ypCutTrackBar.ValueChanged += (s, e) =>
 			{
-				scene.ViewCorner2 = scene.ViewCorner2.SetY(this.ypCutTrackBar.Value);
-				this.ypCutTrackBar.Value = scene.ViewCorner2.Y;
-				this.viewCorner2TextBox.Text = scene.ViewCorner2.ToString();
+				m_scene.ViewCorner2 = m_scene.ViewCorner2.SetY(this.ypCutTrackBar.Value);
+				this.ypCutTrackBar.Value = m_scene.ViewCorner2.Y;
+				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 			};
 
 			this.checkBox1.CheckedChanged += checkBox_CheckedChanged;
@@ -89,6 +81,20 @@ namespace Client3D
 			this.checkBox3.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_showBorders"].SetValue(checkBox3.Checked);
 			this.checkBox4.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_disableLight"].SetValue(checkBox4.Checked);
 			this.checkBox5.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_disableOcclusion"].SetValue(checkBox5.Checked);
+			this.checkBox6.CheckedChanged += (s, e) =>
+			{
+				SharpDX.Toolkit.Graphics.PresentInterval ival = checkBox6.Checked ? SharpDX.Toolkit.Graphics.PresentInterval.Immediate :
+					SharpDX.Toolkit.Graphics.PresentInterval.One;
+
+				m_game.GraphicsDevice.Presenter.Description.PresentationInterval = ival;
+			};
+		}
+
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			m_timer.Stop();
+
+			base.OnClosing(e);
 		}
 
 		void checkBox_CheckedChanged(object sender, EventArgs e)

@@ -23,10 +23,12 @@ namespace Client3D
 		int m_frameCount;
 		readonly Stopwatch m_fpsClock;
 
+		public GraphicsDeviceManager GraphicsDeviceManager { get { return m_graphicsDeviceManager; } }
+		public TerrainRenderer TerrainRenderer { get { return m_terrainRenderer; } }
+
 		public MyGame()
 		{
 			this.IsMouseVisible = true;
-
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
 			//this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
 			m_keyboardManager = new KeyboardManager(this);
@@ -57,9 +59,8 @@ namespace Client3D
 					m_terrainRenderer.ClickPos = new Dwarrowdelf.IntPoint2(e.X, e.Y);
 				};
 
-				var debugForm = new DebugForm();
+				var debugForm = new DebugForm(this);
 				debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
-				debugForm.SetScene(m_terrainRenderer);
 				debugForm.Show();
 			}
 		}
