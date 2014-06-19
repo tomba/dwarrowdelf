@@ -36,11 +36,8 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public VisibilityMode VisibilityMode { get; private set; }
 
-		[SaveGameProperty]
 		public int Width { get { return this.Size.Width; } }
-		[SaveGameProperty]
 		public int Height { get { return this.Size.Height; } }
-		[SaveGameProperty]
 		public int Depth { get { return this.Size.Depth; } }
 
 		[SaveGameProperty]
