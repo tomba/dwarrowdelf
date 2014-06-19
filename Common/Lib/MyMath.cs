@@ -8,6 +8,14 @@ namespace Dwarrowdelf
 	public static class MyMath
 	{
 		/// <summary>
+		/// Wrap integer with the given maximum. Handles negative wrapping also.
+		/// </summary>
+		public static int Wrap(int i, int i_max)
+		{
+			return ((i % i_max) + i_max) % i_max;
+		}
+
+		/// <summary>
 		/// Divide signed integer m with positive integer n, rounding up for positive m and and down for negative m
 		/// </summary>
 		/// <param name="m">Dividend</param>
