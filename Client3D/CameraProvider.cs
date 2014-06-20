@@ -38,7 +38,7 @@ namespace Client3D
 		/// <param name="game">The game where this system will be attached to.</param>
 		public CameraProvider(Game game)
 		{
-			SetLens(MathUtil.PiOverFour, 1.0f, 1.0f, 100.0f);
+			SetLens(MathUtil.PiOverFour, 1.0f, 1.0f, 200.0f);
 
 			//LookAt(new Vector3(10, 10, 10), new Vector3(0, 0, 0), Vector3.UnitZ);
 			LookAt(new Vector3(-5, -4, 32), new Vector3(40, 40, 0), Vector3.UnitZ);

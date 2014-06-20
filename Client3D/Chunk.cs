@@ -210,11 +210,12 @@ namespace Client3D
 				{
 					for (int x = x0; x <= x1; ++x)
 					{
-						var p = new IntPoint3(x, y, z);
-						var td = m_map.Grid[p.Z, p.Y, p.X];
+						var td = m_map.Grid[z, y, x];
 
 						if (td.IsEmpty)
 							continue;
+
+						var p = new IntPoint3(x, y, z);
 
 						if (td.IsUndefined)
 						{
@@ -264,15 +265,6 @@ namespace Client3D
 
 		void CreateCubicBlock(IntPoint3 p, VertexDataBuffer vertexData, TerrainRenderer scene, TextureID texId)
 		{
-			/*
-			 * 0 up
-			 * 1 down
-			 * 2 east
-			 * 3 west
-			 * 4 south
-			 * 5 north
-			 */
-
 			int sides = 0;
 
 			int x = p.X;
