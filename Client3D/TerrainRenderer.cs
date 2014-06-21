@@ -27,8 +27,7 @@ namespace Client3D
 
 		ChunkManager m_chunkManager;
 
-		GameMap m_map;
-		public GameMap Map { get { return m_map; } }
+		public VoxelMap Map { get; private set; }
 
 		public bool DisableVSync { get; set; }
 		public bool IsRotationEnabled { get; set; }
@@ -42,9 +41,14 @@ namespace Client3D
 			this.Visible = true;
 			this.Enabled = true;
 
-			m_map = new GameMap();
+			this.Map = VoxelMap.CreateFromTileData(new GameMap().Grid);
+
+			//this.Map = VoxelMap.CreateBallMap(32, 16);
+
+			this.Map.UndefineHiddenVoxels();
+
 			m_viewCorner1 = new IntPoint3(0, 0, 0);
-			m_viewCorner2 = new IntPoint3(m_map.Size.Width - 1, m_map.Size.Height - 1, m_map.Size.Depth - 1);
+			m_viewCorner2 = new IntPoint3(this.Map.Width - 1, this.Map.Height - 1, this.Map.Depth - 1);
 
 			this.DirectionalLight = new DirectionalLight()
 			{
@@ -114,7 +118,7 @@ namespace Client3D
 
 				var wp = ScreenToWorld(p, d);
 
-				Console.WriteLine("{0} -> ({1}, {2}, {3})", new Vector3(p.X, p.Y, d), 
+				Console.WriteLine("{0} -> ({1}, {2}, {3})", new Vector3(p.X, p.Y, d),
 					Math.Floor(wp.X), Math.Floor(wp.Y), Math.Floor(wp.Z));
 
 				/*
@@ -205,7 +209,7 @@ namespace Client3D
 				if (value == m_viewCorner1)
 					return;
 
-				if (m_map.Size.Contains(value) == false)
+				if (this.Map.Size.Contains(value) == false)
 					return;
 
 				if (value.X > m_viewCorner2.X || value.Y > m_viewCorner2.Y || value.Z > m_viewCorner2.Z)
@@ -238,7 +242,7 @@ namespace Client3D
 				if (value == m_viewCorner2)
 					return;
 
-				if (m_map.Size.Contains(value) == false)
+				if (this.Map.Size.Contains(value) == false)
 					return;
 
 				if (value.X < m_viewCorner1.X || value.Y < m_viewCorner1.Y || value.Z < m_viewCorner1.Z)

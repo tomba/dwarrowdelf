@@ -102,6 +102,7 @@
     <Compile Include="TestRenderer.cs" />
     <Compile Include="SceneRenderer.cs" />
     <Compile Include="TerrainRenderer.cs" />
+    <Compile Include="VoxelMap.cs" />
     <EmbeddedResource Include="DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </EmbeddedResource>

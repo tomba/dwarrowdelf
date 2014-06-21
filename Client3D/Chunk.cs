@@ -40,7 +40,7 @@ namespace Client3D
 
 		static IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
-		GameMap m_map;
+		VoxelMap m_map;
 
 		static VertexDataBuffer s_vertexData = new VertexDataBuffer(CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * MAX_VERTICES_PER_TILE);
 
@@ -96,7 +96,7 @@ namespace Client3D
 			Sand = 2,
 		}
 
-		public Chunk(GameMap map, IntVector3 chunkOffset)
+		public Chunk(VoxelMap map, IntVector3 chunkOffset)
 		{
 			this.ChunkOffset = chunkOffset;
 
@@ -171,24 +171,6 @@ namespace Client3D
 			}
 		}
 
-		TextureID GetFloorTexture(TileData td)
-		{
-			switch (td.InteriorID)
-			{
-				case InteriorID.Grass:
-				case InteriorID.Tree:
-				case InteriorID.Shrub:
-				case InteriorID.Sapling:
-					return TextureID.Grass;
-
-				case InteriorID.Empty:
-					return TextureID.Sand;
-
-				default:
-					return TextureID.TestTex;
-			}
-		}
-
 		void GenerateVertices(VertexDataBuffer vertexData, TerrainRenderer scene)
 		{
 			IntPoint3 cutn = scene.ViewCorner1;
@@ -223,43 +205,9 @@ namespace Client3D
 							continue;
 						}
 
-						switch (td.InteriorID)
-						{
-							case InteriorID.NaturalWall:
-								CreateCubicBlock(p, vertexData, scene, TextureID.Tex2);
-								continue;
-						}
-
-						TextureID texID = GetFloorTexture(td);
-
-						switch (td.TerrainID)
-						{
-							case TerrainID.NaturalFloor:
-								CreateFloorBlock(p, vertexData, texID);
-								continue;
-
-							case TerrainID.Slope:
-								CreateFloorBlock(p, vertexData, texID);
-								continue;
-						}
+						CreateCubicBlock(p, vertexData, scene, TextureID.Tex2);
 					}
 				}
-			}
-		}
-
-		void CreateFloorBlock(IntPoint3 p, VertexDataBuffer vertexData, TextureID texID)
-		{
-			var vertices = s_floorCoords;
-
-			var offset = p.ToVector3();
-			offset += new Vector3(0.5f);
-
-			for (int i = 0; i < vertices.Length; ++i)
-			{
-				float occ = GetOcclusionForFaceVertex(p + Direction.Down, FaceDirection.PositiveZ, s_cubeIndices[i]);
-
-				var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, texID, occ);
-				vertexData.Add(vd);
 			}
 		}
 
@@ -274,28 +222,28 @@ namespace Client3D
 			var grid = m_map.Grid;
 
 			// up
-			if (z == scene.ViewCorner2.Z || (!grid[z + 1, y, x].IsUndefined && grid[z + 1, y, x].IsSeeThroughDown))
+			if (z == scene.ViewCorner2.Z || grid[z + 1, y, x].IsEmpty)
 				sides |= 1 << (int)FaceDirection.PositiveZ;
 
 			// down
 			// Note: we never draw the bottommost layer in the map
-			if (z != 0 && (!grid[z - 1, y, x].IsUndefined && grid[z - 1, y, x].IsSeeThrough))
+			if (z != 0 && grid[z - 1, y, x].IsEmpty)
 				sides |= 1 << (int)FaceDirection.NegativeZ;
 
 			// east
-			if (x == scene.ViewCorner2.X || (!grid[z, y, x + 1].IsUndefined && grid[z, y, x + 1].IsSeeThrough))
+			if (x == scene.ViewCorner2.X || grid[z, y, x + 1].IsEmpty)
 				sides |= 1 << (int)FaceDirection.PositiveX;
 
 			// west
-			if (x == scene.ViewCorner1.X || (!grid[z, y, x - 1].IsUndefined && grid[z, y, x - 1].IsSeeThrough))
+			if (x == scene.ViewCorner1.X || grid[z, y, x - 1].IsEmpty)
 				sides |= 1 << (int)FaceDirection.NegativeX;
 
 			// south
-			if (y == scene.ViewCorner2.Y || (!grid[z, y + 1, x].IsUndefined && grid[z, y + 1, x].IsSeeThrough))
+			if (y == scene.ViewCorner2.Y || grid[z, y + 1, x].IsEmpty)
 				sides |= 1 << (int)FaceDirection.PositiveY;
 
 			// north
-			if (y == scene.ViewCorner1.Y || (!grid[z, y - 1, x].IsUndefined && grid[z, y - 1, x].IsSeeThrough))
+			if (y == scene.ViewCorner1.Y || grid[z, y - 1, x].IsEmpty)
 				sides |= 1 << (int)FaceDirection.NegativeY;
 
 			if (sides == 0)
@@ -309,14 +257,12 @@ namespace Client3D
 			if (m_map.Size.Contains(p) == false)
 				return false;
 
-			var grid = m_map.Grid;
-
-			var td = grid[p.Z, p.Y, p.X];
+			var td = m_map.Grid[p.Z, p.Y, p.X];
 
 			if (td.IsUndefined)
 				return true;
 
-			return !td.IsSeeThrough;
+			return !td.IsEmpty;
 		}
 
 		float GetOcclusionForFaceVertex(IntPoint3 p, FaceDirection face, int vertexNum)
@@ -390,15 +336,9 @@ namespace Client3D
 		static Vector3[][] s_cubeFaces;
 		static int[] s_cubeIndices = { 0, 1, 3, 2 };
 
-		static Vector3[] s_floorCoords;
-
 		static Chunk()
 		{
 			CreateCubeFaces();
-
-			s_floorCoords = s_cubeFaces[(int)FaceDirection.PositiveZ]
-				.Select(v => v + new Vector3(0, 0, -1))
-				.ToArray();
 		}
 
 		static void CreateCubeFaces()

@@ -30,7 +30,7 @@ namespace Client3D
 
 			bool ok = false;
 
-			if (File.Exists(file))
+			if (false && File.Exists(file))
 			{
 				try
 				{
@@ -142,7 +142,7 @@ namespace Client3D
 
 			//CreateExtraStuff();
 
-			UndefineNonvisible(terrainData);
+			//UndefineNonvisible(terrainData);
 		}
 
 		void CreateExtraStuff()
