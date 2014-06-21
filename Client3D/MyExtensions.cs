@@ -24,5 +24,10 @@ namespace Client3D
 		{
 			return new IntVector3(MyMath.Round(v.X), MyMath.Round(v.Y), MyMath.Round(v.Z));
 		}
+
+		public static IntPoint3 ToIntPoint3(this Vector3 v)
+		{
+			return new IntPoint3(MyMath.Round(v.X), MyMath.Round(v.Y), MyMath.Round(v.Z));
+		}
 	}
 }
