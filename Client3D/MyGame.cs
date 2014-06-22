@@ -6,6 +6,7 @@ using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Input;
 using System.Diagnostics;
+using SharpDX.Toolkit.Graphics;
 
 namespace Client3D
 {
@@ -25,6 +26,8 @@ namespace Client3D
 
 		public GraphicsDeviceManager GraphicsDeviceManager { get { return m_graphicsDeviceManager; } }
 		public TerrainRenderer TerrainRenderer { get { return m_terrainRenderer; } }
+
+		public RasterizerState RasterizerState { get; set; }
 
 		public MyGame()
 		{
@@ -47,22 +50,20 @@ namespace Client3D
 		{
 			base.OnWindowCreated();
 
-			if (m_terrainRenderer != null)
+			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+			form.Width = 1024;
+			form.Height = 800;
+			form.Location = new System.Drawing.Point(300, 0);
+			form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			form.MouseDown += (s, e) =>
 			{
-				var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
-				form.Width = 1024;
-				form.Height = 800;
-				form.Location = new System.Drawing.Point(300, 0);
-				form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-				form.MouseDown += (s, e) =>
-				{
+				if (m_terrainRenderer != null)
 					m_terrainRenderer.ClickPos = new Dwarrowdelf.IntPoint2(e.X, e.Y);
-				};
+			};
 
-				var debugForm = new DebugForm(this);
-				debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
-				debugForm.Show();
-			}
+			var debugForm = new DebugForm(this);
+			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
+			debugForm.Show();
 		}
 
 		protected override void Initialize()
@@ -74,6 +75,7 @@ namespace Client3D
 			this.Window.ClientSizeChanged += (s, e) =>
 					m_cameraProvider.SetAspect((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height);
 
+			this.RasterizerState = this.GraphicsDevice.RasterizerStates.CullBack;
 		}
 
 		protected override void BeginRun()
@@ -142,6 +144,8 @@ namespace Client3D
 				m_cameraProvider.RotateZ(-rotSpeed * dTime);
 			else if (m_keyboardState.IsKeyDown(Keys.Right))
 				m_cameraProvider.RotateZ(rotSpeed * dTime);
+
+			this.GraphicsDevice.SetRasterizerState(this.RasterizerState);
 
 			base.Draw(gameTime);
 		}

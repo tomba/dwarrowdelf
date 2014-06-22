@@ -78,8 +78,6 @@ namespace Client3D
 			m_effect.Parameters["blockTextures"].SetResource(m_textures);
 
 			m_effect.Parameters["blockSampler"].SetResource(device.SamplerStates.LinearClamp);
-
-			this.RasterizerState = this.GraphicsDevice.RasterizerStates.CullBack;
 		}
 
 		public IntPoint2? ClickPos;
@@ -176,13 +174,9 @@ namespace Client3D
 
 		public DirectionalLight DirectionalLight { get; private set; }
 
-		public RasterizerState RasterizerState { get; set; }
-
 		public override void Draw(GameTime gameTime)
 		{
 			base.Draw(gameTime);
-
-			this.GraphicsDevice.SetRasterizerState(this.RasterizerState);
 
 			m_effect.Parameters["ambientColor"].SetValue(this.DirectionalLight.AmbientColor);
 			m_effect.Parameters["diffuseColor"].SetValue(this.DirectionalLight.DiffuseColor);

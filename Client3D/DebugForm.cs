@@ -23,6 +23,20 @@ namespace Client3D
 
 			InitializeComponent();
 
+			this.checkBox1.CheckedChanged += checkBox_CheckedChanged;
+			this.checkBox2.CheckedChanged += checkBox_CheckedChanged;
+
+			this.checkBox6.CheckedChanged += (s, e) =>
+			{
+				SharpDX.Toolkit.Graphics.PresentInterval ival = checkBox6.Checked ? SharpDX.Toolkit.Graphics.PresentInterval.Immediate :
+					SharpDX.Toolkit.Graphics.PresentInterval.One;
+
+				m_game.GraphicsDevice.Presenter.Description.PresentationInterval = ival;
+			};
+
+			if (m_scene == null)
+				return;
+
 			m_timer = new Timer();
 			m_timer.Tick += timer_Tick;
 			m_timer.Interval = 1000;
@@ -75,24 +89,15 @@ namespace Client3D
 				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 			};
 
-			this.checkBox1.CheckedChanged += checkBox_CheckedChanged;
-			this.checkBox2.CheckedChanged += checkBox_CheckedChanged;
-
 			this.checkBox3.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_showBorders"].SetValue(checkBox3.Checked);
 			this.checkBox4.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_disableLight"].SetValue(checkBox4.Checked);
 			this.checkBox5.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_disableOcclusion"].SetValue(checkBox5.Checked);
-			this.checkBox6.CheckedChanged += (s, e) =>
-			{
-				SharpDX.Toolkit.Graphics.PresentInterval ival = checkBox6.Checked ? SharpDX.Toolkit.Graphics.PresentInterval.Immediate :
-					SharpDX.Toolkit.Graphics.PresentInterval.One;
-
-				m_game.GraphicsDevice.Presenter.Description.PresentationInterval = ival;
-			};
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			m_timer.Stop();
+			if (m_timer != null)
+				m_timer.Stop();
 
 			base.OnClosing(e);
 		}
@@ -105,17 +110,17 @@ namespace Client3D
 			SharpDX.Toolkit.Graphics.RasterizerState state;
 
 			if (!disableCull && !wire)
-				state = m_scene.Game.GraphicsDevice.RasterizerStates.CullBack;
+				state = m_game.GraphicsDevice.RasterizerStates.CullBack;
 			else if (disableCull && !wire)
-				state = m_scene.Game.GraphicsDevice.RasterizerStates.CullNone;
+				state = m_game.GraphicsDevice.RasterizerStates.CullNone;
 			else if (!disableCull && wire)
-				state = m_scene.Game.GraphicsDevice.RasterizerStates.WireFrame;
+				state = m_game.GraphicsDevice.RasterizerStates.WireFrame;
 			else if (disableCull && wire)
-				state = m_scene.Game.GraphicsDevice.RasterizerStates.WireFrameCullNone;
+				state = m_game.GraphicsDevice.RasterizerStates.WireFrameCullNone;
 			else
 				throw new Exception();
 
-			m_scene.RasterizerState = state;
+			m_game.RasterizerState = state;
 		}
 
 		void timer_Tick(object sender, EventArgs e)
