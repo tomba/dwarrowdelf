@@ -9,17 +9,17 @@ namespace Client3D
 	/// </summary>
 	sealed class SceneRenderer : GameSystem
 	{
-		private ICameraService m_cameraService;
+		ICameraService m_cameraService;
 
-		private GeometricPrimitive m_cube;
-		private Texture2D m_cubeTexture;
-		private Matrix m_cubeTransform;
+		GeometricPrimitive m_cube;
+		Texture2D m_cubeTexture;
+		Matrix m_cubeTransform;
 
-		private GeometricPrimitive m_plane;
-		private Texture2D m_planeTexture;
-		private Matrix m_planeTransform;
+		GeometricPrimitive m_plane;
+		Texture2D m_planeTexture;
+		Matrix m_planeTransform;
 
-		private BasicEffect m_basicEffect;
+		BasicEffect m_basicEffect;
 
 		/// <summary>
 		/// Initialize in constructor anything that doesn't depend on other services.

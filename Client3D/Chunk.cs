@@ -107,10 +107,9 @@ namespace Client3D
 			this.BBox = new BoundingBox(v1, v2);
 		}
 
-
 		public void Setup(GraphicsDevice device)
 		{
-			m_vertexBuffer = Buffer.New<TerrainVertex>(device, m_maxVertices, BufferFlags.VertexBuffer);
+			m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
 			m_layout = VertexInputLayout.FromBuffer(0, m_vertexBuffer);
 		}
 
