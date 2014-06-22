@@ -22,6 +22,8 @@ namespace Client3D
 		public bool IsEmpty { get { return this.Type == VoxelType.Empty; } }
 
 		public readonly static Voxel Undefined = new Voxel() { Type = VoxelType.Undefined };
+		public readonly static Voxel Empty = new Voxel() { Type = VoxelType.Empty };
+		public readonly static Voxel Rock = new Voxel() { Type = VoxelType.Rock };
 	}
 
 	class VoxelMap
@@ -99,6 +101,36 @@ namespace Client3D
 					}
 				});
 			}
+		}
+
+		public static VoxelMap CreateSimplexMap(int side, float limit)
+		{
+			var map = new VoxelMap(new IntSize3(side, side, side));
+
+			var grid = map.Grid;
+
+			var n = new SharpNoise.Modules.Simplex()
+			{
+				OctaveCount = 3,
+			};
+
+			Parallel.For(0, side, z =>
+			{
+				for (int y = 0; y < side; ++y)
+					for (int x = 0; x < side; ++x)
+					{
+						var v = new SharpDX.Vector3(x, y, z) / side;
+
+						var val = n.GetValue(v.X, v.Y, v.Z);
+
+						if (val < limit)
+							grid[z, y, x] = Voxel.Empty;
+						else
+							grid[z, y, x] = Voxel.Rock;
+					}
+			});
+
+			return map;
 		}
 
 		public static VoxelMap CreateBallMap(int side, int innerSide = 0)

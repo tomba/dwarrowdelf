@@ -41,9 +41,9 @@ namespace Client3D
 			this.Visible = true;
 			this.Enabled = true;
 
-			this.Map = VoxelMap.CreateFromTileData(new GameMap().Grid);
-
+			//this.Map = VoxelMap.CreateFromTileData(new GameMap().Grid);
 			//this.Map = VoxelMap.CreateBallMap(32, 16);
+			this.Map = VoxelMap.CreateSimplexMap(64, 0.2f);
 
 			this.Map.UndefineHiddenVoxels();
 
