@@ -277,30 +277,11 @@ namespace Client3D
 
 		float GetOcclusionForFaceVertex(IntPoint3 p, FaceDirection face, int vertexNum)
 		{
-			/*
-			 * For each corner of the face, make a vector from the center of the cube through the corner and
-			 * through the middles of the side edges. These vectors point to three cubes that cause occlusion.
-			 */
+			var odata = s_occlusionLookup[(int)face, vertexNum];
 
-			var cp = p.ToVector3();
-
-			var cubeface = s_cubeFaces[(int)face];
-
-			// corner
-			var corner = cubeface[vertexNum];
-			// middle of edge1
-			var edge1 = (cubeface[MyMath.Wrap(vertexNum - 1, 4)] + corner) / 2;
-			// middle of edge2
-			var edge2 = (cubeface[MyMath.Wrap(vertexNum + 1, 4)] + corner) / 2;
-
-			// the cube vertex coordinates are 0.5 units, so multiply by 2
-			corner *= 2;
-			edge1 *= 2;
-			edge2 *= 2;
-
-			bool b_corner = IsBlocker(p + corner.ToIntVector3());
-			bool b_edge1 = IsBlocker(p + edge1.ToIntVector3());
-			bool b_edge2 = IsBlocker(p + edge2.ToIntVector3());
+			bool b_corner = IsBlocker(p + odata.Corner);
+			bool b_edge1 = IsBlocker(p + odata.Edge1);
+			bool b_edge2 = IsBlocker(p + odata.Edge2);
 
 			int occlusion = 0;
 
@@ -351,6 +332,8 @@ namespace Client3D
 		static Chunk()
 		{
 			CreateCubeFaces();
+
+			InitOcclusionLookup();
 		}
 
 		static void CreateCubeFaces()
@@ -385,6 +368,53 @@ namespace Client3D
 				}
 
 				s_cubeFaces[side] = face;
+			}
+		}
+
+		struct OcclusionLookupData
+		{
+			public IntVector3 Corner;
+			public IntVector3 Edge1;
+			public IntVector3 Edge2;
+		}
+
+		// OcclusionLookupData[face][vertexnum]
+		static OcclusionLookupData[,] s_occlusionLookup;
+
+		static void InitOcclusionLookup()
+		{
+			s_occlusionLookup = new OcclusionLookupData[6, 4];
+
+			for (int face = 0; face < 6; ++face)
+			{
+				var cubeface = s_cubeFaces[(int)face];
+
+				for (int vertexNum = 0; vertexNum < 4; ++vertexNum)
+				{
+					/*
+					 * For each corner of the face, make a vector from the center of the cube through the corner and
+					 * through the middles of the side edges. These vectors point to three cubes that cause occlusion.
+					 */
+
+					// corner
+					var corner = cubeface[vertexNum];
+					// middle of edge1
+					var edge1 = (cubeface[MyMath.Wrap(vertexNum - 1, 4)] + corner) / 2;
+					// middle of edge2
+					var edge2 = (cubeface[MyMath.Wrap(vertexNum + 1, 4)] + corner) / 2;
+
+					// the cube vertex coordinates are 0.5 units, so multiply by 2
+					corner *= 2;
+					edge1 *= 2;
+					edge2 *= 2;
+
+					s_occlusionLookup[face, vertexNum] = new OcclusionLookupData()
+					{
+						Corner = corner.ToIntVector3(),
+						Edge1 = edge1.ToIntVector3(),
+						Edge2 = edge2.ToIntVector3(),
+					};
+				}
 			}
 		}
 	}
