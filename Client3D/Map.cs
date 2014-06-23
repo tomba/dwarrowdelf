@@ -24,7 +24,7 @@ namespace Client3D
 
 		public GameMap()
 		{
-			this.Size = new IntSize3(64, 64, 32);
+			this.Size = new IntSize3(128, 128, 32);
 
 			string file = Path.Combine(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath), "map.dat");
 

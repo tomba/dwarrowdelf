@@ -1,6 +1,9 @@
-﻿using Dwarrowdelf;
+﻿#define USE_NONPARALLEL
+
+using Dwarrowdelf;
 using SharpDX;
 using SharpDX.Direct3D11;
+using SharpDX.Toolkit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +19,7 @@ namespace Client3D
 		TerrainRenderer m_scene;
 
 		public int VerticesRendered { get; private set; }
+		public int ChunksRendered { get; private set; }
 		public int ChunkRecalcs { get; private set; }
 
 		public ChunkManager(TerrainRenderer scene)
@@ -66,11 +70,51 @@ namespace Client3D
 			}
 		}
 
-		public void Render()
+		public void Update(GameTime gameTime)
 		{
+			var cameraService = m_scene.Services.GetService<ICameraService>();
+
+			var frustum = cameraService.Frustum;
+
 			this.VerticesRendered = 0;
 			this.ChunkRecalcs = 0;
+			this.ChunksRendered = 0;
 
+#if USE_NONPARALLEL
+			foreach (var chunk in m_chunks)
+#else
+			Parallel.ForEach(m_chunks, chunk =>
+#endif
+			{
+				var res = frustum.Contains(ref chunk.BBox);
+
+				if (res == ContainmentType.Disjoint)
+				{
+					chunk.IsEnabled = false;
+
+					chunk.Free();
+				}
+				else
+				{
+					chunk.IsEnabled = true;
+
+					if (chunk.IsInvalid)
+						this.ChunkRecalcs++;
+
+					chunk.Update(m_scene);
+
+					this.VerticesRendered += chunk.VertexCount;
+					this.ChunksRendered++;
+				}
+#if USE_NONPARALLEL
+			}
+#else
+			});
+#endif
+		}
+
+		public void Draw(GameTime gameTime)
+		{
 			var cameraService = m_scene.Services.GetService<ICameraService>();
 
 			// Vertex Shader
@@ -82,35 +126,18 @@ namespace Client3D
 			// Pixel Shader
 			m_scene.Effect.Parameters["g_eyePos"].SetValue(cameraService.Position);
 
-
-			var frustum = cameraService.Frustum;
-
-			foreach (var chunk in m_chunks)
-			{
-				var res = frustum.Contains(ref chunk.BBox);
-
-				if (res != ContainmentType.Disjoint)
-				{
-					RenderChunk(chunk);
-				}
-				else
-				{
-					chunk.Free();
-				}
-			}
-		}
-
-		void RenderChunk(Chunk chunk)
-		{
 			var worldMatrix = Matrix.Identity;
 			worldMatrix.Transpose();
 
 			m_scene.Effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);
 
-			chunk.Render(m_scene);
+			foreach (var chunk in m_chunks)
+			{
+				if (chunk.IsEnabled == false)
+					continue;
 
-			this.VerticesRendered += chunk.VertexCount;
-			this.ChunkRecalcs += chunk.ChunkRecalcs;
+				chunk.Render(m_scene);
+			}
 		}
 	}
 }

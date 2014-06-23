@@ -50,12 +50,14 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.viewCorner1TextBox = new System.Windows.Forms.TextBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.checkBox6 = new System.Windows.Forms.CheckBox();
 			this.checkBox5 = new System.Windows.Forms.CheckBox();
 			this.checkBox4 = new System.Windows.Forms.CheckBox();
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.checkBox6 = new System.Windows.Forms.CheckBox();
+			this.label9 = new System.Windows.Forms.Label();
+			this.chunksRenderedTextBox = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -97,13 +99,15 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.label9);
+			this.groupBox2.Controls.Add(this.chunksRenderedTextBox);
 			this.groupBox2.Controls.Add(this.label3);
 			this.groupBox2.Controls.Add(this.chunkRecalcsTextBox);
 			this.groupBox2.Controls.Add(this.label2);
 			this.groupBox2.Controls.Add(this.vertRendTextBox);
 			this.groupBox2.Location = new System.Drawing.Point(12, 72);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(260, 77);
+			this.groupBox2.Size = new System.Drawing.Size(260, 148);
 			this.groupBox2.TabIndex = 3;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Scene";
@@ -111,7 +115,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(6, 48);
+			this.label3.Location = new System.Drawing.Point(6, 74);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(80, 13);
 			this.label3.TabIndex = 3;
@@ -119,7 +123,7 @@
 			// 
 			// chunkRecalcsTextBox
 			// 
-			this.chunkRecalcsTextBox.Location = new System.Drawing.Point(107, 45);
+			this.chunkRecalcsTextBox.Location = new System.Drawing.Point(107, 71);
 			this.chunkRecalcsTextBox.Name = "chunkRecalcsTextBox";
 			this.chunkRecalcsTextBox.ReadOnly = true;
 			this.chunkRecalcsTextBox.Size = new System.Drawing.Size(147, 20);
@@ -156,9 +160,9 @@
 			this.groupBox3.Controls.Add(this.zCutTrackBar);
 			this.groupBox3.Controls.Add(this.label5);
 			this.groupBox3.Controls.Add(this.viewCorner1TextBox);
-			this.groupBox3.Location = new System.Drawing.Point(12, 155);
+			this.groupBox3.Location = new System.Drawing.Point(12, 226);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(260, 315);
+			this.groupBox3.Size = new System.Drawing.Size(260, 293);
 			this.groupBox3.TabIndex = 4;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Map View Area";
@@ -267,12 +271,22 @@
 			this.groupBox4.Controls.Add(this.checkBox3);
 			this.groupBox4.Controls.Add(this.checkBox2);
 			this.groupBox4.Controls.Add(this.checkBox1);
-			this.groupBox4.Location = new System.Drawing.Point(12, 477);
+			this.groupBox4.Location = new System.Drawing.Point(12, 525);
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(260, 140);
 			this.groupBox4.TabIndex = 5;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Options";
+			// 
+			// checkBox6
+			// 
+			this.checkBox6.AutoSize = true;
+			this.checkBox6.Location = new System.Drawing.Point(107, 43);
+			this.checkBox6.Name = "checkBox6";
+			this.checkBox6.Size = new System.Drawing.Size(95, 17);
+			this.checkBox6.TabIndex = 5;
+			this.checkBox6.Text = "Disable VSync";
+			this.checkBox6.UseVisualStyleBackColor = true;
 			// 
 			// checkBox5
 			// 
@@ -324,21 +338,28 @@
 			this.checkBox1.Text = "Disable Culling";
 			this.checkBox1.UseVisualStyleBackColor = true;
 			// 
-			// checkBox6
+			// label9
 			// 
-			this.checkBox6.AutoSize = true;
-			this.checkBox6.Location = new System.Drawing.Point(107, 43);
-			this.checkBox6.Name = "checkBox6";
-			this.checkBox6.Size = new System.Drawing.Size(95, 17);
-			this.checkBox6.TabIndex = 5;
-			this.checkBox6.Text = "Disable VSync";
-			this.checkBox6.UseVisualStyleBackColor = true;
+			this.label9.AutoSize = true;
+			this.label9.Location = new System.Drawing.Point(6, 46);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(93, 13);
+			this.label9.TabIndex = 5;
+			this.label9.Text = "Chunks Rendered";
+			// 
+			// chunksRenderedTextBox
+			// 
+			this.chunksRenderedTextBox.Location = new System.Drawing.Point(107, 43);
+			this.chunksRenderedTextBox.Name = "chunksRenderedTextBox";
+			this.chunksRenderedTextBox.ReadOnly = true;
+			this.chunksRenderedTextBox.Size = new System.Drawing.Size(147, 20);
+			this.chunksRenderedTextBox.TabIndex = 4;
 			// 
 			// DebugForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(284, 629);
+			this.ClientSize = new System.Drawing.Size(284, 677);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
@@ -395,6 +416,8 @@
 		private System.Windows.Forms.CheckBox checkBox3;
 		private System.Windows.Forms.CheckBox checkBox5;
 		private System.Windows.Forms.CheckBox checkBox6;
+		private System.Windows.Forms.Label label9;
+		internal System.Windows.Forms.TextBox chunksRenderedTextBox;
 
 	}
 }

@@ -22,8 +22,9 @@ namespace Client3D
 		public bool DisableVSync { get; set; }
 		public bool IsRotationEnabled { get; set; }
 		public bool ShowBorders { get; set; }
-		public int VerticesRendered { get; private set; }
-		public int ChunkRecalcs { get; private set; }
+		public int VerticesRendered { get { return m_chunkManager.VerticesRendered; } }
+		public int ChunksRendered { get { return m_chunkManager.ChunksRendered; } }
+		public int ChunkRecalcs { get { return m_chunkManager.ChunkRecalcs; } }
 
 		class DirectionalLight
 		{
@@ -41,9 +42,9 @@ namespace Client3D
 			this.Visible = true;
 			this.Enabled = true;
 
-			//this.Map = VoxelMap.CreateFromTileData(new GameMap().Grid);
+			this.Map = VoxelMap.CreateFromTileData(new GameMap().Grid);
 			//this.Map = VoxelMap.CreateBallMap(32, 16);
-			this.Map = VoxelMap.CreateSimplexMap(64, 0.2f);
+			//this.Map = VoxelMap.CreateSimplexMap(64, 0.2f);
 
 			this.Map.UndefineHiddenVoxels();
 
@@ -91,6 +92,8 @@ namespace Client3D
 			}
 
 			HandleMouseClick();
+
+			m_chunkManager.Update(gameTime);
 		}
 
 		public override void Draw(GameTime gameTime)
@@ -105,11 +108,7 @@ namespace Client3D
 			var renderPass = m_effect.CurrentTechnique.Passes[0];
 			renderPass.Apply();
 
-			m_chunkManager.Render();
-
-			this.VerticesRendered = m_chunkManager.VerticesRendered;
-			if (m_chunkManager.ChunkRecalcs > 0)
-				this.ChunkRecalcs = m_chunkManager.ChunkRecalcs;
+			m_chunkManager.Draw(gameTime);
 		}
 
 		IntPoint3 m_viewCorner1;

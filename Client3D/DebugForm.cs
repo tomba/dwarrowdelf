@@ -130,6 +130,7 @@ namespace Client3D
 			this.camPosTextBox.Text = String.Format("{0:F2}/{1:F2}/{2:F2}",
 				cam.Position.X, cam.Position.Y, cam.Position.Z);
 			this.vertRendTextBox.Text = m_scene.VerticesRendered.ToString();
+			this.chunksRenderedTextBox.Text = m_scene.ChunksRendered.ToString();
 			this.chunkRecalcsTextBox.Text = m_scene.ChunkRecalcs.ToString();
 		}
 	}

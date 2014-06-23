@@ -34,15 +34,14 @@ namespace Client3D
 			}
 		}
 
-		public const int CHUNK_SIZE = 8;
+		public const int CHUNK_SIZE = 16;
 		const int MAX_TILES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
 		const int MAX_VERTICES_PER_TILE = 6 * 4;
+		const int MAX_VERTICES = MAX_TILES * MAX_VERTICES_PER_TILE;
 
 		static IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
 		VoxelMap m_map;
-
-		static VertexDataBuffer s_vertexData = new VertexDataBuffer(CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * MAX_VERTICES_PER_TILE);
 
 		Buffer<TerrainVertex> m_vertexBuffer;
 		VertexInputLayout m_layout;
@@ -50,21 +49,25 @@ namespace Client3D
 		public IntVector3 ChunkOffset { get; private set; }
 
 		public int VertexCount { get; private set; }
-		public int ChunkRecalcs { get; private set; }
 
 		// Maximum number of vertices this Chunk has had
 		int m_maxVertices;
 
-		bool m_chunkInvalid = true;
+		public bool IsInvalid { get; private set; }
+
+		VertexList m_vertexList;
+		bool m_vertexBufferInvalid;
 
 		public BoundingBox BBox;
 
-		class VertexDataBuffer
+		public bool IsEnabled { get; set; }
+
+		class VertexList
 		{
 			public TerrainVertex[] Data { get; private set; }
 			public int Count { get; private set; }
 
-			public VertexDataBuffer(int size)
+			public VertexList(int size)
 			{
 				this.Data = new TerrainVertex[size];
 				this.Count = 0;
@@ -100,6 +103,8 @@ namespace Client3D
 		{
 			this.ChunkOffset = chunkOffset;
 
+			this.IsInvalid = true;
+
 			m_map = map;
 
 			var v1 = chunkOffset.ToVector3();
@@ -107,59 +112,66 @@ namespace Client3D
 			this.BBox = new BoundingBox(v1, v2);
 		}
 
-		public void Setup(GraphicsDevice device)
-		{
-			m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
-			m_layout = VertexInputLayout.FromBuffer(0, m_vertexBuffer);
-		}
-
 		public void InvalidateChunk()
 		{
-			m_chunkInvalid = true;
+			this.IsInvalid = true;
 		}
 
 		public void Free()
 		{
+			m_vertexList = null;
+
 			if (m_vertexBuffer != null)
 			{
 				//System.Diagnostics.Trace.TraceError("Free {0}", this.ChunkOffset);
 				RemoveAndDispose(ref m_vertexBuffer);
-				m_chunkInvalid = true;
+				this.IsInvalid = true;
 			}
+		}
+
+		public void Update(TerrainRenderer scene)
+		{
+			if (this.IsInvalid == false)
+				return;
+
+			if (m_vertexList == null)
+				m_vertexList = new VertexList(MAX_VERTICES);
+
+			var device = scene.Game.GraphicsDevice;
+
+			m_vertexList.Clear();
+
+			GenerateVertices(m_vertexList, scene);
+
+			this.IsInvalid = false;
+			m_vertexBufferInvalid = true;
+
+			this.VertexCount = m_vertexList.Count;
 		}
 
 		public void Render(TerrainRenderer scene)
 		{
 			var device = scene.Game.GraphicsDevice;
 
-			if (m_chunkInvalid)
+			if (m_vertexBufferInvalid)
 			{
-				s_vertexData.Clear();
-
-				GenerateVertices(s_vertexData, scene);
-
-				if (s_vertexData.Count > 0)
+				if (m_vertexList.Count > 0)
 				{
-					if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < s_vertexData.Count)
+					if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < m_vertexList.Count)
 					{
-						if (s_vertexData.Count > m_maxVertices)
-							m_maxVertices = s_vertexData.Count;
+						if (m_vertexList.Count > m_maxVertices)
+							m_maxVertices = m_vertexList.Count;
 
 						//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
 
-						Setup(device);
+						m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
+						m_layout = VertexInputLayout.FromBuffer(0, m_vertexBuffer);
 					}
 
-					m_vertexBuffer.SetData(s_vertexData.Data, 0, s_vertexData.Count);
+					m_vertexBuffer.SetData(m_vertexList.Data, 0, m_vertexList.Count);
 				}
 
-				m_chunkInvalid = false;
-				this.ChunkRecalcs = 1;
-				this.VertexCount = s_vertexData.Count;
-			}
-			else
-			{
-				this.ChunkRecalcs = 0;
+				m_vertexBufferInvalid = false;
 			}
 
 			if (this.VertexCount > 0)
@@ -170,7 +182,7 @@ namespace Client3D
 			}
 		}
 
-		void GenerateVertices(VertexDataBuffer vertexData, TerrainRenderer scene)
+		void GenerateVertices(VertexList vertexData, TerrainRenderer scene)
 		{
 			IntPoint3 cutn = scene.ViewCorner1;
 			IntPoint3 cutp = scene.ViewCorner2;
@@ -210,7 +222,7 @@ namespace Client3D
 			}
 		}
 
-		void CreateCubicBlock(IntPoint3 p, VertexDataBuffer vertexData, TerrainRenderer scene, TextureID texId)
+		void CreateCubicBlock(IntPoint3 p, VertexList vertexData, TerrainRenderer scene, TextureID texId)
 		{
 			int sides = 0;
 
@@ -308,7 +320,7 @@ namespace Client3D
 			return occlusion * 0.3f;
 		}
 
-		void CreateCube(IntPoint3 p, VertexDataBuffer vertexData, int sides, TextureID texId)
+		void CreateCube(IntPoint3 p, VertexList vertexData, int sides, TextureID texId)
 		{
 			var grid = m_map.Grid;
 
