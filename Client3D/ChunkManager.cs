@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Client3D
@@ -76,9 +77,9 @@ namespace Client3D
 
 			var frustum = cameraService.Frustum;
 
-			this.VerticesRendered = 0;
-			this.ChunkRecalcs = 0;
-			this.ChunksRendered = 0;
+			int numVertices = 0;
+			int numChunks = 0;
+			int numChunkRecalcs = 0;
 
 #if USE_NONPARALLEL
 			foreach (var chunk in m_chunks)
@@ -99,18 +100,21 @@ namespace Client3D
 					chunk.IsEnabled = true;
 
 					if (chunk.IsInvalid)
-						this.ChunkRecalcs++;
+						Interlocked.Increment(ref numChunkRecalcs);
 
 					chunk.Update(m_scene);
 
-					this.VerticesRendered += chunk.VertexCount;
-					this.ChunksRendered++;
+					Interlocked.Add(ref numVertices, chunk.VertexCount);
+					Interlocked.Increment(ref numChunks);
 				}
 #if USE_NONPARALLEL
 			}
 #else
 			});
 #endif
+			this.VerticesRendered = numVertices;
+			this.ChunksRendered = numChunks;
+			this.ChunkRecalcs = numChunkRecalcs;
 		}
 
 		public void Draw(GameTime gameTime)
