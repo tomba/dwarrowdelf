@@ -130,15 +130,16 @@ namespace Client3D
 			// Pixel Shader
 			m_scene.Effect.Parameters["g_eyePos"].SetValue(cameraService.Position);
 
-			var worldMatrix = Matrix.Identity;
-			worldMatrix.Transpose();
-
-			m_scene.Effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);
+			var perObCBuf = m_scene.Effect.ConstantBuffers["PerObjectBuffer"];
 
 			foreach (var chunk in m_chunks)
 			{
 				if (chunk.IsEnabled == false)
 					continue;
+
+				var worldMatrix = Matrix.Translation(chunk.ChunkOffset.ToVector3());
+				perObCBuf.Parameters["worldMatrix"].SetValue(ref worldMatrix);
+				perObCBuf.Update();
 
 				chunk.Render(m_scene);
 			}

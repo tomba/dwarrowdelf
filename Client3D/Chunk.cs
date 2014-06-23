@@ -311,7 +311,7 @@ namespace Client3D
 
 				var vertices = s_cubeFaces[side];
 
-				var offset = p.ToVector3();
+				var offset = (p - this.ChunkOffset).ToVector3();
 				offset += new Vector3(0.5f);
 
 				for (int i = 0; i < 4; ++i)
