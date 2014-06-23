@@ -17,6 +17,7 @@ namespace Client3D
 	struct Voxel
 	{
 		public VoxelType Type;
+		public bool IsGrass;
 
 		public bool IsUndefined { get { return this.Type == VoxelType.Undefined; } }
 		public bool IsEmpty { get { return this.Type == VoxelType.Empty; } }
@@ -200,6 +201,9 @@ namespace Client3D
 				grid[z, y, x].Type = VoxelType.Rock;
 				return;
 			}
+
+			if (td.IsGreen)
+				grid[z - 1, y, x].IsGrass = true;
 
 			grid[z, y, x].Type = VoxelType.Empty;
 		}

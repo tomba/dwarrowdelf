@@ -212,17 +212,17 @@ namespace Client3D
 
 						if (td.IsUndefined)
 						{
-							CreateCubicBlock(p, vertexData, scene, TextureID.Undefined);
+							CreateCubicBlock(p, vertexData, scene, TextureID.Undefined, TextureID.Undefined);
 							continue;
 						}
 
-						CreateCubicBlock(p, vertexData, scene, TextureID.Tex2);
+						CreateCubicBlock(p, vertexData, scene, TextureID.Tex2, td.IsGrass ? TextureID.Grass : TextureID.Tex2);
 					}
 				}
 			}
 		}
 
-		void CreateCubicBlock(IntPoint3 p, VertexList vertexData, TerrainRenderer scene, TextureID texId)
+		void CreateCubicBlock(IntPoint3 p, VertexList vertexData, TerrainRenderer scene, TextureID texId, TextureID topTexId)
 		{
 			int sides = 0;
 
@@ -260,7 +260,7 @@ namespace Client3D
 			if (sides == 0)
 				return;
 
-			CreateCube(p, vertexData, sides, texId);
+			CreateCube(p, vertexData, sides, texId, topTexId);
 		}
 
 		bool IsBlocker(IntPoint3 p)
@@ -320,7 +320,7 @@ namespace Client3D
 			return occlusion * 0.3f;
 		}
 
-		void CreateCube(IntPoint3 p, VertexList vertexData, int sides, TextureID texId)
+		void CreateCube(IntPoint3 p, VertexList vertexData, int sides, TextureID texId, TextureID topTexId)
 		{
 			var grid = m_map.Grid;
 
@@ -338,7 +338,9 @@ namespace Client3D
 				{
 					float occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
 
-					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, texId, occ);
+					var tex = side == (int)FaceDirection.PositiveZ ? topTexId : texId;
+
+					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, tex, occ);
 					vertexData.Add(vd);
 				}
 			}
