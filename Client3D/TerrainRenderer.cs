@@ -134,8 +134,7 @@ namespace Client3D
 
 				if (diff.X == 0 && diff.Y == 0)
 				{
-					m_chunkManager.InvalidateChunksZ(old.Z);
-					m_chunkManager.InvalidateChunksZ(value.Z);
+					m_chunkManager.InvalidateChunksZ(Math.Min(old.Z, value.Z), Math.Max(old.Z, value.Z));
 				}
 				else
 				{
@@ -167,8 +166,7 @@ namespace Client3D
 
 				if (diff.X == 0 && diff.Y == 0)
 				{
-					m_chunkManager.InvalidateChunksZ(old.Z);
-					m_chunkManager.InvalidateChunksZ(value.Z);
+					m_chunkManager.InvalidateChunksZ(Math.Min(old.Z, value.Z), Math.Max(old.Z, value.Z));
 				}
 				else
 				{

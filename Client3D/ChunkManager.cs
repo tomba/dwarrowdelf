@@ -61,11 +61,11 @@ namespace Client3D
 				chunk.InvalidateChunk();
 		}
 
-		public void InvalidateChunksZ(int z)
+		public void InvalidateChunksZ(int fromZ, int toZ)
 		{
 			foreach (var chunk in m_chunks)
 			{
-				if (z > chunk.ChunkOffset.Z - 1 && z < chunk.ChunkOffset.Z + Chunk.CHUNK_SIZE + 1)
+				if (chunk.ChunkOffset.Z <= toZ && chunk.ChunkOffset.Z + Chunk.CHUNK_SIZE >= fromZ)
 					chunk.InvalidateChunk();
 			}
 		}
