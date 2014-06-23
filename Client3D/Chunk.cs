@@ -44,7 +44,7 @@ namespace Client3D
 		VoxelMap m_map;
 
 		Buffer<TerrainVertex> m_vertexBuffer;
-		VertexInputLayout m_layout;
+		static readonly VertexInputLayout s_layout = VertexInputLayout.New<TerrainVertex>(0);
 
 		public IntVector3 ChunkOffset { get; private set; }
 
@@ -165,7 +165,6 @@ namespace Client3D
 						//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
 
 						m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
-						m_layout = VertexInputLayout.FromBuffer(0, m_vertexBuffer);
 					}
 
 					m_vertexBuffer.SetData(m_vertexList.Data, 0, m_vertexList.Count);
@@ -177,7 +176,7 @@ namespace Client3D
 			if (this.VertexCount > 0)
 			{
 				device.SetVertexBuffer(m_vertexBuffer);
-				device.SetVertexInputLayout(m_layout);
+				device.SetVertexInputLayout(s_layout);
 				device.Draw(PrimitiveType.LineListWithAdjacency, this.VertexCount);
 			}
 		}
