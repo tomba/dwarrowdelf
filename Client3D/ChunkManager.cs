@@ -1,4 +1,4 @@
-﻿#define USE_NONPARALLEL
+﻿//#define USE_NONPARALLEL
 
 using Dwarrowdelf;
 using SharpDX;

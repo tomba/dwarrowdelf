@@ -19,18 +19,15 @@ namespace Client3D
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		struct TerrainVertex
 		{
-			[VertexElement("POSITION")]
-			public Vector3 Position;
-			[VertexElement("TEXID")]
-			public int TexID;
-			[VertexElement("OCCLUSION")]
-			public float Occlusion;
+			[VertexElement("POSITION", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+			public Byte4 Position;
+			[VertexElement("TEXOCCPACK", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+			public Byte4 TexOccPack;
 
-			public TerrainVertex(Vector3 pos, TextureID texID, float occlusion)
+			public TerrainVertex(IntPoint3 pos, TextureID texID, int occlusion)
 			{
-				this.Position = pos;
-				this.TexID = (int)texID;
-				this.Occlusion = occlusion;
+				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
+				this.TexOccPack = new Byte4((int)texID, occlusion, 0, 0);
 			}
 		}
 
@@ -275,7 +272,7 @@ namespace Client3D
 			return !td.IsEmpty;
 		}
 
-		float GetOcclusionForFaceVertex(IntPoint3 p, FaceDirection face, int vertexNum)
+		int GetOcclusionForFaceVertex(IntPoint3 p, FaceDirection face, int vertexNum)
 		{
 			var odata = s_occlusionLookup[(int)face, vertexNum];
 
@@ -297,26 +294,25 @@ namespace Client3D
 					occlusion++;
 			}
 
-			return occlusion * 0.3f;
+			return occlusion;
 		}
 
 		void CreateCube(IntPoint3 p, VertexList vertexData, int sides, TextureID texId, TextureID topTexId)
 		{
 			var grid = m_map.Grid;
 
+			var offset = new IntVector3(p - this.ChunkOffset);
+
 			for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
 			{
 				if ((sides & 1) == 0)
 					continue;
 
-				var vertices = s_cubeFaces[side];
-
-				var offset = (p - this.ChunkOffset).ToVector3();
-				offset += new Vector3(0.5f);
+				var vertices = s_intCubeFaces[side];
 
 				for (int i = 0; i < 4; ++i)
 				{
-					float occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
+					int occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
 
 					var tex = side == (int)FaceDirection.PositiveZ ? topTexId : texId;
 
@@ -326,7 +322,16 @@ namespace Client3D
 			}
 		}
 
+		/// <summary>
+		/// Int cube faces from 0 to 1
+		/// </summary>
+		static IntPoint3[][] s_intCubeFaces;
+
+		/// <summary>
+		/// Float cube faces from -0.5 to 0.5
+		/// </summary>
 		static Vector3[][] s_cubeFaces;
+
 		static int[] s_cubeIndices = { 0, 1, 3, 2 };
 
 		static Chunk()
@@ -357,17 +362,21 @@ namespace Client3D
 			};
 
 			s_cubeFaces = new Vector3[6][];
+			s_intCubeFaces = new IntPoint3[6][];
 
 			for (int side = 0; side < 6; ++side)
 			{
 				Vector3[] face = new Vector3[4];
+				IntPoint3[] intFace = new IntPoint3[4];
 
 				for (int vn = 0; vn < 4; ++vn)
 				{
 					face[vn] = Vector3.Transform(south[vn], rotQs[side]) / 2.0f;
+					intFace[vn] = (face[vn] + 0.5f).ToIntPoint3();
 				}
 
 				s_cubeFaces[side] = face;
+				s_intCubeFaces[side] = intFace;
 			}
 		}
 

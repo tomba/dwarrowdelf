@@ -1,9 +1,8 @@
 ﻿
 struct VS_IN
 {
-	float3 pos : POSITION;
-	int texID : TEXID;
-	float occlusion : OCCLUSION;
+	uint4 pos : POSITION;
+	uint4 texOccPack : TEXOCCPACK;
 };
 
 struct GS_IN
@@ -11,7 +10,7 @@ struct GS_IN
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
 	int texID : TEXID;
-	float occlusion : OCCLUSION;
+	int occlusion : OCCLUSION;
 };
 
 struct PS_IN
@@ -20,7 +19,7 @@ struct PS_IN
 	float3 posW : POSITION;
 	float2 tex : TEXCOORD0;
 	nointerpolation int texID : TEXID;
-	nointerpolation float occlusion[4] : OCCLUSION;
+	nointerpolation int occlusion[4] : OCCLUSION;
 };
 
 Texture2DArray blockTextures;
@@ -56,14 +55,14 @@ GS_IN VSMain(VS_IN input)
 	GS_IN output = (GS_IN)0;
 
 	// Change the position vector to be 4 units for proper matrix calculations.
-	float4 pos = float4(input.pos, 1.0f);
+	float4 pos = float4(input.pos.xyz, 1.0f);
 
 	output.pos = mul(pos, worldMatrix);
 	output.posW = output.pos.xyz;
 	output.pos = mul(output.pos, g_viewProjMatrix);
 
-	output.texID = input.texID;
-	output.occlusion = input.occlusion;
+	output.texID = input.texOccPack.x;
+	output.occlusion = input.texOccPack.y;
 
 	return output;
 }
@@ -161,12 +160,13 @@ float4 PSMain(PS_IN input) : SV_Target
 	}
 
 	float occlusion = 1.0f;
+	const float occlusionStep = 0.3f;
 
 	if (!g_disableOcclusion)
 	{
 		float o1 = lerp(input.occlusion[0], input.occlusion[1], input.tex.x);
 		float o2 = lerp(input.occlusion[2], input.occlusion[3], input.tex.x);
-		occlusion = 1.0f - lerp(o1, o2, input.tex.y);
+		occlusion = 1.0f - lerp(o1, o2, input.tex.y) * occlusionStep;
 	}
 
 	float border = 1.0f;
