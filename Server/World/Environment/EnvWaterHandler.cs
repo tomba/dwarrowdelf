@@ -10,8 +10,8 @@ namespace Dwarrowdelf.Server
 	{
 		EnvironmentObject m_env;
 
-		HashSet<IntPoint3> m_waterTiles = new HashSet<IntPoint3>();
-		Dictionary<IntPoint3, int> m_waterChangeMap = new Dictionary<IntPoint3, int>();
+		HashSet<IntVector3> m_waterTiles = new HashSet<IntVector3>();
+		Dictionary<IntVector3, int> m_waterChangeMap = new Dictionary<IntVector3, int>();
 
 		public EnvWaterHandler(EnvironmentObject env)
 		{
@@ -27,12 +27,12 @@ namespace Dwarrowdelf.Server
 			m_env.World.TickEnding -= OnTick;
 		}
 
-		public void AddWater(IntPoint3 p)
+		public void AddWater(IntVector3 p)
 		{
 			m_waterTiles.Add(p);
 		}
 
-		public void RemoveWater(IntPoint3 p)
+		public void RemoveWater(IntVector3 p)
 		{
 			m_waterTiles.Remove(p);
 		}
@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Server
 			m_waterChangeMap.Clear();
 		}
 
-		bool CanWaterFlow(IntPoint3 from, IntPoint3 to)
+		bool CanWaterFlow(IntVector3 from, IntVector3 to)
 		{
 			Debug.Assert((to - from).IsNormal);
 
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Server
 			return false;
 		}
 
-		int GetCurrentWaterLevel(IntPoint3 p)
+		int GetCurrentWaterLevel(IntVector3 p)
 		{
 			int l;
 			if (!m_waterChangeMap.TryGetValue(p, out l))
@@ -112,7 +112,7 @@ namespace Dwarrowdelf.Server
 			return l;
 		}
 
-		void HandleWaterAt(IntPoint3 src)
+		void HandleWaterAt(IntVector3 src)
 		{
 			int srcLevel = GetCurrentWaterLevel(src);
 
@@ -129,7 +129,7 @@ namespace Dwarrowdelf.Server
 				m_waterChangeMap[src] = srcLevel;
 		}
 
-		void HandleWaterFlowPlanar(IntPoint3 src, ref int srcLevel)
+		void HandleWaterFlowPlanar(IntVector3 src, ref int srcLevel)
 		{
 			if (srcLevel <= 1)
 				return;
@@ -169,7 +169,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void HandleWaterFlowDown(IntPoint3 src, ref int srcLevel)
+		void HandleWaterFlowDown(IntVector3 src, ref int srcLevel)
 		{
 			if (srcLevel == 0)
 				return;
@@ -181,7 +181,7 @@ namespace Dwarrowdelf.Server
 
 			int downLevel = GetCurrentWaterLevel(down);
 
-			IntPoint3 dst;
+			IntVector3 dst;
 			int dstLevel;
 			int flow;
 
@@ -196,7 +196,7 @@ namespace Dwarrowdelf.Server
 				m_currentSrc = src;
 				m_currentSrcLevel = srcLevel;
 
-				var astar = new AStar(new IntPoint3[] { src.Down }, this);
+				var astar = new AStar(new IntVector3[] { src.Down }, this);
 
 				var status = astar.Find();
 
@@ -215,26 +215,26 @@ namespace Dwarrowdelf.Server
 			m_waterChangeMap[dst] = dstLevel;
 		}
 
-		IntPoint3 m_currentSrc;
+		IntVector3 m_currentSrc;
 		int m_currentSrcLevel;
 
-		bool IAStarTarget.GetIsTarget(IntPoint3 p)
+		bool IAStarTarget.GetIsTarget(IntVector3 p)
 		{
 			int l = GetCurrentWaterLevel(p);
 			return l < m_currentSrcLevel;
 		}
 
-		ushort IAStarTarget.GetHeuristic(IntPoint3 location)
+		ushort IAStarTarget.GetHeuristic(IntVector3 location)
 		{
 			return (ushort)location.Z;
 		}
 
-		ushort IAStarTarget.GetCostBetween(IntPoint3 src, IntPoint3 dst)
+		ushort IAStarTarget.GetCostBetween(IntVector3 src, IntVector3 dst)
 		{
 			return 0;
 		}
 
-		IEnumerable<Direction> IAStarTarget.GetValidDirs(IntPoint3 from)
+		IEnumerable<Direction> IAStarTarget.GetValidDirs(IntVector3 from)
 		{
 			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
 			{

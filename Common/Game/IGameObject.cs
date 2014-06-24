@@ -37,26 +37,26 @@ namespace Dwarrowdelf
 		VisibilityMode VisibilityMode { get; }
 
 		IntSize3 Size { get; }
-		bool Contains(IntPoint3 p);
+		bool Contains(IntVector3 p);
 
-		TerrainID GetTerrainID(IntPoint3 l);
-		MaterialID GetTerrainMaterialID(IntPoint3 l);
+		TerrainID GetTerrainID(IntVector3 l);
+		MaterialID GetTerrainMaterialID(IntVector3 l);
 
-		InteriorID GetInteriorID(IntPoint3 l);
-		MaterialID GetInteriorMaterialID(IntPoint3 l);
+		InteriorID GetInteriorID(IntVector3 l);
+		MaterialID GetInteriorMaterialID(IntVector3 l);
 
-		TerrainInfo GetTerrain(IntPoint3 l);
-		MaterialInfo GetTerrainMaterial(IntPoint3 l);
+		TerrainInfo GetTerrain(IntVector3 l);
+		MaterialInfo GetTerrainMaterial(IntVector3 l);
 
-		InteriorInfo GetInterior(IntPoint3 l);
-		MaterialInfo GetInteriorMaterial(IntPoint3 l);
+		InteriorInfo GetInterior(IntVector3 l);
+		MaterialInfo GetInteriorMaterial(IntVector3 l);
 
-		TileData GetTileData(IntPoint3 l);
+		TileData GetTileData(IntVector3 l);
 
-		bool GetTileFlags(IntPoint3 l, TileFlags flags);
+		bool GetTileFlags(IntVector3 l, TileFlags flags);
 
-		bool HasContents(IntPoint3 pos);
-		IEnumerable<IMovableObject> GetContents(IntPoint3 pos);
+		bool HasContents(IntVector3 pos);
+		IEnumerable<IMovableObject> GetContents(IntVector3 pos);
 		IEnumerable<IMovableObject> GetContents(IntGrid2Z rect);
 	}
 
@@ -67,7 +67,7 @@ namespace Dwarrowdelf
 		/// </summary>
 		IEnvironmentObject Environment { get; }
 		IContainerObject Parent { get; }
-		IntPoint3 Location { get; }
+		IntVector3 Location { get; }
 	}
 
 	public interface IConcreteObject : IMovableObject

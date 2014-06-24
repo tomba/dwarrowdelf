@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client
 		public EnvironmentObject Environment { get; private set; }
 
 		[SaveGameProperty]
-		Dictionary<IntPoint3, DesignationData> m_map;
+		Dictionary<IntVector3, DesignationData> m_map;
 
 		[SaveGameProperty]
 		bool m_checkStatus;
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Environment = env;
 
-			m_map = new Dictionary<IntPoint3, DesignationData>();
+			m_map = new Dictionary<IntVector3, DesignationData>();
 		}
 
 		Designation(SaveGameContext ctx)
@@ -77,12 +77,12 @@ namespace Dwarrowdelf.Client
 				RemoveDesignation(kvp.Key);
 		}
 
-		void OnEnvironmentMapTileTerrainChanged(IntPoint3 obj)
+		void OnEnvironmentMapTileTerrainChanged(IntVector3 obj)
 		{
 			m_checkStatus = true;
 		}
 
-		public DesignationType ContainsPoint(IntPoint3 p)
+		public DesignationType ContainsPoint(IntVector3 p)
 		{
 			DesignationData data;
 			if (m_map.TryGetValue(p, out data))
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Client
 		{
 			if (m_checkStatus)
 			{
-				var rm = new List<IntPoint3>();
+				var rm = new List<IntVector3>();
 
 				foreach (var kvp in m_map)
 				{
@@ -251,7 +251,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void RemoveDesignation(IntPoint3 p)
+		void RemoveDesignation(IntVector3 p)
 		{
 			RemoveJob(p);
 
@@ -266,7 +266,7 @@ namespace Dwarrowdelf.Client
 			this.Environment.OnTileExtraChanged(p);
 		}
 
-		void RemoveJob(IntPoint3 p)
+		void RemoveJob(IntVector3 p)
 		{
 			var job = m_map[p].Job;
 
@@ -280,12 +280,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IntPoint3 FindLocationFromJob(IJob job)
+		IntVector3 FindLocationFromJob(IJob job)
 		{
 			return m_map.First(e => e.Value.Job == job).Key;
 		}
 
-		bool GetTileValid(IntPoint3 p, DesignationType type)
+		bool GetTileValid(IntVector3 p, DesignationType type)
 		{
 			var td = this.Environment.GetTileData(p);
 
@@ -327,14 +327,14 @@ namespace Dwarrowdelf.Client
 		/// <summary>
 		/// trivial validity check to remove AStar process for totally blocked tiles
 		/// </summary>
-		bool GetTileReachableSimple(IntPoint3 p, DesignationType type)
+		bool GetTileReachableSimple(IntVector3 p, DesignationType type)
 		{
 			DirectionSet dirs = GetDesignationPositioning(p, type);
 
 			return dirs.ToSurroundingPoints(p).Any(this.Environment.CanEnter);
 		}
 
-		DirectionSet GetDesignationPositioning(IntPoint3 p, DesignationType type)
+		DirectionSet GetDesignationPositioning(IntVector3 p, DesignationType type)
 		{
 			switch (type)
 			{

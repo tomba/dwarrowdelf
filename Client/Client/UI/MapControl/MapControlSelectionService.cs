@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public event Action<MapSelection> SelectionChanged;
 		public event Action<MapSelection> GotSelection;
-		public event Action<IntPoint3> CursorPositionChanged;
+		public event Action<IntVector3> CursorPositionChanged;
 
 		enum State
 		{
@@ -73,9 +73,9 @@ namespace Dwarrowdelf.Client.UI
 			m_canvas.Children.Add(m_cursorRectangle);
 		}
 
-		IntPoint3 m_cursorPosition;
+		IntVector3 m_cursorPosition;
 
-		public IntPoint3 CursorPosition
+		public IntVector3 CursorPosition
 		{
 			get { return m_cursorPosition; }
 
@@ -240,23 +240,23 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void StartSelection(IntPoint3 p, State state)
+		void StartSelection(IntVector3 p, State state)
 		{
 			m_state = state;
 			UpdateCursorRectangle();
 			this.Selection = new MapSelection(p, p);
 		}
 
-		void UpdateSelection(IntPoint3 p)
+		void UpdateSelection(IntVector3 p)
 		{
-			IntPoint3 start;
+			IntVector3 start;
 
 			var end = p.Truncate(new IntGrid3(this.m_mapControl.Environment.Size));
 
 			switch (m_selectionMode)
 			{
 				case MapSelectionMode.Rectangle:
-					start = new IntPoint3(this.Selection.SelectionStart.ToIntVector2(), end.Z);
+					start = new IntVector3(this.Selection.SelectionStart.ToIntVector2(), end.Z);
 					break;
 
 				case MapSelectionMode.Box:
@@ -274,7 +274,7 @@ namespace Dwarrowdelf.Client.UI
 			this.Selection = new MapSelection(start, end);
 		}
 
-		void EndSelection(IntPoint3 p)
+		void EndSelection(IntVector3 p)
 		{
 			m_state = State.None;
 			UpdateSelection(p);
@@ -432,7 +432,7 @@ namespace Dwarrowdelf.Client.UI
 
 	struct MapSelection
 	{
-		public MapSelection(IntPoint3 start, IntPoint3 end)
+		public MapSelection(IntVector3 start, IntVector3 end)
 			: this()
 		{
 			this.SelectionStart = start;
@@ -456,10 +456,10 @@ namespace Dwarrowdelf.Client.UI
 		}
 
 		public bool IsSelectionValid { get; set; }
-		public IntPoint3 SelectionStart { get; set; }
-		public IntPoint3 SelectionEnd { get; set; }
+		public IntVector3 SelectionStart { get; set; }
+		public IntVector3 SelectionEnd { get; set; }
 
-		public IntPoint3 SelectionPoint
+		public IntVector3 SelectionPoint
 		{
 			get
 			{

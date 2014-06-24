@@ -286,10 +286,10 @@ namespace Dwarrowdelf
 	public sealed class ConstructAction : GameAction
 	{
 		public ConstructMode Mode { get; private set; }
-		public IntPoint3 Location { get; private set; }
+		public IntVector3 Location { get; private set; }
 		public ObjectID[] ItemObjectIDs { get; private set; }
 
-		public ConstructAction(ConstructMode mode, IntPoint3 location, IEnumerable<IItemObject> items)
+		public ConstructAction(ConstructMode mode, IntVector3 location, IEnumerable<IItemObject> items)
 		{
 			this.Mode = mode;
 			this.Location = location;

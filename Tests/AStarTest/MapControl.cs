@@ -28,7 +28,7 @@ namespace AStarTest
 	{
 		public class TileInfo
 		{
-			public IntPoint3 Location { get; set; }
+			public IntVector3 Location { get; set; }
 		}
 
 		Map m_map;
@@ -38,7 +38,7 @@ namespace AStarTest
 		const int MapDepth = 10;
 
 		int m_state;
-		IntPoint3 m_from, m_to;
+		IntVector3 m_from, m_to;
 
 		bool m_removing;
 
@@ -50,8 +50,8 @@ namespace AStarTest
 		Renderer m_renderer;
 		RenderData m_renderData;
 
-		HashSet<IntPoint3> m_path;
-		IDictionary<IntPoint3, AStarNode> m_nodes;
+		HashSet<IntVector3> m_path;
+		IDictionary<IntVector3, AStarNode> m_nodes;
 
 		public MapControl()
 		{
@@ -132,7 +132,7 @@ namespace AStarTest
 			m_renderer.Render(drawingContext, renderSize, ctx);
 		}
 
-		void UpdateTile(ref RenderTileData tile, IntPoint3 ml)
+		void UpdateTile(ref RenderTileData tile, IntVector3 ml)
 		{
 			tile = new RenderTileData(Brushes.Black);
 
@@ -212,14 +212,14 @@ namespace AStarTest
 			}
 		}
 
-		public IntPoint3 ScreenPointToMapLocation(Point p)
+		public IntVector3 ScreenPointToMapLocation(Point p)
 		{
 			var rt = RenderPointToRenderTile(p);
 			var st3 = RenderTileToScreen3(rt);
 			return st3.ToIntPoint3();
 		}
 
-		public IntPoint3 ScreenTileToMapLocation(IntVector2 st)
+		public IntVector3 ScreenTileToMapLocation(IntVector2 st)
 		{
 			var p = RenderTileToScreen3(new Point(st.X, st.Y));
 			return p.ToIntPoint3();
@@ -320,7 +320,7 @@ namespace AStarTest
 			}
 		}
 
-		void DoAStar(IntPoint3 src, IntPoint3 dst)
+		void DoAStar(IntVector3 src, IntVector3 dst)
 		{
 			long startBytes, stopBytes;
 			Stopwatch sw = new Stopwatch();
@@ -361,7 +361,7 @@ namespace AStarTest
 					return;
 				}
 
-				m_path = new HashSet<IntPoint3>(astar.GetPathLocationsReverse());
+				m_path = new HashSet<IntVector3>(astar.GetPathLocationsReverse());
 				var dirs = astar.GetPathReverse().ToArray();
 
 				this.PathLength = dirs.Length;
@@ -403,7 +403,7 @@ namespace AStarTest
 								return;
 							}
 
-							m_path = new HashSet<IntPoint3>(astar.GetPathLocationsReverse());
+							m_path = new HashSet<IntVector3>(astar.GetPathLocationsReverse());
 							var dirs = astar.GetPathReverse().ToArray();
 
 							this.PathLength = dirs.Length;
@@ -414,7 +414,7 @@ namespace AStarTest
 			}
 		}
 
-		void AStarDebugCallback(IDictionary<IntPoint3, AStarNode> nodes)
+		void AStarDebugCallback(IDictionary<IntVector3, AStarNode> nodes)
 		{
 			if (!this.Step)
 				return;
@@ -434,20 +434,20 @@ namespace AStarTest
 			switch (test)
 			{
 				case 1:
-					m_from = new IntPoint3(7, 6, 0);
-					m_to = new IntPoint3(12, 9, 0);
+					m_from = new IntVector3(7, 6, 0);
+					m_to = new IntVector3(12, 9, 0);
 					break;
 				case 2:
-					m_from = new IntPoint3(6, 0, 0);
-					m_to = new IntPoint3(0, 13, 1);
+					m_from = new IntVector3(6, 0, 0);
+					m_to = new IntVector3(0, 13, 1);
 					break;
 				case 3:
-					m_from = new IntPoint3(6, 0, 0);
-					m_to = new IntPoint3(0, 0, 0);
+					m_from = new IntVector3(6, 0, 0);
+					m_to = new IntVector3(0, 0, 0);
 					break;
 				case 4:
-					m_from = new IntPoint3(6, 0, 0);
-					m_to = new IntPoint3(37, 15, 0);
+					m_from = new IntVector3(6, 0, 0);
+					m_to = new IntVector3(37, 15, 0);
 					break;
 				default:
 					return;
@@ -507,22 +507,22 @@ namespace AStarTest
 			const int COST_STRAIGHT = 10;
 
 			Map m_env;
-			IntPoint3 m_destination;
+			IntVector3 m_destination;
 			DirectionSet m_positioning;
 
-			public MyTarget(Map env, IntPoint3 destination, DirectionSet positioning)
+			public MyTarget(Map env, IntVector3 destination, DirectionSet positioning)
 			{
 				m_env = env;
 				m_destination = destination;
 				m_positioning = positioning;
 			}
 
-			bool IAStarTarget.GetIsTarget(IntPoint3 p)
+			bool IAStarTarget.GetIsTarget(IntVector3 p)
 			{
 				return p.IsAdjacentTo(m_destination, m_positioning);
 			}
 
-			ushort IAStarTarget.GetHeuristic(IntPoint3 p)
+			ushort IAStarTarget.GetHeuristic(IntVector3 p)
 			{
 				var v = m_destination - p;
 
@@ -533,7 +533,7 @@ namespace AStarTest
 				return (ushort)h;
 			}
 
-			ushort IAStarTarget.GetCostBetween(IntPoint3 src, IntPoint3 dst)
+			ushort IAStarTarget.GetCostBetween(IntVector3 src, IntVector3 dst)
 			{
 				ushort cost = (src - dst).ManhattanLength == 1 ? (ushort)COST_STRAIGHT : (ushort)COST_DIAGONAL;
 				cost += (ushort)m_env.GetWeight(dst);
@@ -541,7 +541,7 @@ namespace AStarTest
 
 			}
 
-			IEnumerable<Direction> IAStarTarget.GetValidDirs(IntPoint3 p)
+			IEnumerable<Direction> IAStarTarget.GetValidDirs(IntVector3 p)
 			{
 				var map = m_env;
 

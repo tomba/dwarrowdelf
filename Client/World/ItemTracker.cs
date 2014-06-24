@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 			m_env.ObjectMoved += Environment_ObjectMoved;
 		}
 
-		public IEnumerable<ItemObject> GetItemsByDistance(IntPoint3 location, Func<ItemObject, bool> filter)
+		public IEnumerable<ItemObject> GetItemsByDistance(IntVector3 location, Func<ItemObject, bool> filter)
 		{
 			var items = m_items
 				.Where(filter)
@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Client
 			return items;
 		}
 
-		public IEnumerable<ItemObject> GetItemsByDistance(IntPoint3 location, ItemCategory category, Func<ItemObject, bool> filter)
+		public IEnumerable<ItemObject> GetItemsByDistance(IntVector3 location, ItemCategory category, Func<ItemObject, bool> filter)
 		{
 			var items = m_items
 				.Where(i => i.ItemCategory == category)
@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 			return items;
 		}
 
-		public ItemObject GetReachableItemByDistance(IntPoint3 location, IItemFilter filter,
+		public ItemObject GetReachableItemByDistance(IntVector3 location, IItemFilter filter,
 			Unreachables unreachables)
 		{
 			var items = m_items
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Client
 			m_items.Remove(item);
 		}
 
-		void Environment_ObjectMoved(MovableObject obj, IntPoint3 oldPos)
+		void Environment_ObjectMoved(MovableObject obj, IntVector3 oldPos)
 		{
 			var item = obj as ItemObject;
 
@@ -109,7 +109,7 @@ namespace Dwarrowdelf.Client
 	public sealed class Unreachables
 	{
 		// location : expiration tick
-		Dictionary<IntPoint3, int> m_map = new Dictionary<IntPoint3, int>();
+		Dictionary<IntVector3, int> m_map = new Dictionary<IntVector3, int>();
 
 		World m_world;
 
@@ -118,12 +118,12 @@ namespace Dwarrowdelf.Client
 			m_world = world;
 		}
 
-		public void Add(IntPoint3 p)
+		public void Add(IntVector3 p)
 		{
 			m_map[p] = m_world.TickNumber + 25;
 		}
 
-		public bool IsUnreachable(IntPoint3 p)
+		public bool IsUnreachable(IntVector3 p)
 		{
 			int tick;
 

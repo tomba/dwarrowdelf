@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Client
 			m_environment.World.JobManager.RemoveJobSource(this);
 		}
 
-		public void AddInstallJob(ItemObject item, IntPoint3 location)
+		public void AddInstallJob(ItemObject item, IntVector3 location)
 		{
 			var data = new InstallJobData()
 			{
@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Client
 			m_jobDataList.Add(data);
 		}
 
-		public ItemObject ContainsPoint(IntPoint3 p)
+		public ItemObject ContainsPoint(IntVector3 p)
 		{
 			foreach (var data in m_jobDataList)
 			{
@@ -153,7 +153,7 @@ namespace Dwarrowdelf.Client
 		{
 			public InstallMode Mode;
 			public ItemObject Item;
-			public IntPoint3 Location;
+			public IntVector3 Location;
 			public IJob Job;
 		}
 	}

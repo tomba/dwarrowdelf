@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		public IItemObject Item { get; private set; }
 		[SaveGameProperty]
-		IntPoint3 m_location;
+		IntVector3 m_location;
 		[SaveGameProperty]
 		IEnvironmentObject m_environment;
 		[SaveGameProperty("State")]
@@ -31,12 +31,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		DirectionSet m_positioning;
 
-		public FetchItemAssignment(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IItemObject item)
+		public FetchItemAssignment(IJobObserver parent, IEnvironmentObject env, IntVector3 location, IItemObject item)
 			: this(parent, env, location, item, DirectionSet.Exact)
 		{
 		}
 
-		public FetchItemAssignment(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IItemObject item, DirectionSet positioning)
+		public FetchItemAssignment(IJobObserver parent, IEnvironmentObject env, IntVector3 location, IItemObject item, DirectionSet positioning)
 			: base(parent)
 		{
 			this.Item = item;

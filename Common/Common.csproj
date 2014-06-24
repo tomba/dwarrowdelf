@@ -175,7 +175,6 @@
     <Compile Include="Lib\DataTypes\IntSize2.cs" />
     <Compile Include="Lib\DataTypes\Direction.cs" />
     <Compile Include="Lib\DataTypes\IntGrid2.cs" />
-    <Compile Include="Lib\DataTypes\IntPoint3.cs" />
     <Compile Include="Game\IGame.cs" />
     <Compile Include="Lib\DataTypes\Grid2D.cs" />
     <Compile Include="Lib\MMLogTraceListener.cs" />

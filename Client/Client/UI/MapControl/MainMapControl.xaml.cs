@@ -124,12 +124,12 @@ namespace Dwarrowdelf.Client.UI
 		public void GoTo(MovableObject ob)
 		{
 			if (ob == null)
-				GoTo(null, new IntPoint3());
+				GoTo(null, new IntVector3());
 			else
 				GoTo(ob.Environment, ob.Location);
 		}
 
-		public void GoTo(EnvironmentObject env, IntPoint3 p)
+		public void GoTo(EnvironmentObject env, IntVector3 p)
 		{
 			foreach (var map in m_mapList)
 				map.Environment = env;
@@ -140,12 +140,12 @@ namespace Dwarrowdelf.Client.UI
 		public void ScrollTo(MovableObject ob)
 		{
 			if (ob == null)
-				ScrollTo(null, new IntPoint3());
+				ScrollTo(null, new IntVector3());
 			else
 				ScrollTo(ob.Environment, ob.Location);
 		}
 
-		public void ScrollTo(EnvironmentObject env, IntPoint3 p)
+		public void ScrollTo(EnvironmentObject env, IntVector3 p)
 		{
 			foreach (var map in m_mapList)
 				map.Environment = env;
@@ -173,12 +173,12 @@ namespace Dwarrowdelf.Client.UI
 			ev.Handled = true;
 		}
 
-		public void ShowObjectsPopup(IntPoint3 p)
+		public void ShowObjectsPopup(IntVector3 p)
 		{
 			ShowObjectsPopup(m_mapList.First(), p);
 		}
 
-		void ShowObjectsPopup(MapControl mapControl, IntPoint3 ml)
+		void ShowObjectsPopup(MapControl mapControl, IntVector3 ml)
 		{
 			var env = this.Environment;
 

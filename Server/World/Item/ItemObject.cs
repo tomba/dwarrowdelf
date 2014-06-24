@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Server
 		public bool IsArmor { get { return this.ItemInfo.ArmorInfo != null; } }
 		public bool IsWeapon { get { return this.ItemInfo.WeaponInfo != null; } }
 
-		public override bool OkToAddChild(MovableObject ob, IntPoint3 dstLoc)
+		public override bool OkToAddChild(MovableObject ob, IntVector3 dstLoc)
 		{
 			if (this.ItemInfo.IsContainer == false)
 				throw new Exception();

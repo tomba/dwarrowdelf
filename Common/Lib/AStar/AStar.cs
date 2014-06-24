@@ -11,7 +11,7 @@ namespace Dwarrowdelf
 	// tries to save some memory by using ushorts.
 	public sealed class AStarNode : IOpenListNode
 	{
-		public IntPoint3 Loc { get; private set; }
+		public IntVector3 Loc { get; private set; }
 		public AStarNode Parent;
 		public ushort G { get; set; }	/* cost from the starting node, i.e. past path-cost */
 		public ushort H { get; set; }	/* heuristic to the goal, i.e. future path-cost */
@@ -19,7 +19,7 @@ namespace Dwarrowdelf
 
 		public int F { get { return G + H; } }
 
-		public AStarNode(IntPoint3 l, AStarNode parent)
+		public AStarNode(IntVector3 l, AStarNode parent)
 		{
 			Loc = l;
 			Parent = parent;
@@ -34,20 +34,20 @@ namespace Dwarrowdelf
 		readonly IAStarTarget m_target;
 
 		readonly IOpenList<AStarNode> m_openList;
-		readonly Dictionary<IntPoint3, AStarNode> m_nodeMap;
+		readonly Dictionary<IntVector3, AStarNode> m_nodeMap;
 
-		public Dictionary<IntPoint3, AStarNode> NodeMap { get { return m_nodeMap; } }
+		public Dictionary<IntVector3, AStarNode> NodeMap { get { return m_nodeMap; } }
 		public AStarNode LastNode { get; private set; }
 
-		public Action<Dictionary<IntPoint3, AStarNode>> DebugCallback { get; set; }
+		public Action<Dictionary<IntVector3, AStarNode>> DebugCallback { get; set; }
 
-		public AStar(IEnumerable<IntPoint3> initialLocations, IAStarTarget target)
+		public AStar(IEnumerable<IntVector3> initialLocations, IAStarTarget target)
 		{
 			this.MaxNodeCount = 200000;
 			this.CancellationToken = CancellationToken.None;
 
 			m_target = target;
-			m_nodeMap = new Dictionary<IntPoint3, AStarNode>();
+			m_nodeMap = new Dictionary<IntVector3, AStarNode>();
 			m_openList = new BinaryHeap<AStarNode>();
 
 			foreach (var p in initialLocations)
@@ -101,7 +101,7 @@ namespace Dwarrowdelf
 			return AStarStatus.NotFound;
 		}
 
-		public IEnumerable<IntPoint3> GetPathLocationsReverse()
+		public IEnumerable<IntVector3> GetPathLocationsReverse()
 		{
 			for (AStarNode n = this.LastNode; n != null; n = n.Parent)
 				yield return n.Loc;
@@ -131,7 +131,7 @@ namespace Dwarrowdelf
 		{
 			foreach (var dir in m_target.GetValidDirs(parent.Loc))
 			{
-				IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
+				IntVector3 childLoc = parent.Loc + new IntVector3(dir);
 
 				AStarNode child;
 				m_nodeMap.TryGetValue(childLoc, out child);
@@ -182,7 +182,7 @@ namespace Dwarrowdelf
 		{
 			foreach (var dir in m_target.GetValidDirs(parent.Loc))
 			{
-				IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
+				IntVector3 childLoc = parent.Loc + new IntVector3(dir);
 
 				AStarNode child;
 				m_nodeMap.TryGetValue(childLoc, out child);

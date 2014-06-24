@@ -12,9 +12,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public sealed class HaulAssignment : MoveAssignmentBase
 	{
 		[SaveGameProperty("Dest")]
-		readonly IntPoint3 m_dest;
+		readonly IntVector3 m_dest;
 
-		public HaulAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3 destination, DirectionSet positioning, IItemObject hauledItem)
+		public HaulAssignment(IJobObserver parent, IEnvironmentObject environment, IntVector3 destination, DirectionSet positioning, IItemObject hauledItem)
 			: base(parent, environment, positioning, hauledItem)
 		{
 			m_dest = destination;

@@ -167,11 +167,11 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void UpdateBounds(IntPoint3 mapCenterPos, IntSize2 gridSize)
+		void UpdateBounds(IntVector3 mapCenterPos, IntSize2 gridSize)
 		{
 			var cp = mapCenterPos;
 			var s = gridSize;
-			m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+			m_bounds = new IntGrid3(new IntVector3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 				new IntSize3(s, MAXLEVEL));
 		}
 
@@ -212,7 +212,7 @@ namespace Dwarrowdelf.Client.UI
 		/// <summary>
 		/// Mark the tile's datacontent as invalid.
 		/// </summary>
-		void InvalidateRenderViewTile(IntPoint3 ml)
+		void InvalidateRenderViewTile(IntVector3 ml)
 		{
 			if (!m_bounds.Contains(ml))
 				return;
@@ -338,17 +338,17 @@ namespace Dwarrowdelf.Client.UI
 			Notify("ScreenCenterPos");
 		}
 
-		void MapChangedCallback(IntPoint3 l)
+		void MapChangedCallback(IntVector3 l)
 		{
 			InvalidateRenderViewTile(l);
 		}
 
-		void MapObjectChangedCallback(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changetype)
+		void MapObjectChangedCallback(MovableObject ob, IntVector3 l, MapTileObjectChangeType changetype)
 		{
 			InvalidateRenderViewTile(l);
 		}
 
-		void OnMapTileExtraChanged(IntPoint3 p)
+		void OnMapTileExtraChanged(IntVector3 p)
 		{
 			InvalidateRenderViewTile(p);
 		}

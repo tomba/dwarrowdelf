@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var player = new FortressPlayer(2 + playerNum, this, env);
 
-			IntPoint3 pos;
+			IntVector3 pos;
 
 			switch (playerNum)
 			{
@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Server.Fortress
 			return true;
 		}
 
-		IntGrid2Z? FindStartLocation(EnvironmentObject env, IntPoint3 pos)
+		IntGrid2Z? FindStartLocation(EnvironmentObject env, IntVector3 pos)
 		{
 			const int size = 3;
 

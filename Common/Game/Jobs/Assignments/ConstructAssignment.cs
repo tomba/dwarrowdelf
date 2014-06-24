@@ -16,11 +16,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly ConstructMode m_mode;
 		[SaveGameProperty]
-		readonly IntPoint3 m_location;
+		readonly IntVector3 m_location;
 		[SaveGameProperty]
 		readonly IItemObject[] m_items;
 
-		public ConstructAssignment(IJobObserver parent, ConstructMode mode, IEnvironmentObject environment, IntPoint3 location, IItemObject[] items)
+		public ConstructAssignment(IJobObserver parent, ConstructMode mode, IEnvironmentObject environment, IntVector3 location, IItemObject[] items)
 			: base(parent)
 		{
 			m_mode = mode;

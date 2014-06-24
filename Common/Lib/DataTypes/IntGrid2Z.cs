@@ -47,19 +47,19 @@ namespace Dwarrowdelf
 		public int Y1 { get { return Y; } }
 		public int Y2 { get { return Y + Rows - 1; } }
 
-		public IntPoint3 X1Y1
+		public IntVector3 X1Y1
 		{
-			get { return new IntPoint3(m_grid.X1Y1, this.Z); }
+			get { return new IntVector3(m_grid.X1Y1, this.Z); }
 		}
 
-		public IntPoint3 X2Y2
+		public IntVector3 X2Y2
 		{
-			get { return new IntPoint3(m_grid.X2Y2, this.Z); }
+			get { return new IntVector3(m_grid.X2Y2, this.Z); }
 		}
 
-		public IntPoint3 Center
+		public IntVector3 Center
 		{
-			get { return new IntPoint3(m_grid.Center, this.Z); }
+			get { return new IntVector3(m_grid.Center, this.Z); }
 		}
 
 		public int Area
@@ -100,7 +100,7 @@ namespace Dwarrowdelf
 			return Equals((IntGrid2Z)obj);
 		}
 
-		public bool Contains(IntPoint3 l)
+		public bool Contains(IntVector3 l)
 		{
 			return m_grid.Contains(l.ToIntVector2()) && l.Z == m_z;
 		}
@@ -115,11 +115,11 @@ namespace Dwarrowdelf
 			return new IntGrid2Z(m_grid.Inflate(columns, rows), this.Z);
 		}
 
-		public IEnumerable<IntPoint3> Range()
+		public IEnumerable<IntVector3> Range()
 		{
 			for (int y = this.Y; y < this.Y + this.Rows; ++y)
 				for (int x = this.X; x < this.X + this.Columns; ++x)
-					yield return new IntPoint3(x, y, m_z);
+					yield return new IntVector3(x, y, m_z);
 		}
 
 		public IntGrid3 ToIntGrid3()

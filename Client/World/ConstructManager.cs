@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 			m_environment.World.JobManager.RemoveJobSource(this);
 		}
 
-		public ConstructMode ContainsPoint(IntPoint3 p)
+		public ConstructMode ContainsPoint(IntVector3 p)
 		{
 			foreach (var d in m_jobDataList)
 			{
@@ -211,7 +211,7 @@ namespace Dwarrowdelf.Client
 		class ConstructJobData
 		{
 			public ConstructMode Mode;
-			public IntPoint3 Location;
+			public IntVector3 Location;
 			public IItemFilter ItemFilter;
 			// XXX item criteria
 			public ItemObject Item;

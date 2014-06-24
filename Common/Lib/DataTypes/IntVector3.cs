@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 namespace Dwarrowdelf
 {
 	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(IntVector3Converter))]
 	public struct IntVector3 : IEquatable<IntVector3>
 	{
 		// X, Y, Z: 16 bits, from -32768 to 32767
@@ -27,8 +28,8 @@ namespace Dwarrowdelf
 				((long)(z & 0xffff) << 48);
 		}
 
-		public IntVector3(IntPoint3 p)
-			: this(p.X, p.Y, p.Z)
+		public IntVector3(IntVector2 p, int z)
+			: this(p.X, p.Y, z)
 		{
 		}
 
@@ -70,6 +71,14 @@ namespace Dwarrowdelf
 			IntVector3 l = (IntVector3)obj;
 			return l.m_value == this.m_value;
 		}
+
+		public IntVector3 Offset(int offsetX, int offsetY, int offsetZ)
+		{
+			return new IntVector3(this.X + offsetX, this.Y + offsetY, this.Z + offsetZ);
+		}
+
+		public IntVector3 Down { get { return new IntVector3(this.X, this.Y, this.Z - 1); } }
+		public IntVector3 Up { get { return new IntVector3(this.X, this.Y, this.Z + 1); } }
 
 		public double Length
 		{
@@ -113,6 +122,11 @@ namespace Dwarrowdelf
 			return new IntVector3(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 		}
 
+		public static IntVector3 operator +(IntVector3 left, IntVector2 right)
+		{
+			return new IntVector3(left.X + right.X, left.Y + right.Y, left.Z);
+		}
+
 		public static IntVector3 operator -(IntVector3 left, IntVector3 right)
 		{
 			return new IntVector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
@@ -128,6 +142,23 @@ namespace Dwarrowdelf
 			return new IntVector3(left.X / number, left.Y / number, left.Z / number);
 		}
 
+		public static IntVector3 operator +(IntVector3 left, Direction right)
+		{
+			return left + new IntVector3(right);
+		}
+
+		public bool IsAdjacentTo(IntVector3 p, DirectionSet positioning)
+		{
+			var v = p - this;
+
+			if (!v.IsNormal)
+				return false;
+
+			var d = v.ToDirection();
+
+			return positioning.Contains(d);
+		}
+
 		public override int GetHashCode()
 		{
 			return Hash.Hash3D(this.X, this.Y, this.Z);
@@ -139,9 +170,21 @@ namespace Dwarrowdelf
 			return String.Format(info, "{0},{1},{2}", this.X, this.Y, this.Z);
 		}
 
-		public static explicit operator IntVector3(IntPoint3 point)
+		public static IntVector3 Parse(string str)
 		{
-			return new IntVector3(point.X, point.Y, point.Z);
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			var arr = str.Split(',');
+			return new IntVector3(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info));
+		}
+
+		public IntVector2 ToIntVector2()
+		{
+			return new IntVector2(this.X, this.Y);
+		}
+
+		public DoublePoint3 ToDoublePoint3()
+		{
+			return new DoublePoint3(this.X, this.Y, this.Z);
 		}
 
 		public Direction ToDirection()
@@ -231,9 +274,45 @@ namespace Dwarrowdelf
 
 		public bool IsNull { get { return m_value == 0; } }
 
-		public IntVector2 ToIntVector2()
+		public IntVector3 Truncate(IntGrid3 box)
 		{
-			return new IntVector2(this.X, this.Y);
+			int x = Math.Min(Math.Max(this.X, box.X1), box.X2);
+			int y = Math.Min(Math.Max(this.Y, box.Y1), box.Y2);
+			int z = Math.Min(Math.Max(this.Z, box.Z1), box.Z2);
+
+			return new IntVector3(x, y, z);
+		}
+
+		public IntVector3 SetX(int x)
+		{
+			return new IntVector3(x, this.Y, this.Z);
+		}
+
+		public IntVector3 SetY(int y)
+		{
+			return new IntVector3(this.X, y, this.Z);
+		}
+
+		public IntVector3 SetZ(int z)
+		{
+			return new IntVector3(this.X, this.Y, z);
+		}
+
+		public static IntVector3 Center(IEnumerable<IntVector3> points)
+		{
+			int x, y, z;
+			int count = 0;
+			x = y = z = 0;
+
+			foreach (var p in points)
+			{
+				x += p.X;
+				y += p.Y;
+				z += p.Z;
+				count++;
+			}
+
+			return new IntVector3(x / count, y / count, z / count);
 		}
 	}
 }

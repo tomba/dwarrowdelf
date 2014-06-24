@@ -42,7 +42,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public sealed class IntPoint3Converter : TypeConverter
+	public sealed class IntVector3Converter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -56,10 +56,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntPoint3) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntVector3) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var p = (IntPoint3)value;
+			var p = (IntVector3)value;
 			return p.ToString();
 		}
 
@@ -73,7 +73,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntPoint3.Parse(source);
+			return IntVector3.Parse(source);
 		}
 	}
 

@@ -43,7 +43,7 @@ namespace Dwarrowdelf.Server
 			m_env.World.TickEnding -= OnTick;
 		}
 
-		void OnTerrainOrInteriorChanged(IntPoint3 p, TileData oldData, TileData newData)
+		void OnTerrainOrInteriorChanged(IntVector3 p, TileData oldData, TileData newData)
 		{
 			if (oldData.HasTree != newData.HasTree)
 			{

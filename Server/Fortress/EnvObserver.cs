@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 		}
 
-		public bool Contains(IntPoint3 p)
+		public bool Contains(IntVector3 p)
 		{
 			return m_region.Contains(p);
 		}
@@ -35,6 +35,6 @@ namespace Dwarrowdelf.Server.Fortress
 			m_region.Add(rect);
 		}
 
-		public IntPoint3? Center { get { return m_region.Center; } }
+		public IntVector3? Center { get { return m_region.Center; } }
 	}
 }

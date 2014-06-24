@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var txt = dstTextBox.Text;
 
-			var p = IntPoint3.Parse(txt);
+			var p = IntVector3.Parse(txt);
 
 			var args = new Dictionary<string, object>()
 			{

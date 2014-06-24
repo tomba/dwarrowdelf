@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Server
 		IEnvironmentObject IMovableObject.Environment { get { return this.Parent as IEnvironmentObject; } }
 
 		[SaveGameProperty]
-		public IntPoint3 Location { get; private set; }
+		public IntVector3 Location { get; private set; }
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Server
 		{
 			// use MoveToLow to force the move
 			if (this.Parent != null)
-				MoveToLow(null, new IntPoint3());
+				MoveToLow(null, new IntVector3());
 
 			base.Destruct();
 		}
@@ -82,10 +82,10 @@ namespace Dwarrowdelf.Server
 			if (this.Parent == parent)
 				return true;
 
-			return MoveTo(parent, new IntPoint3());
+			return MoveTo(parent, new IntVector3());
 		}
 
-		public bool MoveTo(ContainerObject dst, IntPoint3 dstLoc)
+		public bool MoveTo(ContainerObject dst, IntVector3 dstLoc)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -108,14 +108,14 @@ namespace Dwarrowdelf.Server
 
 		public bool MoveTo(int x, int y, int z)
 		{
-			var p = new IntPoint3(x, y, z);
+			var p = new IntVector3(x, y, z);
 			return MoveTo(p);
 		}
 
 		/// <summary>
 		/// Move object to given location, without checking if there's a route from current location
 		/// </summary>
-		public bool MoveTo(IntPoint3 location)
+		public bool MoveTo(IntVector3 location)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -154,7 +154,7 @@ namespace Dwarrowdelf.Server
 			return MoveTo(location);
 		}
 
-		void MoveToLow(ContainerObject dst, IntPoint3 dstLoc)
+		void MoveToLow(ContainerObject dst, IntVector3 dstLoc)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(!this.IsDestructed);
@@ -179,7 +179,7 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
 		}
 
-		void MoveToLow(IntPoint3 location)
+		void MoveToLow(IntVector3 location)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(!this.IsDestructed);

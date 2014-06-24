@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		uint m_losMapVersion;
-		IntPoint3 m_losLocation;
+		IntVector3 m_losLocation;
 		Grid2D<bool> m_visionMap;
 		[SaveGameProperty]
 		Dwarrowdelf.AI.IAI m_ai;
@@ -521,14 +521,14 @@ namespace Dwarrowdelf.Server
 			int z = this.Z;
 			var env = this.Environment;
 			ShadowCastRecursive.Calculate(new IntVector2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Size.Plane,
-				p2 => !env.GetTileData(new IntPoint3(p2, z)).IsSeeThrough);
+				p2 => !env.GetTileData(new IntVector3(p2, z)).IsSeeThrough);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
 		}
 
 		// does this living see location l in env
-		public bool Sees(EnvironmentObject env, IntPoint3 l)
+		public bool Sees(EnvironmentObject env, IntVector3 l)
 		{
 			if (env != this.Environment)
 				return false;

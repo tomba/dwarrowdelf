@@ -31,13 +31,13 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			CreateTerrain();
 
-			IntPoint3? stairs = null;
+			IntVector3? stairs = null;
 
 			foreach (var p2 in m_terrainData.Size.Plane.Range())
 			{
 				var z = m_terrainData.GetSurfaceLevel(p2);
 
-				var p = new IntPoint3(p2, z);
+				var p = new IntVector3(p2, z);
 				var td = m_terrainData.GetTileData(p);
 				if (td.TerrainID == TerrainID.StairsDown)
 				{
@@ -89,7 +89,7 @@ namespace Dwarrowdelf.Server.Fortress
 			}
 		}
 
-		static IntPoint3? GetRandomRoomLoc(EnvironmentObject env, ref IntGrid2Z grid)
+		static IntVector3? GetRandomRoomLoc(EnvironmentObject env, ref IntGrid2Z grid)
 		{
 			int x = grid.X + Helpers.GetRandomInt(grid.Columns);
 			int y = grid.Y + Helpers.GetRandomInt(grid.Rows);
@@ -99,7 +99,7 @@ namespace Dwarrowdelf.Server.Fortress
 				if (env.Size.Plane.Contains(p) == false)
 					continue;
 
-				var p3 = new IntPoint3(p, grid.Z);
+				var p3 = new IntVector3(p, grid.Z);
 
 				if (env.CanEnter(p3) == false)
 					continue;
@@ -123,7 +123,7 @@ namespace Dwarrowdelf.Server.Fortress
 			return living;
 		}
 
-		static IntPoint3? GetLocNearEntry(EnvironmentObject env)
+		static IntVector3? GetLocNearEntry(EnvironmentObject env)
 		{
 			foreach (var p in IntVector2.SquareSpiral(env.StartLocation.ToIntVector2(), env.Width / 2))
 			{

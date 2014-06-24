@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client
 		static object m_visionMapLock = new object();
 
 		uint m_losMapVersion;
-		IntPoint3 m_losLocation;
+		IntVector3 m_losLocation;
 		Grid2D<bool> m_visionMap;
 
 		Dwarrowdelf.AI.IAI m_ai;
@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 			ReceiveObjectData(data);
 
 			var item = new ItemObject();
-			item.MoveTo(this, new IntPoint3());
+			item.MoveTo(this, new IntVector3());
 
 			ReceiveObjectDataEnd();
 		}
@@ -336,7 +336,7 @@ namespace Dwarrowdelf.Client
 					m_visionMap, env.Size.Plane,
 					p2 =>
 					{
-						var td = env.GetTileData(new IntPoint3(p2, z));
+						var td = env.GetTileData(new IntVector3(p2, z));
 						return !td.IsUndefined && !td.IsSeeThrough;
 					});
 

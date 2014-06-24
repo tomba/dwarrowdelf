@@ -12,14 +12,14 @@ namespace Dwarrowdelf.Server
 		public virtual void AddLiving(LivingObject living) { }
 		public virtual void RemoveLiving(LivingObject living) { }
 
-		public abstract bool Sees(IntPoint3 p);
+		public abstract bool Sees(IntVector3 p);
 	}
 
 	sealed class AdminVisionTracker : VisionTrackerBase
 	{
 		public static AdminVisionTracker Tracker = new AdminVisionTracker();
 
-		public override bool Sees(IntPoint3 p)
+		public override bool Sees(IntVector3 p)
 		{
 			return true;
 		}
@@ -62,7 +62,7 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(m_livingCount >= 0);
 		}
 
-		public override bool Sees(IntPoint3 p)
+		public override bool Sees(IntVector3 p)
 		{
 			return m_environment.Contains(p);
 		}

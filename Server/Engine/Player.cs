@@ -420,7 +420,7 @@ namespace Dwarrowdelf.Server
 		/// <summary>
 		/// Does the player see location p in object ob
 		/// </summary>
-		public bool Sees(BaseObject ob, IntPoint3 p)
+		public bool Sees(BaseObject ob, IntVector3 p)
 		{
 			if (m_seeAll)
 				return true;

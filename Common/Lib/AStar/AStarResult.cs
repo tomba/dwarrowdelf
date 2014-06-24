@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 			this.Status = status;
 		}
 
-		public IEnumerable<IntPoint3> GetPathLocationsReverse()
+		public IEnumerable<IntVector3> GetPathLocationsReverse()
 		{
 			for (AStarNode n = this.LastNode; n != null; n = n.Parent)
 				yield return n.Loc;

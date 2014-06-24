@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Server
 			if (this.ActionTicksUsed < this.ActionTotalTicks)
 				return ActionState.Ok;
 
-			IntPoint3 p = this.Location + new IntVector3(action.Direction);
+			IntVector3 p = this.Location + new IntVector3(action.Direction);
 
 			var td = this.Environment.GetTileData(p);
 			var id = td.InteriorID;

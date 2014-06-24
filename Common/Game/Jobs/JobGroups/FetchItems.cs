@@ -11,12 +11,12 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	[SaveGameObject]
 	public sealed class FetchItems : JobGroup
 	{
-		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IEnumerable<IItemObject> items)
+		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntVector3 location, IEnumerable<IItemObject> items)
 			: this(parent, env, location, items, DirectionSet.Exact)
 		{
 		}
 
-		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IEnumerable<IItemObject> items, DirectionSet positioning)
+		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntVector3 location, IEnumerable<IItemObject> items, DirectionSet positioning)
 			: base(parent)
 		{
 			foreach (var item in items)

@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static void CreateWaterRiverTest(EnvironmentObject env)
 		{
-			var p = new IntPoint3(111, 44, 9);
+			var p = new IntVector3(111, 44, 9);
 			for (int x = 0; x < 6; ++x)
 			{
 				env.SetTileData(p.Offset(x, 0, 0), new TileData()
@@ -137,32 +137,32 @@ namespace Dwarrowdelf.Server.Fortress
 				int x = pos.X + 1;
 				int y = pos.Y + 1;
 
-				ClearTile(env, new IntPoint3(x, y, surface - 0));
-				ClearTile(env, new IntPoint3(x, y, surface - 1));
-				ClearTile(env, new IntPoint3(x, y, surface - 2));
-				ClearTile(env, new IntPoint3(x, y, surface - 3));
-				ClearTile(env, new IntPoint3(x, y, surface - 4));
-				ClearInside(env, new IntPoint3(x + 0, y, surface - 5));
-				ClearInside(env, new IntPoint3(x + 1, y, surface - 5));
-				ClearInside(env, new IntPoint3(x + 2, y, surface - 5));
-				ClearInside(env, new IntPoint3(x + 3, y, surface - 5));
-				ClearInside(env, new IntPoint3(x + 4, y, surface - 5));
-				ClearTile(env, new IntPoint3(x + 4, y, surface - 4));
-				ClearTile(env, new IntPoint3(x + 4, y, surface - 3));
-				ClearTile(env, new IntPoint3(x + 4, y, surface - 2));
-				ClearTile(env, new IntPoint3(x + 4, y, surface - 1));
-				ClearTile(env, new IntPoint3(x + 4, y, surface - 0));
+				ClearTile(env, new IntVector3(x, y, surface - 0));
+				ClearTile(env, new IntVector3(x, y, surface - 1));
+				ClearTile(env, new IntVector3(x, y, surface - 2));
+				ClearTile(env, new IntVector3(x, y, surface - 3));
+				ClearTile(env, new IntVector3(x, y, surface - 4));
+				ClearInside(env, new IntVector3(x + 0, y, surface - 5));
+				ClearInside(env, new IntVector3(x + 1, y, surface - 5));
+				ClearInside(env, new IntVector3(x + 2, y, surface - 5));
+				ClearInside(env, new IntVector3(x + 3, y, surface - 5));
+				ClearInside(env, new IntVector3(x + 4, y, surface - 5));
+				ClearTile(env, new IntVector3(x + 4, y, surface - 4));
+				ClearTile(env, new IntVector3(x + 4, y, surface - 3));
+				ClearTile(env, new IntVector3(x + 4, y, surface - 2));
+				ClearTile(env, new IntVector3(x + 4, y, surface - 1));
+				ClearTile(env, new IntVector3(x + 4, y, surface - 0));
 			}
 
 			if (true)
 			{
 				// Add a water generator
 				var item = WaterGenerator.Create(env.World);
-				item.MoveTo(env, new IntPoint3(pos.X + 1, pos.Y + 2, surface));
+				item.MoveTo(env, new IntVector3(pos.X + 1, pos.Y + 2, surface));
 			}
 		}
 
-		public static void ClearTile(EnvironmentObject env, IntPoint3 p)
+		public static void ClearTile(EnvironmentObject env, IntVector3 p)
 		{
 			var td = env.GetTileData(p);
 
@@ -174,7 +174,7 @@ namespace Dwarrowdelf.Server.Fortress
 			env.SetTileData(p, td);
 		}
 
-		public static void ClearInside(EnvironmentObject env, IntPoint3 p)
+		public static void ClearInside(EnvironmentObject env, IntVector3 p)
 		{
 			var td = env.GetTileData(p);
 
@@ -195,7 +195,7 @@ namespace Dwarrowdelf.Server.Fortress
 					if (y != area.Y1 && y != area.Y2 && x != area.X1 && x != area.X2)
 						continue;
 
-					var p = new IntPoint3(x, y, area.Z);
+					var p = new IntVector3(x, y, area.Z);
 
 					var td = new TileData();
 
@@ -215,7 +215,7 @@ namespace Dwarrowdelf.Server.Fortress
 			{
 				for (int y = area.Y1; y <= area.Y2; ++y)
 				{
-					var p = new IntPoint3(x, y, area.Z);
+					var p = new IntVector3(x, y, area.Z);
 
 					ClearInside(env, p);
 

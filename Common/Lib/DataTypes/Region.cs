@@ -26,7 +26,7 @@ namespace Dwarrowdelf
 			m_boxs.Remove(box);
 		}
 
-		public IntPoint3? Center
+		public IntVector3? Center
 		{
 			get
 			{
@@ -38,17 +38,17 @@ namespace Dwarrowdelf
 
 				foreach (var c in m_boxs)
 				{
-					v += new IntVector3(c.Center);
+					v += c.Center;
 					i++;
 				}
 
 				v /= i;
 
-				return new IntPoint3(v.X, v.Y, v.Z);
+				return new IntVector3(v.X, v.Y, v.Z);
 			}
 		}
 
-		public bool Contains(IntPoint3 p)
+		public bool Contains(IntVector3 p)
 		{
 			return m_boxs.Any(c => c.Contains(p));
 		}

@@ -17,9 +17,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		Queue<Direction> m_pathDirs;
 		[SaveGameProperty]
-		IntPoint3 m_supposedLocation;
+		IntVector3 m_supposedLocation;
 		[SaveGameProperty]
-		IntPoint3 m_dest;
+		IntVector3 m_dest;
 
 		public AttackAssignment(IJobObserver parent, ILivingObject target)
 			: base(parent)

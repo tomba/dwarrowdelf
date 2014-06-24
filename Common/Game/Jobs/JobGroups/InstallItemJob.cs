@@ -13,12 +13,12 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		IItemObject m_item;
 		[SaveGameProperty]
-		IntPoint3 m_location;
+		IntVector3 m_location;
 
 		[SaveGameProperty]
 		int m_state;
 
-		public InstallItemJob(IJobObserver parent, IItemObject item, IEnvironmentObject env, IntPoint3 location)
+		public InstallItemJob(IJobObserver parent, IItemObject item, IEnvironmentObject env, IntVector3 location)
 			: base(parent)
 		{
 			m_item = item;

@@ -14,10 +14,10 @@ namespace Dwarrowdelf.Server
 
 		List<LivingObject> m_livings = new List<LivingObject>();
 
-		HashSet<IntPoint3> m_oldKnownLocations = new HashSet<IntPoint3>();
+		HashSet<IntVector3> m_oldKnownLocations = new HashSet<IntVector3>();
 		HashSet<MovableObject> m_oldKnownObjects = new HashSet<MovableObject>();
 
-		HashSet<IntPoint3> m_newKnownLocations = new HashSet<IntPoint3>();
+		HashSet<IntVector3> m_newKnownLocations = new HashSet<IntVector3>();
 		HashSet<MovableObject> m_newKnownObjects = new HashSet<MovableObject>();
 
 		public VisionTrackerLOS(Player player, EnvironmentObject env)
@@ -87,12 +87,12 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		bool EventIsNear(IntPoint3 p)
+		bool EventIsNear(IntVector3 p)
 		{
 			return m_livings.Any(l => (l.Location - p).ManhattanLength <= l.VisionRange);
 		}
 
-		public override bool Sees(IntPoint3 p)
+		public override bool Sees(IntVector3 p)
 		{
 			return m_livings.Any(l => l.Sees(m_environment, p));
 		}
@@ -113,13 +113,13 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect all locations that friendlies see
-		HashSet<IntPoint3> CollectLocations()
+		HashSet<IntVector3> CollectLocations()
 		{
-			var knownLocs = new HashSet<IntPoint3>();
+			var knownLocs = new HashSet<IntVector3>();
 
 			foreach (var l in m_livings)
 			{
-				var locList = l.GetVisibleLocations().Select(p => new IntPoint3(p.X, p.Y, l.Z));
+				var locList = l.GetVisibleLocations().Select(p => new IntVector3(p.X, p.Y, l.Z));
 
 				knownLocs.UnionWith(locList);
 			}
@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect all objects in the given location map
-		HashSet<MovableObject> CollectObjects(HashSet<IntPoint3> knownLocs)
+		HashSet<MovableObject> CollectObjects(HashSet<IntVector3> knownLocs)
 		{
 			var knownObs = new HashSet<MovableObject>();
 
@@ -142,7 +142,7 @@ namespace Dwarrowdelf.Server
 			return knownObs;
 		}
 
-		void SendNewTerrains(IEnumerable<IntPoint3> revealedLocations)
+		void SendNewTerrains(IEnumerable<IntVector3> revealedLocations)
 		{
 			if (revealedLocations.Any() == false)
 				return;
@@ -150,7 +150,7 @@ namespace Dwarrowdelf.Server
 			var msg = new Messages.MapDataTerrainsListMessage()
 			{
 				Environment = m_environment.ObjectID,
-				TileDataList = revealedLocations.Select(l => new KeyValuePair<IntPoint3, TileData>(l, m_environment.GetTileData(l))).ToArray(),
+				TileDataList = revealedLocations.Select(l => new KeyValuePair<IntVector3, TileData>(l, m_environment.GetTileData(l))).ToArray(),
 			};
 
 			m_player.Send(msg);

@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Server
 			m_visibilityArray = null;
 		}
 
-		public override bool Sees(IntPoint3 p)
+		public override bool Sees(IntVector3 p)
 		{
 			if (!m_environment.Contains(p))
 				return false;
@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Server
 				{
 					for (int x = 0; x < bounds.Width; ++x)
 					{
-						var p = new IntPoint3(x, y, z);
+						var p = new IntVector3(x, y, z);
 
 						var vis = env.GetTileData(p).IsSeeThrough || env.CanBeSeen(p);
 
@@ -110,7 +110,7 @@ namespace Dwarrowdelf.Server
 			Trace.TraceInformation("Initialize visibilityarray took {0} ms", sw.ElapsedMilliseconds);
 		}
 
-		bool GetVisible(IntPoint3 p)
+		bool GetVisible(IntVector3 p)
 		{
 			if (m_visibilityArray == null)
 				return false;
@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Server
 			return m_visibilityArray[p.Z, p.Y, p.X];
 		}
 
-		void SetVisible(IntPoint3 p)
+		void SetVisible(IntVector3 p)
 		{
 			m_visibilityArray[p.Z, p.Y, p.X] = true;
 		}
@@ -134,7 +134,7 @@ namespace Dwarrowdelf.Server
 				m_tracker = tracker;
 			}
 
-			public IEnumerable<Direction> GetValidDirs(IntPoint3 p)
+			public IEnumerable<Direction> GetValidDirs(IntVector3 p)
 			{
 				var td = m_env.GetTileData(p);
 
@@ -162,13 +162,13 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			public bool GetIsTarget(IntPoint3 location)
+			public bool GetIsTarget(IntVector3 location)
 			{
 				return m_tracker.GetVisible(location) == false;
 			}
 		}
 
-		void OnTerrainOrInteriorChanged(IntPoint3 location, TileData oldData, TileData newData)
+		void OnTerrainOrInteriorChanged(IntVector3 location, TileData oldData, TileData newData)
 		{
 			bool check = false;
 
@@ -183,11 +183,11 @@ namespace Dwarrowdelf.Server
 				CheckVisibility(location, oldData, newData);
 		}
 
-		void CheckVisibility(IntPoint3 location, TileData oldData, TileData newData)
+		void CheckVisibility(IntVector3 location, TileData oldData, TileData newData)
 		{
 			var env = m_environment;
 
-			var initLocs = new IntPoint3[] { location };
+			var initLocs = new IntVector3[] { location };
 			var target = new MyTarget(env, this);
 
 			var bfs = new BFS(initLocs, target);
@@ -207,7 +207,7 @@ namespace Dwarrowdelf.Server
 			var msg = new Messages.MapDataTerrainsListMessage()
 			{
 				Environment = env.ObjectID,
-				TileDataList = revealed.Select(l => new KeyValuePair<IntPoint3, TileData>(l, env.GetTileData(l))).ToArray(),
+				TileDataList = revealed.Select(l => new KeyValuePair<IntVector3, TileData>(l, env.GetTileData(l))).ToArray(),
 			};
 
 			m_player.Send(msg);

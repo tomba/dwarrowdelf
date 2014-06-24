@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Client
 
 		public static void Resolve(EnvironmentObject env, DataGrid2D<TileControl.RenderTile> renderData,
 			bool isVisibilityCheckEnabled,
-			IntPoint3 baseLoc, IntVector3 xInc, IntVector3 yInc, IntVector3 zInc, bool symbolToggler)
+			IntVector3 baseLoc, IntVector3 xInc, IntVector3 yInc, IntVector3 zInc, bool symbolToggler)
 		{
 			//Debug.WriteLine("RenderView.Resolve");
 
@@ -82,7 +82,7 @@ namespace Dwarrowdelf.Client
 #endif
 		}
 
-		static void ResolveDetailed(out RenderTile tile, EnvironmentObject env, IntPoint3 ml, bool isVisibilityCheckEnabled,
+		static void ResolveDetailed(out RenderTile tile, EnvironmentObject env, IntVector3 ml, bool isVisibilityCheckEnabled,
 			bool symbolToggler, IntVector3 zInc)
 		{
 			tile = new RenderTile();
@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Client
 				tile.Layer0DarknessLevel = tile.Layer1DarknessLevel;
 		}
 
-		static void GetTerrainTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)
+		static void GetTerrainTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)
 		{
 			seeThrough = false;
 
@@ -242,7 +242,7 @@ namespace Dwarrowdelf.Client
 				throw new Exception();
 		}
 
-		static void GetInteriorTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)
+		static void GetInteriorTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)
 		{
 			var td = env.GetTileData(ml);
 
@@ -405,7 +405,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static void GetObjectTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile)
+		static void GetObjectTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile)
 		{
 			var ob = (ConcreteObject)env.GetFirstObject(ml);
 
@@ -417,7 +417,7 @@ namespace Dwarrowdelf.Client
 			tile.BgColor = GameColor.None;
 		}
 
-		static void GetTopTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool symbolToggler)
+		static void GetTopTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool symbolToggler)
 		{
 			SymbolID id;
 
@@ -497,7 +497,7 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		static bool TileVisible(IntPoint3 ml, EnvironmentObject env)
+		static bool TileVisible(IntVector3 ml, EnvironmentObject env)
 		{
 			switch (env.VisibilityMode)
 			{
@@ -551,7 +551,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static SymbolID GetDesignationSymbolAt(Designation designation, IntPoint3 p)
+		static SymbolID GetDesignationSymbolAt(Designation designation, IntVector3 p)
 		{
 			var dt = designation.ContainsPoint(p);
 
@@ -577,7 +577,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static SymbolID GetConstructSymbolAt(ConstructManager mgr, IntPoint3 p)
+		static SymbolID GetConstructSymbolAt(ConstructManager mgr, IntVector3 p)
 		{
 			var dt = mgr.ContainsPoint(p);
 
@@ -600,7 +600,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static SymbolID GetInstallSymbolAt(InstallItemManager mgr, IntPoint3 p)
+		static SymbolID GetInstallSymbolAt(InstallItemManager mgr, IntVector3 p)
 		{
 			var item = mgr.ContainsPoint(p);
 

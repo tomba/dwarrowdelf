@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Client
 			Debug.Print("GrowingTileGrid.SetSize({0})", this.Size);
 		}
 
-		public void Grow(IntPoint3 p)
+		public void Grow(IntVector3 p)
 		{
 			if (!this.Size.Contains(p))
 				DoGrow(p);
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 				return x & ~0xf;
 		}
 
-		void DoGrow(IntPoint3 p)
+		void DoGrow(IntVector3 p)
 		{
 			int nw, nh, nd;
 
@@ -93,42 +93,42 @@ namespace Dwarrowdelf.Client
 					}
 		}
 
-		public void SetTileData(IntPoint3 p, TileData data)
+		public void SetTileData(IntVector3 p, TileData data)
 		{
 			m_grid[p.Z, p.Y, p.X] = data;
 		}
 
-		public TileData GetTileData(IntPoint3 p)
+		public TileData GetTileData(IntVector3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X];
 		}
 
-		public InteriorID GetInteriorID(IntPoint3 p)
+		public InteriorID GetInteriorID(IntVector3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].InteriorID;
 		}
 
-		public TerrainID GetTerrainID(IntPoint3 p)
+		public TerrainID GetTerrainID(IntVector3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].TerrainID;
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3 p)
+		public MaterialID GetInteriorMaterialID(IntVector3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3 p)
+		public MaterialID GetTerrainMaterialID(IntVector3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
 		}
 
-		public byte GetWaterLevel(IntPoint3 p)
+		public byte GetWaterLevel(IntVector3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].WaterLevel;
 		}
 
-		public TileFlags GetFlags(IntPoint3 p)
+		public TileFlags GetFlags(IntVector3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].Flags;
 		}

@@ -12,7 +12,7 @@ namespace Dwarrowdelf
 		/// Return all possible move directions.
 		/// XXX Some room for optimization...
 		/// </summary>
-		public static IEnumerable<Direction> GetDirectionsFrom(this IEnvironmentObject env, IntPoint3 p)
+		public static IEnumerable<Direction> GetDirectionsFrom(this IEnvironmentObject env, IntVector3 p)
 		{
 			foreach (var dir in DirectionExtensions.PlanarUpDownDirections)
 			{
@@ -25,7 +25,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Determine if a living can move from srcLoc to dir
 		/// </summary>
-		public static bool CanMoveFromTo(this IEnvironmentObject env, IntPoint3 srcLoc, Direction dir)
+		public static bool CanMoveFromTo(this IEnvironmentObject env, IntVector3 srcLoc, Direction dir)
 		{
 			var dstLoc = srcLoc + dir;
 			return CanMoveFrom(env, srcLoc, dir) && CanMoveTo(env, dstLoc, dir);
@@ -34,7 +34,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Determine if a living can move from srcLoc to dir, without considering the destination
 		/// </summary>
-		public static bool CanMoveFrom(this IEnvironmentObject env, IntPoint3 srcLoc, Direction dir)
+		public static bool CanMoveFrom(this IEnvironmentObject env, IntVector3 srcLoc, Direction dir)
 		{
 			Debug.Assert(dir.IsValid());
 
@@ -81,7 +81,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Determine if a living can move to dir, ending to dstLoc, without considering the source
 		/// </summary>
-		public static bool CanMoveTo(this IEnvironmentObject env, IntPoint3 dstLoc, Direction dir)
+		public static bool CanMoveTo(this IEnvironmentObject env, IntVector3 dstLoc, Direction dir)
 		{
 			Debug.Assert(dir.IsValid());
 
@@ -127,7 +127,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Tile can be entered and stood upon
 		/// </summary>
-		public static bool CanEnter(this IEnvironmentObject env, IntPoint3 location)
+		public static bool CanEnter(this IEnvironmentObject env, IntVector3 location)
 		{
 			if (!env.Contains(location))
 				return false;
@@ -143,7 +143,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Can the given tile be seen from any adjacent tile
 		/// </summary>
-		public static bool CanBeSeen(this IEnvironmentObject env, IntPoint3 location)
+		public static bool CanBeSeen(this IEnvironmentObject env, IntVector3 location)
 		{
 			foreach (var d in DirectionExtensions.PlanarDirections)
 			{
@@ -163,7 +163,7 @@ namespace Dwarrowdelf
 		/// For PlanarUpDown directions, return Direction.None if the direction cannot be entered,
 		/// or the direction, adjusted by slopes (i.e. or'ed with Up or Down)
 		/// </summary>
-		public static Direction AdjustMoveDir(this IEnvironmentObject env, IntPoint3 location, Direction dir)
+		public static Direction AdjustMoveDir(this IEnvironmentObject env, IntVector3 location, Direction dir)
 		{
 			Debug.Assert(dir.IsValid());
 			Debug.Assert(dir != Direction.None);
@@ -187,7 +187,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Return enterable positions around the given location, based on positioning
 		/// </summary>
-		public static IEnumerable<IntPoint3> GetPositioningLocations(this IEnvironmentObject env, IntPoint3 pos,
+		public static IEnumerable<IntVector3> GetPositioningLocations(this IEnvironmentObject env, IntVector3 pos,
 			DirectionSet positioning)
 		{
 			return positioning.ToSurroundingPoints(pos).Where(p => CanEnter(env, p));
@@ -196,7 +196,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Get possible positioning to perform mining on given location
 		/// </summary>
-		public static DirectionSet GetPossibleMiningPositioning(this IEnvironmentObject env, IntPoint3 p,
+		public static DirectionSet GetPossibleMiningPositioning(this IEnvironmentObject env, IntVector3 p,
 			MineActionType mineActionType)
 		{
 			DirectionSet ds;

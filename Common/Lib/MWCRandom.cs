@@ -27,7 +27,7 @@ namespace Dwarrowdelf
 				m_w = 1;
 		}
 
-		public MWCRandom(IntPoint3 p, int seed)
+		public MWCRandom(IntVector3 p, int seed)
 		{
 			m_z = Hash.HashUInt32((uint)p.GetHashCode());
 			m_w = (uint)seed;

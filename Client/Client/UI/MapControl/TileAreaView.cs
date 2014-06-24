@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public IntGrid3 Box { get { return m_box; } }
 
-		public void SetTarget(EnvironmentObject env, IntPoint3 p)
+		public void SetTarget(EnvironmentObject env, IntVector3 p)
 		{
 			SetTarget(env, new IntGrid3(p, new IntSize3(1, 1, 1)));
 		}
@@ -120,7 +120,7 @@ namespace Dwarrowdelf.Client.UI
 				m_objects.Add(ob);
 		}
 
-		void OnMapTerrainChanged(IntPoint3 l)
+		void OnMapTerrainChanged(IntVector3 l)
 		{
 			if (!m_box.Contains(l))
 				return;
@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Client.UI
 			NotifyTileTerrainChanges();
 		}
 
-		void OnMapObjectChanged(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changeType)
+		void OnMapObjectChanged(MovableObject ob, IntVector3 l, MapTileObjectChangeType changeType)
 		{
 			if (!m_box.Contains(l))
 				return;

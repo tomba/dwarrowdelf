@@ -17,9 +17,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		int m_state;
 
 		[SaveGameProperty]
-		IntPoint3[] m_waypoints;
+		IntVector3[] m_waypoints;
 
-		public PatrolAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3[] waypoints)
+		public PatrolAssignment(IJobObserver parent, IEnvironmentObject environment, IntVector3[] waypoints)
 			: base(parent)
 		{
 			m_environment = environment;
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 			// start at waypoint closest to the worker
 			m_state = m_waypoints
-				.Select((p, i) => new Tuple<IntPoint3, int>(p, i))
+				.Select((p, i) => new Tuple<IntVector3, int>(p, i))
 				.OrderBy(t => (t.Item1 - worker.Location).Length).First().Item2;
 		}
 

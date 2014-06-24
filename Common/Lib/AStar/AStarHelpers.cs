@@ -13,7 +13,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Find route from src to dst, using the given positionings
 		/// </summary>
-		public static AStarResult Find(IEnvironmentObject env, IntPoint3 src, DirectionSet srcPositioning, IntPoint3 dst, DirectionSet dstPositioning,
+		public static AStarResult Find(IEnvironmentObject env, IntVector3 src, DirectionSet srcPositioning, IntVector3 dst, DirectionSet dstPositioning,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var initLocs = env.GetPositioningLocations(src, srcPositioning);
@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Flood-find the nearest location for which func returns true
 		/// </summary>
-		public static AStarResult FindNearest(IEnvironmentObject env, IntPoint3 src, Func<IntPoint3, bool> func, int maxNodeCount = 200000)
+		public static AStarResult FindNearest(IEnvironmentObject env, IntVector3 src, Func<IntVector3, bool> func, int maxNodeCount = 200000)
 		{
 			var initLocs = env.GetPositioningLocations(src, DirectionSet.Exact);
 			var target = new AStarDelegateTarget(env, func);
@@ -34,7 +34,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Find route from src to destination area
 		/// </summary>
-		public static AStarResult FindArea(IEnvironmentObject env, IntPoint3 src, DirectionSet srcPositioning, IntGrid3 dstArea,
+		public static AStarResult FindArea(IEnvironmentObject env, IntVector3 src, DirectionSet srcPositioning, IntGrid3 dstArea,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var initLocs = env.GetPositioningLocations(src, srcPositioning);
@@ -45,7 +45,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Find route from init locations to destination defined by IAstarTarget
 		/// </summary>
-		public static AStarResult Find(IEnumerable<IntPoint3> initLocs, IAStarTarget target,
+		public static AStarResult Find(IEnumerable<IntVector3> initLocs, IAStarTarget target,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var astar = new AStar(initLocs, target);
@@ -63,7 +63,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Returns if dst can be reached from src
 		/// </summary>
-		public static bool CanReach(IEnvironmentObject env, IntPoint3 src, IntPoint3 dst, DirectionSet dstPositioning)
+		public static bool CanReach(IEnvironmentObject env, IntVector3 src, IntVector3 dst, DirectionSet dstPositioning)
 		{
 			Debug.Assert(env != null);
 
@@ -100,7 +100,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Find route from src to dest, finding the route in parallel from both directions
 		/// </summary>
-		public static IEnumerable<Direction> Find(IEnvironmentObject env, IntPoint3 src, IntPoint3 dest, DirectionSet positioning)
+		public static IEnumerable<Direction> Find(IEnvironmentObject env, IntVector3 src, IntVector3 dest, DirectionSet positioning)
 		{
 			AStarResult resBackward;
 			AStarResult resForward;
@@ -122,8 +122,8 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Find route from src to dest, finding the route in parallel from both directions
 		/// </summary>
-		public static IEnumerable<Direction> Find(IEnvironmentObject env, IntPoint3 src, IntPoint3 dest, DirectionSet positioning,
-			out IntPoint3 finalLocation)
+		public static IEnumerable<Direction> Find(IEnvironmentObject env, IntVector3 src, IntVector3 dest, DirectionSet positioning,
+			out IntVector3 finalLocation)
 		{
 			AStarResult resBackward;
 			AStarResult resForward;
@@ -150,13 +150,13 @@ namespace Dwarrowdelf
 			else
 			{
 				dirs = null;
-				finalLocation = new IntPoint3();
+				finalLocation = new IntVector3();
 			}
 
 			return dirs;
 		}
 
-		static void ParallelFind(IEnvironmentObject env, IntPoint3 src, IntPoint3 dest, DirectionSet positioning, out AStarResult resBackward, out AStarResult resForward)
+		static void ParallelFind(IEnvironmentObject env, IntVector3 src, IntVector3 dest, DirectionSet positioning, out AStarResult resBackward, out AStarResult resForward)
 		{
 			Debug.Assert(env != null);
 
@@ -189,7 +189,7 @@ namespace Dwarrowdelf
 		}
 
 		public static IEnumerable<AStarResult> FindMany(IEnvironmentObject env,
-			IntPoint3 src, DirectionSet srcPositioning, Func<IntPoint3, bool> func,
+			IntVector3 src, DirectionSet srcPositioning, Func<IntVector3, bool> func,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var target = new AStarDelegateTarget(env, func);
@@ -197,7 +197,7 @@ namespace Dwarrowdelf
 		}
 
 		public static IEnumerable<AStarResult> FindMany(IEnvironmentObject env,
-			IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
+			IntVector3 src, DirectionSet srcPositioning, IAStarTarget target,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var initLocs = env.GetPositioningLocations(src, srcPositioning);

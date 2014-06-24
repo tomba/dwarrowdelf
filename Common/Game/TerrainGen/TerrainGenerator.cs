@@ -130,7 +130,7 @@ namespace Dwarrowdelf.TerrainGen
 
 					for (int z = 0; z < depth; ++z)
 					{
-						var p = new IntPoint3(x, y, z);
+						var p = new IntVector3(x, y, z);
 						var td = new TileData();
 
 						if (z < surface)
@@ -152,7 +152,7 @@ namespace Dwarrowdelf.TerrainGen
 						else if (z == surface)
 						{
 							td.TerrainID = TerrainID.NaturalFloor;
-							td.TerrainMaterialID = m_data.GetTileData(new IntPoint3(x, y, z - 1)).TerrainMaterialID;
+							td.TerrainMaterialID = m_data.GetTileData(new IntVector3(x, y, z - 1)).TerrainMaterialID;
 							td.InteriorID = InteriorID.Empty;
 							td.InteriorMaterialID = MaterialID.Undefined;
 							m_data.SetTileData(p, td);
@@ -209,7 +209,7 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		void CreateOreSphere(IntPoint3 center, int r, MaterialID oreMaterialID, double probIn, double probOut)
+		void CreateOreSphere(IntVector3 center, int r, MaterialID oreMaterialID, double probIn, double probOut)
 		{
 			// adjust r, so that r == 1 gives sphere of one tile
 			r -= 1;
@@ -247,7 +247,7 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		void CreateOre(IntPoint3 p, MaterialID oreMaterialID)
+		void CreateOre(IntVector3 p, MaterialID oreMaterialID)
 		{
 			if (!m_size.Contains(p))
 				return;
@@ -271,12 +271,12 @@ namespace Dwarrowdelf.TerrainGen
 			return m_random.NextDouble();
 		}
 
-		void CreateOreCluster(IntPoint3 p, MaterialID oreMaterialID)
+		void CreateOreCluster(IntVector3 p, MaterialID oreMaterialID)
 		{
 			CreateOreCluster(p, oreMaterialID, GetRandomInt(6) + 1);
 		}
 
-		void CreateOreCluster(IntPoint3 p, MaterialID oreMaterialID, int count)
+		void CreateOreCluster(IntVector3 p, MaterialID oreMaterialID, int count)
 		{
 			if (!m_size.Contains(p))
 				return;
@@ -299,14 +299,14 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		IntPoint3 GetRandomSubterraneanLocation()
+		IntVector3 GetRandomSubterraneanLocation()
 		{
 			int x = GetRandomInt(m_size.Width);
 			int y = GetRandomInt(m_size.Height);
 			int maxZ = m_data.GetSurfaceLevel(x, y);
 			int z = GetRandomInt(maxZ);
 
-			return new IntPoint3(x, y, z);
+			return new IntVector3(x, y, z);
 		}
 	}
 }

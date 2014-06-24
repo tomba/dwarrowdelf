@@ -198,7 +198,7 @@ namespace Dwarrowdelf.Messages
 	public sealed class MapDataTerrainsListMessage : StateMessage
 	{
 		public ObjectID Environment;
-		public KeyValuePair<IntPoint3, TileData>[] TileDataList;
+		public KeyValuePair<IntVector3, TileData>[] TileDataList;
 
 		public override string ToString()
 		{

@@ -32,17 +32,17 @@ namespace Dwarrowdelf.TerrainGen
 		class MyTarget : IAStarTarget
 		{
 			TerrainData m_terrain;
-			IntPoint3 m_origin;
+			IntVector3 m_origin;
 			SideEdge m_sourceSide;
 
-			public MyTarget(TerrainData terrain, IntPoint3 origin, SideEdge sourceSide)
+			public MyTarget(TerrainData terrain, IntVector3 origin, SideEdge sourceSide)
 			{
 				m_terrain = terrain;
 				m_origin = origin;
 				m_sourceSide = sourceSide;
 			}
 
-			public bool GetIsTarget(IntPoint3 p)
+			public bool GetIsTarget(IntVector3 p)
 			{
 				if (p.X != 0 && p.Y != 0 && p.X != m_terrain.Width - 1 && p.Y != m_terrain.Height - 1)
 					return false;
@@ -54,19 +54,19 @@ namespace Dwarrowdelf.TerrainGen
 					(m_sourceSide == SideEdge.Bottom && p.Y < m_terrain.Height / 2);
 			}
 
-			public ushort GetHeuristic(IntPoint3 p)
+			public ushort GetHeuristic(IntVector3 p)
 			{
 				// Add a bit random so that the river doesn't go straight
 				var r = new MWCRandom(p, 1);
 				return (ushort)(p.Z * 10 + r.Next(4));
 			}
 
-			public ushort GetCostBetween(IntPoint3 src, IntPoint3 dst)
+			public ushort GetCostBetween(IntVector3 src, IntVector3 dst)
 			{
 				return 0;
 			}
 
-			public IEnumerable<Direction> GetValidDirs(IntPoint3 p)
+			public IEnumerable<Direction> GetValidDirs(IntVector3 p)
 			{
 				foreach (var d in DirectionExtensions.CardinalUpDownDirections.ToArray())
 				{
@@ -94,7 +94,7 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		IntPoint3 FindStartLoc(Random r, SideEdge edge)
+		IntVector3 FindStartLoc(Random r, SideEdge edge)
 		{
 			int side = m_terrain.Width;
 
@@ -152,7 +152,7 @@ namespace Dwarrowdelf.TerrainGen
 
 				var target = new MyTarget(m_terrain, startLoc, edge);
 				int maxNodeCount = 500000; // XXX this should reflect the map size
-				var res = AStar.Find(new IntPoint3[] { startLoc }, target, maxNodeCount);
+				var res = AStar.Find(new IntVector3[] { startLoc }, target, maxNodeCount);
 
 				if (res.Status != AStarStatus.Found)
 					continue;
@@ -199,7 +199,7 @@ namespace Dwarrowdelf.TerrainGen
 
 				for (int z = m_terrain.Depth - 1; z >= minZ - 1; --z)
 				{
-					var p = new IntPoint3(pp.X, pp.Y, z);
+					var p = new IntVector3(pp.X, pp.Y, z);
 
 					var td = m_terrain.GetTileData(p);
 					td.InteriorID = InteriorID.Empty;

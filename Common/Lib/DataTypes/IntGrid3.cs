@@ -34,7 +34,7 @@ namespace Dwarrowdelf
 			m_depth = depth;
 		}
 
-		public IntGrid3(IntPoint3 p, IntSize3 size)
+		public IntGrid3(IntVector3 p, IntSize3 size)
 		{
 			m_x = p.X;
 			m_y = p.Y;
@@ -44,7 +44,7 @@ namespace Dwarrowdelf
 			m_depth = size.Depth;
 		}
 
-		public IntGrid3(IntPoint3 point1, IntPoint3 point2)
+		public IntGrid3(IntVector3 point1, IntVector3 point2)
 		{
 			m_x = Math.Min(point1.X, point2.X);
 			m_y = Math.Min(point1.Y, point2.Y);
@@ -76,19 +76,19 @@ namespace Dwarrowdelf
 		public int Z1 { get { return this.Z; } }
 		public int Z2 { get { return this.Z + this.Depth - 1; } }
 
-		public IntPoint3 Corner1
+		public IntVector3 Corner1
 		{
-			get { return new IntPoint3(this.X, this.Y, this.Z); }
+			get { return new IntVector3(this.X, this.Y, this.Z); }
 		}
 
-		public IntPoint3 Corner2
+		public IntVector3 Corner2
 		{
-			get { return new IntPoint3(this.X + this.Columns - 1, this.Y + this.Rows - 1, this.Z + this.Depth - 1); }
+			get { return new IntVector3(this.X + this.Columns - 1, this.Y + this.Rows - 1, this.Z + this.Depth - 1); }
 		}
 
-		public IntPoint3 Center
+		public IntVector3 Center
 		{
-			get { return new IntPoint3(this.X + (this.Columns - 1) / 2, this.Y + (this.Rows - 1) / 2, this.Z + (this.Depth - 1) / 2); }
+			get { return new IntVector3(this.X + (this.Columns - 1) / 2, this.Y + (this.Rows - 1) / 2, this.Z + (this.Depth - 1) / 2); }
 		}
 
 		public int Volume
@@ -106,7 +106,7 @@ namespace Dwarrowdelf
 			get { return this.Columns == 0 && this.Rows == 0 && this.Depth == 0; }
 		}
 
-		public bool Contains(IntPoint3 p)
+		public bool Contains(IntVector3 p)
 		{
 			return (p.X >= this.X) && (p.X < this.X + this.Columns) && (p.Y >= this.Y) && (p.Y < this.Y + this.Rows) && (p.Z >= this.Z) && (p.Z < this.Z + this.Depth);
 		}
@@ -155,12 +155,12 @@ namespace Dwarrowdelf
 			return new IntGrid3(this.X, this.Y, this.Z, this.Columns + columns, this.Rows + rows, this.Depth + depth);
 		}
 
-		public IEnumerable<IntPoint3> Range()
+		public IEnumerable<IntVector3> Range()
 		{
 			for (int z = this.Z; z < this.Z + this.Depth; ++z)
 				for (int y = this.Y; y < this.Y + this.Rows; ++y)
 					for (int x = this.X; x < this.X + this.Columns; ++x)
-						yield return new IntPoint3(x, y, z);
+						yield return new IntVector3(x, y, z);
 		}
 
 		public IntGrid2 ToIntRect()

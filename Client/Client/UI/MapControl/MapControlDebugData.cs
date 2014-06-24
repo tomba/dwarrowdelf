@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Client.UI
 		public Point ScreenPos { get; set; }
 		public Point ScreenTile { get; set; }
 		public Point MapTile { get; set; }
-		public IntPoint3 MapLocation { get; set; }
+		public IntVector3 MapLocation { get; set; }
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

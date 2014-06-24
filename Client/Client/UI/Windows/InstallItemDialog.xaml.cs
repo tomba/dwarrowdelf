@@ -16,14 +16,14 @@ namespace Dwarrowdelf.Client.UI
 	sealed partial class InstallItemDialog : Window
 	{
 		EnvironmentObject m_env;
-		IntPoint3 m_location;
+		IntVector3 m_location;
 
 		public InstallItemDialog()
 		{
 			InitializeComponent();
 		}
 
-		public void SetContext(EnvironmentObject env, IntPoint3 location)
+		public void SetContext(EnvironmentObject env, IntVector3 location)
 		{
 			m_env = env;
 			m_location = location;

@@ -82,9 +82,9 @@ namespace Dwarrowdelf
 			return new DoublePoint3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));
 		}
 
-		public IntPoint3 ToIntPoint3()
+		public IntVector3 ToIntPoint3()
 		{
-			return new IntPoint3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));
+			return new IntVector3(MyMath.Round(this.X), MyMath.Round(this.Y), MyMath.Round(this.Z));
 		}
 
 		public override int GetHashCode()

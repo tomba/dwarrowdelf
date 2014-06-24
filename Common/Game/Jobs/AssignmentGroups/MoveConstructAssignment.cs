@@ -18,9 +18,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		IEnvironmentObject m_environment;
 		[SaveGameProperty]
-		IntPoint3 m_location;
+		IntVector3 m_location;
 
-		public MoveConstructAssignment(IJobObserver parent, ConstructMode mode, IItemObject[] items, IEnvironmentObject environment, IntPoint3 location)
+		public MoveConstructAssignment(IJobObserver parent, ConstructMode mode, IItemObject[] items, IEnvironmentObject environment, IntVector3 location)
 			: base(parent, environment, items[0].Location)
 		{
 			m_mode = mode;

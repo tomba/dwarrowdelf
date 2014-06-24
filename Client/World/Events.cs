@@ -11,14 +11,14 @@ namespace Dwarrowdelf.Client
 	{
 		public string Message { get; private set; }
 		public EnvironmentObject Environment { get; private set; }
-		public IntPoint3 Location { get; private set; }
+		public IntVector3 Location { get; private set; }
 
 		public ClientEvent(string str)
 		{
 			this.Message = str;
 		}
 
-		public ClientEvent(string str, EnvironmentObject env, IntPoint3 location)
+		public ClientEvent(string str, EnvironmentObject env, IntVector3 location)
 		{
 			this.Message = str;
 			this.Environment = env;
@@ -38,13 +38,13 @@ namespace Dwarrowdelf.Client
 			EventsCollection = new ReadOnlyObservableCollection<ClientEvent>(s_events);
 		}
 
-		public static void AddGameEvent(EnvironmentObject env, IntPoint3 location, string format, params object[] args)
+		public static void AddGameEvent(EnvironmentObject env, IntVector3 location, string format, params object[] args)
 		{
 			AddGameEventInternal(env, location, String.Format(format, args));
 			s_previousWasTickEvent = false;
 		}
 
-		public static void AddGameEvent(EnvironmentObject env, IntPoint3 location, string message)
+		public static void AddGameEvent(EnvironmentObject env, IntVector3 location, string message)
 		{
 			AddGameEventInternal(env, location, message);
 			s_previousWasTickEvent = false;
@@ -65,12 +65,12 @@ namespace Dwarrowdelf.Client
 			if (s_previousWasTickEvent)
 				return;
 
-			AddGameEventInternal(null, new IntPoint3(), "---");
+			AddGameEventInternal(null, new IntVector3(), "---");
 
 			s_previousWasTickEvent = true;
 		}
 
-		static void AddGameEventInternal(EnvironmentObject env, IntPoint3 location, string message)
+		static void AddGameEventInternal(EnvironmentObject env, IntVector3 location, string message)
 		{
 			if (s_events.Count > 100)
 				s_events.RemoveAt(0);

@@ -57,7 +57,7 @@ namespace Dwarrowdelf
 		/// Plot the line from src to dst
 		/// </summary>
 		/// <param name="plot">The plotting function (if this returns false, the algorithm stops early)</param>
-		public static void PlotLine3(IntPoint3 src, IntPoint3 dst, Func<IntPoint3, bool> plot)
+		public static void PlotLine3(IntVector3 src, IntVector3 dst, Func<IntVector3, bool> plot)
 		{
 			int x0 = src.X;
 			int y0 = src.Y;
@@ -103,7 +103,7 @@ namespace Dwarrowdelf
 				if (steepXY)
 					Swap(ref tx, ref ty);
 
-				if (plot(new IntPoint3(tx, ty, tz)) == false)
+				if (plot(new IntVector3(tx, ty, tz)) == false)
 					return;
 
 				errorXY -= deltaY;

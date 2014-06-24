@@ -13,17 +13,17 @@ namespace Dwarrowdelf.Client
 	{
 		EnvironmentObject m_env;
 
-		SortedDictionary<IntPoint3, List<ItemObject>> m_heap;
+		SortedDictionary<IntVector3, List<ItemObject>> m_heap;
 
 		Func<ItemObject, bool> m_filter;
 
 		public bool IsEnabled { get; private set; }
 
-		public TargetItemTracker(EnvironmentObject env, IntPoint3 center, Func<ItemObject, bool> filter)
+		public TargetItemTracker(EnvironmentObject env, IntVector3 center, Func<ItemObject, bool> filter)
 		{
 			m_env = env;
 			m_filter = filter;
-			m_heap = new SortedDictionary<IntPoint3, List<ItemObject>>(new LocationComparer(center));
+			m_heap = new SortedDictionary<IntVector3, List<ItemObject>>(new LocationComparer(center));
 		}
 
 		public void Enable()
@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Client
 			Add(item);
 		}
 
-		void RemoveIfExists(ItemObject item, IntPoint3 pos)
+		void RemoveIfExists(ItemObject item, IntVector3 pos)
 		{
 			List<ItemObject> l;
 
@@ -103,7 +103,7 @@ namespace Dwarrowdelf.Client
 				m_heap.Remove(pos);
 		}
 
-		void Remove(ItemObject item, IntPoint3 pos)
+		void Remove(ItemObject item, IntVector3 pos)
 		{
 			List<ItemObject> l = m_heap[pos];
 			var ok = l.Remove(item);
@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Client
 			l.Add(item);
 		}
 
-		void Environment_ObjectMoved(MovableObject obj, IntPoint3 oldPos)
+		void Environment_ObjectMoved(MovableObject obj, IntVector3 oldPos)
 		{
 			var item = obj as ItemObject;
 
@@ -187,18 +187,18 @@ namespace Dwarrowdelf.Client
 			return m_heap.SelectMany(kvp => kvp.Value);
 		}
 
-		class LocationComparer : IComparer<IntPoint3>
+		class LocationComparer : IComparer<IntVector3>
 		{
-			IntPoint3 m_center;
+			IntVector3 m_center;
 
-			public LocationComparer(IntPoint3 center)
+			public LocationComparer(IntVector3 center)
 			{
 				m_center = center;
 			}
 
 			#region IComparer<Obu> Members
 
-			public int Compare(IntPoint3 x, IntPoint3 y)
+			public int Compare(IntVector3 x, IntVector3 y)
 			{
 				var d1 = x - m_center;
 				var d2 = y - m_center;

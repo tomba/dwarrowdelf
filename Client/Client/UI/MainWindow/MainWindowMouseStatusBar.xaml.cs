@@ -45,9 +45,9 @@ namespace Dwarrowdelf.Client.UI
 				return String.Format("{0}, {1}", p.X, p.Y);
 			}
 
-			if (value is IntPoint3)
+			if (value is IntVector3)
 			{
-				var p = (IntPoint3)value;
+				var p = (IntVector3)value;
 				return String.Format("{0}, {1}, {2}", p.X, p.Y, p.Z);
 			}
 

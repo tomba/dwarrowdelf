@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void Environment_ObjectMoved(MovableObject ob, IntPoint3 oldPos)
+		void Environment_ObjectMoved(MovableObject ob, IntVector3 oldPos)
 		{
 			if (this.Area.Contains(oldPos) == false)
 				return;
@@ -216,23 +216,23 @@ namespace Dwarrowdelf.Client
 		}
 
 		// XXX Silly algorithm. Fill the stockpile evenly.
-		public IntPoint3 FindEmptyLocation(out bool ok)
+		public IntVector3 FindEmptyLocation(out bool ok)
 		{
 			int min = GetMinStack();
 
 			var loc = this.Area.Range().FirstOrDefault(p => GetStack(p) == min);
 
-			if (loc != new IntPoint3())
+			if (loc != new IntVector3())
 			{
 				ok = true;
 				return loc;
 			}
 
 			ok = false;
-			return new IntPoint3();
+			return new IntVector3();
 		}
 
-		public bool LocationOk(IntPoint3 p, ItemObject ob)
+		public bool LocationOk(IntVector3 p, ItemObject ob)
 		{
 			if (!this.Area.Contains(p))
 				throw new Exception();
@@ -245,7 +245,7 @@ namespace Dwarrowdelf.Client
 			return this.Area.Range().Min(p => GetStack(p));
 		}
 
-		int GetStack(IntPoint3 p)
+		int GetStack(IntVector3 p)
 		{
 			return this.Environment.GetContents(p).OfType<ItemObject>().Count();
 		}

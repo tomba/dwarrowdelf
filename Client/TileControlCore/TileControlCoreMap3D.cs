@@ -34,24 +34,24 @@ namespace Dwarrowdelf.Client.TileControl
 			return new Rect(p1, p2);
 		}
 
-		public IntPoint3 RenderPointToMapLocation(Point p)
+		public IntVector3 RenderPointToMapLocation(Point p)
 		{
 			var ct = RenderPointToScreen(p);
 			return ScreenTileToMapLocation(ct);
 		}
 
-		public IntPoint3 RenderTileToMapLocation(Point p)
+		public IntVector3 RenderTileToMapLocation(Point p)
 		{
 			var ct = RenderTileToScreen(p);
 			return ScreenTileToMapLocation(ct);
 		}
 
-		public IntPoint3 ScreenTileToMapLocation(Point p)
+		public IntVector3 ScreenTileToMapLocation(Point p)
 		{
 			return ScreenTileToMapLocation(p, this.ScreenZ);
 		}
 
-		public IntPoint3 ScreenTileToMapLocation(Point p, double _z)
+		public IntVector3 ScreenTileToMapLocation(Point p, double _z)
 		{
 			int x = MyMath.Round(p.X);
 			int y = MyMath.Round(p.Y);
@@ -60,11 +60,11 @@ namespace Dwarrowdelf.Client.TileControl
 			switch (this.Orientation)
 			{
 				case TileControlOrientation.XY:
-					return new IntPoint3(x, y, z);
+					return new IntVector3(x, y, z);
 				case TileControlOrientation.XZ:
-					return new IntPoint3(x, z, -y);
+					return new IntVector3(x, z, -y);
 				case TileControlOrientation.ZY:
-					return new IntPoint3(z, y, x);
+					return new IntVector3(z, y, x);
 				default:
 					throw new NotImplementedException();
 			}
@@ -90,13 +90,13 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public Point MapLocationToScreenTile(IntPoint3 p)
+		public Point MapLocationToScreenTile(IntVector3 p)
 		{
 			int z;
 			return MapLocationToScreenTile(p, out z);
 		}
 
-		public Point MapLocationToScreenTile(IntPoint3 p, out int z)
+		public Point MapLocationToScreenTile(IntVector3 p, out int z)
 		{
 			switch (this.Orientation)
 			{
@@ -114,14 +114,14 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public IntVector2 MapLocationToIntRenderTile(IntPoint3 p)
+		public IntVector2 MapLocationToIntRenderTile(IntVector3 p)
 		{
 			var ct = MapLocationToScreenTile(p);
 			var st = ScreenToRenderTile(ct);
 			return new IntVector2(MyMath.Round(st.X), MyMath.Round(st.Y));
 		}
 
-		public DoublePoint3 MapToScreen(IntPoint3 p)
+		public DoublePoint3 MapToScreen(IntVector3 p)
 		{
 			return MapToScreen(p.ToDoublePoint3());
 		}

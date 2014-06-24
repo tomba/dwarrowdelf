@@ -7,10 +7,10 @@ namespace Dwarrowdelf
 {
 	public interface IAStarTarget
 	{
-		bool GetIsTarget(IntPoint3 p);
-		ushort GetHeuristic(IntPoint3 p);
-		ushort GetCostBetween(IntPoint3 src, IntPoint3 dst);
-		IEnumerable<Direction> GetValidDirs(IntPoint3 p);
+		bool GetIsTarget(IntVector3 p);
+		ushort GetHeuristic(IntVector3 p);
+		ushort GetCostBetween(IntVector3 src, IntVector3 dst);
+		IEnumerable<Direction> GetValidDirs(IntVector3 p);
 	}
 
 	public abstract class AStarEnvTargetBase : IAStarTarget
@@ -25,7 +25,7 @@ namespace Dwarrowdelf
 			m_env = env;
 		}
 
-		public ushort GetCostBetween(IntPoint3 src, IntPoint3 dst)
+		public ushort GetCostBetween(IntVector3 src, IntVector3 dst)
 		{
 			ushort cost = (src - dst).ManhattanLength == 1 ? (ushort)COST_STRAIGHT : (ushort)COST_DIAGONAL;
 			// XXX add tile weight
@@ -33,33 +33,33 @@ namespace Dwarrowdelf
 		}
 
 
-		public IEnumerable<Direction> GetValidDirs(IntPoint3 p)
+		public IEnumerable<Direction> GetValidDirs(IntVector3 p)
 		{
 			return EnvironmentExtensions.GetDirectionsFrom(m_env, p);
 		}
 
-		public abstract bool GetIsTarget(IntPoint3 p);
-		public abstract ushort GetHeuristic(IntPoint3 p);
+		public abstract bool GetIsTarget(IntVector3 p);
+		public abstract ushort GetHeuristic(IntVector3 p);
 	}
 
 	public sealed class AStarDefaultTarget : AStarEnvTargetBase
 	{
-		IntPoint3 m_destination;
+		IntVector3 m_destination;
 		DirectionSet m_positioning;
 
-		public AStarDefaultTarget(IEnvironmentObject env, IntPoint3 destination, DirectionSet positioning)
+		public AStarDefaultTarget(IEnvironmentObject env, IntVector3 destination, DirectionSet positioning)
 			: base(env)
 		{
 			m_destination = destination;
 			m_positioning = positioning;
 		}
 
-		public override bool GetIsTarget(IntPoint3 p)
+		public override bool GetIsTarget(IntVector3 p)
 		{
 			return p.IsAdjacentTo(m_destination, m_positioning);
 		}
 
-		public override ushort GetHeuristic(IntPoint3 p)
+		public override ushort GetHeuristic(IntVector3 p)
 		{
 			var v = m_destination - p;
 
@@ -81,12 +81,12 @@ namespace Dwarrowdelf
 			m_destination = destination;
 		}
 
-		public override bool GetIsTarget(IntPoint3 location)
+		public override bool GetIsTarget(IntVector3 location)
 		{
 			return m_destination.Contains(location);
 		}
 
-		public override ushort GetHeuristic(IntPoint3 location)
+		public override ushort GetHeuristic(IntVector3 location)
 		{
 			var dst = m_destination.Center;
 			return (ushort)((dst - location).ManhattanLength * 10);
@@ -95,20 +95,20 @@ namespace Dwarrowdelf
 
 	public sealed class AStarDelegateTarget : AStarEnvTargetBase
 	{
-		Func<IntPoint3, bool> m_func;
+		Func<IntVector3, bool> m_func;
 
-		public AStarDelegateTarget(IEnvironmentObject env, Func<IntPoint3, bool> func)
+		public AStarDelegateTarget(IEnvironmentObject env, Func<IntVector3, bool> func)
 			: base(env)
 		{
 			m_func = func;
 		}
 
-		public override bool GetIsTarget(IntPoint3 location)
+		public override bool GetIsTarget(IntVector3 location)
 		{
 			return m_func(location);
 		}
 
-		public override ushort GetHeuristic(IntPoint3 location)
+		public override ushort GetHeuristic(IntVector3 location)
 		{
 			return 0;
 		}

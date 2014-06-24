@@ -47,11 +47,11 @@ namespace Dwarrowdelf.AI
 			get { return m_members.Count; }
 		}
 
-		public IntPoint3 GetCenter()
+		public IntVector3 GetCenter()
 		{
 			var locations = m_members.Select(ai => ai.Worker.Location);
 
-			return IntPoint3.Center(locations);
+			return IntVector3.Center(locations);
 		}
 	}
 }

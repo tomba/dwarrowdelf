@@ -66,13 +66,13 @@ namespace Dwarrowdelf.TerrainGen
 					if (m_size.Plane.Contains(p) == false)
 						continue;
 
-					var p1 = new IntPoint3(p, z);
+					var p1 = new IntVector3(p, z);
 					var td1 = GetTileData(p1);
 
 					if (td1.IsClearFloor == false)
 						continue;
 
-					var p2 = new IntPoint3(p, z - 1);
+					var p2 = new IntVector3(p, z - 1);
 					var td2 = GetTileData(p2);
 
 					if (td2.IsClearFloor == false)
@@ -106,7 +106,7 @@ namespace Dwarrowdelf.TerrainGen
 
 					for (int z = 0; z < depth; ++z)
 					{
-						var p = new IntPoint3(x, y, z);
+						var p = new IntVector3(x, y, z);
 						var td = new TileData();
 
 						if (z < surface)
@@ -252,7 +252,7 @@ namespace Dwarrowdelf.TerrainGen
 
 				foreach (var p2 in grid.Range())
 				{
-					var p = new IntPoint3(p2, z);
+					var p = new IntVector3(p2, z);
 
 					var _td = GetTileData(p);
 					if (_td.TerrainID == td.TerrainID)
@@ -326,16 +326,16 @@ namespace Dwarrowdelf.TerrainGen
 				int middle = from.Y + (to.Y - from.Y) / 2;
 
 				for (int y = from.Y; y != middle; y += yinc)
-					SetTileData(new IntPoint3(from.X, y, z), td);
+					SetTileData(new IntVector3(from.X, y, z), td);
 
 				int x1 = Math.Min(from.X, to.X);
 				int x2 = Math.Max(from.X, to.X);
 
 				for (int x = x1; x <= x2; ++x)
-					SetTileData(new IntPoint3(x, middle, z), td);
+					SetTileData(new IntVector3(x, middle, z), td);
 
 				for (int y = middle; y != to.Y; y += yinc)
-					SetTileData(new IntPoint3(to.X, y, z), td);
+					SetTileData(new IntVector3(to.X, y, z), td);
 			}
 			else
 			{
@@ -344,16 +344,16 @@ namespace Dwarrowdelf.TerrainGen
 				int middle = from.X + (to.X - from.X) / 2;
 
 				for (int x = from.X; x != middle; x += xinc)
-					SetTileData(new IntPoint3(x, from.Y, z), td);
+					SetTileData(new IntVector3(x, from.Y, z), td);
 
 				int y1 = Math.Min(from.Y, to.Y);
 				int y2 = Math.Max(from.Y, to.Y);
 
 				for (int y = y1; y <= y2; ++y)
-					SetTileData(new IntPoint3(middle, y, z), td);
+					SetTileData(new IntVector3(middle, y, z), td);
 
 				for (int x = middle; x != to.X; x += xinc)
-					SetTileData(new IntPoint3(x, to.Y, z), td);
+					SetTileData(new IntVector3(x, to.Y, z), td);
 			}
 		}
 
@@ -428,12 +428,12 @@ namespace Dwarrowdelf.TerrainGen
 			return m_random.NextDouble() * (max - min) + min;
 		}
 
-		void SetTileData(IntPoint3 p, TileData td)
+		void SetTileData(IntVector3 p, TileData td)
 		{
 			m_data.SetTileData(p, td);
 		}
 
-		TileData GetTileData(IntPoint3 p)
+		TileData GetTileData(IntVector3 p)
 		{
 			return m_data.GetTileData(p);
 		}

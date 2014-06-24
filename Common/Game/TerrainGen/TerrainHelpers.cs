@@ -24,7 +24,7 @@ namespace Dwarrowdelf.TerrainGen
 				{
 					int z = data.GetSurfaceLevel(x, y);
 
-					var p = new IntPoint3(x, y, z);
+					var p = new IntVector3(x, y, z);
 
 					if (z < soilLimit)
 					{
@@ -51,7 +51,7 @@ namespace Dwarrowdelf.TerrainGen
 
 				if (create)
 				{
-					var p3d = new IntPoint3(p, z);
+					var p3d = new IntVector3(p, z);
 
 					var td = data.GetTileData(p3d);
 					td.TerrainID = TerrainID.Slope;
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.TerrainGen
 			{
 				int z = terrain.GetSurfaceLevel(p2d);
 
-				var p = new IntPoint3(p2d, z);
+				var p = new IntVector3(p2d, z);
 
 				if (z >= vegetationLimit)
 					return;

@@ -503,7 +503,7 @@ namespace Dwarrowdelf.Client.UI
 			GoTo(mp);
 		}
 
-		public void GoTo(IntPoint3 p)
+		public void GoTo(IntVector3 p)
 		{
 			GoTo(p.ToDoublePoint3());
 		}
@@ -513,7 +513,7 @@ namespace Dwarrowdelf.Client.UI
 			this.MapCenterPos = p;
 		}
 
-		public void ScrollTo(IntPoint3 p)
+		public void ScrollTo(IntVector3 p)
 		{
 			ScrollTo(p.ToDoublePoint3());
 		}
@@ -570,7 +570,7 @@ namespace Dwarrowdelf.Client.UI
 		/// <summary>
 		/// Scroll, if necessary, so that the given map position is on the screen
 		/// </summary>
-		public void KeepOnScreen(IntPoint3 p)
+		public void KeepOnScreen(IntVector3 p)
 		{
 			var cp = this.MapCenterPos.ToIntPoint3();
 			var s = this.GridSize;

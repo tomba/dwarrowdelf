@@ -17,8 +17,8 @@ namespace Dwarrowdelf
 
 	public interface IBFSTarget
 	{
-		bool GetIsTarget(IntPoint3 p);
-		IEnumerable<Direction> GetValidDirs(IntPoint3 p);
+		bool GetIsTarget(IntVector3 p);
+		IEnumerable<Direction> GetValidDirs(IntVector3 p);
 	}
 
 	/// <summary>
@@ -32,17 +32,17 @@ namespace Dwarrowdelf
 
 		IBFSTarget m_target;
 
-		HashSet<IntPoint3> m_map;
-		Queue<IntPoint3> m_queue;
+		HashSet<IntVector3> m_map;
+		Queue<IntVector3> m_queue;
 
-		public BFS(IEnumerable<IntPoint3> initialLocations, IBFSTarget target)
+		public BFS(IEnumerable<IntVector3> initialLocations, IBFSTarget target)
 		{
 			this.MaxNodeCount = 200000;
 			this.CancellationToken = CancellationToken.None;
 
 			m_target = target;
-			m_map = new HashSet<IntPoint3>();
-			m_queue = new Queue<IntPoint3>();
+			m_map = new HashSet<IntVector3>();
+			m_queue = new Queue<IntVector3>();
 
 			foreach (var p in initialLocations)
 			{
@@ -51,7 +51,7 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public IEnumerable<IntPoint3> Find()
+		public IEnumerable<IntVector3> Find()
 		{
 			while (m_queue.Count > 0)
 			{
@@ -78,11 +78,11 @@ namespace Dwarrowdelf
 			this.Status = BFSStatus.NotFound;
 		}
 
-		void CheckNeighbors(IntPoint3 parent)
+		void CheckNeighbors(IntVector3 parent)
 		{
 			foreach (var dir in m_target.GetValidDirs(parent))
 			{
-				IntPoint3 child = parent + new IntVector3(dir);
+				IntVector3 child = parent + new IntVector3(dir);
 
 				if (m_map.Contains(child) == false)
 				{

@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Server
 	public sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
 		public static EnvironmentObject Create(World world, Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode,
-			IntPoint3 startLocation)
+			IntVector3 startLocation)
 		{
 			var ob = new EnvironmentObject(terrain, visMode, startLocation);
 			ob.Initialize(world);
@@ -44,9 +44,9 @@ namespace Dwarrowdelf.Server
 		public IntSize3 Size { get; private set; }
 
 		[SaveGameProperty]
-		public IntPoint3 StartLocation { get; private set; }
+		public IntVector3 StartLocation { get; private set; }
 
-		public event Action<IntPoint3, TileData, TileData> TerrainOrInteriorChanged;
+		public event Action<IntVector3, TileData, TileData> TerrainOrInteriorChanged;
 
 		EnvWaterHandler m_waterHandler;
 		EnvTreeHandler m_treeHandler;
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		EnvironmentObject(Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode, IntPoint3 startLocation)
+		EnvironmentObject(Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode, IntVector3 startLocation)
 			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
@@ -183,12 +183,12 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		void MapChanged(IntPoint3 l, TileData tileData)
+		void MapChanged(IntVector3 l, TileData tileData)
 		{
 			this.World.AddChange(new MapChange(this, l, tileData));
 		}
 
-		public bool Contains(IntPoint3 p)
+		public bool Contains(IntVector3 p)
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
@@ -199,7 +199,7 @@ namespace Dwarrowdelf.Server
 			m_waterHandler.Rescan();
 		}
 
-		public IntPoint3 GetRandomSurfaceLocation(int idx)
+		public IntVector3 GetRandomSurfaceLocation(int idx)
 		{
 			uint raw = m_randomXYArray[idx];
 			int x = (int)(raw >> 16);
@@ -207,7 +207,7 @@ namespace Dwarrowdelf.Server
 			return GetSurfaceLocation(x, y);
 		}
 
-		public IntPoint3 GetRandomEnterableSurfaceLocation()
+		public IntVector3 GetRandomEnterableSurfaceLocation()
 		{
 			int numXYs = this.Width * this.Height;
 
@@ -244,57 +244,57 @@ namespace Dwarrowdelf.Server
 			m_levelMap[p.Y, p.X] = level;
 		}
 
-		public IntPoint3 GetSurfaceLocation(int x, int y)
+		public IntVector3 GetSurfaceLocation(int x, int y)
 		{
-			return new IntPoint3(x, y, GetSurfaceLevel(x, y));
+			return new IntVector3(x, y, GetSurfaceLevel(x, y));
 		}
 
-		public IntPoint3 GetSurfaceLocation(IntVector2 p)
+		public IntVector3 GetSurfaceLocation(IntVector2 p)
 		{
 			return GetSurfaceLocation(p.X, p.Y);
 		}
 
-		public TerrainID GetTerrainID(IntPoint3 p)
+		public TerrainID GetTerrainID(IntVector3 p)
 		{
 			return GetTileData(p).TerrainID;
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3 p)
+		public MaterialID GetTerrainMaterialID(IntVector3 p)
 		{
 			return GetTileData(p).TerrainMaterialID;
 		}
 
-		public InteriorID GetInteriorID(IntPoint3 p)
+		public InteriorID GetInteriorID(IntVector3 p)
 		{
 			return GetTileData(p).InteriorID;
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3 p)
+		public MaterialID GetInteriorMaterialID(IntVector3 p)
 		{
 			return GetTileData(p).InteriorMaterialID;
 		}
 
-		public TerrainInfo GetTerrain(IntPoint3 p)
+		public TerrainInfo GetTerrain(IntVector3 p)
 		{
 			return Terrains.GetTerrain(GetTerrainID(p));
 		}
 
-		public MaterialInfo GetTerrainMaterial(IntPoint3 p)
+		public MaterialInfo GetTerrainMaterial(IntVector3 p)
 		{
 			return Materials.GetMaterial(GetTerrainMaterialID(p));
 		}
 
-		public InteriorInfo GetInterior(IntPoint3 p)
+		public InteriorInfo GetInterior(IntVector3 p)
 		{
 			return Interiors.GetInterior(GetInteriorID(p));
 		}
 
-		public MaterialInfo GetInteriorMaterial(IntPoint3 p)
+		public MaterialInfo GetInteriorMaterial(IntVector3 p)
 		{
 			return Materials.GetMaterial(GetInteriorMaterialID(p));
 		}
 
-		public TileData GetTileData(IntPoint3 p)
+		public TileData GetTileData(IntVector3 p)
 		{
 			return m_tileGrid[p.Z, p.Y, p.X];
 		}
@@ -304,12 +304,12 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid[z, y, x];
 		}
 
-		public byte GetWaterLevel(IntPoint3 p)
+		public byte GetWaterLevel(IntVector3 p)
 		{
 			return GetTileData(p).WaterLevel;
 		}
 
-		public bool GetTileFlags(IntPoint3 p, TileFlags flags)
+		public bool GetTileFlags(IntVector3 p, TileFlags flags)
 		{
 			return (GetTileData(p).Flags & flags) != 0;
 		}
@@ -317,7 +317,7 @@ namespace Dwarrowdelf.Server
 		/// <summary>
 		/// Note: this does not change tile flags!
 		/// </summary>
-		public void SetTileData(IntPoint3 p, TileData data)
+		public void SetTileData(IntVector3 p, TileData data)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
@@ -352,7 +352,7 @@ namespace Dwarrowdelf.Server
 
 				for (int z = p.Z - 1; z >= 0; --z)
 				{
-					if (GetTileData(new IntPoint3(p2d, z)).IsEmpty == false)
+					if (GetTileData(new IntVector3(p2d, z)).IsEmpty == false)
 					{
 						Debug.Assert(z >= 0 && z < 256);
 						SetSurfaceLevel(p2d, (byte)p.Z);
@@ -375,16 +375,16 @@ namespace Dwarrowdelf.Server
 			if (newSurfaceLevel > oldSurfaceLevel)
 			{
 				for (int z = oldSurfaceLevel; z < newSurfaceLevel; ++z)
-					SetTileFlags(new IntPoint3(p2d, z), TileFlags.Subterranean, true);
+					SetTileFlags(new IntVector3(p2d, z), TileFlags.Subterranean, true);
 			}
 			else if (newSurfaceLevel < oldSurfaceLevel)
 			{
 				for (int z = oldSurfaceLevel - 1; z >= newSurfaceLevel; --z)
-					SetTileFlags(new IntPoint3(p2d, z), TileFlags.Subterranean, false);
+					SetTileFlags(new IntVector3(p2d, z), TileFlags.Subterranean, false);
 			}
 		}
 
-		public void SetWaterLevel(IntPoint3 p, byte waterLevel)
+		public void SetWaterLevel(IntVector3 p, byte waterLevel)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
@@ -403,7 +403,7 @@ namespace Dwarrowdelf.Server
 				m_waterHandler.RemoveWater(p);
 		}
 
-		void SetTileFlags(IntPoint3 l, TileFlags flags, bool value)
+		void SetTileFlags(IntVector3 l, TileFlags flags, bool value)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
@@ -420,7 +420,7 @@ namespace Dwarrowdelf.Server
 			MapChanged(l, d);
 		}
 
-		public void ItemBlockChanged(IntPoint3 p)
+		public void ItemBlockChanged(IntVector3 p)
 		{
 			bool oldBlocking = GetTileFlags(p, TileFlags.ItemBlocks);
 			bool newBlocking = GetContents(p).OfType<ItemObject>().Any(item => item.IsBlocking);
@@ -436,25 +436,25 @@ namespace Dwarrowdelf.Server
 			return obs.Where(o => rect.Contains(o.Location));
 		}
 
-		IEnumerable<IMovableObject> IEnvironmentObject.GetContents(IntPoint3 l)
+		IEnumerable<IMovableObject> IEnvironmentObject.GetContents(IntVector3 l)
 		{
 			var list = m_contentArray[l.Z];
 			return list.Where(o => o.Location == l);
 		}
 
-		public IEnumerable<MovableObject> GetContents(IntPoint3 l)
+		public IEnumerable<MovableObject> GetContents(IntVector3 l)
 		{
 			var list = m_contentArray[l.Z];
 			return list.Where(o => o.Location == l);
 		}
 
-		public bool HasContents(IntPoint3 l)
+		public bool HasContents(IntVector3 l)
 		{
 			var list = m_contentArray[l.Z];
 			return list.Any(o => o.Location == l);
 		}
 
-		public override bool OkToAddChild(MovableObject ob, IntPoint3 p)
+		public override bool OkToAddChild(MovableObject ob, IntVector3 p)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -482,12 +482,12 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		public override bool OkToMoveChild(MovableObject ob, Direction dir, IntPoint3 dstLoc)
+		public override bool OkToMoveChild(MovableObject ob, Direction dir, IntVector3 dstLoc)
 		{
 			return EnvironmentExtensions.CanMoveFromTo(this, ob.Location, dir);
 		}
 
-		protected override void OnChildMoved(MovableObject child, IntPoint3 srcLoc, IntPoint3 dstLoc)
+		protected override void OnChildMoved(MovableObject child, IntVector3 srcLoc, IntVector3 dstLoc)
 		{
 			if (srcLoc.Z == dstLoc.Z)
 				return;
@@ -570,7 +570,7 @@ namespace Dwarrowdelf.Server
 				{
 					memStream.SetLength(0);
 
-					var bounds = new IntGrid3(new IntPoint3(0, 0, z), size);
+					var bounds = new IntGrid3(new IntVector3(0, 0, z), size);
 
 					if (m_useCompression == false)
 					{

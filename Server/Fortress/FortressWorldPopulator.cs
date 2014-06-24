@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Server.Fortress
 			AddMonsters(env);
 		}
 
-		static void ClearFloor(EnvironmentObject env, IntPoint3 p)
+		static void ClearFloor(EnvironmentObject env, IntVector3 p)
 		{
 			var td = env.GetTileData(p);
 
@@ -123,7 +123,7 @@ namespace Dwarrowdelf.Server.Fortress
 			var surface = env.GetSurfaceLevel(new IntVector2(posx, posy));
 
 			{
-				var p = new IntPoint3(posx, posy, surface);
+				var p = new IntVector3(posx, posy, surface);
 				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.SmithsWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
@@ -132,7 +132,7 @@ namespace Dwarrowdelf.Server.Fortress
 			posx += 4;
 
 			{
-				var p = new IntPoint3(posx, posy, surface);
+				var p = new IntVector3(posx, posy, surface);
 				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.CarpentersWorkbench, MaterialID.Oak, p);
 				item.IsInstalled = true;
@@ -141,7 +141,7 @@ namespace Dwarrowdelf.Server.Fortress
 			posx += 4;
 
 			{
-				var p = new IntPoint3(posx, posy, surface);
+				var p = new IntVector3(posx, posy, surface);
 				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.MasonsWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
@@ -152,7 +152,7 @@ namespace Dwarrowdelf.Server.Fortress
 			posy += 4;
 
 			{
-				var p = new IntPoint3(posx, posy, surface);
+				var p = new IntVector3(posx, posy, surface);
 				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.SmelterWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
@@ -161,14 +161,14 @@ namespace Dwarrowdelf.Server.Fortress
 			posx += 4;
 
 			{
-				var p = new IntPoint3(posx, posy, surface);
+				var p = new IntVector3(posx, posy, surface);
 				ClearFloor(env, p);
 				var item = CreateItem(env, ItemID.GemcuttersWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
 			}
 		}
 
-		static ItemObject CreateItem(EnvironmentObject env, ItemID itemID, MaterialID materialID, IntPoint3 p)
+		static ItemObject CreateItem(EnvironmentObject env, ItemID itemID, MaterialID materialID, IntVector3 p)
 		{
 			var builder = new ItemObjectBuilder(itemID, materialID);
 			var item = builder.Create(env.World);

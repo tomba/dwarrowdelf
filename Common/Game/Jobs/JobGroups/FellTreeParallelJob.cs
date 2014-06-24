@@ -13,9 +13,9 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		readonly IEnvironmentObject m_environment;
 		readonly IntGrid3 m_area;
 
-		IEnumerable<IntPoint3> m_locs;
+		IEnumerable<IntVector3> m_locs;
 
-		List<Tuple<IntPoint3, IJob>> m_jobs = new List<Tuple<IntPoint3, IJob>>();
+		List<Tuple<IntVector3, IJob>> m_jobs = new List<Tuple<IntVector3, IJob>>();
 
 		public FellTreeParallelJob(IEnvironmentObject env, IntGrid3 area)
 			: base(null)
@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			{
 				var job = new AssignmentGroups.MoveFellTreeAssignment(this, m_environment, p);
 				AddSubJob(job);
-				m_jobs.Add(new Tuple<IntPoint3, IJob>(p, job));
+				m_jobs.Add(new Tuple<IntVector3, IJob>(p, job));
 			}
 
 		}

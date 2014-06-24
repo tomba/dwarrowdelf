@@ -411,7 +411,7 @@ namespace Dwarrowdelf.Client.UI
 			this.FollowObject = newOb;
 		}
 
-		void OnFocusedControllableMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
+		void OnFocusedControllableMoved(MovableObject ob, ContainerObject dst, IntVector3 loc)
 		{
 			this.FocusedTileView.SetTarget(ob.Environment, ob.Location);
 		}
@@ -440,7 +440,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void FollowedObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
+		void FollowedObjectMoved(MovableObject ob, ContainerObject dst, IntVector3 loc)
 		{
 			map.GoTo(ob);
 		}

@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		readonly MineActionType m_mineActionType;
 
-		public MoveMineAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3 location, MineActionType mineActionType)
+		public MoveMineAssignment(IJobObserver parent, IEnvironmentObject environment, IntVector3 location, MineActionType mineActionType)
 			: base(parent, environment, location)
 		{
 			m_mineActionType = mineActionType;

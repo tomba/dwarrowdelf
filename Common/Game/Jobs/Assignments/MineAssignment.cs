@@ -11,13 +11,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public sealed class MineAssignment : Assignment
 	{
 		[SaveGameProperty]
-		readonly IntPoint3 m_location;
+		readonly IntVector3 m_location;
 		[SaveGameProperty]
 		readonly MineActionType m_mineActionType;
 		[SaveGameProperty]
 		readonly IEnvironmentObject m_environment;
 
-		public MineAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3 location, MineActionType mineActionType)
+		public MineAssignment(IJobObserver parent, IEnvironmentObject environment, IntVector3 location, MineActionType mineActionType)
 			: base(parent)
 		{
 			m_environment = environment;

@@ -17,12 +17,12 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		IEnvironmentObject m_environment;
 		[SaveGameProperty]
-		IntPoint3 m_location;
+		IntVector3 m_location;
 
 		[SaveGameProperty]
 		int m_state;
 
-		public ConstructJob(IJobObserver parent, ConstructMode mode, IItemObject[] items, IEnvironmentObject environment, IntPoint3 location)
+		public ConstructJob(IJobObserver parent, ConstructMode mode, IItemObject[] items, IEnvironmentObject environment, IntVector3 location)
 			: base(parent)
 		{
 			m_mode = mode;
