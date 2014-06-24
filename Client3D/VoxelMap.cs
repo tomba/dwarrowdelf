@@ -1,4 +1,5 @@
 ﻿using Dwarrowdelf;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,21 +109,29 @@ namespace Client3D
 		{
 			var map = new VoxelMap(new IntSize3(side, side, side));
 
-			var grid = map.Grid;
-
 			var n = new SharpNoise.Modules.Simplex()
 			{
 				OctaveCount = 3,
 			};
+
+			map.FillSimplex(n, limit, new Vector3());
+
+			return map;
+		}
+
+		public void FillSimplex(SharpNoise.Modules.Simplex noise, float limit, Vector3 offset)
+		{
+			var grid = this.Grid;
+			int side = this.Width;
 
 			Parallel.For(0, side, z =>
 			{
 				for (int y = 0; y < side; ++y)
 					for (int x = 0; x < side; ++x)
 					{
-						var v = new SharpDX.Vector3(x, y, z) / side;
+						var v = new Vector3(x, y, z) / side + offset;
 
-						var val = n.GetValue(v.X, v.Y, v.Z);
+						var val = noise.GetValue(v.X, v.Y, v.Z);
 
 						if (val < limit)
 							grid[z, y, x] = Voxel.Empty;
@@ -130,8 +139,6 @@ namespace Client3D
 							grid[z, y, x] = Voxel.Rock;
 					}
 			});
-
-			return map;
 		}
 
 		public static VoxelMap CreateBallMap(int side, int innerSide = 0)
