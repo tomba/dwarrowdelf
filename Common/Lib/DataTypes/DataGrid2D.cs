@@ -51,12 +51,12 @@ namespace Dwarrowdelf
 			return x + y * this.Size.Width;
 		}
 
-		public int GetIdx(IntPoint2 p)
+		public int GetIdx(IntVector2 p)
 		{
 			return p.X + p.Y * this.Size.Width;
 		}
 
-		public bool Contains(IntPoint2 p)
+		public bool Contains(IntVector2 p)
 		{
 			return p.X >= 0 && p.X < this.Width && p.Y >= 0 && p.Y < this.Height;
 		}

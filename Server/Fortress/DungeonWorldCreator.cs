@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Server.Fortress
 			int x = grid.X + Helpers.GetRandomInt(grid.Columns);
 			int y = grid.Y + Helpers.GetRandomInt(grid.Rows);
 
-			foreach (var p in IntPoint2.SquareSpiral(new IntPoint2(x, y), Math.Max(grid.Columns, grid.Rows)))
+			foreach (var p in IntVector2.SquareSpiral(new IntVector2(x, y), Math.Max(grid.Columns, grid.Rows)))
 			{
 				if (env.Size.Plane.Contains(p) == false)
 					continue;
@@ -125,7 +125,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static IntPoint3? GetLocNearEntry(EnvironmentObject env)
 		{
-			foreach (var p in IntPoint2.SquareSpiral(env.StartLocation.ToIntPoint2(), env.Width / 2))
+			foreach (var p in IntVector2.SquareSpiral(env.StartLocation.ToIntVector2(), env.Width / 2))
 			{
 				if (env.Size.Plane.Contains(p) == false)
 					continue;

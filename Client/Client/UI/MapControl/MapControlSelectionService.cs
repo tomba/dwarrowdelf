@@ -256,7 +256,7 @@ namespace Dwarrowdelf.Client.UI
 			switch (m_selectionMode)
 			{
 				case MapSelectionMode.Rectangle:
-					start = new IntPoint3(this.Selection.SelectionStart.ToIntPoint2(), end.Z);
+					start = new IntPoint3(this.Selection.SelectionStart.ToIntVector2(), end.Z);
 					break;
 
 				case MapSelectionMode.Box:
@@ -488,7 +488,7 @@ namespace Dwarrowdelf.Client.UI
 				if (this.SelectionStart.Z != this.SelectionEnd.Z)
 					throw new Exception();
 
-				return new IntGrid2Z(this.SelectionStart.ToIntPoint2(), this.SelectionEnd.ToIntPoint2(), this.SelectionStart.Z);
+				return new IntGrid2Z(this.SelectionStart.ToIntVector2(), this.SelectionEnd.ToIntVector2(), this.SelectionStart.Z);
 			}
 		}
 	}

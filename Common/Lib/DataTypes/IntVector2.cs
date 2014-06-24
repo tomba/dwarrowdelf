@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
-using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
 	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(IntVector2Converter))]
 	public struct IntVector2 : IEquatable<IntVector2>
 	{
 		// X, Y: 16 bits, from -32768 to 32767
@@ -26,8 +26,6 @@ namespace Dwarrowdelf
 
 		public IntVector2(Direction dir)
 		{
-			Debug.Assert(dir.IsValid());
-
 			int d = (int)dir;
 
 			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
@@ -79,6 +77,11 @@ namespace Dwarrowdelf
 			return new IntVector2(x, y);
 		}
 
+		public IntVector2 Offset(int offsetX, int offsetY)
+		{
+			return new IntVector2(this.X + offsetX, this.Y + offsetY);
+		}
+
 		public static bool operator ==(IntVector2 left, IntVector2 right)
 		{
 			return left.m_value == right.m_value;
@@ -99,9 +102,9 @@ namespace Dwarrowdelf
 			return new IntVector2(left.X - right.X, left.Y - right.Y);
 		}
 
-		public static IntVector2 operator *(IntVector2 left, int number)
+		public static IntVector2 operator *(IntVector2 left, int right)
 		{
-			return new IntVector2(left.X * number, left.Y * number);
+			return new IntVector2(left.X * right, left.Y * right);
 		}
 
 		public static IntVector2 operator /(IntVector2 left, int number)
@@ -109,25 +112,81 @@ namespace Dwarrowdelf
 			return new IntVector2(left.X / number, left.Y / number);
 		}
 
+		public static IntVector2 operator +(IntVector2 left, Direction right)
+		{
+			return left + new IntVector2(right);
+		}
+
 		public override int GetHashCode()
 		{
 			return Hash.Hash2D(this.X, this.Y);
 		}
 
-		public override string ToString()
+		/// <summary>
+		/// Returns a square spiral, centered at center, covering an area of size * size
+		/// </summary>
+		/// <example>
+		/// Size = 5
+		/// 016 015 014 013 012
+		/// 017 004 003 002 011
+		/// 018 005 000 001 010
+		/// 019 006 007 008 009
+		/// 020 021 022 023 024
+		/// </example>
+		public static IEnumerable<IntVector2> SquareSpiral(IntVector2 center, int size)
 		{
-			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
-			return String.Format(info, "{0},{1}", this.X, this.Y);
+			var p = center;
+			var v = new IntVector2(1, 0);
+
+			for (int loop = 0; loop < size * 2 - 1; ++loop)
+			{
+				for (int i = 0; i < loop / 2 + 1; ++i)
+				{
+					yield return p;
+					p += v;
+				}
+
+				v = v.FastRotate(2);
+			}
 		}
 
-		public static explicit operator IntVector2(IntPoint2 point)
+		/// <summary>
+		/// Returns a diagonal square spiral
+		/// </summary>
+		/// <example>
+		/// Size = 4
+		/// ... ... ... 015 ... ... ...
+		/// ... ... 016 006 014 ... ...
+		/// ... 017 007 001 005 013 ...
+		/// 018 008 002 000 004 012 024
+		/// ... 019 009 003 011 023 ...
+		/// ... ... 020 010 022 ... ...
+		/// ... ... ... 021 ... ... ...
+		/// </example>
+		/// <param name="center">Center of the spiral</param>
+		/// <param name="size">Length of a side of the spiral</param>
+		public static IEnumerable<IntVector2> DiagonalSquareSpiral(IntVector2 center, int size)
 		{
-			return new IntVector2(point.X, point.Y);
-		}
+			var p = center;
+			var v = new IntVector2(-1, 1);
 
-		public static explicit operator IntSize2(IntVector2 vector)
-		{
-			return new IntSize2(vector.X, vector.Y);
+			yield return p;
+
+			for (int loop = 1; loop < size; ++loop)
+			{
+				p += new IntVector2(1, 0);
+
+				for (int t = 0; t < 4; ++t)
+				{
+					for (int i = 0; i < loop; ++i)
+					{
+						p += v;
+						yield return p;
+					}
+
+					v = v.FastRotate(2);
+				}
+			}
 		}
 
 		public Direction ToDirection()
@@ -251,6 +310,18 @@ namespace Dwarrowdelf
 			v = v.FastRotate(rotate);
 			return v.ToDirection();
 		}
-	}
 
+		public override string ToString()
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1}", this.X, this.Y);
+		}
+
+		public static IntVector2 Parse(string str)
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			var arr = str.Split(',');
+			return new IntVector2(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info));
+		}
+	}
 }

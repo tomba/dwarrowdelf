@@ -8,8 +8,8 @@ namespace Dwarrowdelf
 {
 	public static class RayCast
 	{
-		public static void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
-			Func<IntPoint2, bool> blockerDelegate)
+		public static void Calculate(IntVector2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
+			Func<IntVector2, bool> blockerDelegate)
 		{
 			visibilityMap.Clear();
 
@@ -34,7 +34,7 @@ namespace Dwarrowdelf
 			}
 		}
 
-		static bool FindLos(IntPoint2 src, IntPoint2 dst, Func<IntPoint2, bool> blockerDelegate)
+		static bool FindLos(IntVector2 src, IntVector2 dst, Func<IntVector2, bool> blockerDelegate)
 		{
 			bool vis = true;
 

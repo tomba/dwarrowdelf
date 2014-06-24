@@ -59,9 +59,9 @@ namespace Dwarrowdelf.TerrainGen
 		{
 			for (int z = m_size.Depth - 1; z > 0; --z)
 			{
-				var center = new IntPoint2(m_random.Next(m_size.Width), m_random.Next(m_size.Height));
+				var center = new IntVector2(m_random.Next(m_size.Width), m_random.Next(m_size.Height));
 
-				foreach (var p in IntPoint2.SquareSpiral(center, m_size.Width))
+				foreach (var p in IntVector2.SquareSpiral(center, m_size.Width))
 				{
 					if (m_size.Plane.Contains(p) == false)
 						continue;
@@ -282,7 +282,7 @@ namespace Dwarrowdelf.TerrainGen
 			ConnectRooms(bsp[leftRoom].Grid, bsp[rightRoom].Grid, z);
 		}
 
-		int FindNearestRoom(BSPTree bsp, int i, IntPoint2 p)
+		int FindNearestRoom(BSPTree bsp, int i, IntVector2 p)
 		{
 			if (bsp.IsLeaf(i))
 			{
@@ -311,7 +311,7 @@ namespace Dwarrowdelf.TerrainGen
 			CreateCorridor(room1.Center, room2.Center, z, horiz);
 		}
 
-		void CreateCorridor(IntPoint2 from, IntPoint2 to, int z, bool horiz)
+		void CreateCorridor(IntVector2 from, IntVector2 to, int z, bool horiz)
 		{
 			var td = new TileData();
 			td.TerrainID = TerrainID.NaturalFloor;

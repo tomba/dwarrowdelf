@@ -122,7 +122,7 @@ namespace AStarTest
 				{
 					for (int x = 0; x < width; ++x)
 					{
-						var ml = ScreenTileToMapLocation(new IntPoint2(x, y));
+						var ml = ScreenTileToMapLocation(new IntVector2(x, y));
 
 						UpdateTile(ref grid[y, x], ml);
 					}
@@ -219,7 +219,7 @@ namespace AStarTest
 			return st3.ToIntPoint3();
 		}
 
-		public IntPoint3 ScreenTileToMapLocation(IntPoint2 st)
+		public IntPoint3 ScreenTileToMapLocation(IntVector2 st)
 		{
 			var p = RenderTileToScreen3(new Point(st.X, st.Y));
 			return p.ToIntPoint3();

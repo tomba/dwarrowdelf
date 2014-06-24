@@ -250,7 +250,7 @@ namespace TileControlD3DWinFormsTest
 			{
 				for (int x = 0; x < mapData.Width; ++x)
 				{
-					var r = new MWCRandom(new IntPoint2(x, y), 123);
+					var r = new MWCRandom(new IntVector2(x, y), 123);
 
 					mapData[x, y] = new RenderTile()
 					{

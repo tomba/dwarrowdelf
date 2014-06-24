@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 			m_z = z;
 		}
 
-		public DoublePoint3(IntPoint2 p, double z)
+		public DoublePoint3(IntVector2 p, double z)
 			: this(p.X, p.Y, z)
 		{
 		}

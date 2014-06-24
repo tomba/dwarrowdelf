@@ -39,9 +39,9 @@ namespace Dwarrowdelf.Client.UI
 				return String.Format("{0:F2}, {1:F2}, {2:F2}", p.X, p.Y, p.Z);
 			}
 
-			if (value is IntPoint2)
+			if (value is IntVector2)
 			{
-				var p = (IntPoint2)value;
+				var p = (IntVector2)value;
 				return String.Format("{0}, {1}", p.X, p.Y);
 			}
 

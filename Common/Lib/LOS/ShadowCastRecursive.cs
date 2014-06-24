@@ -13,16 +13,16 @@ namespace Dwarrowdelf
 	{
 		struct SCRData
 		{
-			public IntPoint2 ViewerLocation;
+			public IntVector2 ViewerLocation;
 			public int VisionRange;
 			public int VisionRangeSquared;
 			public Grid2D<bool> VisibilityMap;
 			public IntSize2 MapSize;
-			public Func<IntPoint2, bool> BlockerDelegate;
+			public Func<IntVector2, bool> BlockerDelegate;
 		}
 
-		public static void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
-			Func<IntPoint2, bool> blockerDelegate)
+		public static void Calculate(IntVector2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
+			Func<IntVector2, bool> blockerDelegate)
 		{
 			visibilityMap.Clear();
 
@@ -118,8 +118,8 @@ namespace Dwarrowdelf
 
 				for (int y = lowY; y <= highY; ++y)
 				{
-					IntPoint2 translatedLocation = OctantTranslate(new IntPoint2(x, y), octant);
-					IntPoint2 mapLocation = translatedLocation.Offset(data.ViewerLocation.X, data.ViewerLocation.Y);
+					IntVector2 translatedLocation = OctantTranslate(new IntVector2(x, y), octant);
+					IntVector2 mapLocation = translatedLocation.Offset(data.ViewerLocation.X, data.ViewerLocation.Y);
 
 					Debug.Assert(data.MapSize.Contains(mapLocation));
 
@@ -193,12 +193,12 @@ namespace Dwarrowdelf
 		static readonly int[] yxcomp = { 0, 1, 1, 0, 0, -1, -1, 0 };
 		static readonly int[] yycomp = { 1, 0, 0, 1, -1, 0, 0, -1 };
 
-		static IntPoint2 OctantTranslate(IntPoint2 p, int octant)
+		static IntVector2 OctantTranslate(IntVector2 p, int octant)
 		{
 			int tx = p.X * xxcomp[octant] + p.Y * xycomp[octant];
 			int ty = p.X * yxcomp[octant] + p.Y * yycomp[octant];
 
-			return new IntPoint2(tx, ty);
+			return new IntVector2(tx, ty);
 		}
 	}
 }

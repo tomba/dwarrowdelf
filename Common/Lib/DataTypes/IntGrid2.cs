@@ -28,7 +28,7 @@ namespace Dwarrowdelf
 			m_rows = rows;
 		}
 
-		public IntGrid2(IntPoint2 point1, IntPoint2 point2)
+		public IntGrid2(IntVector2 point1, IntVector2 point2)
 		{
 			m_x = Math.Min(point1.X, point2.X);
 			m_y = Math.Min(point1.Y, point2.Y);
@@ -36,7 +36,7 @@ namespace Dwarrowdelf
 			m_rows = Math.Max(point1.Y, point2.Y) - m_y + 1;
 		}
 
-		public IntGrid2(IntPoint2 point, IntSize2 size)
+		public IntGrid2(IntVector2 point, IntSize2 size)
 			: this(point.X, point.Y, size.Width, size.Height)
 		{
 		}
@@ -46,19 +46,19 @@ namespace Dwarrowdelf
 		public int Y1 { get { return Y; } }
 		public int Y2 { get { return Y + Rows - 1; } }
 
-		public IntPoint2 X1Y1
+		public IntVector2 X1Y1
 		{
-			get { return new IntPoint2(this.X, this.Y); }
+			get { return new IntVector2(this.X, this.Y); }
 		}
 
-		public IntPoint2 X2Y2
+		public IntVector2 X2Y2
 		{
-			get { return new IntPoint2(this.X + this.Columns - 1, this.Y + this.Rows - 1); }
+			get { return new IntVector2(this.X + this.Columns - 1, this.Y + this.Rows - 1); }
 		}
 
-		public IntPoint2 Center
+		public IntVector2 Center
 		{
-			get { return new IntPoint2(this.X + (this.Columns - 1) / 2, this.Y + (this.Rows - 1) / 2); }
+			get { return new IntVector2(this.X + (this.Columns - 1) / 2, this.Y + (this.Rows - 1) / 2); }
 		}
 
 		public int Area
@@ -119,7 +119,7 @@ namespace Dwarrowdelf
 			return new IntGrid2(this.X, this.Y, this.Columns + columns, this.Rows + rows);
 		}
 
-		public bool Contains(IntPoint2 p)
+		public bool Contains(IntVector2 p)
 		{
 			return (p.X >= this.X) && (p.X < this.X + this.Columns) && (p.Y >= this.Y) && (p.Y < this.Y + this.Rows);
 		}
@@ -152,11 +152,11 @@ namespace Dwarrowdelf
 			return new IntGrid2(x1, y1, x2 - x1, y2 - y1);
 		}
 
-		public IEnumerable<IntPoint2> Range()
+		public IEnumerable<IntVector2> Range()
 		{
 			for (int y = this.Y; y < this.Y + this.Rows; ++y)
 				for (int x = this.X; x < this.X + this.Columns; ++x)
-					yield return new IntPoint2(x, y);
+					yield return new IntVector2(x, y);
 		}
 
 		public override int GetHashCode()

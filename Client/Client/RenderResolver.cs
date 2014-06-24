@@ -519,7 +519,7 @@ namespace Dwarrowdelf.Client
 								if (l.Environment != env || l.Location.Z != ml.Z)
 									continue;
 
-								IntPoint2 vp = new IntPoint2(ml.X - l.Location.X, ml.Y - l.Location.Y);
+								IntVector2 vp = new IntVector2(ml.X - l.Location.X, ml.Y - l.Location.Y);
 
 								if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange &&
 									l.VisionMap[vp] == true)
@@ -534,7 +534,7 @@ namespace Dwarrowdelf.Client
 								if (l.Environment != env || l.Location.Z != ml.Z)
 									continue;
 
-								IntPoint2 vp = new IntPoint2(ml.X - l.Location.X, ml.Y - l.Location.Y);
+								IntVector2 vp = new IntVector2(ml.X - l.Location.X, ml.Y - l.Location.Y);
 
 								if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange)
 									return true;

@@ -26,7 +26,7 @@ namespace Dwarrowdelf
 				((long)(z & 0xffff) << 48);
 		}
 
-		public IntPoint3(IntPoint2 p, int z)
+		public IntPoint3(IntVector2 p, int z)
 			: this(p.X, p.Y, z)
 		{
 		}
@@ -109,9 +109,9 @@ namespace Dwarrowdelf
 			return Hash.Hash3D(this.X, this.Y, this.Z);
 		}
 
-		public IntPoint2 ToIntPoint2()
+		public IntVector2 ToIntVector2()
 		{
-			return new IntPoint2(this.X, this.Y);
+			return new IntVector2(this.X, this.Y);
 		}
 
 		public DoublePoint3 ToDoublePoint3()

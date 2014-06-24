@@ -172,7 +172,6 @@
     <Compile Include="Game\Properties.cs" />
     <Compile Include="Game\Serializer.cs" />
     <Compile Include="Lib\DataTypes\IntGrid3.cs" />
-    <Compile Include="Lib\DataTypes\IntVector2.cs" />
     <Compile Include="Lib\DataTypes\IntSize2.cs" />
     <Compile Include="Lib\DataTypes\Direction.cs" />
     <Compile Include="Lib\DataTypes\IntGrid2.cs" />
@@ -183,7 +182,7 @@
     <Compile Include="Game\ObjectID.cs" />
     <Compile Include="Game\Messages\GameAction.cs" />
     <Compile Include="Game\IGameObject.cs" />
-    <Compile Include="Lib\DataTypes\IntPoint2.cs" />
+    <Compile Include="Lib\DataTypes\IntVector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\TileData.cs" />
     <Compile Include="Lib\TypeConverters.cs" />

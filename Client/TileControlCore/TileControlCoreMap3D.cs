@@ -114,11 +114,11 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public IntPoint2 MapLocationToIntRenderTile(IntPoint3 p)
+		public IntVector2 MapLocationToIntRenderTile(IntPoint3 p)
 		{
 			var ct = MapLocationToScreenTile(p);
 			var st = ScreenToRenderTile(ct);
-			return new IntPoint2(MyMath.Round(st.X), MyMath.Round(st.Y));
+			return new IntVector2(MyMath.Round(st.X), MyMath.Round(st.Y));
 		}
 
 		public DoublePoint3 MapToScreen(IntPoint3 p)

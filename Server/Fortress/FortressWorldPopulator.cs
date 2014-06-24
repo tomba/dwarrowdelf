@@ -120,7 +120,7 @@ namespace Dwarrowdelf.Server.Fortress
 			int posx = env.Width / 2 - 10;
 			int posy = env.Height / 2 - 10;
 
-			var surface = env.GetSurfaceLevel(new IntPoint2(posx, posy));
+			var surface = env.GetSurfaceLevel(new IntVector2(posx, posy));
 
 			{
 				var p = new IntPoint3(posx, posy, surface);

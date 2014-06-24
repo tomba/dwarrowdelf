@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace Dwarrowdelf
 {
-	public sealed class IntPointConverter : TypeConverter
+	public sealed class IntVector2Converter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -21,10 +21,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntPoint2) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntVector2) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var rect = (IntPoint2)value;
+			var rect = (IntVector2)value;
 			return rect.ToString();
 		}
 
@@ -38,7 +38,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntPoint2.Parse(source);
+			return IntVector2.Parse(source);
 		}
 	}
 

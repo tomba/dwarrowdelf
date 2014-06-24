@@ -234,12 +234,12 @@ namespace Dwarrowdelf.Server
 			return m_levelMap[y, x];
 		}
 
-		public int GetSurfaceLevel(IntPoint2 p)
+		public int GetSurfaceLevel(IntVector2 p)
 		{
 			return m_levelMap[p.Y, p.X];
 		}
 
-		void SetSurfaceLevel(IntPoint2 p, byte level)
+		void SetSurfaceLevel(IntVector2 p, byte level)
 		{
 			m_levelMap[p.Y, p.X] = level;
 		}
@@ -249,7 +249,7 @@ namespace Dwarrowdelf.Server
 			return new IntPoint3(x, y, GetSurfaceLevel(x, y));
 		}
 
-		public IntPoint3 GetSurfaceLocation(IntPoint2 p)
+		public IntPoint3 GetSurfaceLocation(IntVector2 p)
 		{
 			return GetSurfaceLocation(p.X, p.Y);
 		}
@@ -332,7 +332,7 @@ namespace Dwarrowdelf.Server
 
 			m_tileGrid[p.Z, p.Y, p.X] = data;
 
-			var p2d = p.ToIntPoint2();
+			var p2d = p.ToIntVector2();
 			int oldSurfaceLevel = GetSurfaceLevel(p2d);
 			int newSurfaceLevel = oldSurfaceLevel;
 

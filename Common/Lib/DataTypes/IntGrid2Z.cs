@@ -25,13 +25,13 @@ namespace Dwarrowdelf
 			m_z = z;
 		}
 
-		public IntGrid2Z(IntPoint2 point1, IntPoint2 point2, int z)
+		public IntGrid2Z(IntVector2 point1, IntVector2 point2, int z)
 		{
 			m_grid = new IntGrid2(point1, point2);
 			m_z = z;
 		}
 
-		public IntGrid2Z(IntPoint2 point, IntSize2 size, int z)
+		public IntGrid2Z(IntVector2 point, IntSize2 size, int z)
 			: this(point.X, point.Y, size.Width, size.Height, z)
 		{
 		}
@@ -102,7 +102,7 @@ namespace Dwarrowdelf
 
 		public bool Contains(IntPoint3 l)
 		{
-			return m_grid.Contains(l.ToIntPoint2()) && l.Z == m_z;
+			return m_grid.Contains(l.ToIntVector2()) && l.Z == m_z;
 		}
 
 		public bool IntersectsWith(IntGrid2Z rect)

@@ -26,14 +26,14 @@ namespace Dwarrowdelf
 			get { return this.Width == 0 && this.Height == 0; }
 		}
 
-		public bool Contains(IntPoint2 p)
+		public bool Contains(IntVector2 p)
 		{
 			return p.X >= 0 && p.Y >= 0 && p.X < this.Width && p.Y < this.Height;
 		}
 
-		public IntPoint2 Center
+		public IntVector2 Center
 		{
-			get { return new IntPoint2((this.Width - 1) / 2, (this.Height - 1) / 2); }
+			get { return new IntVector2((this.Width - 1) / 2, (this.Height - 1) / 2); }
 		}
 
 		public int Area
@@ -41,11 +41,11 @@ namespace Dwarrowdelf
 			get { return m_width * m_height; }
 		}
 
-		public IEnumerable<IntPoint2> Range()
+		public IEnumerable<IntVector2> Range()
 		{
 			for (int y = 0; y < this.Height; ++y)
 				for (int x = 0; x < this.Width; ++x)
-					yield return new IntPoint2(x, y);
+					yield return new IntVector2(x, y);
 		}
 
 		#region IEquatable<IntSize2> Members
@@ -76,7 +76,7 @@ namespace Dwarrowdelf
 			return !(left == right);
 		}
 
-		public int GetIndex(IntPoint2 p)
+		public int GetIndex(IntVector2 p)
 		{
 			return p.X + p.Y * this.Width;
 		}

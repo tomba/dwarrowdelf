@@ -35,7 +35,7 @@ namespace Dwarrowdelf
 			m_grid.Clear();
 		}
 
-		public T this[IntPoint2 l]
+		public T this[IntVector2 l]
 		{
 			get
 			{
@@ -52,8 +52,8 @@ namespace Dwarrowdelf
 
 		public T this[int x, int y]
 		{
-			get { return this[new IntPoint2(x, y)]; }
-			set { this[new IntPoint2(x, y)] = value; }
+			get { return this[new IntVector2(x, y)]; }
+			set { this[new IntVector2(x, y)] = value; }
 		}
 
 		public IntGrid2 Bounds
@@ -61,13 +61,13 @@ namespace Dwarrowdelf
 			get { return new IntGrid2(0 - this.Origin.X, 0 - this.Origin.Y, this.Width, this.Height); }
 		}
 
-		public IEnumerable<KeyValuePair<IntPoint2, T>> GetIndexValueEnumerable()
+		public IEnumerable<KeyValuePair<IntVector2, T>> GetIndexValueEnumerable()
 		{
 			for (int y = 0; y < this.Height; y++)
 			{
 				for (int x = 0; x < this.Width; x++)
 				{
-					yield return new KeyValuePair<IntPoint2, T>(new IntPoint2(x - Origin.X, y - Origin.Y), m_grid.Grid[y, x]);
+					yield return new KeyValuePair<IntVector2, T>(new IntVector2(x - Origin.X, y - Origin.Y), m_grid.Grid[y, x]);
 				}
 			}
 		}

@@ -332,7 +332,7 @@ namespace Dwarrowdelf.Client
 				var env = this.Environment;
 				var z = this.Location.Z;
 
-				ShadowCastRecursive.Calculate(this.Location.ToIntPoint2(), visionRange,
+				ShadowCastRecursive.Calculate(this.Location.ToIntVector2(), visionRange,
 					m_visionMap, env.Size.Plane,
 					p2 =>
 					{

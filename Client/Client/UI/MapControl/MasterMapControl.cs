@@ -574,7 +574,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var cp = this.MapCenterPos.ToIntPoint3();
 			var s = this.GridSize;
-			var rect = new IntGrid2Z(new IntPoint2(cp.X - s.Width / 2 + 1, cp.Y - s.Height / 2 + 1),
+			var rect = new IntGrid2Z(new IntVector2(cp.X - s.Width / 2 + 1, cp.Y - s.Height / 2 + 1),
 				new IntSize2(s.Width - 2, s.Height - 2),
 				cp.Z);
 

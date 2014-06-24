@@ -13,7 +13,7 @@ namespace Dwarrowdelf.TerrainGen
 		TerrainData m_terrain;
 		Random m_random;
 
-		IntPoint2[] m_riverPath;
+		IntVector2[] m_riverPath;
 
 		public RiverGen(TerrainData terrain, Random random)
 		{
@@ -77,18 +77,18 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		IntPoint2 MapCoord(int c, SideEdge edge)
+		IntVector2 MapCoord(int c, SideEdge edge)
 		{
 			switch (edge)
 			{
 				case SideEdge.Left:
-					return new IntPoint2(0, c);
+					return new IntVector2(0, c);
 				case SideEdge.Top:
-					return new IntPoint2(c, 0);
+					return new IntVector2(c, 0);
 				case SideEdge.Right:
-					return new IntPoint2(m_terrain.Width - 1, c);
+					return new IntVector2(m_terrain.Width - 1, c);
 				case SideEdge.Bottom:
-					return new IntPoint2(c, m_terrain.Height - 1);
+					return new IntVector2(c, m_terrain.Height - 1);
 				default:
 					throw new Exception();
 			}
@@ -157,7 +157,7 @@ namespace Dwarrowdelf.TerrainGen
 				if (res.Status != AStarStatus.Found)
 					continue;
 
-				var riverPath = res.GetPathLocationsReverse().Select(p => p.ToIntPoint2()).ToArray();
+				var riverPath = res.GetPathLocationsReverse().Select(p => p.ToIntVector2()).ToArray();
 
 				if (riverPath.Length < 100)
 				{
@@ -190,7 +190,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			var pos = DirectionSet.Cardinal | DirectionSet.Exact;
 
-			var coreLocs = new HashSet<IntPoint2>(m_riverPath.SelectMany(p => pos.ToSurroundingPoints(p)));
+			var coreLocs = new HashSet<IntVector2>(m_riverPath.SelectMany(p => pos.ToSurroundingPoints(p)));
 
 			foreach (var pp in coreLocs)
 			{

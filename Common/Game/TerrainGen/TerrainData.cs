@@ -40,7 +40,7 @@ namespace Dwarrowdelf.TerrainGen
 			return m_levelMap[y, x];
 		}
 
-		public int GetSurfaceLevel(IntPoint2 p)
+		public int GetSurfaceLevel(IntVector2 p)
 		{
 			return m_levelMap[p.Y, p.X];
 		}
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.TerrainGen
 			return new IntPoint3(x, y, GetSurfaceLevel(x, y));
 		}
 
-		public IntPoint3 GetSurfaceLocation(IntPoint2 p)
+		public IntPoint3 GetSurfaceLocation(IntVector2 p)
 		{
 			return new IntPoint3(p, GetSurfaceLevel(p));
 		}

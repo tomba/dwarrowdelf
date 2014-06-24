@@ -520,7 +520,7 @@ namespace Dwarrowdelf.Server
 
 			int z = this.Z;
 			var env = this.Environment;
-			ShadowCastRecursive.Calculate(new IntPoint2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Size.Plane,
+			ShadowCastRecursive.Calculate(new IntVector2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Size.Plane,
 				p2 => !env.GetTileData(new IntPoint3(p2, z)).IsSeeThrough);
 
 			m_losMapVersion = this.Environment.Version;
@@ -549,7 +549,7 @@ namespace Dwarrowdelf.Server
 					return true;
 
 				case LivingVisionMode.LOS:
-					if (this.VisionMap[new IntPoint2(dl.X, dl.Y)] == false)
+					if (this.VisionMap[new IntVector2(dl.X, dl.Y)] == false)
 						return false;
 
 					return true;
@@ -559,7 +559,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		IEnumerable<IntPoint2> GetVisibleLocationsSimpleFOV()
+		IEnumerable<IntVector2> GetVisibleLocationsSimpleFOV()
 		{
 			var bounds2D = this.Environment.Size.Plane;
 
@@ -567,7 +567,7 @@ namespace Dwarrowdelf.Server
 			{
 				for (int x = this.X - this.VisionRange; x <= this.X + this.VisionRange; ++x)
 				{
-					IntPoint2 loc = new IntPoint2(x, y);
+					IntVector2 loc = new IntVector2(x, y);
 					if (!bounds2D.Contains(loc))
 						continue;
 
@@ -576,14 +576,14 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		IEnumerable<IntPoint2> GetVisibleLocationsLOS()
+		IEnumerable<IntVector2> GetVisibleLocationsLOS()
 		{
 			return this.VisionMap.GetIndexValueEnumerable().
 					Where(kvp => kvp.Value == true).
 					Select(kvp => kvp.Key + new IntVector2(this.X, this.Y));
 		}
 
-		public IEnumerable<IntPoint2> GetVisibleLocations()
+		public IEnumerable<IntVector2> GetVisibleLocations()
 		{
 			switch (World.LivingVisionMode)
 			{

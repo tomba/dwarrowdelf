@@ -10,7 +10,7 @@ namespace Dwarrowdelf
 		/// Plot the line from src to dst
 		/// </summary>
 		/// <param name="plot">The plotting function (if this returns false, the algorithm stops early)</param>
-		public static void PlotLine(IntPoint2 src, IntPoint2 dst, Func<IntPoint2, bool> plot)
+		public static void PlotLine(IntVector2 src, IntVector2 dst, Func<IntVector2, bool> plot)
 		{
 			int x0 = src.X;
 			int y0 = src.Y;
@@ -39,7 +39,7 @@ namespace Dwarrowdelf
 
 			for (int x = x0; x <= x1; ++x)
 			{
-				IntPoint2 p = steep ? new IntPoint2(y, x) : new IntPoint2(x, y);
+				IntVector2 p = steep ? new IntVector2(y, x) : new IntVector2(x, y);
 
 				if (!plot(p))
 					return;

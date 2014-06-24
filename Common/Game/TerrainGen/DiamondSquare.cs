@@ -76,7 +76,7 @@ namespace Dwarrowdelf.TerrainGen
 				{
 					for (int x = half; x < grid.Width; x += size)
 					{
-						var p = new IntPoint2(x, y);
+						var p = new IntVector2(x, y);
 						Rectangle(ctx, p, half);
 					}
 				}
@@ -87,7 +87,7 @@ namespace Dwarrowdelf.TerrainGen
 				{
 					for (int x = odd ? half : 0; x < grid.Width; x += size)
 					{
-						var p = new IntPoint2(x, y);
+						var p = new IntVector2(x, y);
 						Diamond(ctx, p, half);
 					}
 
@@ -98,11 +98,11 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		static void Rectangle(Context ctx, IntPoint2 middle, int radius)
+		static void Rectangle(Context ctx, IntVector2 middle, int radius)
 		{
 			var grid = ctx.Grid;
 			double v1, v2, v3, v4;
-			IntPoint2 p1, p2, p3, p4;
+			IntVector2 p1, p2, p3, p4;
 
 			p1 = middle.Offset(radius, radius);
 			v1 = grid[p1];
@@ -127,10 +127,10 @@ namespace Dwarrowdelf.TerrainGen
 				ctx.Max = val;
 		}
 
-		static void Diamond(Context ctx, IntPoint2 middle, int radius)
+		static void Diamond(Context ctx, IntVector2 middle, int radius)
 		{
 			double v1, v2, v3, v4;
-			IntPoint2 p1, p2, p3, p4;
+			IntVector2 p1, p2, p3, p4;
 
 			p1 = middle.Offset(0, -radius);
 			v1 = GetGridValue(ctx, p1);
@@ -158,7 +158,7 @@ namespace Dwarrowdelf.TerrainGen
 		/// <summary>
 		/// Get value from the grid, or if the point is outside the grid, a value averaged between two corners
 		/// </summary>
-		static double GetGridValue(Context ctx, IntPoint2 p)
+		static double GetGridValue(Context ctx, IntVector2 p)
 		{
 			var grid = ctx.Grid;
 			var corners = ctx.Corners;
