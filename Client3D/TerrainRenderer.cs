@@ -64,6 +64,13 @@ namespace Client3D
 			game.GameSystems.Add(this);
 		}
 
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			m_chunkManager.Initialize();
+		}
+
 		protected override void LoadContent()
 		{
 			base.LoadContent();

@@ -28,6 +28,8 @@ namespace Client3D
 		/// </summary>
 		public IntSize3 Size { get; private set; }
 
+		ICameraService m_camera;
+
 		Vector3 m_oldCameraPos;
 
 		public ChunkManager(TerrainRenderer scene)
@@ -35,8 +37,6 @@ namespace Client3D
 			m_scene = scene;
 
 			CreateChunks();
-
-			m_oldCameraPos = m_scene.Services.GetService<ICameraService>().Position;
 		}
 
 		void CreateChunks()
@@ -66,13 +66,20 @@ namespace Client3D
 			}
 		}
 
+		public void Initialize()
+		{
+			m_camera = m_scene.Services.GetService<ICameraService>();
+
+			m_oldCameraPos = m_camera.Position;
+		}
+
 		public void InvalidateChunks()
 		{
 			foreach (var chunk in m_chunks)
 				chunk.InvalidateChunk();
 		}
 
-		public void InvalidateChunk(IntPoint3 cp)
+		void InvalidateChunk(IntPoint3 cp)
 		{
 			var chunk = m_chunks[this.Size.GetIndex(cp)];
 
@@ -132,9 +139,7 @@ namespace Client3D
 
 		void InvalidateDueVisibilityChange()
 		{
-			var cameraService = m_scene.Services.GetService<ICameraService>();
-
-			var cameraPos = cameraService.Position;
+			var cameraPos = m_camera.Position;
 
 			var p1 = m_oldCameraPos / Chunk.CHUNK_SIZE;
 			var p2 = cameraPos / Chunk.CHUNK_SIZE;
@@ -170,17 +175,15 @@ namespace Client3D
 
 		public void Update(GameTime gameTime)
 		{
-			var cameraService = m_scene.Services.GetService<ICameraService>();
-
 			InvalidateDueVisibilityChange();
 
-			var frustum = cameraService.Frustum;
+			var frustum = m_camera.Frustum;
 
 			int numVertices = 0;
 			int numChunks = 0;
 			int numChunkRecalcs = 0;
 
-			var eyePos = cameraService.Position;
+			var eyePos = m_camera.Position;
 
 #if USE_NONPARALLEL
 			foreach (var chunk in m_chunks)
@@ -220,16 +223,14 @@ namespace Client3D
 
 		public void Draw(GameTime gameTime)
 		{
-			var cameraService = m_scene.Services.GetService<ICameraService>();
-
 			// Vertex Shader
 
-			var viewProjMatrix = Matrix.Transpose(cameraService.View * cameraService.Projection);
+			var viewProjMatrix = Matrix.Transpose(m_camera.View * m_camera.Projection);
 			viewProjMatrix.Transpose();
 			m_scene.Effect.Parameters["g_viewProjMatrix"].SetValue(ref viewProjMatrix);
 
 			// Pixel Shader
-			m_scene.Effect.Parameters["g_eyePos"].SetValue(cameraService.Position);
+			m_scene.Effect.Parameters["g_eyePos"].SetValue(m_camera.Position);
 
 			var perObCBuf = m_scene.Effect.ConstantBuffers["PerObjectBuffer"];
 
