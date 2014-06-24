@@ -220,38 +220,38 @@ namespace Client3D
 
 		void CreateCubicBlock(IntPoint3 p, VertexList vertexData, TerrainRenderer scene, TextureID texId, TextureID topTexId)
 		{
-			int sides = 0;
-
 			int x = p.X;
 			int y = p.Y;
 			int z = p.Z;
 
 			var grid = m_map.Grid;
 
+			FaceDirectionBits sides = 0;
+
 			// up
 			if (z == scene.ViewCorner2.Z || grid[z + 1, y, x].IsEmpty)
-				sides |= 1 << (int)FaceDirection.PositiveZ;
+				sides |= FaceDirectionBits.PositiveZ;
 
 			// down
 			// Note: we never draw the bottommost layer in the map
 			if (z != 0 && grid[z - 1, y, x].IsEmpty)
-				sides |= 1 << (int)FaceDirection.NegativeZ;
+				sides |= FaceDirectionBits.NegativeZ;
 
 			// east
 			if (x == scene.ViewCorner2.X || grid[z, y, x + 1].IsEmpty)
-				sides |= 1 << (int)FaceDirection.PositiveX;
+				sides |= FaceDirectionBits.PositiveX;
 
 			// west
 			if (x == scene.ViewCorner1.X || grid[z, y, x - 1].IsEmpty)
-				sides |= 1 << (int)FaceDirection.NegativeX;
+				sides |= FaceDirectionBits.NegativeX;
 
 			// south
 			if (y == scene.ViewCorner2.Y || grid[z, y + 1, x].IsEmpty)
-				sides |= 1 << (int)FaceDirection.PositiveY;
+				sides |= FaceDirectionBits.PositiveY;
 
 			// north
 			if (y == scene.ViewCorner1.Y || grid[z, y - 1, x].IsEmpty)
-				sides |= 1 << (int)FaceDirection.NegativeY;
+				sides |= FaceDirectionBits.NegativeY;
 
 			if (sides == 0)
 				return;
@@ -297,11 +297,13 @@ namespace Client3D
 			return occlusion;
 		}
 
-		void CreateCube(IntPoint3 p, VertexList vertexData, int sides, TextureID texId, TextureID topTexId)
+		void CreateCube(IntPoint3 p, VertexList vertexData, FaceDirectionBits faceMask, TextureID texId, TextureID topTexId)
 		{
 			var grid = m_map.Grid;
 
 			var offset = new IntVector3(p - this.ChunkOffset);
+
+			int sides = (int)faceMask;
 
 			for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
 			{
