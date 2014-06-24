@@ -106,11 +106,6 @@ namespace Dwarrowdelf
 			get { return this.Columns == 0 && this.Rows == 0 && this.Depth == 0; }
 		}
 
-		public int GetIndex(IntPoint3 p)
-		{
-			return p.X + p.Y * this.Columns + p.Z * this.Columns * this.Rows;
-		}
-
 		public bool Contains(IntPoint3 p)
 		{
 			return (p.X >= this.X) && (p.X < this.X + this.Columns) && (p.Y >= this.Y) && (p.Y < this.Y + this.Rows) && (p.Z >= this.Z) && (p.Z < this.Z + this.Depth);

@@ -99,11 +99,6 @@ namespace Dwarrowdelf
 			return Equals((IntGrid2)obj);
 		}
 
-		public int GetIndex(IntPoint2 p)
-		{
-			return p.X + p.Y * this.Columns;
-		}
-
 		public IntGrid2 Move(int x, int y)
 		{
 			return new IntGrid2(x, y, this.Columns, this.Rows);

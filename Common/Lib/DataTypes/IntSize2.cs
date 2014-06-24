@@ -76,6 +76,11 @@ namespace Dwarrowdelf
 			return !(left == right);
 		}
 
+		public int GetIndex(IntPoint2 p)
+		{
+			return p.X + p.Y * this.Width;
+		}
+
 		public override int GetHashCode()
 		{
 			return Hash.Hash2D(this.Width, this.Height);
