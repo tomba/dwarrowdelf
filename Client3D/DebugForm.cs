@@ -127,8 +127,12 @@ namespace Client3D
 		{
 			var cam = m_scene.Services.GetService<ICameraService>();
 
-			this.camPosTextBox.Text = String.Format("{0:F2}/{1:F2}/{2:F2}",
-				cam.Position.X, cam.Position.Y, cam.Position.Z);
+			var campos = cam.Position;
+			var chunkpos = (campos / Chunk.CHUNK_SIZE).ToFloorIntPoint3();
+
+			this.camPosTextBox.Text = String.Format("{0:F2}/{1:F2}/{2:F2} (Chunk {3}/{4}/{5})",
+				campos.X, campos.Y, campos.Z,
+				chunkpos.X, chunkpos.Y, chunkpos.Z);
 			this.vertRendTextBox.Text = m_scene.VerticesRendered.ToString();
 			this.chunksRenderedTextBox.Text = m_scene.ChunksRendered.ToString();
 			this.chunkRecalcsTextBox.Text = m_scene.ChunkRecalcs.ToString();
