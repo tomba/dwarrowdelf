@@ -182,9 +182,9 @@ namespace Dwarrowdelf
 			return new IntVector2(this.X, this.Y);
 		}
 
-		public DoublePoint3 ToDoublePoint3()
+		public DoubleVector3 ToDoubleVector3()
 		{
-			return new DoublePoint3(this.X, this.Y, this.Z);
+			return new DoubleVector3(this.X, this.Y, this.Z);
 		}
 
 		public Direction ToDirection()

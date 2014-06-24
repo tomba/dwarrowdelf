@@ -31,6 +31,11 @@ namespace Dwarrowdelf
 			m_z = vector.Z;
 		}
 
+		public DoubleVector3(IntVector2 p, double z)
+			: this(p.X, p.Y, z)
+		{
+		}
+
 		public DoubleVector3(Direction dir)
 		{
 			int d = (int)dir;
@@ -44,15 +49,9 @@ namespace Dwarrowdelf
 			m_z = ((z ^ 1) - (z >> 1)) - 1;
 		}
 
-		public bool IsNull
-		{
-			get
-			{
-				return this.X == 0 && this.Y == 0 && this.Z == 0;
-			}
-		}
+		public bool IsNull { get { return this.X == 0 && this.Y == 0 && this.Z == 0; } }
 
-		#region IEquatable<Vector3> Members
+		#region IEquatable<DoubleVector3> Members
 
 		public bool Equals(DoubleVector3 other)
 		{
@@ -128,6 +127,11 @@ namespace Dwarrowdelf
 		public static DoubleVector3 operator /(DoubleVector3 v, double number)
 		{
 			return new DoubleVector3(v.X / number, v.Y / number, v.Z / number);
+		}
+
+		public static DoubleVector3 operator +(DoubleVector3 left, Direction right)
+		{
+			return left + new DoubleVector3(right);
 		}
 
 		public DoubleVector3 Round()

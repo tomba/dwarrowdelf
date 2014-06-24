@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Client.UI
 			UpdateElements();
 		}
 
-		void OnScreenCenterPosChanged(object mc, DoublePoint3 center, IntVector3 diff)
+		void OnScreenCenterPosChanged(object mc, DoubleVector3 center, IntVector3 diff)
 		{
 			UpdateTranslateTransform();
 			UpdateScaleTransform();

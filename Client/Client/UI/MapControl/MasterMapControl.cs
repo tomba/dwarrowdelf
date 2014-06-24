@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Client.UI
 
 		double? m_targetTileSize;
 
-		AnimBase<DoublePoint3> m_scrollAnim;
+		AnimBase<DoubleVector3> m_scrollAnim;
 		AnimBase<double> m_cameraZAnim;
 
 		MapControlToolTipService m_toolTipService;
@@ -145,22 +145,22 @@ namespace Dwarrowdelf.Client.UI
 		{
 			/* for testing */
 			if (e.Key == Key.D1)
-				ScrollTo(new DoublePoint3(0, 0, this.MapCenterPos.Z));
+				ScrollTo(new DoubleVector3(0, 0, this.MapCenterPos.Z));
 			else if (e.Key == Key.D2)
-				ScrollTo(new DoublePoint3(this.Environment.Size.Width - 1, 0, this.MapCenterPos.Z));
+				ScrollTo(new DoubleVector3(this.Environment.Size.Width - 1, 0, this.MapCenterPos.Z));
 			else if (e.Key == Key.D3)
-				ScrollTo(new DoublePoint3(this.Environment.Size.Width - 1, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
+				ScrollTo(new DoubleVector3(this.Environment.Size.Width - 1, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
 			else if (e.Key == Key.D4)
-				ScrollTo(new DoublePoint3(0, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
+				ScrollTo(new DoubleVector3(0, this.Environment.Size.Height - 1, this.MapCenterPos.Z));
 			else if (e.Key == Key.D5)
-				ScrollTo(new DoublePoint3(this.Environment.Size.Width / 2, this.Environment.Size.Height / 2, this.MapCenterPos.Z));
+				ScrollTo(new DoubleVector3(this.Environment.Size.Width / 2, this.Environment.Size.Height / 2, this.MapCenterPos.Z));
 			else if (e.Key == Key.D0)
 				SetScrollAnim(new ContinuousCircle3DAnim(this.ScreenCenterPos, 50));
 		}
 
 		bool m_renderingRegistered;
 
-		void SetScrollAnim(AnimBase<DoublePoint3> anim)
+		void SetScrollAnim(AnimBase<DoubleVector3> anim)
 		{
 			if (!m_renderingRegistered)
 			{
@@ -277,7 +277,7 @@ namespace Dwarrowdelf.Client.UI
 			UpdateHoverTileInfo(false);
 		}
 
-		void OnScreenCenterPosChanged(object control, DoublePoint3 centerPos, IntVector3 diff)
+		void OnScreenCenterPosChanged(object control, DoubleVector3 centerPos, IntVector3 diff)
 		{
 			if (diff.Z != 0)
 				UpdateHoverTileInfo(false);
@@ -430,8 +430,8 @@ namespace Dwarrowdelf.Client.UI
 			if (destinationCameraZ == currentCameraZ)
 				return;
 
-			var src = new DoublePoint3(this.ScreenCenterPos.X, this.ScreenCenterPos.Y, currentCameraZ);
-			var dst = new DoublePoint3(p.X, p.Y, 0);
+			var src = new DoubleVector3(this.ScreenCenterPos.X, this.ScreenCenterPos.Y, currentCameraZ);
+			var dst = new DoubleVector3(p.X, p.Y, 0);
 
 			// Vector from eye to the surface
 			var v = dst - src;
@@ -439,7 +439,7 @@ namespace Dwarrowdelf.Client.UI
 			// Vector from eye to the targetZ level
 			v *= (currentCameraZ - destinationCameraZ) / currentCameraZ;
 
-			var scrollDestination = new DoublePoint3(src.X + v.X, src.Y + v.Y, this.ScreenCenterPos.Z);
+			var scrollDestination = new DoubleVector3(src.X + v.X, src.Y + v.Y, this.ScreenCenterPos.Z);
 
 			var duration = ANIM_TIME;
 
@@ -505,20 +505,20 @@ namespace Dwarrowdelf.Client.UI
 
 		public void GoTo(IntVector3 p)
 		{
-			GoTo(p.ToDoublePoint3());
+			GoTo(p.ToDoubleVector3());
 		}
 
-		public void GoTo(DoublePoint3 p)
+		public void GoTo(DoubleVector3 p)
 		{
 			this.MapCenterPos = p;
 		}
 
 		public void ScrollTo(IntVector3 p)
 		{
-			ScrollTo(p.ToDoublePoint3());
+			ScrollTo(p.ToDoubleVector3());
 		}
 
-		void ScrollTo(DoublePoint3 p)
+		void ScrollTo(DoubleVector3 p)
 		{
 			//StopScrollToDir();
 
@@ -572,7 +572,7 @@ namespace Dwarrowdelf.Client.UI
 		/// </summary>
 		public void KeepOnScreen(IntVector3 p)
 		{
-			var cp = this.MapCenterPos.ToIntPoint3();
+			var cp = this.MapCenterPos.ToIntVector3();
 			var s = this.GridSize;
 			var rect = new IntGrid2Z(new IntVector2(cp.X - s.Width / 2 + 1, cp.Y - s.Height / 2 + 1),
 				new IntSize2(s.Width - 2, s.Height - 2),
@@ -606,7 +606,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var v = new IntVector3(xdiff, ydiff, zdiff);
 
-			this.MapCenterPos = (cp + v).ToDoublePoint3();
+			this.MapCenterPos = (cp + v).ToDoubleVector3();
 		}
 
 		string m_tileSet = "Char";
@@ -702,7 +702,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		class Continuous3DAnim : AnimBase<DoublePoint3>
+		class Continuous3DAnim : AnimBase<DoubleVector3>
 		{
 			public DoubleVector3 Direction { get; set; }
 			MapControl m_mapControl;
@@ -713,7 +713,7 @@ namespace Dwarrowdelf.Client.UI
 				m_mapControl = mapControl;
 			}
 
-			public override DoublePoint3 GetValue(TimeSpan now)
+			public override DoubleVector3 GetValue(TimeSpan now)
 			{
 				double t;
 
@@ -767,19 +767,19 @@ namespace Dwarrowdelf.Client.UI
 			protected abstract T GetValue(double t);
 		}
 
-		class Linear3DAnim : FinishableAnimBase<DoublePoint3>
+		class Linear3DAnim : FinishableAnimBase<DoubleVector3>
 		{
-			public DoublePoint3 Source { get; private set; }
-			public DoublePoint3 Destination { get; private set; }
+			public DoubleVector3 Source { get; private set; }
+			public DoubleVector3 Destination { get; private set; }
 
-			public Linear3DAnim(DoublePoint3 src, DoublePoint3 dst, double duration)
+			public Linear3DAnim(DoubleVector3 src, DoubleVector3 dst, double duration)
 				: base(duration)
 			{
 				this.Source = src;
 				this.Destination = dst;
 			}
 
-			protected override DoublePoint3 GetValue(double t)
+			protected override DoubleVector3 GetValue(double t)
 			{
 				if (t >= 1)
 					return this.Destination;
@@ -843,25 +843,25 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		class ContinuousCircle3DAnim : AnimBase<DoublePoint3>
+		class ContinuousCircle3DAnim : AnimBase<DoubleVector3>
 		{
-			DoublePoint3 m_center;
+			DoubleVector3 m_center;
 			double m_radius;
 
-			public ContinuousCircle3DAnim(DoublePoint3 center, double radius)
+			public ContinuousCircle3DAnim(DoubleVector3 center, double radius)
 			{
 				m_center = center;
 				m_radius = radius;
 			}
 
-			public override DoublePoint3 GetValue(TimeSpan now)
+			public override DoubleVector3 GetValue(TimeSpan now)
 			{
 				double t = (now - this.StartTime).TotalSeconds;
 
 				double x = Math.Cos(t) * m_radius;
 				double y = Math.Sin(t) * m_radius;
 
-				return new DoublePoint3(m_center.X + x, m_center.Y + y, m_center.Z);
+				return new DoubleVector3(m_center.X + x, m_center.Y + y, m_center.Z);
 			}
 		}
 	}

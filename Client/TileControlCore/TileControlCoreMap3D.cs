@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client.TileControl
 	{
 		public TileControlOrientation Orientation { get; set; }
 
-		public DoublePoint3 MapCenterPos
+		public DoubleVector3 MapCenterPos
 		{
 			get { return ScreenToMap(this.ScreenCenterPos); }
 			set { this.ScreenCenterPos = MapToScreen(value); }
@@ -70,21 +70,21 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public DoublePoint3 ScreenTileToMapPoint(Point p)
+		public DoubleVector3 ScreenTileToMapPoint(Point p)
 		{
 			return ScreenTileToMapPoint(p, this.ScreenZ);
 		}
 
-		public DoublePoint3 ScreenTileToMapPoint(Point p, double z)
+		public DoubleVector3 ScreenTileToMapPoint(Point p, double z)
 		{
 			switch (this.Orientation)
 			{
 				case TileControlOrientation.XY:
-					return new DoublePoint3(p.X, p.Y, z);
+					return new DoubleVector3(p.X, p.Y, z);
 				case TileControlOrientation.XZ:
-					return new DoublePoint3(p.X, z, -p.Y);
+					return new DoubleVector3(p.X, z, -p.Y);
 				case TileControlOrientation.ZY:
-					return new DoublePoint3(z, p.Y, p.X);
+					return new DoubleVector3(z, p.Y, p.X);
 				default:
 					throw new NotImplementedException();
 			}
@@ -121,36 +121,21 @@ namespace Dwarrowdelf.Client.TileControl
 			return new IntVector2(MyMath.Round(st.X), MyMath.Round(st.Y));
 		}
 
-		public DoublePoint3 MapToScreen(IntVector3 p)
+		public DoubleVector3 MapToScreen(IntVector3 p)
 		{
-			return MapToScreen(p.ToDoublePoint3());
+			return MapToScreen(p.ToDoubleVector3());
 		}
 
-		public DoublePoint3 MapToScreen(DoublePoint3 p)
+		public DoubleVector3 MapToScreen(DoubleVector3 p)
 		{
 			switch (this.Orientation)
 			{
 				case TileControlOrientation.XY:
 					return p;
 				case TileControlOrientation.XZ:
-					return new DoublePoint3(p.X, -p.Z, p.Y);
+					return new DoubleVector3(p.X, -p.Z, p.Y);
 				case TileControlOrientation.ZY:
-					return new DoublePoint3(p.Z, p.Y, p.X);
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		public DoublePoint3 ScreenToMap(DoublePoint3 p)
-		{
-			switch (this.Orientation)
-			{
-				case TileControlOrientation.XY:
-					return p;
-				case TileControlOrientation.XZ:
-					return new DoublePoint3(p.X, p.Z, -p.Y);
-				case TileControlOrientation.ZY:
-					return new DoublePoint3(p.Z, p.Y, p.X);
+					return new DoubleVector3(p.Z, p.Y, p.X);
 				default:
 					throw new NotImplementedException();
 			}

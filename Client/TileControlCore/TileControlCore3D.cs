@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D; // XXX remove when Point3D not used
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public delegate void CenterPosChanged(object control, DoublePoint3 centerPos, IntVector3 diff);
+	public delegate void CenterPosChanged(object control, DoubleVector3 centerPos, IntVector3 diff);
 
 	public abstract class TileControlCore3D : TileControlCore
 	{
@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize)
 		{
-			var iscp = this.ScreenCenterPos.ToIntPoint3();
+			var iscp = this.ScreenCenterPos.ToIntVector3();
 
 			m_contentOffset = new Vector(iscp.X - gridSize.Width / 2, iscp.Y - gridSize.Height / 2);
 		}
@@ -42,8 +42,8 @@ namespace Dwarrowdelf.Client.TileControl
 			get { return this.ScreenCenterPos.Z; }
 		}
 
-		DoublePoint3 m_screenCenterPos;
-		public DoublePoint3 ScreenCenterPos
+		DoubleVector3 m_screenCenterPos;
+		public DoubleVector3 ScreenCenterPos
 		{
 			get { return m_screenCenterPos; }
 
@@ -57,8 +57,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 				m_screenCenterPos = scp;
 
-				var ioldscp = oldscp.ToIntPoint3();
-				var iscp = scp.ToIntPoint3();
+				var ioldscp = oldscp.ToIntVector3();
+				var iscp = scp.ToIntVector3();
 
 				var diff = iscp - ioldscp;
 
@@ -97,10 +97,10 @@ namespace Dwarrowdelf.Client.TileControl
 			return RenderTileToRenderPoint(st);
 		}
 
-		public DoublePoint3 RenderTileToScreen3(Point st)
+		public DoubleVector3 RenderTileToScreen3(Point st)
 		{
 			var p = RenderTileToScreen(st);
-			return new DoublePoint3(p.X, p.Y, this.ScreenZ);
+			return new DoubleVector3(p.X, p.Y, this.ScreenZ);
 		}
 	}
 }

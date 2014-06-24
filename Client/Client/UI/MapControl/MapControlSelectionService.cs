@@ -139,7 +139,7 @@ namespace Dwarrowdelf.Client.UI
 						m_mapControl.ScreenCenterPosChanged += OnScreenCenterPosChanged;
 						m_mapControl.KeyDown += OnKeyDown;
 
-						this.CursorPosition = m_mapControl.MapCenterPos.ToIntPoint3();
+						this.CursorPosition = m_mapControl.MapCenterPos.ToIntVector3();
 
 						break;
 
@@ -147,7 +147,7 @@ namespace Dwarrowdelf.Client.UI
 						m_mapControl.MouseClicked += OnMouseClicked;
 						m_mapControl.KeyDown += OnKeyDown;
 
-						this.CursorPosition = m_mapControl.MapCenterPos.ToIntPoint3();
+						this.CursorPosition = m_mapControl.MapCenterPos.ToIntVector3();
 
 						break;
 				}
@@ -353,7 +353,7 @@ namespace Dwarrowdelf.Client.UI
 			AbortSelection();
 		}
 
-		void OnScreenCenterPosChanged(object control, DoublePoint3 centerPos, IntVector3 diff)
+		void OnScreenCenterPosChanged(object control, DoubleVector3 centerPos, IntVector3 diff)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
 

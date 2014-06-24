@@ -90,7 +90,7 @@ namespace AStarTest
 
 			base.OnInitialized(e);
 
-			base.ScreenCenterPos = new DoublePoint3(19, 12, 0);
+			base.ScreenCenterPos = new DoubleVector3(19, 12, 0);
 		}
 
 		void MapControl_GridSizeChanged(object ob, IntSize2 gridSize)
@@ -98,7 +98,7 @@ namespace AStarTest
 			m_renderData.SetGridSize(gridSize);
 		}
 
-		void MapControl_ScreenCenterPosChanged(object arg1, DoublePoint3 arg2, IntVector3 arg3)
+		void MapControl_ScreenCenterPosChanged(object arg1, DoubleVector3 arg2, IntVector3 arg3)
 		{
 			UpdateCurrentTileInfo(Mouse.GetPosition(this));
 		}
@@ -216,13 +216,13 @@ namespace AStarTest
 		{
 			var rt = RenderPointToRenderTile(p);
 			var st3 = RenderTileToScreen3(rt);
-			return st3.ToIntPoint3();
+			return st3.ToIntVector3();
 		}
 
 		public IntVector3 ScreenTileToMapLocation(IntVector2 st)
 		{
 			var p = RenderTileToScreen3(new Point(st.X, st.Y));
-			return p.ToIntPoint3();
+			return p.ToIntVector3();
 		}
 
 		void UpdateCurrentTileInfo(Point pos)

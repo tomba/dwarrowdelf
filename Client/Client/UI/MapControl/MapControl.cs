@@ -162,7 +162,7 @@ namespace Dwarrowdelf.Client.UI
 			if (gridSize != m_renderData.Size)
 			{
 				m_renderData.SetSize(gridSize);
-				UpdateBounds(this.MapCenterPos.ToIntPoint3(), gridSize);
+				UpdateBounds(this.MapCenterPos.ToIntVector3(), gridSize);
 				InvalidateTileData();
 			}
 		}
@@ -312,10 +312,10 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void OnScreenCenterPosChanged(object ob, DoublePoint3 scp, IntVector3 diff)
+		void OnScreenCenterPosChanged(object ob, DoubleVector3 scp, IntVector3 diff)
 		{
 			var mcp = ScreenToMap(scp);
-			var imcp = mcp.ToIntPoint3();
+			var imcp = mcp.ToIntVector3();
 
 			UpdateBounds(imcp, this.GridSize);
 

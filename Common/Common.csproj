@@ -62,7 +62,6 @@
     <Compile Include="Game\TerrainGen\RiverGen.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMask.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMask64.cs" />
-    <Compile Include="Lib\DataTypes\DoublePoint3.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMask32.cs" />
     <Compile Include="Lib\DataTypes\DataGrid2D.cs" />
     <Compile Include="Lib\DisposeHelper.cs" />
