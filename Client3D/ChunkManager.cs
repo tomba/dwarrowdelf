@@ -23,6 +23,11 @@ namespace Client3D
 		public int ChunksRendered { get; private set; }
 		public int ChunkRecalcs { get; private set; }
 
+		/// <summary>
+		/// Size in chunks
+		/// </summary>
+		public IntSize3 Size { get; private set; }
+
 		public ChunkManager(TerrainRenderer scene)
 		{
 			m_scene = scene;
@@ -38,19 +43,20 @@ namespace Client3D
 			int yChunks = map.Size.Height / Chunk.CHUNK_SIZE;
 			int zChunks = map.Size.Depth / Chunk.CHUNK_SIZE;
 
-			m_chunks = new Chunk[xChunks * yChunks * zChunks];
+			this.Size = new IntSize3(xChunks, yChunks, zChunks);
+
+			m_chunks = new Chunk[this.Size.Volume];
 
 			// Organize chunks from up to down to avoid overdraw
-			int idx = 0;
 			for (int z = zChunks - 1; z >= 0; --z)
 			{
 				for (int y = 0; y < yChunks; ++y)
 				{
 					for (int x = 0; x < xChunks; ++x)
 					{
-						var chunkOffset = new IntVector3(x, y, z) * Chunk.CHUNK_SIZE;
-						var chunk = ToDispose(new Chunk(map, chunkOffset));
-						m_chunks[idx++] = chunk;
+						var chunkPosition = new IntVector3(x, y, z);
+						var chunk = ToDispose(new Chunk(map, chunkPosition));
+						m_chunks[this.Size.GetIndex(x, y, z)] = chunk;
 					}
 				}
 			}
@@ -64,10 +70,13 @@ namespace Client3D
 
 		public void InvalidateChunksZ(int fromZ, int toZ)
 		{
-			foreach (var chunk in m_chunks)
+			int fromIdx = this.Size.GetIndex(0, 0, fromZ / Chunk.CHUNK_SIZE);
+			int toIdx = this.Size.GetIndex(0, 0, (toZ / Chunk.CHUNK_SIZE) + 1);
+
+			for (int idx = fromIdx; idx < toIdx; ++idx)
 			{
-				if (chunk.ChunkOffset.Z <= toZ && chunk.ChunkOffset.Z + Chunk.CHUNK_SIZE >= fromZ)
-					chunk.InvalidateChunk();
+				var chunk = m_chunks[idx];
+				chunk.InvalidateChunk();
 			}
 		}
 

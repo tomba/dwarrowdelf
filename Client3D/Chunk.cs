@@ -43,6 +43,13 @@ namespace Client3D
 		Buffer<TerrainVertex> m_vertexBuffer;
 		static readonly VertexInputLayout s_layout = VertexInputLayout.New<TerrainVertex>(0);
 
+		/// <summary>
+		/// Chunk position
+		/// </summary>
+		public IntVector3 ChunkPosition { get; private set; }
+		/// <summary>
+		/// Chunk offset, i.e. position * CHUNK_SIZE
+		/// </summary>
 		public IntVector3 ChunkOffset { get; private set; }
 
 		public int VertexCount { get; private set; }
@@ -96,15 +103,16 @@ namespace Client3D
 			Sand = 2,
 		}
 
-		public Chunk(VoxelMap map, IntVector3 chunkOffset)
+		public Chunk(VoxelMap map, IntVector3 chunkPosition)
 		{
-			this.ChunkOffset = chunkOffset;
+			this.ChunkPosition = chunkPosition;
+			this.ChunkOffset = chunkPosition * CHUNK_SIZE;
 
 			this.IsInvalid = true;
 
 			m_map = map;
 
-			var v1 = chunkOffset.ToVector3();
+			var v1 = this.ChunkOffset.ToVector3();
 			var v2 = v1 + new Vector3(Chunk.CHUNK_SIZE);
 			this.BBox = new BoundingBox(v1, v2);
 		}
