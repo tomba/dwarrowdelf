@@ -19,6 +19,18 @@ namespace Client3D
 		NegativeZ = 5,	// Down
 	}
 
+	[Flags]
+	enum FaceDirectionBits
+	{
+		PositiveX = 1 << FaceDirection.PositiveX,	// East
+		NegativeX = 1 << FaceDirection.NegativeX,	// West
+		PositiveY = 1 << FaceDirection.PositiveY,	// South
+		NegativeY = 1 << FaceDirection.NegativeY,	// North
+		PositiveZ = 1 << FaceDirection.PositiveZ,	// Up
+		NegativeZ = 1 << FaceDirection.NegativeZ,	// Down
+		All = (1 << 6) - 1,
+	}
+
 	struct Vertex3002
 	{
 		public Vertex3002(float x, float y, float z, float tu, float tv)
