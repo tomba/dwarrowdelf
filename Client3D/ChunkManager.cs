@@ -28,11 +28,15 @@ namespace Client3D
 		/// </summary>
 		public IntSize3 Size { get; private set; }
 
+		Vector3 m_oldCameraPos;
+
 		public ChunkManager(TerrainRenderer scene)
 		{
 			m_scene = scene;
 
 			CreateChunks();
+
+			m_oldCameraPos = m_scene.Services.GetService<ICameraService>().Position;
 		}
 
 		void CreateChunks()
@@ -68,6 +72,13 @@ namespace Client3D
 				chunk.InvalidateChunk();
 		}
 
+		public void InvalidateChunk(IntPoint3 cp)
+		{
+			var chunk = m_chunks[this.Size.GetIndex(cp)];
+
+			chunk.InvalidateChunk();
+		}
+
 		public void InvalidateChunksZ(int fromZ, int toZ)
 		{
 			int fromIdx = this.Size.GetIndex(0, 0, fromZ / Chunk.CHUNK_SIZE);
@@ -80,15 +91,96 @@ namespace Client3D
 			}
 		}
 
+		void InvalidateYZPlane(int x)
+		{
+			//Console.WriteLine("invalidate x plane {0}", x);
+
+			var rect = new IntGrid2(0, 0, this.Size.Height, this.Size.Depth);
+
+			foreach (var _p in rect.Range())
+			{
+				var p = new IntPoint3(x, _p.X, _p.Y);
+				InvalidateChunk(p);
+			}
+		}
+
+		void InvalidateXZPlane(int y)
+		{
+			//Console.WriteLine("invalidate y plane {0}", y);
+
+			var rect = new IntGrid2(0, 0, this.Size.Width, this.Size.Depth);
+
+			foreach (var _p in rect.Range())
+			{
+				var p = new IntPoint3(_p.X, y, _p.Y);
+				InvalidateChunk(p);
+			}
+		}
+
+		void InvalidateXYPlane(int z)
+		{
+			//Console.WriteLine("invalidate z plane {0}", z);
+
+			var rect = new IntGrid2(0, 0, this.Size.Width, this.Size.Height);
+
+			foreach (var _p in rect.Range())
+			{
+				var p = new IntPoint3(_p.X, _p.Y, z);
+				InvalidateChunk(p);
+			}
+		}
+
+		void InvalidateDueVisibilityChange()
+		{
+			var cameraService = m_scene.Services.GetService<ICameraService>();
+
+			var cameraPos = cameraService.Position;
+
+			var p1 = m_oldCameraPos / Chunk.CHUNK_SIZE;
+			var p2 = cameraPos / Chunk.CHUNK_SIZE;
+
+			var minf = Vector3.Min(p1, p2);
+			var maxf = Vector3.Max(p1, p2);
+
+			var min = minf.ToFloorIntPoint3();
+			var max = maxf.ToFloorIntPoint3();
+
+			var diff = max - min;
+
+			if (diff.X != 0)
+			{
+				for (int x = Math.Max(min.X, 0); x <= Math.Min(max.X, this.Size.Width - 1); ++x)
+					InvalidateYZPlane(x);
+			}
+
+			if (diff.Y != 0)
+			{
+				for (int y = Math.Max(min.Y, 0); y <= Math.Min(max.Y, this.Size.Height - 1); ++y)
+					InvalidateXZPlane(y);
+			}
+
+			if (diff.Z != 0)
+			{
+				for (int z = Math.Max(min.Z, 0); z <= Math.Min(max.Z, this.Size.Depth - 1); ++z)
+					InvalidateXYPlane(z);
+			}
+
+			m_oldCameraPos = cameraPos;
+		}
+
 		public void Update(GameTime gameTime)
 		{
 			var cameraService = m_scene.Services.GetService<ICameraService>();
+
+			InvalidateDueVisibilityChange();
 
 			var frustum = cameraService.Frustum;
 
 			int numVertices = 0;
 			int numChunks = 0;
 			int numChunkRecalcs = 0;
+
+			var eyePos = cameraService.Position;
 
 #if USE_NONPARALLEL
 			foreach (var chunk in m_chunks)
@@ -111,7 +203,7 @@ namespace Client3D
 					if (chunk.IsInvalid)
 						Interlocked.Increment(ref numChunkRecalcs);
 
-					chunk.Update(m_scene);
+					chunk.Update(m_scene, eyePos);
 
 					Interlocked.Add(ref numVertices, chunk.VertexCount);
 					Interlocked.Increment(ref numChunks);

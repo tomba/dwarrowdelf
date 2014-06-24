@@ -134,7 +134,7 @@ namespace Client3D
 			}
 		}
 
-		public void Update(TerrainRenderer scene)
+		public void Update(TerrainRenderer scene, Vector3 cameraPos)
 		{
 			if (this.IsInvalid == false)
 				return;
@@ -146,7 +146,24 @@ namespace Client3D
 
 			m_vertexList.Clear();
 
-			GenerateVertices(m_vertexList, scene);
+			var cameraChunkPos = (cameraPos / CHUNK_SIZE).ToFloorIntVector3();
+			var diff = cameraChunkPos - this.ChunkPosition;
+
+			FaceDirectionBits mask = 0;
+			if (diff.X >= 0)
+				mask |= FaceDirectionBits.PositiveX;
+			if (diff.X <= 0)
+				mask |= FaceDirectionBits.NegativeX;
+			if (diff.Y >= 0)
+				mask |= FaceDirectionBits.PositiveY;
+			if (diff.Y <= 0)
+				mask |= FaceDirectionBits.NegativeY;
+			if (diff.Z >= 0)
+				mask |= FaceDirectionBits.PositiveZ;
+			if (diff.Z <= 0)
+				mask |= FaceDirectionBits.NegativeZ;
+
+			GenerateVertices(m_vertexList, scene, mask);
 
 			this.IsInvalid = false;
 			m_vertexBufferInvalid = true;
@@ -186,7 +203,7 @@ namespace Client3D
 			}
 		}
 
-		void GenerateVertices(VertexList vertexData, TerrainRenderer scene)
+		void GenerateVertices(VertexList vertexData, TerrainRenderer scene, FaceDirectionBits mask)
 		{
 			IntPoint3 cutn = scene.ViewCorner1;
 			IntPoint3 cutp = scene.ViewCorner2;
@@ -216,17 +233,18 @@ namespace Client3D
 
 						if (td.IsUndefined)
 						{
-							CreateCubicBlock(p, vertexData, scene, TextureID.Undefined, TextureID.Undefined);
+							CreateCubicBlock(p, vertexData, scene, TextureID.Undefined, TextureID.Undefined, mask);
 							continue;
 						}
 
-						CreateCubicBlock(p, vertexData, scene, TextureID.Tex2, td.IsGrass ? TextureID.Grass : TextureID.Tex2);
+						CreateCubicBlock(p, vertexData, scene, TextureID.Tex2, td.IsGrass ? TextureID.Grass : TextureID.Tex2, mask);
 					}
 				}
 			}
 		}
 
-		void CreateCubicBlock(IntPoint3 p, VertexList vertexData, TerrainRenderer scene, TextureID texId, TextureID topTexId)
+		void CreateCubicBlock(IntPoint3 p, VertexList vertexData, TerrainRenderer scene, TextureID texId, TextureID topTexId,
+			FaceDirectionBits mask)
 		{
 			int x = p.X;
 			int y = p.Y;
@@ -237,29 +255,47 @@ namespace Client3D
 			FaceDirectionBits sides = 0;
 
 			// up
-			if (z == scene.ViewCorner2.Z || grid[z + 1, y, x].IsEmpty)
-				sides |= FaceDirectionBits.PositiveZ;
+			if ((mask & FaceDirectionBits.PositiveZ) != 0)
+			{
+				if (z == scene.ViewCorner2.Z || grid[z + 1, y, x].IsEmpty)
+					sides |= FaceDirectionBits.PositiveZ;
+			}
 
 			// down
 			// Note: we never draw the bottommost layer in the map
-			if (z != 0 && grid[z - 1, y, x].IsEmpty)
-				sides |= FaceDirectionBits.NegativeZ;
+			if ((mask & FaceDirectionBits.NegativeZ) != 0)
+			{
+				if (z != 0 && grid[z - 1, y, x].IsEmpty)
+					sides |= FaceDirectionBits.NegativeZ;
+			}
 
 			// east
-			if (x == scene.ViewCorner2.X || grid[z, y, x + 1].IsEmpty)
-				sides |= FaceDirectionBits.PositiveX;
+			if ((mask & FaceDirectionBits.PositiveX) != 0)
+			{
+				if (x == scene.ViewCorner2.X || grid[z, y, x + 1].IsEmpty)
+					sides |= FaceDirectionBits.PositiveX;
+			}
 
 			// west
-			if (x == scene.ViewCorner1.X || grid[z, y, x - 1].IsEmpty)
-				sides |= FaceDirectionBits.NegativeX;
+			if ((mask & FaceDirectionBits.NegativeX) != 0)
+			{
+				if (x == scene.ViewCorner1.X || grid[z, y, x - 1].IsEmpty)
+					sides |= FaceDirectionBits.NegativeX;
+			}
 
 			// south
-			if (y == scene.ViewCorner2.Y || grid[z, y + 1, x].IsEmpty)
-				sides |= FaceDirectionBits.PositiveY;
+			if ((mask & FaceDirectionBits.PositiveY) != 0)
+			{
+				if (y == scene.ViewCorner2.Y || grid[z, y + 1, x].IsEmpty)
+					sides |= FaceDirectionBits.PositiveY;
+			}
 
 			// north
-			if (y == scene.ViewCorner1.Y || grid[z, y - 1, x].IsEmpty)
-				sides |= FaceDirectionBits.NegativeY;
+			if ((mask & FaceDirectionBits.NegativeY) != 0)
+			{
+				if (y == scene.ViewCorner1.Y || grid[z, y - 1, x].IsEmpty)
+					sides |= FaceDirectionBits.NegativeY;
+			}
 
 			if (sides == 0)
 				return;
