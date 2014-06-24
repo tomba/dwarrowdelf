@@ -188,8 +188,8 @@ namespace TileControlD3DWinFormsTest
 				if (renderSize == new IntSize2())
 					return;
 
-				int offsetX = MyMath.Ceiling((renderSize.Width - renderData.Size.Width * tilesize) / 2);
-				int offsetY = MyMath.Ceiling((renderSize.Height - renderData.Size.Height * tilesize) / 2);
+				int offsetX = MyMath.RoundAway((renderSize.Width - renderData.Size.Width * tilesize) / 2);
+				int offsetY = MyMath.RoundAway((renderSize.Height - renderData.Size.Height * tilesize) / 2);
 
 				scene.SetRenderOffset(offsetX + (xoffset % tilesize), offsetY + (yoffset % tilesize));
 

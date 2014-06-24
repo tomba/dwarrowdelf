@@ -157,21 +157,36 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Round value up for positive numbers and down for negative numbers.
-		/// Note: different behavior for negative numbers than System.Math.Ceiling()
+		/// Round value to nearest integer away from zero, i.e. up for positive numbers and down for negative numbers.
 		/// </summary>
-		public static int Ceiling(double val)
+		public static int RoundAway(double val)
 		{
 			return (int)val + (1 - (int)((int)(val + 1) - val));
 		}
 
 		/// <summary>
-		/// Round value down for positive numbers and up for negative numbers.
-		/// Note: different behavior for negative numbers than System.Math.Floor()
+		/// Round value to nearest integer towards zero, i.e. down for positive numbers and up for negative numbers.
+		/// Basically a truncate.
+		/// </summary>
+		public static int RoundTowards(double val)
+		{
+			return (int)val;
+		}
+
+		/// <summary>
+		/// Ceiling
+		/// </summary>
+		public static int Ceiling(double val)
+		{
+			return (int)Math.Ceiling(val);
+		}
+
+		/// <summary>
+		/// Floor
 		/// </summary>
 		public static int Floor(double val)
 		{
-			return (int)val;
+			return (int)Math.Floor(val);
 		}
 
 		/// <summary>
