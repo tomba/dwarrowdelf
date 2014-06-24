@@ -90,7 +90,12 @@ namespace Dwarrowdelf
 
 		public int GetIndex(IntPoint3 p)
 		{
-			return p.X + p.Y * this.Width + p.Z * this.Width * this.Height;
+			return GetIndex(p.X, p.Y, p.Z);
+		}
+
+		public int GetIndex(int x, int y, int z)
+		{
+			return x + y * this.Width + z * this.Width * this.Height;
 		}
 
 		public override int GetHashCode()
