@@ -58,7 +58,7 @@ namespace Client3D
 			form.MouseDown += (s, e) =>
 			{
 				if (m_terrainRenderer != null)
-					m_terrainRenderer.ClickPos = new Dwarrowdelf.IntPoint2(e.X, e.Y);
+					m_terrainRenderer.ClickPos = new Dwarrowdelf.IntVector2(e.X, e.Y);
 			};
 
 			var debugForm = new DebugForm(this);

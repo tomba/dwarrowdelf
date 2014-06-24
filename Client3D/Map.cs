@@ -193,7 +193,7 @@ namespace Client3D
 			}
 		}
 
-		void SetTerrain(IntPoint3 p, TileData td)
+		void SetTerrain(IntVector3 p, TileData td)
 		{
 			this.Grid[p.Z, p.Y, p.X] = td;
 
@@ -310,7 +310,7 @@ namespace Client3D
 				{
 					for (int x = 0; x < bounds.Width; ++x)
 					{
-						var p = new IntPoint3(x, y, z);
+						var p = new IntVector3(x, y, z);
 
 						var vis = terrainData.GetTileData(p).IsSeeThrough || CanBeSeen(terrainData, p);
 
@@ -335,7 +335,7 @@ namespace Client3D
 					{
 						if (visibilityArray[z, y, x] == false)
 						{
-							var p = new IntPoint3(x, y, z);
+							var p = new IntVector3(x, y, z);
 							terrainData.SetTileData(p, TileData.UndefinedTileData);
 						}
 					}
@@ -343,7 +343,7 @@ namespace Client3D
 			}
 		}
 
-		static bool CanBeSeen(TerrainData terrainData, IntPoint3 location)
+		static bool CanBeSeen(TerrainData terrainData, IntVector3 location)
 		{
 			foreach (var d in DirectionExtensions.PlanarDirections)
 			{
@@ -359,7 +359,7 @@ namespace Client3D
 			return false;
 		}
 
-		public int GetSurfaceLevel(IntPoint2 p)
+		public int GetSurfaceLevel(IntVector2 p)
 		{
 			return m_levelMap[p.Y, p.X];
 		}
@@ -370,7 +370,7 @@ namespace Client3D
 
 			var center = this.Size.Plane.Center;
 
-			foreach (var p in IntPoint2.SquareSpiral(center, this.Width / 2))
+			foreach (var p in IntVector2.SquareSpiral(center, this.Width / 2))
 			{
 				if (this.Size.Plane.Contains(p) == false)
 					continue;
@@ -403,12 +403,12 @@ namespace Client3D
 			return true;
 		}
 
-		public TerrainID GetTerrainID(IntPoint3 p)
+		public TerrainID GetTerrainID(IntVector3 p)
 		{
 			return this.Grid[p.Z, p.Y, p.X].TerrainID;
 		}
 
-		public InteriorID GetInteriorID(IntPoint3 p)
+		public InteriorID GetInteriorID(IntVector3 p)
 		{
 			return this.Grid[p.Z, p.Y, p.X].InteriorID;
 		}

@@ -43,7 +43,7 @@ namespace Client3D
 			this.Grid = new Voxel[size.Depth, size.Height, size.Width];
 		}
 
-		public Voxel GetVoxel(IntPoint3 p)
+		public Voxel GetVoxel(IntVector3 p)
 		{
 			return this.Grid[p.Z, p.Y, p.X];
 		}
@@ -71,7 +71,7 @@ namespace Client3D
 						}
 						else
 						{
-							var p = new IntPoint3(x, y, z);
+							var p = new IntVector3(x, y, z);
 							visible = DirectionSet.All.ToSurroundingPoints(p)
 								.Where(this.Size.Contains)
 								.Any(n => GetVoxel(n).IsEmpty);

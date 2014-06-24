@@ -128,7 +128,7 @@ namespace Client3D
 			var cam = m_scene.Services.GetService<ICameraService>();
 
 			var campos = cam.Position;
-			var chunkpos = (campos / Chunk.CHUNK_SIZE).ToFloorIntPoint3();
+			var chunkpos = (campos / Chunk.CHUNK_SIZE).ToFloorIntVector3();
 
 			this.camPosTextBox.Text = String.Format("{0:F2}/{1:F2}/{2:F2} (Chunk {3}/{4}/{5})",
 				campos.X, campos.Y, campos.Z,

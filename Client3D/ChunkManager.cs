@@ -79,7 +79,7 @@ namespace Client3D
 				chunk.InvalidateChunk();
 		}
 
-		void InvalidateChunk(IntPoint3 cp)
+		void InvalidateChunk(IntVector3 cp)
 		{
 			var chunk = m_chunks[this.Size.GetIndex(cp)];
 
@@ -106,7 +106,7 @@ namespace Client3D
 
 			foreach (var _p in rect.Range())
 			{
-				var p = new IntPoint3(x, _p.X, _p.Y);
+				var p = new IntVector3(x, _p.X, _p.Y);
 				InvalidateChunk(p);
 			}
 		}
@@ -119,7 +119,7 @@ namespace Client3D
 
 			foreach (var _p in rect.Range())
 			{
-				var p = new IntPoint3(_p.X, y, _p.Y);
+				var p = new IntVector3(_p.X, y, _p.Y);
 				InvalidateChunk(p);
 			}
 		}
@@ -132,7 +132,7 @@ namespace Client3D
 
 			foreach (var _p in rect.Range())
 			{
-				var p = new IntPoint3(_p.X, _p.Y, z);
+				var p = new IntVector3(_p.X, _p.Y, z);
 				InvalidateChunk(p);
 			}
 		}
@@ -147,8 +147,8 @@ namespace Client3D
 			var minf = Vector3.Min(p1, p2);
 			var maxf = Vector3.Max(p1, p2);
 
-			var min = minf.ToFloorIntPoint3();
-			var max = maxf.ToFloorIntPoint3();
+			var min = minf.ToFloorIntVector3();
+			var max = maxf.ToFloorIntVector3();
 
 			var diff = max - min;
 

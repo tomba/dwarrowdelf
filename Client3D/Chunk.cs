@@ -24,7 +24,7 @@ namespace Client3D
 			[VertexElement("TEXOCCPACK", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 			public Byte4 TexOccPack;
 
-			public TerrainVertex(IntPoint3 pos, TextureID texID, int occlusion)
+			public TerrainVertex(IntVector3 pos, TextureID texID, int occlusion)
 			{
 				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
 				this.TexOccPack = new Byte4((int)texID, occlusion, 0, 0);
@@ -205,8 +205,8 @@ namespace Client3D
 
 		void GenerateVertices(VertexList vertexData, TerrainRenderer scene, FaceDirectionBits mask)
 		{
-			IntPoint3 cutn = scene.ViewCorner1;
-			IntPoint3 cutp = scene.ViewCorner2;
+			IntVector3 cutn = scene.ViewCorner1;
+			IntVector3 cutp = scene.ViewCorner2;
 
 			int x0 = Math.Max(cutn.X, this.ChunkOffset.X);
 			int x1 = Math.Min(cutp.X, this.ChunkOffset.X + CHUNK_SIZE - 1);
@@ -229,7 +229,7 @@ namespace Client3D
 						if (td.IsEmpty)
 							continue;
 
-						var p = new IntPoint3(x, y, z);
+						var p = new IntVector3(x, y, z);
 
 						if (td.IsUndefined)
 						{
@@ -243,7 +243,7 @@ namespace Client3D
 			}
 		}
 
-		void CreateCubicBlock(IntPoint3 p, VertexList vertexData, TerrainRenderer scene, TextureID texId, TextureID topTexId,
+		void CreateCubicBlock(IntVector3 p, VertexList vertexData, TerrainRenderer scene, TextureID texId, TextureID topTexId,
 			FaceDirectionBits mask)
 		{
 			int x = p.X;
@@ -303,7 +303,7 @@ namespace Client3D
 			CreateCube(p, vertexData, sides, texId, topTexId);
 		}
 
-		bool IsBlocker(IntPoint3 p)
+		bool IsBlocker(IntVector3 p)
 		{
 			if (m_map.Size.Contains(p) == false)
 				return false;
@@ -316,7 +316,7 @@ namespace Client3D
 			return !td.IsEmpty;
 		}
 
-		int GetOcclusionForFaceVertex(IntPoint3 p, FaceDirection face, int vertexNum)
+		int GetOcclusionForFaceVertex(IntVector3 p, FaceDirection face, int vertexNum)
 		{
 			var odata = s_occlusionLookup[(int)face, vertexNum];
 
@@ -341,11 +341,11 @@ namespace Client3D
 			return occlusion;
 		}
 
-		void CreateCube(IntPoint3 p, VertexList vertexData, FaceDirectionBits faceMask, TextureID texId, TextureID topTexId)
+		void CreateCube(IntVector3 p, VertexList vertexData, FaceDirectionBits faceMask, TextureID texId, TextureID topTexId)
 		{
 			var grid = m_map.Grid;
 
-			var offset = new IntVector3(p - this.ChunkOffset);
+			var offset = p - this.ChunkOffset;
 
 			int sides = (int)faceMask;
 
@@ -371,7 +371,7 @@ namespace Client3D
 		/// <summary>
 		/// Int cube faces from 0 to 1
 		/// </summary>
-		static IntPoint3[][] s_intCubeFaces;
+		static IntVector3[][] s_intCubeFaces;
 
 		/// <summary>
 		/// Float cube faces from -0.5 to 0.5
@@ -408,17 +408,17 @@ namespace Client3D
 			};
 
 			s_cubeFaces = new Vector3[6][];
-			s_intCubeFaces = new IntPoint3[6][];
+			s_intCubeFaces = new IntVector3[6][];
 
 			for (int side = 0; side < 6; ++side)
 			{
 				Vector3[] face = new Vector3[4];
-				IntPoint3[] intFace = new IntPoint3[4];
+				IntVector3[] intFace = new IntVector3[4];
 
 				for (int vn = 0; vn < 4; ++vn)
 				{
 					face[vn] = Vector3.Transform(south[vn], rotQs[side]) / 2.0f;
-					intFace[vn] = (face[vn] + 0.5f).ToIntPoint3();
+					intFace[vn] = (face[vn] + 0.5f).ToIntVector3();
 				}
 
 				s_cubeFaces[side] = face;

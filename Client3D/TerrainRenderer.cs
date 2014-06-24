@@ -48,8 +48,8 @@ namespace Client3D
 
 			this.Map.UndefineHiddenVoxels();
 
-			m_viewCorner1 = new IntPoint3(0, 0, 0);
-			m_viewCorner2 = new IntPoint3(this.Map.Width - 1, this.Map.Height - 1, this.Map.Depth - 1);
+			m_viewCorner1 = new IntVector3(0, 0, 0);
+			m_viewCorner2 = new IntVector3(this.Map.Width - 1, this.Map.Height - 1, this.Map.Depth - 1);
 
 			m_directionalLight = new DirectionalLight()
 			{
@@ -118,8 +118,8 @@ namespace Client3D
 			m_chunkManager.Draw(gameTime);
 		}
 
-		IntPoint3 m_viewCorner1;
-		public IntPoint3 ViewCorner1
+		IntVector3 m_viewCorner1;
+		public IntVector3 ViewCorner1
 		{
 			get { return m_viewCorner1; }
 
@@ -150,8 +150,8 @@ namespace Client3D
 			}
 		}
 
-		IntPoint3 m_viewCorner2;
-		public IntPoint3 ViewCorner2
+		IntVector3 m_viewCorner2;
+		public IntVector3 ViewCorner2
 		{
 			get { return m_viewCorner2; }
 
@@ -183,7 +183,7 @@ namespace Client3D
 		}
 
 
-		public IntPoint2? ClickPos;
+		public IntVector2? ClickPos;
 
 		void HandleMouseClick()
 		{
@@ -234,7 +234,7 @@ namespace Client3D
 			this.ClickPos = null;
 		}
 
-		Vector3 ScreenToWorld(IntPoint2 sp, float d)
+		Vector3 ScreenToWorld(IntVector2 sp, float d)
 		{
 			if (d == 1.0f)
 				return new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
