@@ -47,6 +47,7 @@ namespace Client3D
 			//this.Map = VoxelMap.CreateSimplexMap(64, 0.2f);
 
 			this.Map.UndefineHiddenVoxels();
+			this.Map.CheckVisibleFaces();
 
 			m_viewCorner1 = new IntVector3(0, 0, 0);
 			m_viewCorner2 = new IntVector3(this.Map.Width - 1, this.Map.Height - 1, this.Map.Depth - 1);

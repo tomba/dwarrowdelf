@@ -19,6 +19,7 @@ namespace Client3D
 	{
 		public VoxelType Type;
 		public bool IsGrass;
+		public FaceDirectionBits VisibleFaces;
 
 		public bool IsUndefined { get { return this.Type == VoxelType.Undefined; } }
 		public bool IsEmpty { get { return this.Type == VoxelType.Empty; } }
@@ -46,6 +47,32 @@ namespace Client3D
 		public Voxel GetVoxel(IntVector3 p)
 		{
 			return this.Grid[p.Z, p.Y, p.X];
+		}
+
+		public void CheckVisibleFaces()
+		{
+			var grid = this.Grid;
+
+			Parallel.For(0, this.Depth, z =>
+			{
+				for (int y = 0; y < this.Height; ++y)
+					for (int x = 0; x < this.Width; ++x)
+					{
+						var p = new IntVector3(x, y, z);
+
+						var neighbors = DirectionSet.CardinalUpDown.ToSurroundingPoints(p);
+
+						foreach (var n in neighbors)
+						{
+							if (this.Size.Contains(n) == true && grid[n.Z, n.Y, n.X].IsEmpty == false)
+								continue;
+
+							var dir = (n - p).ToDirection();
+
+							grid[z, y, x].VisibleFaces |= dir.ToFaceDirectionBits();
+						}
+					}
+			});
 		}
 
 		public void UndefineHiddenVoxels()

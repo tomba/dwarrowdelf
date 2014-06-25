@@ -231,13 +231,20 @@ namespace Client3D
 
 						var p = new IntVector3(x, y, z);
 
+						TextureID baseTex;
+						TextureID topTex;
+
 						if (td.IsUndefined)
 						{
-							CreateCubicBlock(p, vertexData, scene, TextureID.Undefined, TextureID.Undefined, mask);
-							continue;
+							baseTex = topTex = TextureID.Undefined;
+						}
+						else
+						{
+							baseTex = TextureID.Tex2;
+							topTex = td.IsGrass ? TextureID.Grass : TextureID.Tex2;
 						}
 
-						CreateCubicBlock(p, vertexData, scene, TextureID.Tex2, td.IsGrass ? TextureID.Grass : TextureID.Tex2, mask);
+						CreateCubicBlock(p, vertexData, scene, baseTex, topTex, mask);
 					}
 				}
 			}
@@ -252,50 +259,34 @@ namespace Client3D
 
 			var grid = m_map.Grid;
 
-			FaceDirectionBits sides = 0;
+			var vd = grid[z, y, x];
+
+			FaceDirectionBits sides = mask & vd.VisibleFaces;
 
 			// up
-			if ((mask & FaceDirectionBits.PositiveZ) != 0)
-			{
-				if (z == scene.ViewCorner2.Z || grid[z + 1, y, x].IsEmpty)
-					sides |= FaceDirectionBits.PositiveZ;
-			}
+			if ((mask & FaceDirectionBits.PositiveZ) != 0 && z == scene.ViewCorner2.Z)
+				sides |= FaceDirectionBits.PositiveZ;
 
 			// down
 			// Note: we never draw the bottommost layer in the map
-			if ((mask & FaceDirectionBits.NegativeZ) != 0)
-			{
-				if (z != 0 && grid[z - 1, y, x].IsEmpty)
-					sides |= FaceDirectionBits.NegativeZ;
-			}
+			if (z == 0)
+				sides &= ~FaceDirectionBits.NegativeZ;
 
 			// east
-			if ((mask & FaceDirectionBits.PositiveX) != 0)
-			{
-				if (x == scene.ViewCorner2.X || grid[z, y, x + 1].IsEmpty)
-					sides |= FaceDirectionBits.PositiveX;
-			}
+			if ((mask & FaceDirectionBits.PositiveX) != 0 && x == scene.ViewCorner2.X)
+				sides |= FaceDirectionBits.PositiveX;
 
 			// west
-			if ((mask & FaceDirectionBits.NegativeX) != 0)
-			{
-				if (x == scene.ViewCorner1.X || grid[z, y, x - 1].IsEmpty)
-					sides |= FaceDirectionBits.NegativeX;
-			}
+			if ((mask & FaceDirectionBits.NegativeX) != 0 && x == scene.ViewCorner1.X)
+				sides |= FaceDirectionBits.NegativeX;
 
 			// south
-			if ((mask & FaceDirectionBits.PositiveY) != 0)
-			{
-				if (y == scene.ViewCorner2.Y || grid[z, y + 1, x].IsEmpty)
-					sides |= FaceDirectionBits.PositiveY;
-			}
+			if ((mask & FaceDirectionBits.PositiveY) != 0 && y == scene.ViewCorner2.Y)
+				sides |= FaceDirectionBits.PositiveY;
 
 			// north
-			if ((mask & FaceDirectionBits.NegativeY) != 0)
-			{
-				if (y == scene.ViewCorner1.Y || grid[z, y - 1, x].IsEmpty)
-					sides |= FaceDirectionBits.NegativeY;
-			}
+			if ((mask & FaceDirectionBits.NegativeY) != 0 && y == scene.ViewCorner1.Y)
+				sides |= FaceDirectionBits.NegativeY;
 
 			if (sides == 0)
 				return;
