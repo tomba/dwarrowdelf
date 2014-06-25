@@ -93,6 +93,8 @@
       <DependentUpon>IntPointTest.tt</DependentUpon>
     </Compile>
     <Compile Include="IntPointTestDataTypes.cs" />
+    <Compile Include="IntVector3Mutable.cs" />
+    <Compile Include="IntVectorMutableTest.cs" />
     <Compile Include="MapData.cs" />
     <Compile Include="StructAccess.cs" />
     <Compile Include="SkillMap.cs" />
