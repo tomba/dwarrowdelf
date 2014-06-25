@@ -30,9 +30,9 @@ namespace FOVTest
 		Grid2D<bool> m_visionMap;
 		double m_tileSize;
 
-		IntPoint2 m_viewerLocation;
+		IntVector2 m_viewerLocation;
 
-		Action<IntPoint2, int, Grid2D<bool>, IntSize2, Func<IntPoint2, bool>> m_algoDel = RayCast.Calculate;
+		Action<IntVector2, int, Grid2D<bool>, IntSize2, Func<IntVector2, bool>> m_algoDel = RayCast.Calculate;
 
 		bool m_doPerfTest = false;
 
@@ -42,7 +42,7 @@ namespace FOVTest
 			m_visionMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1);
 			m_visionMap.Origin = new IntVector2(m_visionRange, m_visionRange);
 
-			m_viewerLocation = new IntPoint2(m_visionRange, m_visionRange);
+			m_viewerLocation = new IntVector2(m_visionRange, m_visionRange);
 
 			m_blockerMap.Origin = new IntVector2(m_visionRange, m_visionRange);
 
@@ -97,7 +97,7 @@ namespace FOVTest
 					label.Height = m_tileSize;
 					label.BorderBrush = Brushes.Black;
 					label.BorderThickness = new Thickness(1, 1, 0, 0);
-					label.Tag = new IntPoint2(x, y);
+					label.Tag = new IntVector2(x, y);
 					label.MouseDown += new MouseButtonEventHandler(label_MouseDown);
 					grid.Children.Add(label);
 				}
@@ -139,7 +139,7 @@ namespace FOVTest
 		void label_MouseDown(object sender, MouseButtonEventArgs e)
 		{
 			var b = (Label)sender;
-			var p = (IntPoint2)b.Tag;
+			var p = (IntVector2)b.Tag;
 
 			p = p.Offset(m_viewerLocation.X, m_viewerLocation.Y);
 
@@ -148,8 +148,8 @@ namespace FOVTest
 			UpdateFOV();
 		}
 
-		void Calc(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
-			Func<IntPoint2, bool> blockerDelegate)
+		void Calc(IntVector2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
+			Func<IntVector2, bool> blockerDelegate)
 		{
 			m_algoDel(viewerLocation, visionRange, visibilityMap, mapSize, blockerDelegate);
 		}
@@ -158,7 +158,7 @@ namespace FOVTest
 		{
 			if (m_doPerfTest)
 			{
-				Calc(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+				Calc(new IntVector2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
 
 				GC.Collect();
 				GC.WaitForPendingFinalizers();
@@ -166,7 +166,7 @@ namespace FOVTest
 
 				var sw = Stopwatch.StartNew();
 
-				Calc(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+				Calc(new IntVector2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
 
 				sw.Stop();
 				Trace.TraceInformation("Elapsed {0} ms", sw.ElapsedMilliseconds);
@@ -180,9 +180,9 @@ namespace FOVTest
 
 			foreach (Label b in grid.Children)
 			{
-				var p = (IntPoint2)b.Tag;
+				var p = (IntVector2)b.Tag;
 
-				if (p == new IntPoint2())
+				if (p == new IntVector2())
 				{
 					b.Background = Brushes.Red;
 					continue;
