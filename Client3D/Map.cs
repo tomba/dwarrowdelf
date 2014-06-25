@@ -140,7 +140,7 @@ namespace Client3D
 			terrainData.GetData(out grid, out m_levelMap);
 			this.Grid = grid;
 
-			//CreateExtraStuff();
+			CreateExtraStuff();
 
 			//UndefineNonvisible(terrainData);
 		}
@@ -152,6 +152,16 @@ namespace Client3D
 				throw new Exception();
 
 			this.StartLoc = sl.Value;
+
+			for (int z = 0; z < 10; ++z)
+			{
+				var p = this.StartLoc.Center + new IntVector3(0, 0, -z);
+				SetTerrain(p, new TileData()
+				{
+					TerrainID = TerrainID.Empty,
+					InteriorID = InteriorID.Empty,
+				});
+			}
 
 			for (int y = 0; y < 10; ++y)
 			{
