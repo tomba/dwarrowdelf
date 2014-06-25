@@ -12,8 +12,8 @@ namespace Client3D
 {
 	class TerrainRenderer : GameSystem
 	{
-		public Effect Effect { get { return m_effect; } }
-		Effect m_effect;
+		public TerrainEffect Effect { get { return m_effect; } }
+		TerrainEffect m_effect;
 
 		ChunkManager m_chunkManager;
 
@@ -25,14 +25,6 @@ namespace Client3D
 		public int VerticesRendered { get { return m_chunkManager.VerticesRendered; } }
 		public int ChunksRendered { get { return m_chunkManager.ChunksRendered; } }
 		public int ChunkRecalcs { get { return m_chunkManager.ChunkRecalcs; } }
-
-		class DirectionalLight
-		{
-			public Vector4 AmbientColor;
-			public Vector4 DiffuseColor;
-			public Vector4 SpecularColor;
-			public Vector3 LightDirection;
-		}
 
 		DirectionalLight m_directionalLight;
 
@@ -76,12 +68,9 @@ namespace Client3D
 		{
 			base.LoadContent();
 
-			m_effect = this.Content.Load<Effect>("TerrainEffect");
+			m_effect = this.Content.Load<TerrainEffect>("TerrainEffect");
 
-			var textures = this.Content.Load<Texture2D>("TileTextureArray");
-			m_effect.Parameters["blockTextures"].SetResource(textures);
-
-			m_effect.Parameters["blockSampler"].SetResource(this.GraphicsDevice.SamplerStates.LinearClamp);
+			m_effect.TileTextures = this.Content.Load<Texture2D>("TileTextureArray");
 		}
 
 		public override void Update(GameTime gameTime)
@@ -108,10 +97,7 @@ namespace Client3D
 		{
 			base.Draw(gameTime);
 
-			m_effect.Parameters["ambientColor"].SetValue(m_directionalLight.AmbientColor);
-			m_effect.Parameters["diffuseColor"].SetValue(m_directionalLight.DiffuseColor);
-			m_effect.Parameters["specularColor"].SetValue(m_directionalLight.SpecularColor);
-			m_effect.Parameters["lightDirection"].SetValue(m_directionalLight.LightDirection);
+			m_effect.SetDirectionalLight(m_directionalLight);
 
 			var renderPass = m_effect.CurrentTechnique.Passes[0];
 			renderPass.Apply();

@@ -89,9 +89,9 @@ namespace Client3D
 				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 			};
 
-			this.checkBox3.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_showBorders"].SetValue(checkBox3.Checked);
-			this.checkBox4.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_disableLight"].SetValue(checkBox4.Checked);
-			this.checkBox5.CheckedChanged += (s, e) => m_scene.Effect.Parameters["g_disableOcclusion"].SetValue(checkBox5.Checked);
+			this.checkBox3.CheckedChanged += (s, e) => m_scene.Effect.ShowBorders = checkBox3.Checked;
+			this.checkBox4.CheckedChanged += (s, e) => m_scene.Effect.DisableLight = checkBox4.Checked;
+			this.checkBox5.CheckedChanged += (s, e) => m_scene.Effect.DisableOcclusion = checkBox5.Checked;
 		}
 
 		protected override void OnClosing(CancelEventArgs e)

@@ -227,12 +227,10 @@ namespace Client3D
 
 			var viewProjMatrix = Matrix.Transpose(m_camera.View * m_camera.Projection);
 			viewProjMatrix.Transpose();
-			m_scene.Effect.Parameters["g_viewProjMatrix"].SetValue(ref viewProjMatrix);
+			m_scene.Effect.ViewProjection = viewProjMatrix;
 
 			// Pixel Shader
-			m_scene.Effect.Parameters["g_eyePos"].SetValue(m_camera.Position);
-
-			var perObCBuf = m_scene.Effect.ConstantBuffers["PerObjectBuffer"];
+			m_scene.Effect.EyePos = m_camera.Position;
 
 			foreach (var chunk in m_chunks)
 			{
@@ -240,8 +238,7 @@ namespace Client3D
 					continue;
 
 				var worldMatrix = Matrix.Translation(chunk.ChunkOffset.ToVector3());
-				perObCBuf.Parameters["worldMatrix"].SetValue(ref worldMatrix);
-				perObCBuf.Update();
+				m_scene.Effect.SetPerObjectConstBuf(ref worldMatrix);
 
 				chunk.Render(m_scene);
 			}
