@@ -254,9 +254,55 @@ namespace Client3D
 			}
 
 			if (td.IsGreen)
-				grid[z - 1, y, x].IsGrass = true;
+				grid[z - 1, y, x].Flags |= VoxelFlags.Grass;
 
 			grid[z, y, x].Type = VoxelType.Empty;
+		}
+
+		public static VoxelMap Load(string path)
+		{
+			using (var stream = File.OpenRead(path))
+			using (var br = new BinaryReader(stream))
+			{
+				int w = br.ReadInt32();
+				int h = br.ReadInt32();
+				int d = br.ReadInt32();
+
+				var size = new IntSize3(w, h, d);
+
+				var map = new VoxelMap(size);
+
+				var grid = map.Grid;
+
+				for (int z = 0; z < d; ++z)
+					for (int y = 0; y < h; ++y)
+						for (int x = 0; x < w; ++x)
+						{
+							grid[z, y, x].Raw = br.ReadUInt32();
+						}
+
+				return map;
+			}
+		}
+
+		public void Save(string path)
+		{
+			using (var stream = File.Create(path))
+			using (var bw = new BinaryWriter(stream))
+			{
+				bw.Write(this.Size.Width);
+				bw.Write(this.Size.Height);
+				bw.Write(this.Size.Depth);
+
+				int w = this.Width;
+				int h = this.Height;
+				int d = this.Depth;
+
+				for (int z = 0; z < d; ++z)
+					for (int y = 0; y < h; ++y)
+						for (int x = 0; x < w; ++x)
+							bw.Write(this.Grid[z, y, x].Raw);
+			}
 		}
 	}
 }
