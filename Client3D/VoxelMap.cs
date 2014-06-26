@@ -21,6 +21,7 @@ namespace Client3D
 	{
 		None = 0,
 		Grass = 1 << 0,
+		Tree = 2 << 0,
 	}
 
 	[StructLayout(LayoutKind.Explicit, Size = 4)]
@@ -254,7 +255,14 @@ namespace Client3D
 			}
 
 			if (td.IsGreen)
+			{
 				grid[z - 1, y, x].Flags |= VoxelFlags.Grass;
+
+				Dwarrowdelf.MWCRandom r = new MWCRandom(new IntVector3(x, y, z), 0);
+
+				if (r.Next(100) < 30)
+					grid[z, y, x].Flags |= VoxelFlags.Tree;
+			}
 
 			grid[z, y, x].Type = VoxelType.Empty;
 		}

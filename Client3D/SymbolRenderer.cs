@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Client3D
 {
@@ -43,16 +44,6 @@ namespace Client3D
 			this.Visible = true;
 			this.Enabled = true;
 
-			var sl = new Vector3(17, 11, 16);
-
-			m_vertices = new Vertex[] {
-				new Vertex(sl, Color.Red, (int)Dwarrowdelf.Client.SymbolID.Player),
-				new Vertex(sl + new Vector3(-1, 0, 0), Color.Green, (int)Dwarrowdelf.Client.SymbolID.Wolf),
-			};
-
-			for (int i = 0; i < m_vertices.Length; ++i)
-				m_vertices[i].Position += new Vector3(0.5f);
-
 			game.GameSystems.Add(this);
 		}
 
@@ -69,6 +60,36 @@ namespace Client3D
 
 			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 
+			var sl = new Vector3(17, 11, 16);
+
+			List<Vertex> vertices = new List<Vertex>();
+
+			vertices.Add(new Vertex(sl, Color.Red, (int)Dwarrowdelf.Client.SymbolID.Player));
+			vertices.Add(new Vertex(sl + new Vector3(-1, 0, 0), Color.Green, (int)Dwarrowdelf.Client.SymbolID.Wolf));
+
+			var grid = GlobalData.VoxelMap.Grid;
+			int width = GlobalData.VoxelMap.Width;
+			int height = GlobalData.VoxelMap.Height;
+			int depth = GlobalData.VoxelMap.Depth;
+
+			Parallel.For(0, depth, z =>
+			{
+				for (int y = 0; y < height; ++y)
+					for (int x = 0; x < width; ++x)
+					{
+						if ((grid[z, y, x].Flags & VoxelFlags.Tree) != 0)
+						{
+							lock (vertices)
+								vertices.Add(new Vertex(new Vector3(x, y, z), Color.Green, (int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
+						}
+					}
+			});
+
+			m_vertices = vertices.ToArray();
+
+			for (int i = 0; i < m_vertices.Length; ++i)
+				m_vertices[i].Position += new Vector3(0.5f);
+
 			m_vertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_vertices);
 		}
 
@@ -81,6 +102,13 @@ namespace Client3D
 			m_effect.EyePos = cameraService.Position;
 			Matrix world = Matrix.Identity;
 			m_effect.WorldViewProjection = world * cameraService.View * cameraService.Projection;
+
+			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
+			angle = MathUtil.RadiansToDegrees(angle);
+			if (System.Math.Abs(angle) < 45)
+				m_effect.Mode = 2;
+			else
+				m_effect.Mode = 1;
 		}
 
 		public override void Draw(GameTime gameTime)

@@ -37,5 +37,10 @@ namespace Client3D
 		{
 			set { this.Parameters["gEyePosW"].SetValue(ref value); }
 		}
+
+		public int Mode
+		{
+			set { this.Parameters["g_mode"].SetValue(value); }
+		}
 	}
 }

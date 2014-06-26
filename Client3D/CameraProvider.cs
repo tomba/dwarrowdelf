@@ -11,6 +11,10 @@ namespace Client3D
 	{
 		// Camera coordinate system with coordinates relative to world space
 		public Vector3 Position { get { return m_position; } }
+		public Vector3 Right { get { return m_right; } }
+		public Vector3 Up { get { return m_up; } }
+		public Vector3 Look { get { return m_look; } }
+
 		Vector3 m_position;
 		Vector3 m_right;
 		Vector3 m_up;

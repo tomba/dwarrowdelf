@@ -29,6 +29,7 @@ cbuffer cbPerFrame : register(b0)
 	float4x4 gWorldViewProj;
 	float3 gEyePosW;
 	float _pad00;
+	int g_mode;
 };
 
 Texture2DArray g_texture;
@@ -48,22 +49,43 @@ VSOut VSMain(VSIn vin)
 [maxvertexcount(4)]
 void GSMain(point GSIn gin[1], inout TriangleStream< GSOut > output)
 {
-#ifdef ALWAYS_UP
-	float3 up = float3(0, 0, 1);
-	float3 look = gEyePosW - gin[0].PosW;
-	look.z = 0;
-	look = normalize(look);
-	float3 right = cross(up, look);
-#else
-	float3 look = normalize(gEyePosW - gin[0].PosW);
-	float3 right = normalize(cross(float3(0, 0, 1), look));
-	float3 up = cross(look, right);
-#endif
+	float3 up = 0, right = 0;
+
+	switch (g_mode) {
+	case 0:
+	{
+		/* sprite is always upright */
+		up = float3(0, 0, 1);
+		float3 look = gEyePosW - gin[0].PosW;
+			look.z = 0;
+		look = normalize(look);
+		right = cross(up, look);
+		break;
+	}
+
+	case 1:
+	{
+		/* sprite face follows camera */
+		float3 look = normalize(gEyePosW - gin[0].PosW);
+			right = normalize(cross(float3(0, 0, 1), look));
+		up = cross(look, right);
+		break;
+	}
+
+	case 2:
+	{
+		/* sprite is flat on the ground */
+		up = float3(1, 0, 0);
+		right = float3(0, -1, 0);
+		gin[0].PosW += float3(0, 0, -0.49f);
+		break;
+	}
+	}
 
 	const float2 size = float2(1, 1);
 
-	float hWidth = 0.5f * size.x;
-	float hHeight = 0.5f * size.y;
+	const float hWidth = 0.5f * size.x;
+	const float hHeight = 0.5f * size.y;
 
 	const float2 gTexC[4] =
 	{
