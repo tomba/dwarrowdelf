@@ -41,7 +41,7 @@ namespace Client3D
 
 		void CreateChunks()
 		{
-			var map = m_scene.Map;
+			var map = GlobalData.VoxelMap;
 
 			int xChunks = map.Size.Width / Chunk.CHUNK_SIZE;
 			int yChunks = map.Size.Height / Chunk.CHUNK_SIZE;

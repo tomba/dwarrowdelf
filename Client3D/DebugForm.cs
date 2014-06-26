@@ -45,7 +45,9 @@ namespace Client3D
 			this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
 			this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 
-			this.zCutTrackBar.Maximum = m_scene.Map.Depth - 1;
+			var map = GlobalData.VoxelMap;
+
+			this.zCutTrackBar.Maximum = map.Depth - 1;
 			this.zCutTrackBar.Value = m_scene.ViewCorner2.Z;
 			this.zCutTrackBar.ValueChanged += (s, e) =>
 			{
@@ -53,7 +55,7 @@ namespace Client3D
 				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 			};
 
-			this.xnCutTrackBar.Maximum = m_scene.Map.Width - 1;
+			this.xnCutTrackBar.Maximum = map.Width - 1;
 			this.xnCutTrackBar.Value = m_scene.ViewCorner1.X;
 			this.xnCutTrackBar.ValueChanged += (s, e) =>
 			{
@@ -62,7 +64,7 @@ namespace Client3D
 				this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
 			};
 
-			this.xpCutTrackBar.Maximum = m_scene.Map.Width - 1;
+			this.xpCutTrackBar.Maximum = map.Width - 1;
 			this.xpCutTrackBar.Value = m_scene.ViewCorner2.X;
 			this.xpCutTrackBar.ValueChanged += (s, e) =>
 			{
@@ -71,7 +73,7 @@ namespace Client3D
 				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
 			};
 
-			this.ynCutTrackBar.Maximum = m_scene.Map.Width - 1;
+			this.ynCutTrackBar.Maximum = map.Width - 1;
 			this.ynCutTrackBar.Value = m_scene.ViewCorner1.Y;
 			this.ynCutTrackBar.ValueChanged += (s, e) =>
 			{
@@ -80,7 +82,7 @@ namespace Client3D
 				this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
 			};
 
-			this.ypCutTrackBar.Maximum = m_scene.Map.Width - 1;
+			this.ypCutTrackBar.Maximum = map.Width - 1;
 			this.ypCutTrackBar.Value = m_scene.ViewCorner2.Y;
 			this.ypCutTrackBar.ValueChanged += (s, e) =>
 			{

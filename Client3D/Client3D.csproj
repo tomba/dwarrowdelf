@@ -99,6 +99,7 @@
     <Compile Include="DebugForm.Designer.cs">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalData.cs" />
     <Compile Include="ICameraService.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MyExtensions.cs" />

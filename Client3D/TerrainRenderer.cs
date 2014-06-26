@@ -17,8 +17,6 @@ namespace Client3D
 
 		ChunkManager m_chunkManager;
 
-		public VoxelMap Map { get; private set; }
-
 		public bool DisableVSync { get; set; }
 		public bool IsRotationEnabled { get; set; }
 		public bool ShowBorders { get; set; }
@@ -38,24 +36,28 @@ namespace Client3D
 
 			bool newmap = false;
 
+			VoxelMap map;
+
 			if (newmap == false && System.IO.File.Exists(mapname))
 			{
-				this.Map = VoxelMap.Load(mapname);
+				map = VoxelMap.Load(mapname);
 			}
 			else
 			{
-				this.Map = VoxelMap.CreateFromTileData(new GameMap().Grid);
-				//this.Map = VoxelMap.CreateBallMap(32, 16);
-				//this.Map = VoxelMap.CreateSimplexMap(64, 0.2f);
+				map = VoxelMap.CreateFromTileData(new GameMap().Grid);
+				//map = VoxelMap.CreateBallMap(32, 16);
+				//map = VoxelMap.CreateSimplexMap(64, 0.2f);
 
-				this.Map.UndefineHiddenVoxels();
-				this.Map.CheckVisibleFaces();
+				map.UndefineHiddenVoxels();
+				map.CheckVisibleFaces();
 
-				this.Map.Save(mapname);
+				map.Save(mapname);
 			}
 
+			GlobalData.VoxelMap = map;
+
 			m_viewCorner1 = new IntVector3(0, 0, 0);
-			m_viewCorner2 = new IntVector3(this.Map.Width - 1, this.Map.Height - 1, this.Map.Depth - 1);
+			m_viewCorner2 = new IntVector3(map.Width - 1, map.Height - 1, map.Depth - 1);
 
 			m_directionalLight = new DirectionalLight()
 			{
@@ -128,7 +130,7 @@ namespace Client3D
 				if (value == m_viewCorner1)
 					return;
 
-				if (this.Map.Size.Contains(value) == false)
+				if (GlobalData.VoxelMap.Size.Contains(value) == false)
 					return;
 
 				if (value.X > m_viewCorner2.X || value.Y > m_viewCorner2.Y || value.Z > m_viewCorner2.Z)
@@ -160,7 +162,7 @@ namespace Client3D
 				if (value == m_viewCorner2)
 					return;
 
-				if (this.Map.Size.Contains(value) == false)
+				if (GlobalData.VoxelMap.Size.Contains(value) == false)
 					return;
 
 				if (value.X < m_viewCorner1.X || value.Y < m_viewCorner1.Y || value.Z < m_viewCorner1.Z)
