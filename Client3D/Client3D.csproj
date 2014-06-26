@@ -123,6 +123,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <ToolkitTexture Include="Content\TileTextureArray.dds" />
+    <ToolkitTexture Include="Content\TileSetTextureArray.dds" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
