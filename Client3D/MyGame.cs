@@ -18,6 +18,7 @@ namespace Client3D
 		readonly KeyboardManager m_keyboardManager;
 		readonly TerrainRenderer m_terrainRenderer;
 		readonly TestRenderer m_testRenderer;
+		readonly SymbolRenderer m_symbolRenderer;
 
 		KeyboardState m_keyboardState;
 
@@ -38,8 +39,9 @@ namespace Client3D
 			m_cameraProvider = new CameraProvider(this);
 
 			m_terrainRenderer = new TerrainRenderer(this);
-			m_sceneRenderer = new SceneRenderer(this);
+			//m_sceneRenderer = new SceneRenderer(this);
 			//m_testRenderer = new TestRenderer(this);
+			m_symbolRenderer = new SymbolRenderer(this);
 
 			Content.RootDirectory = "Content";
 
