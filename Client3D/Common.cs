@@ -20,7 +20,7 @@ namespace Client3D
 	}
 
 	[Flags]
-	enum FaceDirectionBits
+	enum FaceDirectionBits : byte
 	{
 		PositiveX = 1 << FaceDirection.PositiveX,	// East
 		NegativeX = 1 << FaceDirection.NegativeX,	// West

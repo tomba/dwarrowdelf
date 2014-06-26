@@ -241,7 +241,7 @@ namespace Client3D
 						else
 						{
 							baseTex = TextureID.Tex2;
-							topTex = td.IsGrass ? TextureID.Grass : TextureID.Tex2;
+							topTex = (td.Flags & VoxelFlags.Grass) != 0 ? TextureID.Grass : TextureID.Tex2;
 						}
 
 						CreateCubicBlock(p, scene, baseTex, topTex, mask);

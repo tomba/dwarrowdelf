@@ -2,24 +2,39 @@
 using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Client3D
 {
-	enum VoxelType
+	enum VoxelType : byte
 	{
 		Undefined = 0,
 		Empty,
 		Rock,
 	}
 
+	enum VoxelFlags : byte
+	{
+		None = 0,
+		Grass = 1 << 0,
+	}
+
+	[StructLayout(LayoutKind.Explicit, Size = 4)]
 	struct Voxel
 	{
+		[FieldOffset(0)]
+		public uint Raw;
+
+		[FieldOffset(0)]
 		public VoxelType Type;
-		public bool IsGrass;
+		[FieldOffset(1)]
 		public FaceDirectionBits VisibleFaces;
+		[FieldOffset(2)]
+		public VoxelFlags Flags;
 
 		public bool IsUndefined { get { return this.Type == VoxelType.Undefined; } }
 		public bool IsEmpty { get { return this.Type == VoxelType.Empty; } }
@@ -40,6 +55,8 @@ namespace Client3D
 
 		public VoxelMap(IntSize3 size)
 		{
+			System.Diagnostics.Trace.Assert(Marshal.SizeOf<Voxel>() == 4);
+
 			this.Size = size;
 			this.Grid = new Voxel[size.Depth, size.Height, size.Width];
 		}
