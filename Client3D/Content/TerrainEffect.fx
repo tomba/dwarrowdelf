@@ -3,6 +3,7 @@ struct VS_IN
 {
 	uint4 pos : POSITION;
 	uint4 texOccPack : TEXOCCPACK;
+	float4 color : COLOR;
 };
 
 struct GS_IN
@@ -11,6 +12,7 @@ struct GS_IN
 	float3 posW : POSITION;
 	int texID : TEXID;
 	int occlusion : OCCLUSION;
+	float4 color : COLOR;
 };
 
 struct PS_IN
@@ -20,6 +22,7 @@ struct PS_IN
 	float2 tex : TEXCOORD0;
 	nointerpolation int texID : TEXID;
 	nointerpolation int occlusion[4] : OCCLUSION;
+	float4 color : COLOR;
 };
 
 Texture2DArray blockTextures;
@@ -28,6 +31,7 @@ sampler blockSampler;
 bool g_disableLight;
 bool g_showBorders;
 bool g_disableOcclusion;
+bool g_disableTexture;
 
 cbuffer PerFrame
 {
@@ -63,6 +67,7 @@ GS_IN VSMain(VS_IN input)
 
 	output.texID = input.texOccPack.x;
 	output.occlusion = input.texOccPack.y;
+	output.color = input.color;
 
 	return output;
 }
@@ -78,6 +83,7 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.pos = input[0].pos;
 	output.posW = input[0].posW;
 	output.tex = float2(0, 0);
+	output.color = input[0].color;
 
 	output.texID = texID;
 
@@ -91,26 +97,31 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
 	output.tex = float2(1, 0);
+	output.color = input[1].color;
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
 	output.tex = float2(0, 1);
+	output.color = input[2].color;
 	OutputStream.Append(output);
 
 	/* SECOND */
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
 	output.tex = float2(1, 0);
+	output.color = input[1].color;
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
 	output.tex = float2(0, 1);
+	output.color = input[2].color;
 	OutputStream.Append(output);
 
 	output.pos = input[3].pos;
 	output.posW = input[3].posW;
+	output.color = input[3].color;
 	output.tex = float2(1, 1);
 
 	output.texID = texID;
@@ -180,9 +191,14 @@ float4 PSMain(PS_IN input) : SV_Target
 		border = smoothstep(0, 0.1f, val) * 0.3f + 0.7f;
 	}
 
-	float4 textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
+	float4 textureColor = float4(1, 1, 1, 1);
 
-	float4 color = litColor * textureColor * occlusion * border;
+	if (!g_disableTexture)
+	{
+		textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
+	}
+
+	float4 color = litColor * textureColor * occlusion * border * input.color;
 
 	return color;
 }

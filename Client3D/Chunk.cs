@@ -23,11 +23,14 @@ namespace Client3D
 			public Byte4 Position;
 			[VertexElement("TEXOCCPACK", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 			public Byte4 TexOccPack;
+			[VertexElement("COLOR")]
+			public Color TintColor;
 
-			public TerrainVertex(IntVector3 pos, TextureID texID, int occlusion)
+			public TerrainVertex(IntVector3 pos, TextureID texID, int occlusion, Color tintColor)
 			{
 				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
 				this.TexOccPack = new Byte4((int)texID, occlusion, 0, 0);
+				this.TintColor = tintColor;
 			}
 		}
 
@@ -234,6 +237,9 @@ namespace Client3D
 						TextureID baseTex;
 						TextureID topTex;
 
+						Color baseColor = Color.White;
+						Color topColor = Color.White;
+
 						if (td.IsUndefined)
 						{
 							baseTex = topTex = TextureID.Undefined;
@@ -241,16 +247,29 @@ namespace Client3D
 						else
 						{
 							baseTex = TextureID.Tex2;
-							topTex = (td.Flags & VoxelFlags.Grass) != 0 ? TextureID.Grass : TextureID.Tex2;
+							baseColor = Color.LightGray;
+
+							if ((td.Flags & VoxelFlags.Grass) != 0)
+							{
+								topTex = TextureID.Grass;
+								topColor = Color.LightGreen;
+							}
+							else
+							{
+								topTex = TextureID.Tex2;
+								topColor = Color.LightGray;
+							}
 						}
 
-						CreateCubicBlock(p, scene, baseTex, topTex, mask);
+						CreateCubicBlock(p, scene, baseTex, topTex, baseColor, topColor, mask);
 					}
 				}
 			}
 		}
 
-		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene, TextureID texId, TextureID topTexId, FaceDirectionBits mask)
+		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene, TextureID texId, TextureID topTexId,
+			Color baseColor, Color topColor,
+			FaceDirectionBits mask)
 		{
 			int x = p.X;
 			int y = p.Y;
@@ -290,7 +309,7 @@ namespace Client3D
 			if (sides == 0)
 				return;
 
-			CreateCube(p, sides, texId, topTexId);
+			CreateCube(p, sides, texId, topTexId, baseColor, topColor);
 		}
 
 		bool IsBlocker(IntVector3 p)
@@ -331,7 +350,8 @@ namespace Client3D
 			return occlusion;
 		}
 
-		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, TextureID texId, TextureID topTexId)
+		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, TextureID texId, TextureID topTexId,
+			Color baseColor, Color topColor)
 		{
 			var grid = m_map.Grid;
 
@@ -350,9 +370,21 @@ namespace Client3D
 				{
 					int occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
 
-					var tex = side == (int)FaceDirection.PositiveZ ? topTexId : texId;
+					TextureID tex;
+					Color color;
 
-					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, tex, occ);
+					if (side == (int)FaceDirection.PositiveZ)
+					{
+						tex = topTexId;
+						color = topColor;
+					}
+					else
+					{
+						tex = texId;
+						color = baseColor;
+					}
+
+					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, tex, occ, color);
 					m_vertexList.Add(vd);
 				}
 			}

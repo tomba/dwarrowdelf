@@ -21,7 +21,7 @@ namespace Client3D
 		EffectConstantBuffer m_perObConstBuf;
 		EffectParameter m_objectWorldMatrixParam;
 
-			public TerrainEffect(GraphicsDevice device, EffectData effectData)
+		public TerrainEffect(GraphicsDevice device, EffectData effectData)
 			: base(device, effectData)
 		{
 
@@ -30,7 +30,9 @@ namespace Client3D
 		protected override void Initialize()
 		{
 			base.Initialize();
-			this.Parameters["blockSampler"].SetResource(this.GraphicsDevice.SamplerStates.LinearClamp);
+
+			if (this.Parameters.Contains("blockSampler"))
+				this.Parameters["blockSampler"].SetResource(this.GraphicsDevice.SamplerStates.LinearClamp);
 
 			m_perObConstBuf = this.ConstantBuffers["PerObjectBuffer"];
 			m_objectWorldMatrixParam = m_perObConstBuf.Parameters["worldMatrix"];
@@ -49,7 +51,11 @@ namespace Client3D
 
 		public Texture2D TileTextures
 		{
-			set { this.Parameters["blockTextures"].SetResource(value); }
+			set
+			{
+				if (this.Parameters.Contains("blockTextures"))
+					this.Parameters["blockTextures"].SetResource(value);
+			}
 		}
 
 		public void SetDirectionalLight(DirectionalLight m_directionalLight)
