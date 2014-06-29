@@ -37,9 +37,9 @@ cbuffer PerFrame
 {
 	matrix g_viewProjMatrix;
 
-	float4 ambientColor;
-	float4 diffuseColor;
-	float4 specularColor;
+	float3 ambientColor;
+	float3 diffuseColor;
+	float3 specularColor;
 	float3 lightDirection;
 	float _pad0;
 	float3 g_eyePos;
@@ -138,7 +138,7 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float4 litColor = float4(1, 1, 1, 1);
+	float3 litColor = float3(1, 1, 1);
 
 	if (!g_disableLight)
 	{
@@ -147,7 +147,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		// Invert the light direction for calculations.
 		float3 lightDir = -lightDirection;
 
-		float4 ambient, diffuse, specular;
+		float3 ambient, diffuse, specular;
 
 		ambient = ambientColor;
 
@@ -198,7 +198,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
 	}
 
-	float4 color = litColor * textureColor * occlusion * border * input.color;
+	float4 color = float4(litColor, 1) * textureColor * occlusion * border * input.color;
 
 	return color;
 }

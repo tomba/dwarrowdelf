@@ -61,9 +61,9 @@ namespace Client3D
 
 			m_directionalLight = new DirectionalLight()
 			{
-				AmbientColor = new Vector4(new Vector3(0.4f), 1.0f),
-				DiffuseColor = new Vector4(new Vector3(0.6f), 1.0f),
-				SpecularColor = new Vector4(new Vector3(0.6f), 1.0f),
+				AmbientColor = new Vector3(0.4f),
+				DiffuseColor = new Vector3(0.6f),
+				SpecularColor = new Vector3(0.6f),
 				LightDirection = Vector3.Normalize(new Vector3(1, 2, -4)),
 			};
 

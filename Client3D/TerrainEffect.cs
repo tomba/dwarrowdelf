@@ -10,9 +10,9 @@ namespace Client3D
 {
 	class DirectionalLight
 	{
-		public Vector4 AmbientColor;
-		public Vector4 DiffuseColor;
-		public Vector4 SpecularColor;
+		public Vector3 AmbientColor;
+		public Vector3 DiffuseColor;
+		public Vector3 SpecularColor;
 		public Vector3 LightDirection;
 	}
 
