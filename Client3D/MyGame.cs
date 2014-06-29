@@ -7,6 +7,7 @@ using SharpDX.Toolkit;
 using SharpDX.Toolkit.Input;
 using System.Diagnostics;
 using SharpDX.Toolkit.Graphics;
+using Dwarrowdelf;
 
 namespace Client3D
 {
@@ -61,6 +62,18 @@ namespace Client3D
 			{
 				if (m_terrainRenderer != null)
 					m_terrainRenderer.ClickPos = new Dwarrowdelf.IntVector2(e.X, e.Y);
+			};
+			form.KeyPress += (s, e) =>
+			{
+				switch (e.KeyChar)
+				{
+					case '>':
+						m_terrainRenderer.ViewCorner2 = m_terrainRenderer.ViewCorner2 + Direction.Down;
+						break;
+					case '<':
+						m_terrainRenderer.ViewCorner2 = m_terrainRenderer.ViewCorner2 + Direction.Up;
+						break;
+				}
 			};
 
 			var debugForm = new DebugForm(this);
