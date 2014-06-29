@@ -3,7 +3,7 @@ struct VS_IN
 {
 	uint4 pos : POSITION;
 	uint4 texOccPack : TEXOCCPACK;
-	float4 color : COLOR;
+	float3 color : COLOR;
 };
 
 struct GS_IN
@@ -12,7 +12,7 @@ struct GS_IN
 	float3 posW : POSITION;
 	int texID : TEXID;
 	int occlusion : OCCLUSION;
-	float4 color : COLOR;
+	float3 color : COLOR;
 };
 
 struct PS_IN
@@ -22,7 +22,7 @@ struct PS_IN
 	float2 tex : TEXCOORD0;
 	nointerpolation int texID : TEXID;
 	nointerpolation int occlusion[4] : OCCLUSION;
-	float4 color : COLOR;
+	float3 color : COLOR;
 };
 
 Texture2DArray blockTextures;
@@ -198,7 +198,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
 	}
 
-	float4 color = float4(litColor, 1) * textureColor * occlusion * border * input.color;
+	float4 color = float4(litColor, 1) * textureColor * occlusion * border * float4(input.color, 1);
 
 	return color;
 }
