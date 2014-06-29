@@ -171,7 +171,7 @@ float4 PSMain(PS_IN input) : SV_Target
 	}
 
 	float occlusion = 1.0f;
-	const float occlusionStep = 0.3f;
+	const float occlusionStep = 0.2f;
 
 	if (!g_disableOcclusion)
 	{

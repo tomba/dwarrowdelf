@@ -267,9 +267,9 @@ namespace Client3D
 			}
 		}
 
-		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene, TextureID texId, TextureID topTexId,
+		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene, TextureID baseTex, TextureID topTex,
 			Color baseColor, Color topColor,
-			FaceDirectionBits mask)
+			FaceDirectionBits globalFaceMask)
 		{
 			int x = p.X;
 			int y = p.Y;
@@ -279,11 +279,18 @@ namespace Client3D
 
 			var vd = grid[z, y, x];
 
-			FaceDirectionBits sides = mask & vd.VisibleFaces;
+			FaceDirectionBits sides = globalFaceMask & vd.VisibleFaces;
+			FaceDirectionBits hiddenSides = 0;	/* sides that are shown, but are really hidden */
 
 			// up
-			if ((mask & FaceDirectionBits.PositiveZ) != 0 && z == scene.ViewCorner2.Z)
-				sides |= FaceDirectionBits.PositiveZ;
+			if ((globalFaceMask & FaceDirectionBits.PositiveZ) != 0 && z == scene.ViewCorner2.Z)
+			{
+				const FaceDirectionBits b = FaceDirectionBits.PositiveZ;
+				hiddenSides |= b & ~sides;
+				sides |= b;
+				topTex = baseTex;	// override the top tex to remove the grass
+				topColor = baseColor;
+			}
 
 			// down
 			// Note: we never draw the bottommost layer in the map
@@ -291,25 +298,41 @@ namespace Client3D
 				sides &= ~FaceDirectionBits.NegativeZ;
 
 			// east
-			if ((mask & FaceDirectionBits.PositiveX) != 0 && x == scene.ViewCorner2.X)
-				sides |= FaceDirectionBits.PositiveX;
+			if ((globalFaceMask & FaceDirectionBits.PositiveX) != 0 && x == scene.ViewCorner2.X)
+			{
+				const FaceDirectionBits b = FaceDirectionBits.PositiveX;
+				hiddenSides |= b & ~sides;
+				sides |= b;
+			}
 
 			// west
-			if ((mask & FaceDirectionBits.NegativeX) != 0 && x == scene.ViewCorner1.X)
-				sides |= FaceDirectionBits.NegativeX;
+			if ((globalFaceMask & FaceDirectionBits.NegativeX) != 0 && x == scene.ViewCorner1.X)
+			{
+				const FaceDirectionBits b = FaceDirectionBits.NegativeX;
+				hiddenSides |= b & ~sides;
+				sides |= b;
+			}
 
 			// south
-			if ((mask & FaceDirectionBits.PositiveY) != 0 && y == scene.ViewCorner2.Y)
-				sides |= FaceDirectionBits.PositiveY;
+			if ((globalFaceMask & FaceDirectionBits.PositiveY) != 0 && y == scene.ViewCorner2.Y)
+			{
+				const FaceDirectionBits b = FaceDirectionBits.PositiveY;
+				hiddenSides |= b & ~sides;
+				sides |= b;
+			}
 
 			// north
-			if ((mask & FaceDirectionBits.NegativeY) != 0 && y == scene.ViewCorner1.Y)
-				sides |= FaceDirectionBits.NegativeY;
+			if ((globalFaceMask & FaceDirectionBits.NegativeY) != 0 && y == scene.ViewCorner1.Y)
+			{
+				const FaceDirectionBits b = FaceDirectionBits.NegativeY;
+				hiddenSides |= b & ~sides;
+				sides |= b;
+			}
 
 			if (sides == 0)
 				return;
 
-			CreateCube(p, sides, texId, topTexId, baseColor, topColor);
+			CreateCube(p, sides, hiddenSides, baseTex, topTex, baseColor, topColor);
 		}
 
 		bool IsBlocker(IntVector3 p)
@@ -323,6 +346,52 @@ namespace Client3D
 				return true;
 
 			return !td.IsEmpty;
+		}
+
+		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,
+			TextureID texId, TextureID topTexId,
+			Color baseColor, Color topColor)
+		{
+			var grid = m_map.Grid;
+
+			var offset = p - this.ChunkOffset;
+
+			int sides = (int)faceMask;
+
+			for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
+			{
+				if ((sides & 1) == 0)
+					continue;
+
+				var vertices = s_intCubeFaces[side];
+
+				for (int i = 0; i < 4; ++i)
+				{
+					int occ;
+
+					if (((int)hiddenFaceMask & (1 << side)) != 0)
+						occ = 4;
+					else
+						occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
+
+					TextureID tex;
+					Color color;
+
+					if (side == (int)FaceDirection.PositiveZ)
+					{
+						tex = topTexId;
+						color = topColor;
+					}
+					else
+					{
+						tex = texId;
+						color = baseColor;
+					}
+
+					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, tex, occ, color);
+					m_vertexList.Add(vd);
+				}
+			}
 		}
 
 		int GetOcclusionForFaceVertex(IntVector3 p, FaceDirection face, int vertexNum)
@@ -348,46 +417,6 @@ namespace Client3D
 			}
 
 			return occlusion;
-		}
-
-		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, TextureID texId, TextureID topTexId,
-			Color baseColor, Color topColor)
-		{
-			var grid = m_map.Grid;
-
-			var offset = p - this.ChunkOffset;
-
-			int sides = (int)faceMask;
-
-			for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
-			{
-				if ((sides & 1) == 0)
-					continue;
-
-				var vertices = s_intCubeFaces[side];
-
-				for (int i = 0; i < 4; ++i)
-				{
-					int occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
-
-					TextureID tex;
-					Color color;
-
-					if (side == (int)FaceDirection.PositiveZ)
-					{
-						tex = topTexId;
-						color = topColor;
-					}
-					else
-					{
-						tex = texId;
-						color = baseColor;
-					}
-
-					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, tex, occ, color);
-					m_vertexList.Add(vd);
-				}
-			}
 		}
 
 		/// <summary>
