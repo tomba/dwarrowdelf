@@ -20,6 +20,8 @@ namespace Client3D
 		Vector3 m_up;
 		Vector3 m_look;
 
+		public float FarZ { get { return m_farZ; } }
+
 		// Frustum
 		float m_fovY, m_aspect, m_nearZ, m_farZ;
 		float m_nearWindowHeight, m_farWindowHeight;

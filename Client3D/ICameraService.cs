@@ -12,6 +12,8 @@ namespace Client3D
 		Matrix View { get; }
 		Matrix Projection { get; }
 
+		float FarZ { get; }
+
 		BoundingFrustum Frustum { get; }
 	}
 }
