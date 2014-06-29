@@ -66,6 +66,20 @@ namespace Client3D
 					TerrainID = TerrainID.Empty,
 					InteriorID = InteriorID.Empty,
 				});
+
+				if (z % 2 != 0)
+				{
+					for (int x = 0; x < 10; ++x)
+					{
+						var p2 = p + new IntVector3(1, 0, 0) * x;
+
+						SetTerrain(p2, new TileData()
+						{
+							TerrainID = TerrainID.NaturalFloor,
+							InteriorID = InteriorID.Empty,
+						});
+					}
+				}
 			}
 
 			for (int y = 0; y < 10; ++y)
