@@ -22,16 +22,19 @@ namespace Client3D
 		{
 			[VertexElement("POSITION", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 			public Byte4 Position;
-			[VertexElement("TEXOCCPACK", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
-			public Byte4 TexOccPack;
-			[VertexElement("COLOR0")]
-			public uint ColorPack;
+			[VertexElement("OCCLUSION")]
+			public int Occlusion;	/* xxx pack into some other field */
+			[VertexElement("TEX", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+			public Byte4 TexPack;
+			[VertexElement("COLOR", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+			public Byte4 ColorPack;
 
-			public TerrainVertex(IntVector3 pos, SymbolID texID, int occlusion, GameColor tintColor, GameColor bgColor)
+			public TerrainVertex(IntVector3 pos, int occlusion, SymbolID texID, GameColor tintColor, GameColor bgColor)
 			{
 				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
-				this.TexOccPack = new Byte4((int)texID, occlusion, 0, 0);
-				this.ColorPack = ((uint)tintColor << 0) | ((uint)bgColor << 8);
+				this.Occlusion = occlusion;
+				this.TexPack = new Byte4((byte)0, (byte)texID, (byte)0, (byte)0);
+				this.ColorPack = new Byte4((byte)bgColor, (byte)tintColor, (byte)0, (byte)0);
 			}
 		}
 
@@ -379,7 +382,7 @@ namespace Client3D
 						color = baseColor;
 					}
 
-					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, tex, occ, color, color);
+					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, occ, tex, color, color);
 					m_vertexList.Add(vd);
 				}
 			}

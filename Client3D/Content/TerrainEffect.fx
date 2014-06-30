@@ -2,17 +2,18 @@
 struct VS_IN
 {
 	uint4 pos : POSITION;
-	uint4 texOccPack : TEXOCCPACK;
-	uint colorPack : COLOR0;
+	uint occlusion : OCCLUSION;
+	uint4 texPack : TEX;
+	uint4 colorPack : COLOR;
 };
 
 struct GS_IN
 {
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
-	int texID : TEXID;
-	int occlusion : OCCLUSION;
-	uint colorPack : COLOR0;
+	nointerpolation int occlusion : OCCLUSION;
+	nointerpolation uint4 texPack : TEX;
+	nointerpolation uint4 colorPack : COLOR;
 };
 
 struct PS_IN
@@ -20,9 +21,9 @@ struct PS_IN
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
 	float2 tex : TEXCOORD0;
-	nointerpolation int texID : TEXID;
 	nointerpolation int occlusion[4] : OCCLUSION;
-	uint colorPack : COLOR0;
+	nointerpolation uint4 texPack : TEX;
+	nointerpolation uint4 colorPack : COLOR;
 };
 
 Buffer<float3> g_colorBuffer;		// GameColor -> RGB
@@ -66,8 +67,8 @@ GS_IN VSMain(VS_IN input)
 	output.posW = output.pos.xyz;
 	output.pos = mul(output.pos, g_viewProjMatrix);
 
-	output.texID = input.texOccPack.x;
-	output.occlusion = input.texOccPack.y;
+	output.occlusion = input.occlusion;
+	output.texPack = input.texPack;
 	output.colorPack = input.colorPack;
 
 	return output;
@@ -78,15 +79,12 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 {
 	PS_IN output = (PS_IN)0;
 
-	float texID = input[0].texID;
-
 	/* FIRST */
 	output.pos = input[0].pos;
 	output.posW = input[0].posW;
 	output.tex = float2(0, 0);
+	output.texPack = input[0].texPack;
 	output.colorPack = input[0].colorPack;
-
-	output.texID = texID;
 
 	output.occlusion[0] = input[0].occlusion;
 	output.occlusion[1] = input[1].occlusion;
@@ -98,12 +96,14 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
 	output.tex = float2(1, 0);
+	output.texPack = input[1].texPack;
 	output.colorPack = input[1].colorPack;
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
 	output.tex = float2(0, 1);
+	output.texPack = input[2].texPack;
 	output.colorPack = input[2].colorPack;
 	OutputStream.Append(output);
 
@@ -111,21 +111,22 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
 	output.tex = float2(1, 0);
+	output.texPack = input[1].texPack;
 	output.colorPack = input[1].colorPack;
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
 	output.tex = float2(0, 1);
+	output.texPack = input[2].texPack;
 	output.colorPack = input[2].colorPack;
 	OutputStream.Append(output);
 
 	output.pos = input[3].pos;
 	output.posW = input[3].posW;
+	output.texPack = input[3].texPack;
 	output.colorPack = input[3].colorPack;
 	output.tex = float2(1, 1);
-
-	output.texID = texID;
 
 	output.occlusion[0] = input[0].occlusion;
 	output.occlusion[1] = input[1].occlusion;
@@ -192,18 +193,21 @@ float4 PSMain(PS_IN input) : SV_Target
 		border = smoothstep(0, 0.1f, val) * 0.3f + 0.7f;
 	}
 
-	float4 textureColor = 0;
+	/* background */
+	float3 color = g_colorBuffer[input.colorPack[0]];
 
 	if (!g_disableTexture)
 	{
-		textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
-		uint tintColorIdx = (input.colorPack >> 8) & 0xff;
-		textureColor = float4(textureColor.rgb * g_colorBuffer[tintColorIdx], textureColor.a);
+		float4 c1;
+		c1 = blockTextures.Sample(blockSampler, float3(input.tex, input.texPack[1]));
+		c1 = float4(c1.rgb * g_colorBuffer[input.colorPack[1]], c1.a);
+		color = c1.rgb + (1.0f - c1.a) * color.rgb;
+
+		float4 c2;
+		c2 = blockTextures.Sample(blockSampler, float3(input.tex, input.texPack[2]));
+		c2 = float4(c2.rgb * g_colorBuffer[input.colorPack[2]], c2.a);
+		color = c2.rgb + (1.0f - c2.a) * color.rgb;
 	}
-
-	uint bgColorIdx = (input.colorPack >> 0) & 0xff;
-
-	float3 color = textureColor.rgb + g_colorBuffer[bgColorIdx] * (1.0f - textureColor.a);
 
 	color = color * litColor * occlusion * border;
 
