@@ -23,14 +23,17 @@ namespace Client3D
 			public Byte4 Position;
 			[VertexElement("TEXOCCPACK", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 			public Byte4 TexOccPack;
-			[VertexElement("COLOR")]
+			[VertexElement("COLOR0")]
 			public Color TintColor;
+			[VertexElement("COLOR1")]
+			public Color BgColor;
 
-			public TerrainVertex(IntVector3 pos, TextureID texID, int occlusion, Color tintColor)
+			public TerrainVertex(IntVector3 pos, TextureID texID, int occlusion, Color tintColor, Color bgColor)
 			{
 				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
 				this.TexOccPack = new Byte4((int)texID, occlusion, 0, 0);
 				this.TintColor = tintColor;
+				this.BgColor = bgColor;
 			}
 		}
 
@@ -388,7 +391,7 @@ namespace Client3D
 						color = baseColor;
 					}
 
-					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, tex, occ, color);
+					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, tex, occ, color, color);
 					m_vertexList.Add(vd);
 				}
 			}
