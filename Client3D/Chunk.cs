@@ -25,16 +25,13 @@ namespace Client3D
 			[VertexElement("TEXOCCPACK", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 			public Byte4 TexOccPack;
 			[VertexElement("COLOR0")]
-			public Color TintColor;
-			[VertexElement("COLOR1")]
-			public Color BgColor;
+			public uint ColorPack;
 
-			public TerrainVertex(IntVector3 pos, SymbolID texID, int occlusion, Color tintColor, Color bgColor)
+			public TerrainVertex(IntVector3 pos, SymbolID texID, int occlusion, GameColor tintColor, GameColor bgColor)
 			{
 				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
 				this.TexOccPack = new Byte4((int)texID, occlusion, 0, 0);
-				this.TintColor = tintColor;
-				this.BgColor = bgColor;
+				this.ColorPack = ((uint)tintColor << 0) | ((uint)bgColor << 8);
 			}
 		}
 
@@ -226,8 +223,8 @@ namespace Client3D
 						SymbolID baseTex;
 						SymbolID topTex;
 
-						Color baseColor = Color.White;
-						Color topColor = Color.White;
+						GameColor baseColor = GameColor.White;
+						GameColor topColor = GameColor.White;
 
 						if (td.IsUndefined)
 						{
@@ -236,17 +233,17 @@ namespace Client3D
 						else
 						{
 							baseTex = SymbolID.Wall;
-							baseColor = Color.LightGray;
+							baseColor = GameColor.LightGray;
 
 							if ((td.Flags & VoxelFlags.Grass) != 0)
 							{
 								topTex = SymbolID.Grass;
-								topColor = Color.LightGreen;
+								topColor = GameColor.LightGreen;
 							}
 							else if ((td.VisibleFaces & FaceDirectionBits.PositiveZ) != 0)
 							{
 								topTex = SymbolID.Floor;
-								topColor = Color.LightGray;
+								topColor = GameColor.LightGray;
 							}
 							else
 							{
@@ -262,7 +259,7 @@ namespace Client3D
 		}
 
 		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene, SymbolID baseTex, SymbolID topTex,
-			Color baseColor, Color topColor,
+			GameColor baseColor, GameColor topColor,
 			FaceDirectionBits globalFaceMask)
 		{
 			int x = p.X;
@@ -344,7 +341,7 @@ namespace Client3D
 
 		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,
 			SymbolID texId, SymbolID topTexId,
-			Color baseColor, Color topColor)
+			GameColor baseColor, GameColor topColor)
 		{
 			var grid = m_map.Grid;
 
@@ -369,7 +366,7 @@ namespace Client3D
 						occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
 
 					SymbolID tex;
-					Color color;
+					GameColor color;
 
 					if (side == (int)FaceDirection.PositiveZ)
 					{

@@ -3,8 +3,7 @@ struct VS_IN
 {
 	uint4 pos : POSITION;
 	uint4 texOccPack : TEXOCCPACK;
-	float3 tintColor : COLOR0;
-	float3 bgColor : COLOR1;
+	uint colorPack : COLOR0;
 };
 
 struct GS_IN
@@ -13,8 +12,7 @@ struct GS_IN
 	float3 posW : POSITION;
 	int texID : TEXID;
 	int occlusion : OCCLUSION;
-	float3 tintColor : COLOR0;
-	float3 bgColor : COLOR1;
+	uint colorPack : COLOR0;
 };
 
 struct PS_IN
@@ -24,10 +22,10 @@ struct PS_IN
 	float2 tex : TEXCOORD0;
 	nointerpolation int texID : TEXID;
 	nointerpolation int occlusion[4] : OCCLUSION;
-	float3 tintColor : COLOR0;
-	float3 bgColor : COLOR1;
+	uint colorPack : COLOR0;
 };
 
+Buffer<float3> g_colorBuffer;		// GameColor -> RGB
 Texture2DArray blockTextures;
 sampler blockSampler;
 
@@ -70,8 +68,7 @@ GS_IN VSMain(VS_IN input)
 
 	output.texID = input.texOccPack.x;
 	output.occlusion = input.texOccPack.y;
-	output.tintColor = input.tintColor;
-	output.bgColor = input.bgColor;
+	output.colorPack = input.colorPack;
 
 	return output;
 }
@@ -87,8 +84,7 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.pos = input[0].pos;
 	output.posW = input[0].posW;
 	output.tex = float2(0, 0);
-	output.tintColor = input[0].tintColor;
-	output.bgColor = input[0].bgColor;
+	output.colorPack = input[0].colorPack;
 
 	output.texID = texID;
 
@@ -102,36 +98,31 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
 	output.tex = float2(1, 0);
-	output.tintColor = input[1].tintColor;
-	output.bgColor = input[1].bgColor;
+	output.colorPack = input[1].colorPack;
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
 	output.tex = float2(0, 1);
-	output.tintColor = input[2].tintColor;
-	output.bgColor = input[2].bgColor;
+	output.colorPack = input[2].colorPack;
 	OutputStream.Append(output);
 
 	/* SECOND */
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
 	output.tex = float2(1, 0);
-	output.tintColor = input[1].tintColor;
-	output.bgColor = input[1].bgColor;
+	output.colorPack = input[1].colorPack;
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
 	output.tex = float2(0, 1);
-	output.tintColor = input[2].tintColor;
-	output.bgColor = input[2].bgColor;
+	output.colorPack = input[2].colorPack;
 	OutputStream.Append(output);
 
 	output.pos = input[3].pos;
 	output.posW = input[3].posW;
-	output.tintColor = input[3].tintColor;
-	output.bgColor = input[3].bgColor;
+	output.colorPack = input[3].colorPack;
 	output.tex = float2(1, 1);
 
 	output.texID = texID;
@@ -206,10 +197,13 @@ float4 PSMain(PS_IN input) : SV_Target
 	if (!g_disableTexture)
 	{
 		textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
-		textureColor = float4(textureColor.rgb * input.tintColor, textureColor.a);
+		uint tintColorIdx = (input.colorPack >> 8) & 0xff;
+		textureColor = float4(textureColor.rgb * g_colorBuffer[tintColorIdx], textureColor.a);
 	}
 
-	float3 color = textureColor.rgb + input.bgColor.rgb * (1.0f - textureColor.a);
+	uint bgColorIdx = (input.colorPack >> 0) & 0xff;
+
+	float3 color = textureColor.rgb + g_colorBuffer[bgColorIdx] * (1.0f - textureColor.a);
 
 	color = color * litColor * occlusion * border;
 
