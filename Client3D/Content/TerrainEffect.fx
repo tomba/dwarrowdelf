@@ -190,7 +190,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		val = min(val, (1.0f - input.tex.x));
 		val = min(val, (1.0f - input.tex.y));
 
-		border = smoothstep(0, 0.1f, val) * 0.3f + 0.7f;
+		border = smoothstep(0, 0.05f, val) * 0.7f + 0.3f;
 	}
 
 	/* background */
