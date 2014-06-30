@@ -42,7 +42,7 @@ namespace Client3D
 			m_terrainRenderer = new TerrainRenderer(this);
 			//m_sceneRenderer = new SceneRenderer(this);
 			//m_testRenderer = new TestRenderer(this);
-			m_symbolRenderer = new SymbolRenderer(this);
+			//m_symbolRenderer = new SymbolRenderer(this);
 
 			Content.RootDirectory = "Content";
 

@@ -17,6 +17,16 @@ namespace Client3D
 {
 	class Chunk : Component
 	{
+		struct FaceTexture
+		{
+			//public SymbolID Symbol0;
+			public SymbolID Symbol1;
+			public SymbolID Symbol2;
+			public GameColor Color0;
+			public GameColor Color1;
+			public GameColor Color2;
+		}
+
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		struct TerrainVertex
 		{
@@ -29,12 +39,12 @@ namespace Client3D
 			[VertexElement("COLOR", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 			public Byte4 ColorPack;
 
-			public TerrainVertex(IntVector3 pos, int occlusion, SymbolID texID, GameColor tintColor, GameColor bgColor)
+			public TerrainVertex(IntVector3 pos, int occlusion, FaceTexture tex)
 			{
 				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
 				this.Occlusion = occlusion;
-				this.TexPack = new Byte4((byte)0, (byte)texID, (byte)0, (byte)0);
-				this.ColorPack = new Byte4((byte)bgColor, (byte)tintColor, (byte)0, (byte)0);
+				this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, (byte)0);
+				this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, (byte)tex.Color2, (byte)0);
 			}
 		}
 
@@ -223,46 +233,52 @@ namespace Client3D
 
 						var p = new IntVector3(x, y, z);
 
-						SymbolID baseTex;
-						SymbolID topTex;
-
-						GameColor baseColor = GameColor.White;
-						GameColor topColor = GameColor.White;
+						FaceTexture baseTexture = new FaceTexture();
+						FaceTexture topTexture = new FaceTexture();
 
 						if (td.IsUndefined)
 						{
-							baseTex = topTex = SymbolID.Undefined;
+							baseTexture.Symbol1 = SymbolID.Unknown;
+							baseTexture.Color1 = GameColor.LightGray;
 						}
 						else
 						{
-							baseTex = SymbolID.Wall;
-							baseColor = GameColor.LightGray;
+							baseTexture.Color0 = GameColor.LightGray;
+							baseTexture.Symbol1 = SymbolID.Wall;
+							baseTexture.Color1 = GameColor.LightGray;
 
 							if ((td.Flags & VoxelFlags.Grass) != 0)
 							{
-								topTex = SymbolID.Grass;
-								topColor = GameColor.LightGreen;
+								topTexture.Color0 = GameColor.LightGreen;
+								topTexture.Symbol1 = SymbolID.Grass;
+								topTexture.Color1 = GameColor.LightGreen;
+
+								if ((td.Flags & VoxelFlags.Tree2) != 0)
+								{
+									topTexture.Symbol2 = SymbolID.DeciduousTree;
+									topTexture.Color2 = GameColor.LightGreen;
+								}
 							}
 							else if ((td.VisibleFaces & FaceDirectionBits.PositiveZ) != 0)
 							{
-								topTex = SymbolID.Floor;
-								topColor = GameColor.LightGray;
+								topTexture.Color0 = GameColor.LightGray;
+								topTexture.Symbol1 = SymbolID.Floor;
+								topTexture.Color1 = GameColor.LightGray;
 							}
 							else
 							{
-								topTex = baseTex;
-								topColor = baseColor;
+								topTexture = baseTexture;
 							}
 						}
 
-						CreateCubicBlock(p, scene, baseTex, topTex, baseColor, topColor, mask);
+						CreateCubicBlock(p, scene, baseTexture, topTexture, mask);
 					}
 				}
 			}
 		}
 
-		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene, SymbolID baseTex, SymbolID topTex,
-			GameColor baseColor, GameColor topColor,
+		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene,
+			FaceTexture baseTexture, FaceTexture topTexture,
 			FaceDirectionBits globalFaceMask)
 		{
 			int x = p.X;
@@ -282,8 +298,8 @@ namespace Client3D
 				const FaceDirectionBits b = FaceDirectionBits.PositiveZ;
 				hiddenSides |= b & ~sides;
 				sides |= b;
-				topTex = baseTex;	// override the top tex to remove the grass
-				topColor = baseColor;
+				// override the top tex to remove the grass
+				topTexture = baseTexture;
 			}
 
 			// down
@@ -326,7 +342,7 @@ namespace Client3D
 			if (sides == 0)
 				return;
 
-			CreateCube(p, sides, hiddenSides, baseTex, topTex, baseColor, topColor);
+			CreateCube(p, sides, hiddenSides, baseTexture, topTexture);
 		}
 
 		bool IsBlocker(IntVector3 p)
@@ -343,8 +359,7 @@ namespace Client3D
 		}
 
 		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,
-			SymbolID texId, SymbolID topTexId,
-			GameColor baseColor, GameColor topColor)
+			FaceTexture baseTexture, FaceTexture topTexture)
 		{
 			var grid = m_map.Grid;
 
@@ -368,21 +383,8 @@ namespace Client3D
 					else
 						occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
 
-					SymbolID tex;
-					GameColor color;
-
-					if (side == (int)FaceDirection.PositiveZ)
-					{
-						tex = topTexId;
-						color = topColor;
-					}
-					else
-					{
-						tex = texId;
-						color = baseColor;
-					}
-
-					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, occ, tex, color, color);
+					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, occ,
+						side == (int)FaceDirection.PositiveZ ? topTexture : baseTexture);
 					m_vertexList.Add(vd);
 				}
 			}
