@@ -73,6 +73,16 @@ namespace Client3D
 					case '<':
 						m_terrainRenderer.ViewCorner2 = m_terrainRenderer.ViewCorner2 + Direction.Up;
 						break;
+					case '1':
+						m_cameraProvider.LookAt(m_cameraProvider.Position,
+							m_cameraProvider.Position + new Vector3(0, -1, -10),
+							Vector3.UnitZ);
+						break;
+					case '2':
+						m_cameraProvider.LookAt(m_cameraProvider.Position,
+							m_cameraProvider.Position + new Vector3(1, 1, -1),
+							Vector3.UnitZ);
+						break;
 				}
 			};
 
