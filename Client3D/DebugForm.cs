@@ -95,6 +95,7 @@ namespace Client3D
 			this.checkBox3.CheckedChanged += (s, e) => m_scene.Effect.ShowBorders = checkBox3.Checked;
 			this.checkBox4.CheckedChanged += (s, e) => m_scene.Effect.DisableLight = checkBox4.Checked;
 			this.checkBox5.CheckedChanged += (s, e) => m_scene.Effect.DisableOcclusion = checkBox5.Checked;
+			this.checkBox7.CheckedChanged += (s, e) => m_scene.Effect.DisableTexture = checkBox7.Checked;
 		}
 
 		protected override void OnClosing(CancelEventArgs e)

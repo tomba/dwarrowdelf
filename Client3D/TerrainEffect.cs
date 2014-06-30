@@ -90,5 +90,10 @@ namespace Client3D
 		{
 			set { this.Parameters["g_disableOcclusion"].SetValue(value); }
 		}
+
+		public bool DisableTexture
+		{
+			set { this.Parameters["g_disableTexture"].SetValue(value); }
+		}
 	}
 }

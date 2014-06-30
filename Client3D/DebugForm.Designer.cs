@@ -32,6 +32,8 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.camPosTextBox = new System.Windows.Forms.TextBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.label9 = new System.Windows.Forms.Label();
+			this.chunksRenderedTextBox = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.chunkRecalcsTextBox = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
@@ -56,8 +58,7 @@
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.label9 = new System.Windows.Forms.Label();
-			this.chunksRenderedTextBox = new System.Windows.Forms.TextBox();
+			this.checkBox7 = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -111,6 +112,23 @@
 			this.groupBox2.TabIndex = 3;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Scene";
+			// 
+			// label9
+			// 
+			this.label9.AutoSize = true;
+			this.label9.Location = new System.Drawing.Point(6, 46);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(93, 13);
+			this.label9.TabIndex = 5;
+			this.label9.Text = "Chunks Rendered";
+			// 
+			// chunksRenderedTextBox
+			// 
+			this.chunksRenderedTextBox.Location = new System.Drawing.Point(107, 43);
+			this.chunksRenderedTextBox.Name = "chunksRenderedTextBox";
+			this.chunksRenderedTextBox.ReadOnly = true;
+			this.chunksRenderedTextBox.Size = new System.Drawing.Size(147, 20);
+			this.chunksRenderedTextBox.TabIndex = 4;
 			// 
 			// label3
 			// 
@@ -265,6 +283,7 @@
 			// 
 			// groupBox4
 			// 
+			this.groupBox4.Controls.Add(this.checkBox7);
 			this.groupBox4.Controls.Add(this.checkBox6);
 			this.groupBox4.Controls.Add(this.checkBox5);
 			this.groupBox4.Controls.Add(this.checkBox4);
@@ -338,22 +357,15 @@
 			this.checkBox1.Text = "Disable Culling";
 			this.checkBox1.UseVisualStyleBackColor = true;
 			// 
-			// label9
+			// checkBox7
 			// 
-			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point(6, 46);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(93, 13);
-			this.label9.TabIndex = 5;
-			this.label9.Text = "Chunks Rendered";
-			// 
-			// chunksRenderedTextBox
-			// 
-			this.chunksRenderedTextBox.Location = new System.Drawing.Point(107, 43);
-			this.chunksRenderedTextBox.Name = "chunksRenderedTextBox";
-			this.chunksRenderedTextBox.ReadOnly = true;
-			this.chunksRenderedTextBox.Size = new System.Drawing.Size(147, 20);
-			this.chunksRenderedTextBox.TabIndex = 4;
+			this.checkBox7.AutoSize = true;
+			this.checkBox7.Location = new System.Drawing.Point(6, 114);
+			this.checkBox7.Name = "checkBox7";
+			this.checkBox7.Size = new System.Drawing.Size(100, 17);
+			this.checkBox7.TabIndex = 6;
+			this.checkBox7.Text = "Disable Texture";
+			this.checkBox7.UseVisualStyleBackColor = true;
 			// 
 			// DebugForm
 			// 
@@ -418,6 +430,7 @@
 		private System.Windows.Forms.CheckBox checkBox6;
 		private System.Windows.Forms.Label label9;
 		internal System.Windows.Forms.TextBox chunksRenderedTextBox;
+		private System.Windows.Forms.CheckBox checkBox7;
 
 	}
 }
