@@ -206,7 +206,7 @@ float4 PSMain(PS_IN input) : SV_Target
 	if (!g_disableTexture)
 	{
 		textureColor = blockTextures.Sample(blockSampler, float3(input.tex, input.texID));
-		textureColor = float4(textureColor.rgb * input.tintColor, 1);
+		textureColor = float4(textureColor.rgb * input.tintColor, textureColor.a);
 	}
 
 	float3 color = textureColor.rgb + input.bgColor.rgb * (1.0f - textureColor.a);

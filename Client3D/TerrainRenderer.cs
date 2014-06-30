@@ -85,7 +85,7 @@ namespace Client3D
 
 			m_effect = this.Content.Load<TerrainEffect>("TerrainEffect");
 
-			m_effect.TileTextures = this.Content.Load<Texture2D>("TileTextureArray");
+			m_effect.TileTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 		}
 
 		public override void Update(GameTime gameTime)

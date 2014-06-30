@@ -11,6 +11,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.Toolkit.Graphics;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Dwarrowdelf.Client;
 
 namespace Client3D
 {
@@ -28,7 +29,7 @@ namespace Client3D
 			[VertexElement("COLOR1")]
 			public Color BgColor;
 
-			public TerrainVertex(IntVector3 pos, TextureID texID, int occlusion, Color tintColor, Color bgColor)
+			public TerrainVertex(IntVector3 pos, SymbolID texID, int occlusion, Color tintColor, Color bgColor)
 			{
 				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
 				this.TexOccPack = new Byte4((int)texID, occlusion, 0, 0);
@@ -92,21 +93,6 @@ namespace Client3D
 			{
 				this.Count = 0;
 			}
-		}
-
-		// Must match the texture array's index
-		enum TextureID
-		{
-			TestTex = 0,
-			Tex1,
-			Tex2,
-			Tex3,
-			Tex4,
-			Tex5,
-			Undefined = 6,
-
-			Grass = 1,
-			Sand = 2,
 		}
 
 		public Chunk(VoxelMap map, IntVector3 chunkPosition)
@@ -237,30 +223,35 @@ namespace Client3D
 
 						var p = new IntVector3(x, y, z);
 
-						TextureID baseTex;
-						TextureID topTex;
+						SymbolID baseTex;
+						SymbolID topTex;
 
 						Color baseColor = Color.White;
 						Color topColor = Color.White;
 
 						if (td.IsUndefined)
 						{
-							baseTex = topTex = TextureID.Undefined;
+							baseTex = topTex = SymbolID.Undefined;
 						}
 						else
 						{
-							baseTex = TextureID.Tex2;
+							baseTex = SymbolID.Wall;
 							baseColor = Color.LightGray;
 
 							if ((td.Flags & VoxelFlags.Grass) != 0)
 							{
-								topTex = TextureID.Grass;
+								topTex = SymbolID.Grass;
 								topColor = Color.LightGreen;
+							}
+							else if ((td.VisibleFaces & FaceDirectionBits.PositiveZ) != 0)
+							{
+								topTex = SymbolID.Floor;
+								topColor = Color.LightGray;
 							}
 							else
 							{
-								topTex = TextureID.Tex2;
-								topColor = Color.LightGray;
+								topTex = baseTex;
+								topColor = baseColor;
 							}
 						}
 
@@ -270,7 +261,7 @@ namespace Client3D
 			}
 		}
 
-		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene, TextureID baseTex, TextureID topTex,
+		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene, SymbolID baseTex, SymbolID topTex,
 			Color baseColor, Color topColor,
 			FaceDirectionBits globalFaceMask)
 		{
@@ -352,7 +343,7 @@ namespace Client3D
 		}
 
 		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,
-			TextureID texId, TextureID topTexId,
+			SymbolID texId, SymbolID topTexId,
 			Color baseColor, Color topColor)
 		{
 			var grid = m_map.Grid;
@@ -377,7 +368,7 @@ namespace Client3D
 					else
 						occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
 
-					TextureID tex;
+					SymbolID tex;
 					Color color;
 
 					if (side == (int)FaceDirection.PositiveZ)
