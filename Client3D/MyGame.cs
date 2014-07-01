@@ -33,6 +33,8 @@ namespace Client3D
 
 		public MyGame()
 		{
+			GlobalData.VoxelMap = CreateVoxelMap();
+
 			this.IsMouseVisible = true;
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
 			//this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
@@ -47,6 +49,33 @@ namespace Client3D
 			Content.RootDirectory = "Content";
 
 			m_fpsClock = new Stopwatch();
+		}
+
+		VoxelMap CreateVoxelMap()
+		{
+			const string mapname = "voxelmap.dat";
+
+			bool newmap = false;
+
+			VoxelMap map;
+
+			if (newmap == false && System.IO.File.Exists(mapname))
+			{
+				map = VoxelMap.Load(mapname);
+			}
+			else
+			{
+				map = VoxelMap.CreateFromTileData(new GameMap().Grid);
+				//map = VoxelMap.CreateBallMap(32, 16);
+				//map = VoxelMap.CreateSimplexMap(64, 0.2f);
+
+				map.UndefineHiddenVoxels();
+				map.CheckVisibleFaces();
+
+				map.Save(mapname);
+			}
+
+			return map;
 		}
 
 		protected override void OnWindowCreated()

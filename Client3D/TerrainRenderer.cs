@@ -32,29 +32,7 @@ namespace Client3D
 			this.Visible = true;
 			this.Enabled = true;
 
-			const string mapname = "voxelmap.dat";
-
-			bool newmap = false;
-
-			VoxelMap map;
-
-			if (newmap == false && System.IO.File.Exists(mapname))
-			{
-				map = VoxelMap.Load(mapname);
-			}
-			else
-			{
-				map = VoxelMap.CreateFromTileData(new GameMap().Grid);
-				//map = VoxelMap.CreateBallMap(32, 16);
-				//map = VoxelMap.CreateSimplexMap(64, 0.2f);
-
-				map.UndefineHiddenVoxels();
-				map.CheckVisibleFaces();
-
-				map.Save(mapname);
-			}
-
-			GlobalData.VoxelMap = map;
+			var map = GlobalData.VoxelMap;
 
 			m_viewCorner1 = new IntVector3(0, 0, 0);
 			m_viewCorner2 = new IntVector3(map.Width - 1, map.Height - 1, map.Depth - 1);
