@@ -63,6 +63,19 @@ namespace Client3D
 			this.Grid = new Voxel[size.Depth, size.Height, size.Width];
 		}
 
+		public VoxelMap(IntSize3 size, Voxel init)
+			: this(size)
+		{
+			Parallel.For(0, this.Depth, z =>
+			{
+				for (int y = 0; y < this.Height; ++y)
+					for (int x = 0; x < this.Width; ++x)
+					{
+						this.Grid[z, y, x] = init;
+					}
+			});
+		}
+
 		public Voxel GetVoxel(IntVector3 p)
 		{
 			return this.Grid[p.Z, p.Y, p.X];
