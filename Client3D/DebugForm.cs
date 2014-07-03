@@ -83,7 +83,7 @@ namespace Client3D
 				this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
 			};
 
-			this.ypCutTrackBar.Maximum = map.Width - 1;
+			this.ypCutTrackBar.Maximum = map.Height - 1;
 			this.ypCutTrackBar.Value = m_scene.ViewCorner2.Y;
 			this.ypCutTrackBar.ValueChanged += (s, e) =>
 			{
