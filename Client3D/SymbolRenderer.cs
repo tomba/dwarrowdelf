@@ -102,18 +102,20 @@ namespace Client3D
 			m_effect.EyePos = cameraService.Position;
 			Matrix world = Matrix.Identity;
 			m_effect.WorldViewProjection = world * cameraService.View * cameraService.Projection;
-
-			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
-			angle = MathUtil.RadiansToDegrees(angle);
-			if (System.Math.Abs(angle) < 45)
-				m_effect.Mode = 2;
-			else
-				m_effect.Mode = 1;
 		}
 
 		public override void Draw(GameTime gameTime)
 		{
 			base.Draw(gameTime);
+
+			var cameraService = this.Services.GetService<ICameraService>();
+
+			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
+			angle = MathUtil.RadiansToDegrees(angle);
+			if (System.Math.Abs(angle) < 45)
+				m_effect.CurrentTechnique = m_effect.Techniques["ModeFlat"];
+			else
+				m_effect.CurrentTechnique = m_effect.Techniques["ModeFollow"];
 
 			var renderPass = m_effect.CurrentTechnique.Passes[0];
 			renderPass.Apply();
