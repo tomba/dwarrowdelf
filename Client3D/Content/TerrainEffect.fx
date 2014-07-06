@@ -74,15 +74,15 @@ GS_IN VSMain(VS_IN input)
 	return output;
 }
 
-[maxvertexcount(6)]
+[maxvertexcount(4)]
 void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 {
 	PS_IN output = (PS_IN)0;
 
-	/* FIRST */
 	output.pos = input[0].pos;
 	output.posW = input[0].posW;
 	output.tex = float2(0, 0);
+
 	output.texPack = input[0].texPack;
 	output.colorPack = input[0].colorPack;
 
@@ -96,46 +96,17 @@ void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
 	output.pos = input[1].pos;
 	output.posW = input[1].posW;
 	output.tex = float2(1, 0);
-	output.texPack = input[1].texPack;
-	output.colorPack = input[1].colorPack;
 	OutputStream.Append(output);
 
 	output.pos = input[2].pos;
 	output.posW = input[2].posW;
 	output.tex = float2(0, 1);
-	output.texPack = input[2].texPack;
-	output.colorPack = input[2].colorPack;
-	OutputStream.Append(output);
-
-	/* SECOND */
-	output.pos = input[1].pos;
-	output.posW = input[1].posW;
-	output.tex = float2(1, 0);
-	output.texPack = input[1].texPack;
-	output.colorPack = input[1].colorPack;
-	OutputStream.Append(output);
-
-	output.pos = input[2].pos;
-	output.posW = input[2].posW;
-	output.tex = float2(0, 1);
-	output.texPack = input[2].texPack;
-	output.colorPack = input[2].colorPack;
 	OutputStream.Append(output);
 
 	output.pos = input[3].pos;
 	output.posW = input[3].posW;
-	output.texPack = input[3].texPack;
-	output.colorPack = input[3].colorPack;
 	output.tex = float2(1, 1);
-
-	output.occlusion[0] = input[0].occlusion;
-	output.occlusion[1] = input[1].occlusion;
-	output.occlusion[2] = input[2].occlusion;
-	output.occlusion[3] = input[3].occlusion;
-
 	OutputStream.Append(output);
-
-	OutputStream.RestartStrip();
 }
 
 float4 PSMain(PS_IN input) : SV_Target
