@@ -34,6 +34,10 @@ namespace Client3D
 
 		SymbolEffect m_effect;
 
+		Vertex[] m_sceneryVertices;
+
+		Buffer<Vertex> m_sceneryVertexBuffer;
+
 		Vertex[] m_vertices;
 
 		Buffer<Vertex> m_vertexBuffer;
@@ -60,37 +64,50 @@ namespace Client3D
 
 			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 
-			var sl = new Vector3(17, 11, 16);
-
-			List<Vertex> vertices = new List<Vertex>();
-
-			vertices.Add(new Vertex(sl, Color.Red, (int)Dwarrowdelf.Client.SymbolID.Player));
-			vertices.Add(new Vertex(sl + new Vector3(-1, 0, 0), Color.Green, (int)Dwarrowdelf.Client.SymbolID.Wolf));
-
-			var grid = GlobalData.VoxelMap.Grid;
-			int width = GlobalData.VoxelMap.Width;
-			int height = GlobalData.VoxelMap.Height;
-			int depth = GlobalData.VoxelMap.Depth;
-
-			Parallel.For(0, depth, z =>
 			{
-				for (int y = 0; y < height; ++y)
-					for (int x = 0; x < width; ++x)
-					{
-						if ((grid[z, y, x].Flags & VoxelFlags.Tree) != 0)
+				var sl = new Vector3(17, 11, 16);
+
+				List<Vertex> vertices = new List<Vertex>();
+
+				vertices.Add(new Vertex(sl, Color.Red, (int)Dwarrowdelf.Client.SymbolID.Player));
+				vertices.Add(new Vertex(sl + new Vector3(-1, 0, 0), Color.Green, (int)Dwarrowdelf.Client.SymbolID.Wolf));
+
+				m_vertices = vertices.ToArray();
+
+				for (int i = 0; i < m_vertices.Length; ++i)
+					m_vertices[i].Position += new Vector3(0.5f);
+
+				m_vertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_vertices);
+			}
+
+			{
+				List<Vertex> vertices = new List<Vertex>();
+
+				var grid = GlobalData.VoxelMap.Grid;
+				int width = GlobalData.VoxelMap.Width;
+				int height = GlobalData.VoxelMap.Height;
+				int depth = GlobalData.VoxelMap.Depth;
+
+				Parallel.For(0, depth, z =>
+				{
+					for (int y = 0; y < height; ++y)
+						for (int x = 0; x < width; ++x)
 						{
-							lock (vertices)
-								vertices.Add(new Vertex(new Vector3(x, y, z), Color.Green, (int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
+							if ((grid[z, y, x].Flags & VoxelFlags.Tree) != 0)
+							{
+								lock (vertices)
+									vertices.Add(new Vertex(new Vector3(x, y, z), Color.Green, (int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
+							}
 						}
-					}
-			});
+				});
 
-			m_vertices = vertices.ToArray();
+				m_sceneryVertices = vertices.ToArray();
 
-			for (int i = 0; i < m_vertices.Length; ++i)
-				m_vertices[i].Position += new Vector3(0.5f);
+				for (int i = 0; i < m_sceneryVertices.Length; ++i)
+					m_sceneryVertices[i].Position += new Vector3(0.5f);
 
-			m_vertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_vertices);
+				m_sceneryVertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_sceneryVertices);
+			}
 		}
 
 		public override void Update(GameTime gameTime)
@@ -112,6 +129,19 @@ namespace Client3D
 
 			var cameraService = this.Services.GetService<ICameraService>();
 
+
+			device.SetRasterizerState(device.RasterizerStates.CullNone);
+			device.SetBlendState(device.BlendStates.Default);
+			device.SetVertexInputLayout(s_layout);
+
+			m_effect.CurrentTechnique = m_effect.Techniques["ModeCross"];
+			m_effect.CurrentTechnique.Passes[0].Apply();
+
+			device.SetVertexBuffer(m_sceneryVertexBuffer);
+			device.Draw(PrimitiveType.PointList, m_sceneryVertices.Length);
+
+
+
 			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
 			angle = MathUtil.RadiansToDegrees(angle);
 			if (System.Math.Abs(angle) < 45)
@@ -119,14 +149,11 @@ namespace Client3D
 			else
 				m_effect.CurrentTechnique = m_effect.Techniques["ModeFollow"];
 
-			var renderPass = m_effect.CurrentTechnique.Passes[0];
-			renderPass.Apply();
+			m_effect.CurrentTechnique.Passes[0].Apply();
 
-			device.SetRasterizerState(device.RasterizerStates.CullNone);
 			device.SetBlendState(device.BlendStates.AlphaBlend);
+			//device.SetDepthStencilState(device.DepthStencilStates.None);
 			device.SetVertexBuffer(m_vertexBuffer);
-			device.SetVertexInputLayout(s_layout);
-
 			device.Draw(PrimitiveType.PointList, m_vertices.Length);
 		}
 	}
