@@ -106,6 +106,8 @@ namespace Client3D
 
 		public override void Draw(GameTime gameTime)
 		{
+			var device = this.GraphicsDevice;
+
 			base.Draw(gameTime);
 
 			var cameraService = this.Services.GetService<ICameraService>();
@@ -120,8 +122,7 @@ namespace Client3D
 			var renderPass = m_effect.CurrentTechnique.Passes[0];
 			renderPass.Apply();
 
-			var device = this.GraphicsDevice;
-
+			device.SetRasterizerState(device.RasterizerStates.CullNone);
 			device.SetBlendState(device.BlendStates.AlphaBlend);
 			device.SetVertexBuffer(m_vertexBuffer);
 			device.SetVertexInputLayout(s_layout);

@@ -45,6 +45,40 @@ VSOut VSMain(VSIn vin)
 	return vout;
 }
 
+void AddRect(GSIn gin, inout TriangleStream< GSOut > output, in float3 up, in float3 right)
+{
+	const float2 size = float2(1, 1);
+
+	const float hWidth = 0.5f * size.x;
+	const float hHeight = 0.5f * size.y;
+
+	const float2 gTexC[4] =
+	{
+		float2(0, 1),
+		float2(0, 0),
+		float2(1, 1),
+		float2(1, 0),
+	};
+
+	float4 v[4];
+	v[0] = float4(gin.PosW + hWidth * right - hHeight * up, 1.0f);
+	v[1] = float4(gin.PosW + hWidth * right + hHeight * up, 1.0f);
+	v[2] = float4(gin.PosW - hWidth * right - hHeight * up, 1.0f);
+	v[3] = float4(gin.PosW - hWidth * right + hHeight * up, 1.0f);
+
+	GSOut gsout;
+	[unroll]
+	for (int i = 0; i < 4; ++i)
+	{
+		gsout.PosH = mul(v[i], gWorldViewProj);
+		gsout.PosW = v[i].xyz;
+		gsout.Tex = float3(gTexC[i], gin.Tex);
+		gsout.Color = gin.Color;
+
+		output.Append(gsout);
+	}
+}
+
 [maxvertexcount(4)]
 void GSMain(point GSIn gin[1], inout TriangleStream< GSOut > output)
 {
@@ -69,36 +103,22 @@ void GSMain(point GSIn gin[1], inout TriangleStream< GSOut > output)
 		gin[0].PosW += float3(0, 0, -0.49f);
 	}
 
-	const float2 size = float2(1, 1);
+	AddRect(gin, output, up, right);
+}
 
-	const float hWidth = 0.5f * size.x;
-	const float hHeight = 0.5f * size.y;
+[maxvertexcount(8)]
+void GSMainCross(point GSIn gin[1], inout TriangleStream< GSOut > output)
+{
+	float3 up = float3(0, 0, 1);
+	float3 right1 = float3(1, 1, 0);
 
-	const float2 gTexC[4] =
-	{
-		float2(0, 1),
-		float2(0, 0),
-		float2(1, 1),
-		float2(1, 0),
-	};
+	AddRect(gin, output, up, right1);
 
-	float4 v[4];
-	v[0] = float4(gin[0].PosW + hWidth * right - hHeight * up, 1.0f);
-	v[1] = float4(gin[0].PosW + hWidth * right + hHeight * up, 1.0f);
-	v[2] = float4(gin[0].PosW - hWidth * right - hHeight * up, 1.0f);
-	v[3] = float4(gin[0].PosW - hWidth * right + hHeight * up, 1.0f);
+	output.RestartStrip();
 
-	GSOut gsout;
-	[unroll]
-	for (int i = 0; i < 4; ++i)
-	{
-		gsout.PosH = mul(v[i], gWorldViewProj);
-		gsout.PosW = v[i].xyz;
-		gsout.Tex = float3(gTexC[i], gin[0].Tex);
-		gsout.Color = gin[0].Color;
+	float3 right2 = float3(-1, 1, 0);
 
-		output.Append(gsout);
-	}
+	AddRect(gin, output, up, right2);
 }
 
 float4 PSMain(PSIn pin) : SV_TARGET
@@ -144,6 +164,17 @@ technique ModeFlat
 		Preprocessor = { "#define BILLBOARD_MODE 3" };
 		VertexShader = VSMain;
 		GeometryShader = GSMain;
+		PixelShader = PSMain;
+	}
+}
+
+technique ModeCross
+{
+	pass
+	{
+		Profile = 10.0;
+		VertexShader = VSMain;
+		GeometryShader = GSMainCross;
 		PixelShader = PSMain;
 	}
 }
