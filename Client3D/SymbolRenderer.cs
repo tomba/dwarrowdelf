@@ -77,7 +77,8 @@ namespace Client3D
 				for (int i = 0; i < m_vertices.Length; ++i)
 					m_vertices[i].Position += new Vector3(0.5f);
 
-				m_vertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_vertices);
+				if (m_vertices.Length > 0)
+					m_vertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_vertices);
 			}
 
 			{
@@ -96,7 +97,8 @@ namespace Client3D
 							if ((grid[z, y, x].Flags & VoxelFlags.Tree) != 0)
 							{
 								lock (vertices)
-									vertices.Add(new Vertex(new Vector3(x, y, z), Color.Green, (int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
+									vertices.Add(new Vertex(new Vector3(x, y, z), Color.LightGreen,
+										(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
 							}
 						}
 				});
@@ -106,7 +108,8 @@ namespace Client3D
 				for (int i = 0; i < m_sceneryVertices.Length; ++i)
 					m_sceneryVertices[i].Position += new Vector3(0.5f);
 
-				m_sceneryVertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_sceneryVertices);
+				if (m_sceneryVertices.Length > 0)
+					m_sceneryVertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_sceneryVertices);
 			}
 		}
 
@@ -129,32 +132,35 @@ namespace Client3D
 
 			var cameraService = this.Services.GetService<ICameraService>();
 
+			if (m_sceneryVertexBuffer != null)
+			{
+				device.SetRasterizerState(device.RasterizerStates.CullNone);
+				device.SetBlendState(device.BlendStates.Default);
+				device.SetVertexInputLayout(s_layout);
 
-			device.SetRasterizerState(device.RasterizerStates.CullNone);
-			device.SetBlendState(device.BlendStates.Default);
-			device.SetVertexInputLayout(s_layout);
+				m_effect.CurrentTechnique = m_effect.Techniques["ModeCross"];
+				m_effect.CurrentTechnique.Passes[0].Apply();
 
-			m_effect.CurrentTechnique = m_effect.Techniques["ModeCross"];
-			m_effect.CurrentTechnique.Passes[0].Apply();
+				device.SetVertexBuffer(m_sceneryVertexBuffer);
+				device.Draw(PrimitiveType.PointList, m_sceneryVertices.Length);
+			}
 
-			device.SetVertexBuffer(m_sceneryVertexBuffer);
-			device.Draw(PrimitiveType.PointList, m_sceneryVertices.Length);
+			if (m_vertexBuffer != null)
+			{
+				var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
+				angle = MathUtil.RadiansToDegrees(angle);
+				if (System.Math.Abs(angle) < 45)
+					m_effect.CurrentTechnique = m_effect.Techniques["ModeFlat"];
+				else
+					m_effect.CurrentTechnique = m_effect.Techniques["ModeFollow"];
 
+				m_effect.CurrentTechnique.Passes[0].Apply();
 
-
-			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
-			angle = MathUtil.RadiansToDegrees(angle);
-			if (System.Math.Abs(angle) < 45)
-				m_effect.CurrentTechnique = m_effect.Techniques["ModeFlat"];
-			else
-				m_effect.CurrentTechnique = m_effect.Techniques["ModeFollow"];
-
-			m_effect.CurrentTechnique.Passes[0].Apply();
-
-			device.SetBlendState(device.BlendStates.AlphaBlend);
-			//device.SetDepthStencilState(device.DepthStencilStates.None);
-			device.SetVertexBuffer(m_vertexBuffer);
-			device.Draw(PrimitiveType.PointList, m_vertices.Length);
+				device.SetBlendState(device.BlendStates.AlphaBlend);
+				//device.SetDepthStencilState(device.DepthStencilStates.None);
+				device.SetVertexBuffer(m_vertexBuffer);
+				device.Draw(PrimitiveType.PointList, m_vertices.Length);
+			}
 		}
 	}
 }
