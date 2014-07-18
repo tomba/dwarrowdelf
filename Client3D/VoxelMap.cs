@@ -68,6 +68,11 @@ namespace Client3D
 		public VoxelMap(IntSize3 size, Voxel init)
 			: this(size)
 		{
+			Clear(init);
+		}
+
+		public void Clear(Voxel init)
+		{
 			Parallel.For(0, this.Depth, z =>
 			{
 				for (int y = 0; y < this.Height; ++y)
@@ -166,39 +171,55 @@ namespace Client3D
 			}
 		}
 
-		public static VoxelMap CreateSimplexMap(int side, float limit)
+		public void FillFromNoiseMap(SharpNoise.NoiseMap map)
 		{
-			var map = new VoxelMap(new IntSize3(side, side, side));
+			var max = map.IterateAllLines().SelectMany(l => l.ToArray()).Max();
+			var min = map.IterateAllLines().SelectMany(l => l.ToArray()).Min();
 
-			var n = new SharpNoise.Modules.Simplex()
-			{
-				OctaveCount = 3,
-			};
-
-			map.FillSimplex(n, limit, new Vector3());
-
-			return map;
-		}
-
-		public void FillSimplex(SharpNoise.Modules.Simplex noise, float limit, Vector3 offset)
-		{
 			var grid = this.Grid;
-			int side = this.Width;
 
-			Parallel.For(0, side, z =>
+			int waterLimit = this.Depth * 3 / 10;
+
+			Parallel.For(0, this.Height, y =>
 			{
-				for (int y = 0; y < side; ++y)
-					for (int x = 0; x < side; ++x)
+				for (int x = 0; x < this.Width; ++x)
+				{
+					var v = map[x, y];	// [-1 .. 1]
+
+					v -= min;
+					v /= (max - min);	// [0 .. 1]
+
+					v *= this.Depth * 8 / 10;
+					v += this.Depth * 2 / 10;
+
+					for (int z = this.Depth - 1; z >= 0; --z)
 					{
-						var v = new Vector3(x, y, z) / side + offset;
-
-						var val = noise.GetValue(v.X, v.Y, v.Z);
-
-						if (val < limit)
-							grid[z, y, x] = Voxel.Empty;
-						else
+						if (z < v)
+						{
 							grid[z, y, x] = Voxel.Rock;
+
+							if (z >= waterLimit && z < this.Depth * 8 / 10)
+							{
+								grid[z, y, x].Flags = VoxelFlags.Grass;
+
+								Dwarrowdelf.MWCRandom r = new MWCRandom(new IntVector3(x, y, z), 0);
+
+								if (r.Next(100) < 30)
+								{
+									grid[z + 1, y, x].Flags |= VoxelFlags.Tree;
+									//grid[z, y, x].Flags |= VoxelFlags.Tree2;
+								}
+							}
+						}
+						else
+						{
+							if (z < waterLimit)
+								grid[z, y, x] = Voxel.Water;
+							else
+								grid[z, y, x] = Voxel.Empty;
+						}
 					}
+				}
 			});
 		}
 
