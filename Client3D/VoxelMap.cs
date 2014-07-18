@@ -15,6 +15,7 @@ namespace Client3D
 		Undefined = 0,
 		Empty,
 		Rock,
+		Water,
 	}
 
 	enum VoxelFlags : byte
@@ -44,6 +45,7 @@ namespace Client3D
 		public readonly static Voxel Undefined = new Voxel() { Type = VoxelType.Undefined };
 		public readonly static Voxel Empty = new Voxel() { Type = VoxelType.Empty };
 		public readonly static Voxel Rock = new Voxel() { Type = VoxelType.Rock };
+		public readonly static Voxel Water = new Voxel() { Type = VoxelType.Water };
 	}
 
 	class VoxelMap
@@ -265,6 +267,12 @@ namespace Client3D
 			if (td.InteriorID == InteriorID.NaturalWall)
 			{
 				grid[z, y, x].Type = VoxelType.Rock;
+				return;
+			}
+
+			if (td.WaterLevel > 0)
+			{
+				grid[z, y, x].Type = VoxelType.Water;
 				return;
 			}
 

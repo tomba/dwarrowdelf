@@ -241,6 +241,13 @@ namespace Client3D
 							baseTexture.Symbol1 = SymbolID.Unknown;
 							baseTexture.Color1 = GameColor.LightGray;
 						}
+						else if (td.Type == VoxelType.Water)
+						{
+							baseTexture.Symbol1 = SymbolID.Water;
+							baseTexture.Color0 = GameColor.MediumBlue;
+							baseTexture.Color1 = GameColor.SeaGreen;
+							topTexture = baseTexture;
+						}
 						else
 						{
 							baseTexture.Color0 = GameColor.LightGray;
