@@ -74,6 +74,14 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
+		/// Clamp a float between 0 and 1
+		/// </summary>
+		public static float Clamp(float value)
+		{
+			return value > 1 ? 1 : (value < 0 ? 0 : value);
+		}
+
+		/// <summary>
 		/// 2^n
 		/// </summary>
 		public static int Pow2(int n)
@@ -252,6 +260,60 @@ namespace Dwarrowdelf
 		public static double Normalize(double x0, double x1, double x)
 		{
 			return Clamp((x - x0) / (x1 - x0));
+		}
+
+		/// <summary>
+		/// Scale, bias and saturate x to 0..1 range
+		/// </summary>
+		public static float Normalize(float x0, float x1, float x)
+		{
+			return Clamp((x - x0) / (x1 - x0));
+		}
+
+		/// <summary>
+		/// Linear Interpolation, t must be between 0 and 1, returns value between y0 and y1
+		/// </summary>
+		public static float Lerp(float t, float v0, float v1)
+		{
+			return (1 - t) * v0 + t * v1;
+		}
+
+		/// <summary>
+		/// Bilinear Interpolation
+		/// </summary>
+		public static float BiLerp(float x, float y,
+			float x0y0, float x0y1, float x1y0, float x1y1,
+			float x1, float x2, float y1, float y2)
+		{
+			x = Normalize(x1, x2, x);
+			y = Normalize(y1, y2, y);
+
+			float c0 = Lerp(x, x0y0, x1y0);
+			float c1 = Lerp(x, x0y1, x1y1);
+
+			return Lerp(y, c0, c1);
+		}
+
+		/// <summary>
+		/// Trilinear Interpolation
+		/// </summary>
+		public static float TriLerp(float x, float y, float z,
+			float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1,
+			float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1,
+			float x1, float x2, float y1, float y2, float z1, float z2)
+		{
+			x = Normalize(x1, x2, x);
+			y = Normalize(y1, y2, y);
+			z = Normalize(z1, z2, z);
+
+			float c00 = Lerp(x, x0y0z0, x1y0z0);
+			float c10 = Lerp(x, x0y1z0, x1y1z0);
+			float c01 = Lerp(x, x0y0z1, x1y0z1);
+			float c11 = Lerp(x, x0y1z1, x1y1z1);
+			float c0 = Lerp(y, c00, c10);
+			float c1 = Lerp(y, c01, c11);
+
+			return Lerp(z, c0, c1);
 		}
 	}
 }
