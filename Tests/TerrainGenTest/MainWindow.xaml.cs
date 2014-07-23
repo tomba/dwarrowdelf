@@ -41,9 +41,9 @@ namespace TerrainGenTest
 			InitializeComponent();
 		}
 
-		protected override void OnInitialized(EventArgs e)
+		protected override void OnSourceInitialized(EventArgs e)
 		{
-			base.OnInitialized(e);
+			base.OnSourceInitialized(e);
 
 			m_needCreate = true;
 			m_needGenerate = true;
@@ -383,7 +383,7 @@ namespace TerrainGenTest
 			if (pos.Y < m_size.Height)
 				this.Y = pos.Y;
 
-			if (pos.Z < m_size.Depth)
+			if (pos.Z >= 0 && pos.Z < m_size.Depth)
 				this.Z = pos.Z;
 		}
 
