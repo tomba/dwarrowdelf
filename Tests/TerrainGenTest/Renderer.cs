@@ -35,7 +35,7 @@ namespace TerrainGenTest
 			m_sliceBmpYZ = new WriteableBitmap(size.Depth, size.Height, 96, 96, PixelFormats.Bgr32, null);
 		}
 
-		public void Render(TerrainData terrain, IntPoint3 pos)
+		public void Render(TerrainData terrain, IntVector3 pos)
 		{
 			if (pos.Z == m_size.Depth)
 				RenderTerrain(terrain);
@@ -74,7 +74,7 @@ namespace TerrainGenTest
 
 						while (true)
 						{
-							var p = new IntPoint3(x, y, z);
+							var p = new IntVector3(x, y, z);
 							td = terrain.GetTileData(p);
 
 							if (this.ShowWaterEnabled && td.WaterLevel > 0)
@@ -127,7 +127,7 @@ namespace TerrainGenTest
 				{
 					for (int x = 0; x < w; ++x)
 					{
-						var p = new IntPoint3(x, y, level);
+						var p = new IntVector3(x, y, level);
 						var td = terrain.GetTileData(p);
 
 						uint c = GetTileColor(td);
@@ -167,7 +167,7 @@ namespace TerrainGenTest
 					{
 						int mz = d - z - 1;
 
-						var p = new IntPoint3(x, y, mz);
+						var p = new IntVector3(x, y, mz);
 						var td = terrain.GetTileData(p);
 
 						uint c;
@@ -207,7 +207,7 @@ namespace TerrainGenTest
 					{
 						int mz = d - z - 1;
 
-						var p = new IntPoint3(x, y, mz);
+						var p = new IntVector3(x, y, mz);
 						var td = terrain.GetTileData(p);
 
 						uint c;

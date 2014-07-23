@@ -190,7 +190,7 @@ namespace TerrainGenTest
 				Stopwatch sw = Stopwatch.StartNew();
 
 				this.Renderer.ShowWaterEnabled = this.ShowWaterEnabled;
-				this.Renderer.Render(m_terrain, new IntPoint3(this.X, this.Y, this.Z));
+				this.Renderer.Render(m_terrain, new IntVector3(this.X, this.Y, this.Z));
 
 				sw.Stop();
 
@@ -376,7 +376,7 @@ namespace TerrainGenTest
 				return 0;
 		}
 
-		void UpdatePos(IntPoint3 pos)
+		void UpdatePos(IntVector3 pos)
 		{
 			if (pos.X < m_size.Width)
 				this.X = pos.X;
@@ -388,19 +388,19 @@ namespace TerrainGenTest
 				this.Z = pos.Z;
 		}
 
-		void UpdateTileInfo(IntPoint3 p)
+		void UpdateTileInfo(IntVector3 p)
 		{
-			if (m_terrain.Size.Plane.Contains(p.ToIntPoint()) == false)
+			if (m_terrain.Size.Plane.Contains(p.ToIntVector2()) == false)
 				return;
 
-			int h = m_terrain.GetSurfaceLevel(p.ToIntPoint());
+			int h = m_terrain.GetSurfaceLevel(p.ToIntVector2());
 
 			zTextBlock.Text = String.Format("{0} ({1})", p, h);
 
-			IntPoint3 mp;
+			IntVector3 mp;
 
 			if (p.Z == m_size.Depth)
-				mp = new IntPoint3(p.X, p.Y, h);
+				mp = new IntVector3(p.X, p.Y, h);
 			else if (p.Z >= 0)
 				mp = p;
 			else
@@ -425,7 +425,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdatePos(new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), this.Z));
+			UpdatePos(new IntVector3((int)Math.Round(p.X), (int)Math.Round(p.Y), this.Z));
 		}
 
 		private void imageXY_MouseMove(object sender, MouseEventArgs e)
@@ -433,7 +433,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			var mp = new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), this.Z);
+			var mp = new IntVector3((int)Math.Round(p.X), (int)Math.Round(p.Y), this.Z);
 
 			UpdateTileInfo(mp);
 
@@ -448,7 +448,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdateTileInfo(new IntPoint3((int)Math.Round(p.X), this.Y, m_size.Depth - (int)Math.Round(p.Y) - 1));
+			UpdateTileInfo(new IntVector3((int)Math.Round(p.X), this.Y, m_size.Depth - (int)Math.Round(p.Y) - 1));
 		}
 
 		private void imageYZ_MouseMove(object sender, MouseEventArgs e)
@@ -456,7 +456,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdateTileInfo(new IntPoint3(this.X, (int)Math.Round(p.Y), m_size.Depth - (int)Math.Round(p.X) - 1));
+			UpdateTileInfo(new IntVector3(this.X, (int)Math.Round(p.Y), m_size.Depth - (int)Math.Round(p.X) - 1));
 		}
 
 		private void imageXZ_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -464,7 +464,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdatePos(new IntPoint3((int)Math.Round(p.X), this.Y, m_size.Depth - (int)Math.Round(p.Y) - 1));
+			UpdatePos(new IntVector3((int)Math.Round(p.X), this.Y, m_size.Depth - (int)Math.Round(p.Y) - 1));
 		}
 
 		private void imageYZ_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -472,7 +472,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdatePos(new IntPoint3(this.X, (int)Math.Round(p.Y), m_size.Depth - (int)Math.Round(p.X) - 1));
+			UpdatePos(new IntVector3(this.X, (int)Math.Round(p.Y), m_size.Depth - (int)Math.Round(p.X) - 1));
 		}
 
 		private void mapGrid_MouseMove(object sender, MouseEventArgs e)
