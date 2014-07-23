@@ -22,7 +22,6 @@ namespace TerrainGenTest
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		TerrainData m_terrain;
-		TerrainGenerator m_terrainGen;
 		public Renderer Renderer { get; private set; }
 
 		IntSize3 m_size;
@@ -173,10 +172,10 @@ namespace TerrainGenTest
 					SE = SECorner,
 				};
 
-				//m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
-				m_terrainGen = new TerrainGenerator(m_terrain, new Random(this.Seed));
-				m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Amplify);
-				//m_terrainGen.Generate(this.Seed);
+				//var terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
+				//terrainGen.Generate(this.Seed);
+				var terrainGen = new TerrainGenerator(m_terrain, new Random(this.Seed));
+				terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Amplify);
 
 				sw.Stop();
 
