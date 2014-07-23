@@ -448,7 +448,14 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdateTileInfo(new IntVector3((int)Math.Round(p.X), this.Y, m_size.Depth - (int)Math.Round(p.Y) - 1));
+			var mp = new IntVector3((int)Math.Round(p.X), this.Y, m_size.Depth - (int)Math.Round(p.Y) - 1);
+
+			UpdateTileInfo(mp);
+
+			if (e.LeftButton == MouseButtonState.Released)
+				return;
+
+			UpdatePos(mp);
 		}
 
 		private void imageYZ_MouseMove(object sender, MouseEventArgs e)
@@ -456,7 +463,14 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdateTileInfo(new IntVector3(this.X, (int)Math.Round(p.Y), m_size.Depth - (int)Math.Round(p.X) - 1));
+			var mp = new IntVector3(this.X, (int)Math.Round(p.Y), m_size.Depth - (int)Math.Round(p.X) - 1);
+
+			UpdateTileInfo(mp);
+
+			if (e.LeftButton == MouseButtonState.Released)
+				return;
+
+			UpdatePos(mp);
 		}
 
 		private void imageXZ_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
