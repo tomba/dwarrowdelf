@@ -130,7 +130,11 @@ namespace TerrainGenTest
 						var p = new IntVector3(x, y, level);
 						var td = terrain.GetTileData(p);
 
-						uint c = GetTileColor(td);
+						uint c;
+						if (td.IsEmpty && td.WaterLevel == 0)
+							c = ColorToRaw(Colors.SkyBlue);
+						else
+							c = GetTileColor(td);
 
 						var ptr = pBackBuffer + y * stride + x;
 
