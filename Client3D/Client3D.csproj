@@ -70,8 +70,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.Yaml.dll</HintPath>
     </Reference>
-    <Reference Include="SharpNoise">
-      <HintPath>..\packages\SharpNoise.0.9.0.38022\lib\net45\SharpNoise.dll</HintPath>
+    <Reference Include="SharpNoise, Version=0.10.0.33666, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SharpNoise.0.10.0.0\lib\net45\SharpNoise.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpNoise.Utilities">
+      <HintPath>..\packages\SharpNoise.0.10.0.0\lib\net45\SharpNoise.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="SharpYaml">
       <HintPath>..\packages\SharpYaml.1.2.0\lib\SharpYaml.dll</HintPath>
