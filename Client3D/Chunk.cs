@@ -53,7 +53,7 @@ namespace Client3D
 		const int MAX_VERTICES_PER_TILE = 6 * 4;
 		const int MAX_VERTICES = MAX_TILES * MAX_VERTICES_PER_TILE;
 
-		static IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
+		static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
 		VoxelMap m_map;
 
