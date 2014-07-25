@@ -117,6 +117,7 @@
     <Compile Include="TestRenderer.cs" />
     <Compile Include="SceneRenderer.cs" />
     <Compile Include="TerrainRenderer.cs" />
+    <Compile Include="VertexList.cs" />
     <Compile Include="VoxelMap.cs" />
     <Compile Include="VoxelMapGen.cs" />
     <Compile Include="VoxelRayCast.cs" />

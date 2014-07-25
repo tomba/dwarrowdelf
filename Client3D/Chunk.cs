@@ -76,34 +76,12 @@ namespace Client3D
 
 		public bool IsInvalid { get; private set; }
 
-		VertexList m_vertexList;
+		VertexList<TerrainVertex> m_vertexList;
 		bool m_vertexBufferInvalid;
 
 		public BoundingBox BBox;
 
 		public bool IsEnabled { get; set; }
-
-		class VertexList
-		{
-			public TerrainVertex[] Data { get; private set; }
-			public int Count { get; private set; }
-
-			public VertexList(int size)
-			{
-				this.Data = new TerrainVertex[size];
-				this.Count = 0;
-			}
-
-			public void Add(TerrainVertex data)
-			{
-				this.Data[this.Count++] = data;
-			}
-
-			public void Clear()
-			{
-				this.Count = 0;
-			}
-		}
 
 		public Chunk(VoxelMap map, IntVector3 chunkPosition)
 		{
@@ -142,7 +120,7 @@ namespace Client3D
 				return;
 
 			if (m_vertexList == null)
-				m_vertexList = new VertexList(MAX_VERTICES);
+				m_vertexList = new VertexList<TerrainVertex>(MAX_VERTICES);
 
 			var device = scene.Game.GraphicsDevice;
 
