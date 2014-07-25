@@ -51,8 +51,7 @@ namespace Client3D
 
 			m_chunks = new Chunk[this.Size.Volume];
 
-			// Organize chunks from up to down to avoid overdraw
-			for (int z = zChunks - 1; z >= 0; --z)
+			for (int z = 0; z < zChunks; ++z)
 			{
 				for (int y = 0; y < yChunks; ++y)
 				{
