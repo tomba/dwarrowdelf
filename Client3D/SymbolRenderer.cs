@@ -132,11 +132,12 @@ namespace Client3D
 
 			var cameraService = this.Services.GetService<ICameraService>();
 
+			device.SetRasterizerState(device.RasterizerStates.CullNone);
+			device.SetVertexInputLayout(s_layout);
+
 			if (m_sceneryVertexBuffer != null)
 			{
-				device.SetRasterizerState(device.RasterizerStates.CullNone);
 				device.SetBlendState(device.BlendStates.Default);
-				device.SetVertexInputLayout(s_layout);
 
 				m_effect.CurrentTechnique = m_effect.Techniques["ModeCross"];
 				m_effect.CurrentTechnique.Passes[0].Apply();
