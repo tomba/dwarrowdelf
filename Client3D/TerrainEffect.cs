@@ -98,9 +98,9 @@ namespace Client3D
 			set { this.Parameters["g_eyePos"].SetValue(ref value); }
 		}
 
-		public bool ShowBorders
+		public bool DisableBorders
 		{
-			set { this.Parameters["g_showBorders"].SetValue(value); }
+			set { this.Parameters["g_disableBorders"].SetValue(value); }
 		}
 
 		public bool DisableLight

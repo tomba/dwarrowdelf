@@ -31,7 +31,7 @@ Texture2DArray blockTextures;
 sampler blockSampler;
 
 bool g_disableLight;
-bool g_showBorders;
+bool g_disableBorders;
 bool g_disableOcclusion;
 bool g_disableTexture;
 
@@ -155,7 +155,7 @@ float4 PSMain(PS_IN input) : SV_Target
 
 	float border = 1.0f;
 
-	if (g_showBorders)
+	if (!g_disableBorders)
 	{
 		float2 ddEdge = fwidth(input.tex);
 

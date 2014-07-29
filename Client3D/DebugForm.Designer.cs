@@ -52,13 +52,13 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.viewCorner1TextBox = new System.Windows.Forms.TextBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.checkBox7 = new System.Windows.Forms.CheckBox();
 			this.checkBox6 = new System.Windows.Forms.CheckBox();
 			this.checkBox5 = new System.Windows.Forms.CheckBox();
 			this.checkBox4 = new System.Windows.Forms.CheckBox();
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.checkBox7 = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -297,6 +297,16 @@
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Options";
 			// 
+			// checkBox7
+			// 
+			this.checkBox7.AutoSize = true;
+			this.checkBox7.Location = new System.Drawing.Point(6, 114);
+			this.checkBox7.Name = "checkBox7";
+			this.checkBox7.Size = new System.Drawing.Size(100, 17);
+			this.checkBox7.TabIndex = 6;
+			this.checkBox7.Text = "Disable Texture";
+			this.checkBox7.UseVisualStyleBackColor = true;
+			// 
 			// checkBox6
 			// 
 			this.checkBox6.AutoSize = true;
@@ -332,9 +342,9 @@
 			this.checkBox3.AutoSize = true;
 			this.checkBox3.Location = new System.Drawing.Point(6, 43);
 			this.checkBox3.Name = "checkBox3";
-			this.checkBox3.Size = new System.Drawing.Size(98, 17);
+			this.checkBox3.Size = new System.Drawing.Size(100, 17);
 			this.checkBox3.TabIndex = 2;
-			this.checkBox3.Text = "Enable Borders";
+			this.checkBox3.Text = "Disable Borders";
 			this.checkBox3.UseVisualStyleBackColor = true;
 			// 
 			// checkBox2
@@ -356,16 +366,6 @@
 			this.checkBox1.TabIndex = 0;
 			this.checkBox1.Text = "Disable Culling";
 			this.checkBox1.UseVisualStyleBackColor = true;
-			// 
-			// checkBox7
-			// 
-			this.checkBox7.AutoSize = true;
-			this.checkBox7.Location = new System.Drawing.Point(6, 114);
-			this.checkBox7.Name = "checkBox7";
-			this.checkBox7.Size = new System.Drawing.Size(100, 17);
-			this.checkBox7.TabIndex = 6;
-			this.checkBox7.Text = "Disable Texture";
-			this.checkBox7.UseVisualStyleBackColor = true;
 			// 
 			// DebugForm
 			// 
