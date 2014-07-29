@@ -157,11 +157,39 @@ float4 PSMain(PS_IN input) : SV_Target
 
 	if (g_showBorders)
 	{
+		float2 ddEdge = fwidth(input.tex);
+
+#if SIMPLE_BORDER
 		float val = min(input.tex.x, input.tex.y);
 		val = min(val, (1.0f - input.tex.x));
 		val = min(val, (1.0f - input.tex.y));
 
 		border = smoothstep(0, 0.05f, val) * 0.7f + 0.3f;
+#else
+		float2 edgeDist2 = min(input.tex, 1.0f - input.tex);
+		float edgeDist = min(edgeDist2.x, edgeDist2.y);
+
+		float constWidth = min(ddEdge.x, ddEdge.y);
+
+		const float edgeWidth = 1.0f;
+		float edgeThreshold = constWidth * edgeWidth;
+
+		const float lineSmooth = 0.02f;
+		border = smoothstep(0, edgeThreshold + lineSmooth, edgeDist) * 0.7f + 0.3f;
+#endif
+
+#define BORDER_FADE
+#ifdef BORDER_FADE
+		// fade the border based on eye distance and ddx/ddy
+		float edist = length(g_eyePos - input.posW);
+		const float fadeStart = 60;
+		const float fadeLen = 20;
+		border = 1 - border;
+		float distMult = 1 - saturate((edist - fadeStart) / fadeLen);
+		float ddMult = 1 - saturate(max(ddEdge.x, ddEdge.y) * 5);
+		border *= distMult * ddMult;
+		border = 1 - border;
+#endif
 	}
 
 	/* background */
