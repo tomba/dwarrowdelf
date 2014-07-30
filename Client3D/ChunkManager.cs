@@ -224,9 +224,7 @@ namespace Client3D
 		{
 			// Vertex Shader
 
-			var viewProjMatrix = Matrix.Transpose(m_camera.View * m_camera.Projection);
-			viewProjMatrix.Transpose();
-			m_scene.Effect.ViewProjection = viewProjMatrix;
+			m_scene.Effect.ViewProjection = m_camera.View * m_camera.Projection;
 
 			// Pixel Shader
 			m_scene.Effect.EyePos = m_camera.Position;
