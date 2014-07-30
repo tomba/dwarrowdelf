@@ -1,11 +1,13 @@
-﻿using Dwarrowdelf;
-using SharpDX;
+﻿using SharpDX;
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Dwarrowdelf;
+using Dwarrowdelf.Client;
 
 namespace Client3D
 {
@@ -62,6 +64,10 @@ namespace Client3D
 
 		protected override EffectPass OnApply(EffectPass pass)
 		{
+			var device = this.GraphicsDevice;
+
+			device.SetVertexInputLayout(VertexInputLayout.New<TerrainVertex>(0));
+
 			return base.OnApply(pass);
 		}
 
@@ -116,6 +122,37 @@ namespace Client3D
 		public bool DisableTexture
 		{
 			set { this.Parameters["g_disableTexture"].SetValue(value); }
+		}
+	}
+
+	struct FaceTexture
+	{
+		//public SymbolID Symbol0;
+		public SymbolID Symbol1;
+		public SymbolID Symbol2;
+		public GameColor Color0;
+		public GameColor Color1;
+		public GameColor Color2;
+	}
+
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	struct TerrainVertex
+	{
+		[VertexElement("POSITION", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+		public Byte4 Position;
+		[VertexElement("OCCLUSION")]
+		public int Occlusion;	/* xxx pack into some other field */
+		[VertexElement("TEX", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+		public Byte4 TexPack;
+		[VertexElement("COLOR", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+		public Byte4 ColorPack;
+
+		public TerrainVertex(IntVector3 pos, int occlusion, FaceTexture tex)
+		{
+			this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
+			this.Occlusion = occlusion;
+			this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, (byte)0);
+			this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, (byte)tex.Color2, (byte)0);
 		}
 	}
 }

@@ -17,37 +17,6 @@ namespace Client3D
 {
 	class Chunk
 	{
-		struct FaceTexture
-		{
-			//public SymbolID Symbol0;
-			public SymbolID Symbol1;
-			public SymbolID Symbol2;
-			public GameColor Color0;
-			public GameColor Color1;
-			public GameColor Color2;
-		}
-
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		struct TerrainVertex
-		{
-			[VertexElement("POSITION", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
-			public Byte4 Position;
-			[VertexElement("OCCLUSION")]
-			public int Occlusion;	/* xxx pack into some other field */
-			[VertexElement("TEX", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
-			public Byte4 TexPack;
-			[VertexElement("COLOR", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
-			public Byte4 ColorPack;
-
-			public TerrainVertex(IntVector3 pos, int occlusion, FaceTexture tex)
-			{
-				this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
-				this.Occlusion = occlusion;
-				this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, (byte)0);
-				this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, (byte)tex.Color2, (byte)0);
-			}
-		}
-
 		public const int CHUNK_SIZE = 16;
 		const int MAX_TILES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
 		const int MAX_VERTICES_PER_TILE = 6 * 4;
@@ -58,7 +27,6 @@ namespace Client3D
 		VoxelMap m_map;
 
 		Buffer<TerrainVertex> m_vertexBuffer;
-		static readonly VertexInputLayout s_layout = VertexInputLayout.New<TerrainVertex>(0);
 
 		/// <summary>
 		/// Chunk position
@@ -179,7 +147,6 @@ namespace Client3D
 			if (this.VertexCount > 0)
 			{
 				device.SetVertexBuffer(m_vertexBuffer);
-				device.SetVertexInputLayout(s_layout);
 				device.Draw(PrimitiveType.LineListWithAdjacency, this.VertexCount);
 			}
 		}
