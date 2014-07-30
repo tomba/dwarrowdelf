@@ -53,7 +53,7 @@ cbuffer PerFrame
 
 cbuffer PerObjectBuffer
 {
-	matrix worldMatrix;
+	float3 g_chunkOffset;
 };
 
 GS_IN VSMain(VS_IN input)
@@ -62,8 +62,9 @@ GS_IN VSMain(VS_IN input)
 
 	// Change the position vector to be 4 units for proper matrix calculations.
 	float4 pos = float4(input.pos.xyz, 1.0f);
+	pos.xyz += g_chunkOffset;
 
-	output.pos = mul(pos, worldMatrix);
+	output.pos = pos;
 	output.posW = output.pos.xyz;
 	output.pos = mul(output.pos, g_viewProjMatrix);
 

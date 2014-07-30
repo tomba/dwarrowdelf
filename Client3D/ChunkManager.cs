@@ -234,8 +234,7 @@ namespace Client3D
 				if (chunk.IsEnabled == false)
 					continue;
 
-				var worldMatrix = Matrix.Translation(chunk.ChunkOffset.ToVector3());
-				m_scene.Effect.SetPerObjectConstBuf(ref worldMatrix);
+				m_scene.Effect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
 				chunk.Render(m_scene);
 			}

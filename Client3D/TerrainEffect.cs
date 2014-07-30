@@ -38,7 +38,7 @@ namespace Client3D
 				this.Parameters["blockSampler"].SetResource(this.GraphicsDevice.SamplerStates.LinearClamp);
 
 			m_perObConstBuf = this.ConstantBuffers["PerObjectBuffer"];
-			m_objectWorldMatrixParam = m_perObConstBuf.Parameters["worldMatrix"];
+			m_objectWorldMatrixParam = m_perObConstBuf.Parameters["g_chunkOffset"];
 
 			CreateGameColorBuffer();
 		}
@@ -71,9 +71,9 @@ namespace Client3D
 			return base.OnApply(pass);
 		}
 
-		public void SetPerObjectConstBuf(ref Matrix worldMatrix)
+		public void SetPerObjectConstBuf(IntVector3 offset)
 		{
-			m_objectWorldMatrixParam.SetValue(worldMatrix);
+			m_objectWorldMatrixParam.SetValue(offset.ToVector3());
 			m_perObConstBuf.Update();
 		}
 
