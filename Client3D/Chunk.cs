@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 using Dwarrowdelf;
+using Dwarrowdelf.Client;
 
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.Toolkit.Graphics;
 using Buffer = SharpDX.Toolkit.Graphics.Buffer;
-using Dwarrowdelf.Client;
 
 namespace Client3D
 {
-	class Chunk : Component
+	class Chunk
 	{
 		struct FaceTexture
 		{
@@ -109,7 +109,8 @@ namespace Client3D
 			if (m_vertexBuffer != null)
 			{
 				//System.Diagnostics.Trace.TraceError("Free {0}", this.ChunkOffset);
-				RemoveAndDispose(ref m_vertexBuffer);
+				m_vertexBuffer.Dispose();
+				m_vertexBuffer = null;
 				this.IsInvalid = true;
 			}
 		}

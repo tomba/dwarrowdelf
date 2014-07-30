@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Client3D
 {
-	class ChunkManager : Component
+	class ChunkManager
 	{
 		Chunk[] m_chunks;
 
@@ -58,7 +58,7 @@ namespace Client3D
 					for (int x = 0; x < xChunks; ++x)
 					{
 						var chunkPosition = new IntVector3(x, y, z);
-						var chunk = ToDispose(new Chunk(map, chunkPosition));
+						var chunk = new Chunk(map, chunkPosition);
 						m_chunks[this.Size.GetIndex(x, y, z)] = chunk;
 					}
 				}

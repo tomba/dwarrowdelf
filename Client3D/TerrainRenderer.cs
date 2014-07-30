@@ -45,7 +45,7 @@ namespace Client3D
 				LightDirection = Vector3.Normalize(new Vector3(1, 2, -4)),
 			};
 
-			m_chunkManager = ToDispose(new ChunkManager(this));
+			m_chunkManager = new ChunkManager(this);
 
 			game.GameSystems.Add(this);
 		}
