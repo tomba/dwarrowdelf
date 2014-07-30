@@ -79,8 +79,9 @@ namespace Client3D
 				//System.Diagnostics.Trace.TraceError("Free {0}", this.ChunkOffset);
 				m_vertexBuffer.Dispose();
 				m_vertexBuffer = null;
-				this.IsInvalid = true;
 			}
+
+			this.IsInvalid = true;
 		}
 
 		public void Update(TerrainRenderer scene, Vector3 cameraPos)
