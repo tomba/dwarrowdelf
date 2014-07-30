@@ -135,6 +135,9 @@ namespace Client3D
 
 						//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
 
+						if (m_vertexBuffer != null)
+							m_vertexBuffer.Dispose();
+
 						m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
 					}
 
