@@ -58,21 +58,23 @@ namespace Client3D
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-
 		}
 
 		public override void Draw(GameTime gameTime)
 		{
-			var device = this.GraphicsDevice;
-
 			base.Draw(gameTime);
+
+			var device = this.GraphicsDevice;
 
 			if (m_vertexBuffer == null)
 				return;
 
-			var cameraService = this.Services.GetService<ICameraService>();
+			var camera = this.Services.GetService<ICameraService>();
 
-			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
+			m_effect.EyePos = camera.Position;
+			m_effect.ViewProjection = camera.View * camera.Projection;
+
+			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, camera.Look));
 			angle = MathUtil.RadiansToDegrees(angle);
 			if (System.Math.Abs(angle) < 45)
 				m_effect.CurrentTechnique = m_effect.Techniques["ModeFlat"];
@@ -80,9 +82,6 @@ namespace Client3D
 				m_effect.CurrentTechnique = m_effect.Techniques["ModeFollow"];
 
 			m_effect.CurrentTechnique.Passes[0].Apply();
-
-			m_effect.EyePos = cameraService.Position;
-			m_effect.ViewProjection = cameraService.View * cameraService.Projection;
 
 			var offset = new IntVector3();
 			m_effect.SetPerObjectConstBuf(offset);

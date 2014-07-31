@@ -97,26 +97,33 @@ namespace Client3D
 		{
 			base.Draw(gameTime);
 
-			m_effect.SetDirectionalLight(m_directionalLight);
+			var camera = this.Services.GetService<ICameraService>();
 
-			var renderPass = m_effect.CurrentTechnique.Passes[0];
-			renderPass.Apply();
+			var device = this.GraphicsDevice;
+			device.SetBlendState(device.BlendStates.Default);
 
-			m_chunkManager.Draw(gameTime);
+			// voxels
+			{
+				m_effect.EyePos = camera.Position;
+				m_effect.ViewProjection = camera.View * camera.Projection;
+
+				m_effect.SetDirectionalLight(m_directionalLight);
+
+				var renderPass = m_effect.CurrentTechnique.Passes[0];
+				renderPass.Apply();
+
+				m_chunkManager.Draw(gameTime);
+			}
 
 			// trees
-
 			{
-				var device = this.GraphicsDevice;
-
-				var cameraService = this.Services.GetService<ICameraService>();
-
-				m_symbolEffect.EyePos = cameraService.Position;
-
-				device.SetBlendState(device.BlendStates.Default);
+				m_symbolEffect.EyePos = camera.Position;
+				m_symbolEffect.ViewProjection = camera.View * camera.Projection;
 
 				m_symbolEffect.CurrentTechnique = m_symbolEffect.Techniques["ModeCross"];
-				m_symbolEffect.CurrentTechnique.Passes[0].Apply();
+
+				var renderPass = m_symbolEffect.CurrentTechnique.Passes[0];
+				renderPass.Apply();
 
 				m_chunkManager.DrawTrees();
 			}

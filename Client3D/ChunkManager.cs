@@ -222,13 +222,6 @@ namespace Client3D
 
 		public void Draw(GameTime gameTime)
 		{
-			// Vertex Shader
-
-			m_scene.Effect.ViewProjection = m_camera.View * m_camera.Projection;
-
-			// Pixel Shader
-			m_scene.Effect.EyePos = m_camera.Position;
-
 			foreach (var chunk in m_chunks)
 			{
 				if (chunk.IsEnabled == false)
@@ -242,8 +235,6 @@ namespace Client3D
 
 		public void DrawTrees()
 		{
-			m_scene.SymbolEffect.ViewProjection = m_camera.View * m_camera.Projection;
-
 			foreach (var chunk in m_chunks)
 			{
 				if (chunk.IsEnabled == false)
