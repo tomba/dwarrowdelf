@@ -12,35 +12,11 @@ namespace Client3D
 {
 	class SymbolRenderer : GameSystem
 	{
-		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		struct Vertex
-		{
-			[VertexElement("POSITION")]
-			public Vector3 Position;
-			[VertexElement("COLOR")]
-			public Color Color;
-			[VertexElement("TEXIDX")]
-			public uint TexIdx;
-
-			public Vertex(Vector3 pos, Color color, uint texIdx)
-			{
-				this.Position = pos;
-				this.Color = color;
-				this.TexIdx = texIdx;
-			}
-		}
-
-		static readonly VertexInputLayout s_layout = VertexInputLayout.New<Vertex>(0);
-
 		SymbolEffect m_effect;
 
-		Vertex[] m_sceneryVertices;
+		SceneryVertex[] m_vertices;
 
-		Buffer<Vertex> m_sceneryVertexBuffer;
-
-		Vertex[] m_vertices;
-
-		Buffer<Vertex> m_vertexBuffer;
+		Buffer<SceneryVertex> m_vertexBuffer;
 
 		public SymbolRenderer(Game game)
 			: base(game)
@@ -67,49 +43,15 @@ namespace Client3D
 			{
 				var sl = new Vector3(17, 11, 16);
 
-				List<Vertex> vertices = new List<Vertex>();
+				List<SceneryVertex> vertices = new List<SceneryVertex>();
 
-				vertices.Add(new Vertex(sl, Color.Red, (int)Dwarrowdelf.Client.SymbolID.Player));
-				vertices.Add(new Vertex(sl + new Vector3(-1, 0, 0), Color.Green, (int)Dwarrowdelf.Client.SymbolID.Wolf));
+				vertices.Add(new SceneryVertex(sl, Color.Red, (int)Dwarrowdelf.Client.SymbolID.Player));
+				vertices.Add(new SceneryVertex(sl + new Vector3(-1, 0, 0), Color.Green, (int)Dwarrowdelf.Client.SymbolID.Wolf));
 
 				m_vertices = vertices.ToArray();
 
-				for (int i = 0; i < m_vertices.Length; ++i)
-					m_vertices[i].Position += new Vector3(0.5f);
-
 				if (m_vertices.Length > 0)
-					m_vertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_vertices);
-			}
-
-			{
-				List<Vertex> vertices = new List<Vertex>();
-
-				var grid = GlobalData.VoxelMap.Grid;
-				int width = GlobalData.VoxelMap.Width;
-				int height = GlobalData.VoxelMap.Height;
-				int depth = GlobalData.VoxelMap.Depth;
-
-				Parallel.For(0, depth, z =>
-				{
-					for (int y = 0; y < height; ++y)
-						for (int x = 0; x < width; ++x)
-						{
-							if ((grid[z, y, x].Flags & VoxelFlags.Tree) != 0)
-							{
-								lock (vertices)
-									vertices.Add(new Vertex(new Vector3(x, y, z), Color.LightGreen,
-										(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
-							}
-						}
-				});
-
-				m_sceneryVertices = vertices.ToArray();
-
-				for (int i = 0; i < m_sceneryVertices.Length; ++i)
-					m_sceneryVertices[i].Position += new Vector3(0.5f);
-
-				if (m_sceneryVertices.Length > 0)
-					m_sceneryVertexBuffer = Buffer.Vertex.New<Vertex>(this.GraphicsDevice, m_sceneryVertices);
+					m_vertexBuffer = Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, m_vertices);
 			}
 		}
 
@@ -117,11 +59,6 @@ namespace Client3D
 		{
 			base.Update(gameTime);
 
-			var cameraService = this.Services.GetService<ICameraService>();
-
-			m_effect.EyePos = cameraService.Position;
-			Matrix world = Matrix.Identity;
-			m_effect.WorldViewProjection = world * cameraService.View * cameraService.Projection;
 		}
 
 		public override void Draw(GameTime gameTime)
@@ -130,38 +67,30 @@ namespace Client3D
 
 			base.Draw(gameTime);
 
+			if (m_vertexBuffer == null)
+				return;
+
 			var cameraService = this.Services.GetService<ICameraService>();
 
-			device.SetRasterizerState(device.RasterizerStates.CullNone);
-			device.SetVertexInputLayout(s_layout);
+			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
+			angle = MathUtil.RadiansToDegrees(angle);
+			if (System.Math.Abs(angle) < 45)
+				m_effect.CurrentTechnique = m_effect.Techniques["ModeFlat"];
+			else
+				m_effect.CurrentTechnique = m_effect.Techniques["ModeFollow"];
 
-			if (m_sceneryVertexBuffer != null)
-			{
-				device.SetBlendState(device.BlendStates.Default);
+			m_effect.CurrentTechnique.Passes[0].Apply();
 
-				m_effect.CurrentTechnique = m_effect.Techniques["ModeCross"];
-				m_effect.CurrentTechnique.Passes[0].Apply();
+			m_effect.EyePos = cameraService.Position;
+			m_effect.ViewProjection = cameraService.View * cameraService.Projection;
 
-				device.SetVertexBuffer(m_sceneryVertexBuffer);
-				device.Draw(PrimitiveType.PointList, m_sceneryVertices.Length);
-			}
+			var offset = new IntVector3();
+			m_effect.SetPerObjectConstBuf(offset);
 
-			if (m_vertexBuffer != null)
-			{
-				var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, cameraService.Look));
-				angle = MathUtil.RadiansToDegrees(angle);
-				if (System.Math.Abs(angle) < 45)
-					m_effect.CurrentTechnique = m_effect.Techniques["ModeFlat"];
-				else
-					m_effect.CurrentTechnique = m_effect.Techniques["ModeFollow"];
-
-				m_effect.CurrentTechnique.Passes[0].Apply();
-
-				device.SetBlendState(device.BlendStates.AlphaBlend);
-				//device.SetDepthStencilState(device.DepthStencilStates.None);
-				device.SetVertexBuffer(m_vertexBuffer);
-				device.Draw(PrimitiveType.PointList, m_vertices.Length);
-			}
+			device.SetBlendState(device.BlendStates.AlphaBlend);
+			//device.SetDepthStencilState(device.DepthStencilStates.None);
+			device.SetVertexBuffer(m_vertexBuffer);
+			device.Draw(PrimitiveType.PointList, m_vertices.Length);
 		}
 	}
 }

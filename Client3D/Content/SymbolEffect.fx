@@ -26,9 +26,14 @@ typedef GSOut PSIn;
 
 cbuffer cbPerFrame : register(b0)
 {
-	float4x4 gWorldViewProj;
+	float4x4 g_viewProjMatrix;
 	float3 gEyePosW;
 	float _pad00;
+};
+
+cbuffer PerObjectBuffer
+{
+	float3 g_chunkOffset;
 };
 
 Texture2DArray g_texture;
@@ -38,7 +43,7 @@ VSOut VSMain(VSIn vin)
 {
 	VSOut vout;
 
-	vout.PosW = vin.PosW;
+	vout.PosW = vin.PosW + g_chunkOffset + 0.5f;
 	vout.Color = vin.Color;
 	vout.Tex = vin.Tex;
 
@@ -70,7 +75,7 @@ void AddRect(GSIn gin, inout TriangleStream< GSOut > output, in float3 up, in fl
 	[unroll]
 	for (int i = 0; i < 4; ++i)
 	{
-		gsout.PosH = mul(v[i], gWorldViewProj);
+		gsout.PosH = mul(v[i], g_viewProjMatrix);
 		gsout.PosW = v[i].xyz;
 		gsout.Tex = float3(gTexC[i], gin.Tex);
 		gsout.Color = gin.Color;

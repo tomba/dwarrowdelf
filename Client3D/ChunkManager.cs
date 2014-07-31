@@ -239,5 +239,20 @@ namespace Client3D
 				chunk.Render(m_scene);
 			}
 		}
+
+		public void DrawTrees()
+		{
+			m_scene.SymbolEffect.ViewProjection = m_camera.View * m_camera.Projection;
+
+			foreach (var chunk in m_chunks)
+			{
+				if (chunk.IsEnabled == false)
+					continue;
+
+				m_scene.SymbolEffect.SetPerObjectConstBuf(chunk.ChunkOffset);
+
+				chunk.RenderTrees(m_scene);
+			}
+		}
 	}
 }

@@ -47,6 +47,14 @@ namespace Client3D
 		VertexList<TerrainVertex> m_vertexList;
 		bool m_vertexBufferInvalid;
 
+
+
+		VertexList<SceneryVertex> m_sceneryVertices;
+		Buffer<SceneryVertex> m_sceneryVertexBuffer;
+		bool m_sceneryVertexBufferInvalid;
+
+
+
 		public BoundingBox BBox;
 
 		public bool IsEnabled { get; set; }
@@ -73,6 +81,7 @@ namespace Client3D
 		public void Free()
 		{
 			m_vertexList = null;
+			m_sceneryVertices = null;
 
 			if (m_vertexBuffer != null)
 			{
@@ -89,12 +98,23 @@ namespace Client3D
 			if (this.IsInvalid == false)
 				return;
 
+			UpdateVoxels(scene, cameraPos);
+
+			this.IsInvalid = false;
+		}
+
+		void UpdateVoxels(TerrainRenderer scene, Vector3 cameraPos)
+		{
 			if (m_vertexList == null)
 				m_vertexList = new VertexList<TerrainVertex>(MAX_VERTICES);
 
-			var device = scene.Game.GraphicsDevice;
+			if (m_sceneryVertices == null)
+				m_sceneryVertices = new VertexList<SceneryVertex>(MAX_TILES);
 
 			m_vertexList.Clear();
+			m_sceneryVertices.Clear();
+
+			var device = scene.Game.GraphicsDevice;
 
 			var cameraChunkPos = (cameraPos / CHUNK_SIZE).ToFloorIntVector3();
 			var diff = cameraChunkPos - this.ChunkPosition;
@@ -115,8 +135,8 @@ namespace Client3D
 
 			GenerateVertices(scene, mask);
 
-			this.IsInvalid = false;
 			m_vertexBufferInvalid = true;
+			m_sceneryVertexBufferInvalid = true;
 
 			this.VertexCount = m_vertexList.Count;
 		}
@@ -155,6 +175,32 @@ namespace Client3D
 			}
 		}
 
+		public void RenderTrees(TerrainRenderer scene)
+		{
+			var device = scene.Game.GraphicsDevice;
+
+			if (m_sceneryVertexBufferInvalid)
+			{
+				if (m_sceneryVertices.Count > 0)
+				{
+					if (m_sceneryVertexBuffer == null || m_sceneryVertexBuffer.ElementCount < m_sceneryVertices.Count)
+					{
+						m_sceneryVertexBuffer = Buffer.Vertex.New<SceneryVertex>(device, m_sceneryVertices.Data.Length);
+					}
+
+					m_sceneryVertexBuffer.SetData(m_sceneryVertices.Data, 0, m_sceneryVertices.Count);
+				}
+
+				m_sceneryVertexBufferInvalid = false;
+			}
+
+			if (m_sceneryVertices.Count > 0)
+			{
+				device.SetVertexBuffer(m_sceneryVertexBuffer);
+				device.Draw(PrimitiveType.PointList, m_sceneryVertices.Count);
+			}
+		}
+
 		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask)
 		{
 			IntVector3 cutn = scene.ViewCorner1;
@@ -178,10 +224,17 @@ namespace Client3D
 					{
 						var td = m_map.Grid[z, y, x];
 
+						var p = new IntVector3(x, y, z);
+
+						if ((td.Flags & VoxelFlags.Tree) != 0)
+						{
+							var pos = p - this.ChunkOffset;
+							m_sceneryVertices.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
+								(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
+						}
+
 						if (td.IsEmpty)
 							continue;
-
-						var p = new IntVector3(x, y, z);
 
 						FaceTexture baseTexture = new FaceTexture();
 						FaceTexture topTexture = new FaceTexture();

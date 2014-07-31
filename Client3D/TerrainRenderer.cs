@@ -15,6 +15,9 @@ namespace Client3D
 		public TerrainEffect Effect { get { return m_effect; } }
 		TerrainEffect m_effect;
 
+		public SymbolEffect SymbolEffect { get { return m_symbolEffect; } }
+		SymbolEffect m_symbolEffect;
+
 		ChunkManager m_chunkManager;
 
 		public bool DisableVSync { get; set; }
@@ -64,6 +67,10 @@ namespace Client3D
 			m_effect = this.Content.Load<TerrainEffect>("TerrainEffect");
 
 			m_effect.TileTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
+
+			m_symbolEffect = this.Content.Load<SymbolEffect>("SymbolEffect");
+
+			m_symbolEffect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 		}
 
 		public override void Update(GameTime gameTime)
@@ -96,6 +103,23 @@ namespace Client3D
 			renderPass.Apply();
 
 			m_chunkManager.Draw(gameTime);
+
+			// trees
+
+			{
+				var device = this.GraphicsDevice;
+
+				var cameraService = this.Services.GetService<ICameraService>();
+
+				m_symbolEffect.EyePos = cameraService.Position;
+
+				device.SetBlendState(device.BlendStates.Default);
+
+				m_symbolEffect.CurrentTechnique = m_symbolEffect.Techniques["ModeCross"];
+				m_symbolEffect.CurrentTechnique.Passes[0].Apply();
+
+				m_chunkManager.DrawTrees();
+			}
 		}
 
 		IntVector3 m_viewCorner1;
