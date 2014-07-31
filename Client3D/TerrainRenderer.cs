@@ -120,7 +120,12 @@ namespace Client3D
 				m_symbolEffect.EyePos = camera.Position;
 				m_symbolEffect.ViewProjection = camera.View * camera.Projection;
 
-				m_symbolEffect.CurrentTechnique = m_symbolEffect.Techniques["ModeCross"];
+				var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, camera.Look));
+				angle = MathUtil.RadiansToDegrees(angle);
+				if (System.Math.Abs(angle) < 45)
+					m_symbolEffect.CurrentTechnique = m_symbolEffect.Techniques["ModeFlat"];
+				else
+					m_symbolEffect.CurrentTechnique = m_symbolEffect.Techniques["ModeCross"];
 
 				var renderPass = m_symbolEffect.CurrentTechnique.Passes[0];
 				renderPass.Apply();

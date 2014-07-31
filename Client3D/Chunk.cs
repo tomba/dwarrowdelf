@@ -262,12 +262,6 @@ namespace Client3D
 								topTexture.Color0 = GameColor.LightGreen;
 								topTexture.Symbol1 = SymbolID.Grass;
 								topTexture.Color1 = GameColor.LightGreen;
-
-								if ((td.Flags & VoxelFlags.Tree2) != 0)
-								{
-									topTexture.Symbol2 = SymbolID.DeciduousTree;
-									topTexture.Color2 = GameColor.LightGreen;
-								}
 							}
 							else if ((td.VisibleFaces & FaceDirectionBits.PositiveZ) != 0)
 							{
