@@ -105,7 +105,7 @@ void GSMain(point GSIn gin[1], inout TriangleStream< GSOut > output)
 		/* sprite is flat on the ground */
 		up = float3(0, -1, 0);
 		right = float3(1, 0, 0);
-		gin[0].PosW += float3(0, 0, -0.4999f);
+		gin[0].PosW += float3(0, 0, -0.49f);
 	}
 
 	AddRect(gin, output, up, right);
