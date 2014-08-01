@@ -103,9 +103,9 @@ void GSMain(point GSIn gin[1], inout TriangleStream< GSOut > output)
 		up = cross(look, right);
 	} else if (BILLBOARD_MODE == 3) {
 		/* sprite is flat on the ground */
-		up = float3(1, 0, 0);
-		right = float3(0, -1, 0);
-		gin[0].PosW += float3(0, 0, -0.49f);
+		up = float3(0, -1, 0);
+		right = float3(1, 0, 0);
+		gin[0].PosW += float3(0, 0, -0.4999f);
 	}
 
 	AddRect(gin, output, up, right);
