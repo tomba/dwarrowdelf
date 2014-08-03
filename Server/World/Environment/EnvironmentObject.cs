@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Server
 
 			CreateLevelMap();
 
-			CommonInit();
+			CommonInit(false);
 		}
 
 		void CreateLevelMap()
@@ -148,10 +148,10 @@ namespace Dwarrowdelf.Server
 		{
 			base.Initialize(world);
 
-			CommonInit();
+			CommonInit(true);
 		}
 
-		void CommonInit()
+		void CommonInit(bool init)
 		{
 			m_randomXYArray = new uint[this.Width * this.Height];
 			for (int i = 0; i < m_randomXYArray.Length; ++i)
@@ -166,7 +166,8 @@ namespace Dwarrowdelf.Server
 			{
 				m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
 				m_wildlifeHandler = new EnvWildlifeHandler(this);
-				m_wildlifeHandler.Init();
+				if (init)
+					m_wildlifeHandler.Init();
 			}
 
 			m_waterHandler = new EnvWaterHandler(this);
