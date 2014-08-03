@@ -92,6 +92,7 @@ namespace Dwarrowdelf.Client.UI
 			m_selectionService = new MapControlSelectionService(this, m_selectionCanvas);
 			m_selectionService.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
 			m_selectionService.SelectionChanged += OnSelectionChanged;
+			m_selectionService.CursorPositionChanged += OnSelectionCursorPositionChanged;
 
 			m_elementsService = new MapControlElementsService(this, m_elementCanvas);
 
@@ -352,6 +353,18 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			m_updateHoverTileInfoQueued = false;
+		}
+
+		void OnSelectionCursorPositionChanged(IntVector3 ml)
+		{
+			if (this.Environment != null && this.Environment.Contains(ml))
+			{
+				this.HoverTileView.SetTarget(this.Environment, ml);
+			}
+			else
+			{
+				this.HoverTileView.ClearTarget();
+			}
 		}
 
 		public int Columns { get { return this.GridSize.Width; } }
