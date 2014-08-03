@@ -10,10 +10,11 @@ namespace Dwarrowdelf.AI
 	public sealed class Group
 	{
 		[SaveGameProperty]
-		List<IAI> m_members = new List<IAI>();
+		List<IAI> m_members;
 
 		public Group()
 		{
+			m_members = new List<IAI>();
 		}
 
 		Group(SaveGameContext ctx)
