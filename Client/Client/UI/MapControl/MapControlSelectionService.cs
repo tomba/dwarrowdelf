@@ -139,18 +139,16 @@ namespace Dwarrowdelf.Client.UI
 						m_mapControl.ScreenCenterPosChanged += OnScreenCenterPosChanged;
 						m_mapControl.KeyDown += OnKeyDown;
 
-						this.CursorPosition = m_mapControl.MapCenterPos.ToIntVector3();
-
 						break;
 
 					case MapSelectionMode.Point:
 						m_mapControl.MouseClicked += OnMouseClicked;
 						m_mapControl.KeyDown += OnKeyDown;
 
-						this.CursorPosition = m_mapControl.MapCenterPos.ToIntVector3();
-
 						break;
 				}
+
+				this.CursorPosition = m_mapControl.MapCenterPos.ToIntVector3();
 
 				UpdateCursorRectangle();
 			}
