@@ -20,7 +20,6 @@ namespace Client3D
 
 		ChunkManager m_chunkManager;
 
-		public bool DisableVSync { get; set; }
 		public bool IsRotationEnabled { get; set; }
 		public bool ShowBorders { get; set; }
 		public int VerticesRendered { get { return m_chunkManager.VerticesRendered; } }
