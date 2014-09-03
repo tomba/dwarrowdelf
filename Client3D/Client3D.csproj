@@ -96,7 +96,7 @@
     <Compile Include="CameraProvider.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="ChunkManager.cs" />
-    <Compile Include="Common.cs" />
+    <Compile Include="FaceDirection.cs" />
     <Compile Include="DebugForm.cs">
       <SubType>Form</SubType>
     </Compile>

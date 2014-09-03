@@ -30,22 +30,4 @@ namespace Client3D
 		NegativeZ = 1 << FaceDirection.NegativeZ,	// Down
 		All = (1 << 6) - 1,
 	}
-
-	struct Vertex3002
-	{
-		public Vertex3002(float x, float y, float z, float tu, float tv)
-		{
-			this.Pos = new Vector3(x, y, z);
-			this.Tex = new Vector2(tu, tv);
-		}
-
-		public Vertex3002(Vector3 pos, Vector2 tex)
-		{
-			this.Pos = pos;
-			this.Tex = tex;
-		}
-
-		public Vector3 Pos;
-		public Vector2 Tex;
-	}
 }
