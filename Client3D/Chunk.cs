@@ -83,12 +83,8 @@ namespace Client3D
 			m_vertexList = null;
 			m_sceneryVertices = null;
 
-			if (m_vertexBuffer != null)
-			{
-				//System.Diagnostics.Trace.TraceError("Free {0}", this.ChunkOffset);
-				m_vertexBuffer.Dispose();
-				m_vertexBuffer = null;
-			}
+			Utilities.Dispose(ref m_vertexBuffer);
+			Utilities.Dispose(ref m_sceneryVertexBuffer);
 
 			this.IsInvalid = true;
 		}
@@ -156,9 +152,7 @@ namespace Client3D
 
 						//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
 
-						if (m_vertexBuffer != null)
-							m_vertexBuffer.Dispose();
-
+						Utilities.Dispose(ref m_vertexBuffer);
 						m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
 					}
 
@@ -185,6 +179,7 @@ namespace Client3D
 				{
 					if (m_sceneryVertexBuffer == null || m_sceneryVertexBuffer.ElementCount < m_sceneryVertices.Count)
 					{
+						Utilities.Dispose(ref m_sceneryVertexBuffer);
 						m_sceneryVertexBuffer = Buffer.Vertex.New<SceneryVertex>(device, m_sceneryVertices.Data.Length);
 					}
 
