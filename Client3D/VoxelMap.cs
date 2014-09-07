@@ -179,6 +179,7 @@ namespace Client3D
 			var grid = this.Grid;
 
 			int waterLimit = this.Depth * 3 / 10;
+			int grassLimit = this.Depth * 8 / 10;
 
 			Parallel.For(0, this.Height, y =>
 			{
@@ -192,18 +193,28 @@ namespace Client3D
 					v *= this.Depth * 8 / 10;
 					v += this.Depth * 2 / 10;
 
+					int iv = (int)v;
+
 					for (int z = this.Depth - 1; z >= 0; --z)
 					{
-						if (z < v)
+						/* above ground */
+						if (z > iv)
+						{
+							if (z < waterLimit)
+								grid[z, y, x] = Voxel.Water;
+							else
+								grid[z, y, x] = Voxel.Empty;
+						}
+						/* surface */
+						else if (z == iv)
 						{
 							grid[z, y, x] = Voxel.Rock;
 
-							if (z >= waterLimit && z < this.Depth * 8 / 10)
+							if (z >= waterLimit && z < grassLimit)
 							{
 								grid[z, y, x].Flags = VoxelFlags.Grass;
 
 								Dwarrowdelf.MWCRandom r = new MWCRandom(new IntVector3(x, y, z), 0);
-
 								if (r.Next(100) < 30)
 								{
 									grid[z + 1, y, x].Flags |= VoxelFlags.Tree;
@@ -211,12 +222,14 @@ namespace Client3D
 								}
 							}
 						}
+						/* underground */
+						else if (z < iv)
+						{
+							grid[z, y, x] = Voxel.Rock;
+						}
 						else
 						{
-							if (z < waterLimit)
-								grid[z, y, x] = Voxel.Water;
-							else
-								grid[z, y, x] = Voxel.Empty;
+							throw new Exception();
 						}
 					}
 				}
