@@ -176,6 +176,19 @@ namespace Client3D
 			var max = map.Data.Max();
 			var min = map.Data.Min();
 
+			Parallel.For(0, map.Data.Length, i =>
+			{
+				var v = map.Data[i];	// [-1 .. 1]
+
+				v -= min;
+				v /= (max - min);		// [0 .. 1]
+
+				v *= this.Depth * 8 / 10;
+				v += this.Depth * 2 / 10;
+
+				map.Data[i] = v;
+			});
+
 			var grid = this.Grid;
 
 			int waterLimit = this.Depth * 3 / 10;
@@ -185,13 +198,7 @@ namespace Client3D
 			{
 				for (int x = 0; x < this.Width; ++x)
 				{
-					var v = map[x, y];	// [-1 .. 1]
-
-					v -= min;
-					v /= (max - min);	// [0 .. 1]
-
-					v *= this.Depth * 8 / 10;
-					v += this.Depth * 2 / 10;
+					var v = map[x, y];
 
 					int iv = (int)v;
 
