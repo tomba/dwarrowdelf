@@ -173,8 +173,8 @@ namespace Client3D
 
 		public void FillFromNoiseMap(SharpNoise.NoiseMap map)
 		{
-			var max = map.IterateAllLines().SelectMany(l => l.ToArray()).Max();
-			var min = map.IterateAllLines().SelectMany(l => l.ToArray()).Min();
+			var max = map.Data.Max();
+			var min = map.Data.Min();
 
 			var grid = this.Grid;
 
