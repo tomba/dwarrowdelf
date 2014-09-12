@@ -43,7 +43,7 @@ namespace Client3D
 			{
 				AmbientColor = new Vector3(0.4f),
 				DiffuseColor = new Vector3(0.6f),
-				SpecularColor = new Vector3(0.6f),
+				SpecularColor = new Vector3(0.1f),
 				LightDirection = Vector3.Normalize(new Vector3(1, 2, -4)),
 			};
 
