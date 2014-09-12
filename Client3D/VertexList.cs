@@ -10,15 +10,18 @@ namespace Client3D
 	{
 		public T[] Data { get; private set; }
 		public int Count { get; private set; }
+		int m_maxSize;
 
 		public VertexList(int size)
 		{
-			this.Data = new T[size];
-			this.Count = 0;
+			m_maxSize = size;
 		}
 
 		public void Add(T data)
 		{
+			if (this.Data == null)
+				this.Data = new T[m_maxSize];
+
 			this.Data[this.Count++] = data;
 		}
 
