@@ -51,7 +51,7 @@ namespace Client3D
 				m_vertices = vertices.ToArray();
 
 				if (m_vertices.Length > 0)
-					m_vertexBuffer = Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, m_vertices);
+					m_vertexBuffer = ToDispose(Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, m_vertices));
 			}
 		}
 

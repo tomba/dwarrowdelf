@@ -56,8 +56,8 @@ namespace Client3D
 				arr[i] = rgb.R | (rgb.G << 8) | (rgb.B << 16);
 			}
 
-			var buf = Buffer<int>.New(this.GraphicsDevice, arr, BufferFlags.ShaderResource, SharpDX.DXGI.Format.R8G8B8A8_UNorm,
-				SharpDX.Direct3D11.ResourceUsage.Immutable);
+			var buf = ToDispose(Buffer<int>.New(this.GraphicsDevice, arr, BufferFlags.ShaderResource, SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+				SharpDX.Direct3D11.ResourceUsage.Immutable));
 
 			this.Parameters["g_colorBuffer"].SetResource(buf);
 		}

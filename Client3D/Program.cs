@@ -7,6 +7,8 @@ namespace Client3D
 		[STAThread]
 		static void Main()
 		{
+			//SharpDX.Configuration.EnableObjectTracking = true;
+
 			using (var game = new MyGame())
 				game.Run();
 		}

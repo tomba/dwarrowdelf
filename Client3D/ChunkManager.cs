@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Client3D
 {
-	class ChunkManager
+	class ChunkManager : Component
 	{
 		Chunk[] m_chunks;
 
@@ -37,6 +37,17 @@ namespace Client3D
 			m_scene = scene;
 
 			CreateChunks();
+		}
+
+		protected override void Dispose(bool disposeManagedResources)
+		{
+			base.Dispose(disposeManagedResources);
+
+			foreach (var chunk in m_chunks)
+			{
+				if (chunk.IsEnabled)
+					chunk.Free();
+			}
 		}
 
 		void CreateChunks()
