@@ -137,63 +137,65 @@ namespace Client3D
 			this.VertexCount = m_vertexList.Count;
 		}
 
-		public void Render(TerrainRenderer scene)
+		public void UpdateVertexBuffer(GraphicsDevice device)
 		{
-			var device = scene.Game.GraphicsDevice;
+			if (!m_vertexBufferInvalid)
+				return;
 
-			if (m_vertexBufferInvalid)
+			if (m_vertexList.Count > 0)
 			{
-				if (m_vertexList.Count > 0)
+				if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < m_vertexList.Count)
 				{
-					if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < m_vertexList.Count)
-					{
-						if (m_vertexList.Count > m_maxVertices)
-							m_maxVertices = m_vertexList.Count;
+					if (m_vertexList.Count > m_maxVertices)
+						m_maxVertices = m_vertexList.Count;
 
-						//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
+					//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
 
-						Utilities.Dispose(ref m_vertexBuffer);
-						m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
-					}
-
-					m_vertexBuffer.SetData(m_vertexList.Data, 0, m_vertexList.Count);
+					Utilities.Dispose(ref m_vertexBuffer);
+					m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
 				}
 
-				m_vertexBufferInvalid = false;
+				m_vertexBuffer.SetData(m_vertexList.Data, 0, m_vertexList.Count);
 			}
 
-			if (this.VertexCount > 0)
-			{
-				device.SetVertexBuffer(m_vertexBuffer);
-				device.Draw(PrimitiveType.LineListWithAdjacency, this.VertexCount);
-			}
+			m_vertexBufferInvalid = false;
 		}
 
-		public void RenderTrees(TerrainRenderer scene)
+		public void Render(GraphicsDevice device)
 		{
-			var device = scene.Game.GraphicsDevice;
+			if (this.VertexCount == 0)
+				return;
 
-			if (m_sceneryVertexBufferInvalid)
-			{
-				if (m_sceneryVertices.Count > 0)
-				{
-					if (m_sceneryVertexBuffer == null || m_sceneryVertexBuffer.ElementCount < m_sceneryVertices.Count)
-					{
-						Utilities.Dispose(ref m_sceneryVertexBuffer);
-						m_sceneryVertexBuffer = Buffer.Vertex.New<SceneryVertex>(device, m_sceneryVertices.Data.Length);
-					}
+			device.SetVertexBuffer(m_vertexBuffer);
+			device.Draw(PrimitiveType.LineListWithAdjacency, this.VertexCount);
+		}
 
-					m_sceneryVertexBuffer.SetData(m_sceneryVertices.Data, 0, m_sceneryVertices.Count);
-				}
-
-				m_sceneryVertexBufferInvalid = false;
-			}
+		public void UpdateSceneryVertices(GraphicsDevice device)
+		{
+			if (!m_sceneryVertexBufferInvalid)
+				return;
 
 			if (m_sceneryVertices.Count > 0)
 			{
-				device.SetVertexBuffer(m_sceneryVertexBuffer);
-				device.Draw(PrimitiveType.PointList, m_sceneryVertices.Count);
+				if (m_sceneryVertexBuffer == null || m_sceneryVertexBuffer.ElementCount < m_sceneryVertices.Count)
+				{
+					Utilities.Dispose(ref m_sceneryVertexBuffer);
+					m_sceneryVertexBuffer = Buffer.Vertex.New<SceneryVertex>(device, m_sceneryVertices.Data.Length);
+				}
+
+				m_sceneryVertexBuffer.SetData(m_sceneryVertices.Data, 0, m_sceneryVertices.Count);
 			}
+
+			m_sceneryVertexBufferInvalid = false;
+		}
+
+		public void RenderTrees(GraphicsDevice device)
+		{
+			if (m_sceneryVertices.Count == 0)
+				return;
+
+			device.SetVertexBuffer(m_sceneryVertexBuffer);
+			device.Draw(PrimitiveType.PointList, m_sceneryVertices.Count);
 		}
 
 		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask)

@@ -233,6 +233,8 @@ namespace Client3D
 
 		public void Draw(GameTime gameTime)
 		{
+			var device = m_scene.Game.GraphicsDevice;
+
 			foreach (var chunk in m_chunks)
 			{
 				if (chunk.IsEnabled == false)
@@ -240,12 +242,15 @@ namespace Client3D
 
 				m_scene.Effect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
-				chunk.Render(m_scene);
+				chunk.UpdateVertexBuffer(device);
+				chunk.Render(device);
 			}
 		}
 
 		public void DrawTrees()
 		{
+			var device = m_scene.Game.GraphicsDevice;
+
 			foreach (var chunk in m_chunks)
 			{
 				if (chunk.IsEnabled == false)
@@ -253,7 +258,8 @@ namespace Client3D
 
 				m_scene.SymbolEffect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
-				chunk.RenderTrees(m_scene);
+				chunk.UpdateSceneryVertices(device);
+				chunk.RenderTrees(device);
 			}
 		}
 	}
