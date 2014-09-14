@@ -127,6 +127,10 @@ namespace Client3D
 			m_game.RasterizerState = state;
 		}
 
+		int m_c0;
+		int m_c1;
+		int m_c2;
+
 		void timer_Tick(object sender, EventArgs e)
 		{
 			var cam = m_scene.Services.GetService<ICameraService>();
@@ -140,6 +144,21 @@ namespace Client3D
 			this.vertRendTextBox.Text = m_scene.VerticesRendered.ToString();
 			this.chunksRenderedTextBox.Text = m_scene.ChunksRendered.ToString();
 			this.chunkRecalcsTextBox.Text = m_scene.ChunkRecalcs.ToString();
+
+			var c0 = GC.CollectionCount(0);
+			var c1 = GC.CollectionCount(1);
+			var c2 = GC.CollectionCount(2);
+
+			var d0 = c0 - m_c0;
+			var d1 = c1 - m_c1;
+			var d2 = c2 - m_c2;
+
+			textBox1.Text = String.Format("GC0 {0}/s, GC1 {1}/s, GC2 {2}/s",
+				d0, d1, d2);
+
+			m_c0 = c0;
+			m_c1 = c1;
+			m_c2 = c2;
 		}
 	}
 }

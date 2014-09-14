@@ -59,6 +59,8 @@
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
+			this.label10 = new System.Windows.Forms.Label();
+			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -100,6 +102,8 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.textBox1);
+			this.groupBox2.Controls.Add(this.label10);
 			this.groupBox2.Controls.Add(this.label9);
 			this.groupBox2.Controls.Add(this.chunksRenderedTextBox);
 			this.groupBox2.Controls.Add(this.label3);
@@ -367,6 +371,23 @@
 			this.checkBox1.Text = "Disable Culling";
 			this.checkBox1.UseVisualStyleBackColor = true;
 			// 
+			// label10
+			// 
+			this.label10.AutoSize = true;
+			this.label10.Location = new System.Drawing.Point(6, 100);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(22, 13);
+			this.label10.TabIndex = 6;
+			this.label10.Text = "GC";
+			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(107, 97);
+			this.textBox1.Name = "textBox1";
+			this.textBox1.ReadOnly = true;
+			this.textBox1.Size = new System.Drawing.Size(147, 20);
+			this.textBox1.TabIndex = 7;
+			// 
 			// DebugForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -431,6 +452,8 @@
 		private System.Windows.Forms.Label label9;
 		internal System.Windows.Forms.TextBox chunksRenderedTextBox;
 		private System.Windows.Forms.CheckBox checkBox7;
+		internal System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.Label label10;
 
 	}
 }
