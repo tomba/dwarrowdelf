@@ -23,6 +23,7 @@ namespace Client3D
 	{
 		EffectConstantBuffer m_perObConstBuf;
 		EffectParameter m_objectWorldMatrixParam;
+		VertexInputLayout m_vertexInputLayout = VertexInputLayout.New<TerrainVertex>(0);
 
 		public TerrainEffect(GraphicsDevice device, EffectData effectData)
 			: base(device, effectData)
@@ -66,7 +67,7 @@ namespace Client3D
 		{
 			var device = this.GraphicsDevice;
 
-			device.SetVertexInputLayout(VertexInputLayout.New<TerrainVertex>(0));
+			device.SetVertexInputLayout(m_vertexInputLayout);
 
 			return base.OnApply(pass);
 		}
