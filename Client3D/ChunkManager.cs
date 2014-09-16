@@ -197,21 +197,21 @@ namespace Client3D
 		}
 
 		readonly int VERTEX_CACHE_COUNT = Environment.ProcessorCount * 2;
-		BlockingCollection<VertexListCacheItem> m_vertexLists;
-		BlockingCollection<VertexListCacheItem> m_chunkList;
+		BlockingCollection<VertexListCacheItem> m_vertexCacheStack;
+		BlockingCollection<VertexListCacheItem> m_vertexCacheQueue;
 
 		public void Update(GameTime gameTime)
 		{
-			if (m_vertexLists == null)
+			if (m_vertexCacheStack == null)
 			{
 				var stack = new ConcurrentStack<VertexListCacheItem>();
-				m_vertexLists = new BlockingCollection<VertexListCacheItem>(stack);
+				m_vertexCacheStack = new BlockingCollection<VertexListCacheItem>(stack);
 
 				for (int i = 0; i < VERTEX_CACHE_COUNT; ++i)
-					m_vertexLists.Add(new VertexListCacheItem());
+					m_vertexCacheStack.Add(new VertexListCacheItem());
 
 				var queue = new ConcurrentQueue<VertexListCacheItem>();
-				m_chunkList = new BlockingCollection<VertexListCacheItem>(queue);
+				m_vertexCacheQueue = new BlockingCollection<VertexListCacheItem>(queue);
 			}
 
 			InvalidateDueVisibilityChange();
@@ -240,44 +240,42 @@ namespace Client3D
 
 						if (chunk.IsInvalid)
 						{
-							Interlocked.Increment(ref m_chunkRecalcs);
-
-							VertexListCacheItem cacheItem;
-
-							cacheItem = m_vertexLists.Take();
+							var cacheItem = m_vertexCacheStack.Take();
 
 							chunk.GenerateVertices(m_scene, eyePos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
 
 							cacheItem.Chunk = chunk;
-							m_chunkList.Add(cacheItem);
+							m_vertexCacheQueue.Add(cacheItem);
 						}
 					}
 				});
 
-				m_chunkList.Add(null);
+				m_vertexCacheQueue.Add(null);
 			});
 
-			VertexListCacheItem item;
-
-			while (m_chunkList.TryTake(out item, -1))
+			while (true)
 			{
-				if (item == null)
+				var cacheItem = m_vertexCacheQueue.Take();
+
+				if (cacheItem == null)
 					break;
 
-				var chunk = item.Chunk;
+				var chunk = cacheItem.Chunk;
 
-				chunk.UpdateVertexBuffer(m_scene.Game.GraphicsDevice, item.TerrainVertexList);
-				chunk.UpdateSceneryVertexBuffer(m_scene.Game.GraphicsDevice, item.SceneryVertexList);
+				chunk.UpdateVertexBuffer(m_scene.Game.GraphicsDevice, cacheItem.TerrainVertexList);
+				chunk.UpdateSceneryVertexBuffer(m_scene.Game.GraphicsDevice, cacheItem.SceneryVertexList);
 
-				item.Chunk = null;
-				m_vertexLists.Add(item);
+				cacheItem.Chunk = null;
+				m_vertexCacheStack.Add(cacheItem);
+
+				m_chunkRecalcs++;
 			}
 
 			task.Wait();
 			task.Dispose();
 
-			System.Diagnostics.Trace.Assert(m_vertexLists.Count == VERTEX_CACHE_COUNT);
-			System.Diagnostics.Trace.Assert(m_chunkList.Count == 0);
+			System.Diagnostics.Trace.Assert(m_vertexCacheStack.Count == VERTEX_CACHE_COUNT);
+			System.Diagnostics.Trace.Assert(m_vertexCacheQueue.Count == 0);
 		}
 
 		public void Draw(GameTime gameTime)
