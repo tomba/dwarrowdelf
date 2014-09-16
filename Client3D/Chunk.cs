@@ -18,9 +18,9 @@ namespace Client3D
 	class Chunk
 	{
 		public const int CHUNK_SIZE = 16;
-		public const int MAX_TILES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
-		const int MAX_VERTICES_PER_TILE = 6 * 4;
-		public const int MAX_VERTICES = MAX_TILES * MAX_VERTICES_PER_TILE;
+		public const int VOXELS_PER_CHUNK = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
+		const int MAX_VERTICES_PER_VOXEL = 6 * 4;
+		public const int MAX_VERTICES_PER_CHUNK = VOXELS_PER_CHUNK * MAX_VERTICES_PER_VOXEL;
 
 		static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
@@ -79,7 +79,7 @@ namespace Client3D
 			this.IsInvalid = true;
 		}
 
-		public void Update(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,
+		public void GenerateVertices(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
 			if (this.IsInvalid == false)
@@ -95,8 +95,6 @@ namespace Client3D
 		{
 			terrainVertexList.Clear();
 			sceneryVertexList.Clear();
-
-			var device = scene.Game.GraphicsDevice;
 
 			var cameraChunkPos = (cameraPos / CHUNK_SIZE).ToFloorIntVector3();
 			var diff = cameraChunkPos - this.ChunkPosition;
@@ -148,7 +146,7 @@ namespace Client3D
 			m_vertexBufferInvalid = false;
 		}
 
-		public void UpdateSceneryVertices(GraphicsDevice device, VertexList<SceneryVertex> vertexList)
+		public void UpdateSceneryVertexBuffer(GraphicsDevice device, VertexList<SceneryVertex> vertexList)
 		{
 			if (!m_sceneryVertexBufferInvalid)
 				return;
@@ -167,7 +165,7 @@ namespace Client3D
 			m_sceneryVertexBufferInvalid = false;
 		}
 
-		public void Render(GraphicsDevice device)
+		public void DrawTerrain(GraphicsDevice device)
 		{
 			if (this.VertexCount == 0)
 				return;
@@ -176,7 +174,7 @@ namespace Client3D
 			device.Draw(PrimitiveType.LineListWithAdjacency, this.VertexCount);
 		}
 
-		public void RenderTrees(GraphicsDevice device)
+		public void DrawTrees(GraphicsDevice device)
 		{
 			if (this.SceneryVertexCount == 0)
 				return;

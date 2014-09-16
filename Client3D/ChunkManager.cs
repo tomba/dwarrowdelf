@@ -22,8 +22,8 @@ namespace Client3D
 
 			public VertexListCacheItem()
 			{
-				this.TerrainVertexList = new VertexList<TerrainVertex>(Chunk.MAX_VERTICES);
-				this.SceneryVertexList = new VertexList<SceneryVertex>(Chunk.MAX_TILES);
+				this.TerrainVertexList = new VertexList<TerrainVertex>(Chunk.MAX_VERTICES_PER_CHUNK);
+				this.SceneryVertexList = new VertexList<SceneryVertex>(Chunk.VOXELS_PER_CHUNK);
 			}
 		}
 
@@ -246,7 +246,7 @@ namespace Client3D
 
 							cacheItem = m_vertexLists.Take();
 
-							chunk.Update(m_scene, eyePos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
+							chunk.GenerateVertices(m_scene, eyePos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
 
 							cacheItem.Chunk = chunk;
 							m_chunkList.Add(cacheItem);
@@ -267,7 +267,7 @@ namespace Client3D
 				var chunk = item.Chunk;
 
 				chunk.UpdateVertexBuffer(m_scene.Game.GraphicsDevice, item.TerrainVertexList);
-				chunk.UpdateSceneryVertices(m_scene.Game.GraphicsDevice, item.SceneryVertexList);
+				chunk.UpdateSceneryVertexBuffer(m_scene.Game.GraphicsDevice, item.SceneryVertexList);
 
 				item.Chunk = null;
 				m_vertexLists.Add(item);
@@ -294,7 +294,7 @@ namespace Client3D
 
 				m_scene.Effect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
-				chunk.Render(device);
+				chunk.DrawTerrain(device);
 
 				numVertices += chunk.VertexCount;
 				numChunks++;
@@ -315,7 +315,7 @@ namespace Client3D
 
 				m_scene.SymbolEffect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
-				chunk.RenderTrees(device);
+				chunk.DrawTrees(device);
 			}
 		}
 	}
