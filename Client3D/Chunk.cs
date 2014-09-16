@@ -18,15 +18,13 @@ namespace Client3D
 	class Chunk
 	{
 		public const int CHUNK_SIZE = 16;
-		const int MAX_TILES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
+		public const int MAX_TILES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
 		const int MAX_VERTICES_PER_TILE = 6 * 4;
-		const int MAX_VERTICES = MAX_TILES * MAX_VERTICES_PER_TILE;
+		public const int MAX_VERTICES = MAX_TILES * MAX_VERTICES_PER_TILE;
 
 		static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
 		VoxelMap m_map;
-
-		Buffer<TerrainVertex> m_vertexBuffer;
 
 		/// <summary>
 		/// Chunk position
@@ -37,23 +35,18 @@ namespace Client3D
 		/// </summary>
 		public IntVector3 ChunkOffset { get; private set; }
 
-		public int VertexCount { get; private set; }
-
 		// Maximum number of vertices this Chunk has had
 		int m_maxVertices;
 
 		public bool IsInvalid { get; private set; }
 
-		VertexList<TerrainVertex> m_vertexList;
+		Buffer<TerrainVertex> m_vertexBuffer;
+		public int VertexCount { get; private set; }
 		bool m_vertexBufferInvalid;
 
-
-
-		VertexList<SceneryVertex> m_sceneryVertices;
 		Buffer<SceneryVertex> m_sceneryVertexBuffer;
+		public int SceneryVertexCount { get; private set; }
 		bool m_sceneryVertexBufferInvalid;
-
-
 
 		public BoundingBox BBox;
 
@@ -80,35 +73,26 @@ namespace Client3D
 
 		public void Free()
 		{
-			m_vertexList = null;
-			m_sceneryVertices = null;
-
 			Utilities.Dispose(ref m_vertexBuffer);
 			Utilities.Dispose(ref m_sceneryVertexBuffer);
 
 			this.IsInvalid = true;
 		}
 
-		public void Update(TerrainRenderer scene, Vector3 cameraPos)
+		public void Update(TerrainRenderer scene, Vector3 cameraPos, VertexListCacheItem vertexLists)
 		{
 			if (this.IsInvalid == false)
 				return;
 
-			UpdateVoxels(scene, cameraPos);
+			UpdateVoxels(scene, cameraPos, vertexLists);
 
 			this.IsInvalid = false;
 		}
 
-		void UpdateVoxels(TerrainRenderer scene, Vector3 cameraPos)
+		void UpdateVoxels(TerrainRenderer scene, Vector3 cameraPos, VertexListCacheItem vertexLists)
 		{
-			if (m_vertexList == null)
-				m_vertexList = new VertexList<TerrainVertex>(MAX_VERTICES);
-
-			if (m_sceneryVertices == null)
-				m_sceneryVertices = new VertexList<SceneryVertex>(MAX_TILES);
-
-			m_vertexList.Clear();
-			m_sceneryVertices.Clear();
+			vertexLists.TerrainVertexList.Clear();
+			vertexLists.SceneryVertexList.Clear();
 
 			var device = scene.Game.GraphicsDevice;
 
@@ -129,25 +113,32 @@ namespace Client3D
 			if (diff.Z <= 0)
 				mask |= FaceDirectionBits.NegativeZ;
 
-			GenerateVertices(scene, mask);
+			GenerateVertices(scene, mask, vertexLists);
 
 			m_vertexBufferInvalid = true;
 			m_sceneryVertexBufferInvalid = true;
 
-			this.VertexCount = m_vertexList.Count;
+			this.VertexCount = vertexLists.TerrainVertexList.Count;
+			this.SceneryVertexCount = vertexLists.SceneryVertexList.Count;
 		}
 
-		public void UpdateVertexBuffer(GraphicsDevice device)
+		public void UpdateBuffers(GraphicsDevice device, VertexListCacheItem vertexLists)
+		{
+			UpdateVertexBuffer(device, vertexLists.TerrainVertexList);
+			UpdateSceneryVertices(device, vertexLists.SceneryVertexList);
+		}
+
+		public void UpdateVertexBuffer(GraphicsDevice device, VertexList<TerrainVertex> vertexList)
 		{
 			if (!m_vertexBufferInvalid)
 				return;
 
-			if (m_vertexList.Count > 0)
+			if (vertexList.Count > 0)
 			{
-				if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < m_vertexList.Count)
+				if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < vertexList.Count)
 				{
-					if (m_vertexList.Count > m_maxVertices)
-						m_maxVertices = m_vertexList.Count;
+					if (vertexList.Count > m_maxVertices)
+						m_maxVertices = vertexList.Count;
 
 					//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
 
@@ -155,10 +146,29 @@ namespace Client3D
 					m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
 				}
 
-				m_vertexBuffer.SetData(m_vertexList.Data, 0, m_vertexList.Count);
+				m_vertexBuffer.SetData(vertexList.Data, 0, vertexList.Count);
 			}
 
 			m_vertexBufferInvalid = false;
+		}
+
+		public void UpdateSceneryVertices(GraphicsDevice device, VertexList<SceneryVertex> vertexList)
+		{
+			if (!m_sceneryVertexBufferInvalid)
+				return;
+
+			if (vertexList.Count > 0)
+			{
+				if (m_sceneryVertexBuffer == null || m_sceneryVertexBuffer.ElementCount < vertexList.Count)
+				{
+					Utilities.Dispose(ref m_sceneryVertexBuffer);
+					m_sceneryVertexBuffer = Buffer.Vertex.New<SceneryVertex>(device, vertexList.Data.Length);
+				}
+
+				m_sceneryVertexBuffer.SetData(vertexList.Data, 0, vertexList.Count);
+			}
+
+			m_sceneryVertexBufferInvalid = false;
 		}
 
 		public void Render(GraphicsDevice device)
@@ -170,35 +180,16 @@ namespace Client3D
 			device.Draw(PrimitiveType.LineListWithAdjacency, this.VertexCount);
 		}
 
-		public void UpdateSceneryVertices(GraphicsDevice device)
-		{
-			if (!m_sceneryVertexBufferInvalid)
-				return;
-
-			if (m_sceneryVertices.Count > 0)
-			{
-				if (m_sceneryVertexBuffer == null || m_sceneryVertexBuffer.ElementCount < m_sceneryVertices.Count)
-				{
-					Utilities.Dispose(ref m_sceneryVertexBuffer);
-					m_sceneryVertexBuffer = Buffer.Vertex.New<SceneryVertex>(device, m_sceneryVertices.Data.Length);
-				}
-
-				m_sceneryVertexBuffer.SetData(m_sceneryVertices.Data, 0, m_sceneryVertices.Count);
-			}
-
-			m_sceneryVertexBufferInvalid = false;
-		}
-
 		public void RenderTrees(GraphicsDevice device)
 		{
-			if (m_sceneryVertices.Count == 0)
+			if (this.SceneryVertexCount == 0)
 				return;
 
 			device.SetVertexBuffer(m_sceneryVertexBuffer);
-			device.Draw(PrimitiveType.PointList, m_sceneryVertices.Count);
+			device.Draw(PrimitiveType.PointList, this.SceneryVertexCount);
 		}
 
-		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask)
+		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask, VertexListCacheItem vertexLists)
 		{
 			IntVector3 cutn = scene.ViewCorner1;
 			IntVector3 cutp = scene.ViewCorner2;
@@ -226,7 +217,7 @@ namespace Client3D
 						if ((td.Flags & VoxelFlags.Tree) != 0)
 						{
 							var pos = p - this.ChunkOffset;
-							m_sceneryVertices.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
+							vertexLists.SceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
 								(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
 						}
 
@@ -272,7 +263,7 @@ namespace Client3D
 							}
 						}
 
-						CreateCubicBlock(p, scene, baseTexture, topTexture, mask);
+						CreateCubicBlock(p, scene, baseTexture, topTexture, mask, vertexLists);
 					}
 				}
 			}
@@ -280,7 +271,7 @@ namespace Client3D
 
 		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene,
 			FaceTexture baseTexture, FaceTexture topTexture,
-			FaceDirectionBits globalFaceMask)
+			FaceDirectionBits globalFaceMask, VertexListCacheItem vertexLists)
 		{
 			int x = p.X;
 			int y = p.Y;
@@ -343,7 +334,7 @@ namespace Client3D
 			if (sides == 0)
 				return;
 
-			CreateCube(p, sides, hiddenSides, baseTexture, topTexture);
+			CreateCube(p, sides, hiddenSides, baseTexture, topTexture, vertexLists);
 		}
 
 		bool IsBlocker(IntVector3 p)
@@ -360,7 +351,7 @@ namespace Client3D
 		}
 
 		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,
-			FaceTexture baseTexture, FaceTexture topTexture)
+			FaceTexture baseTexture, FaceTexture topTexture, VertexListCacheItem vertexLists)
 		{
 			var grid = m_map.Grid;
 
@@ -386,7 +377,7 @@ namespace Client3D
 
 					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, occ,
 						side == (int)FaceDirection.PositiveZ ? topTexture : baseTexture);
-					m_vertexList.Add(vd);
+					vertexLists.TerrainVertexList.Add(vd);
 				}
 			}
 		}

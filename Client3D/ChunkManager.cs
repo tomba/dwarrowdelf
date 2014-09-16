@@ -1,10 +1,9 @@
-﻿//#define USE_NONPARALLEL
-
-using Dwarrowdelf;
+﻿using Dwarrowdelf;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.Toolkit;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +12,18 @@ using System.Threading.Tasks;
 
 namespace Client3D
 {
+	class VertexListCacheItem
+	{
+		public VertexList<TerrainVertex> TerrainVertexList;
+		public VertexList<SceneryVertex> SceneryVertexList;
+
+		public VertexListCacheItem()
+		{
+			this.TerrainVertexList = new VertexList<TerrainVertex>(Chunk.MAX_VERTICES);
+			this.SceneryVertexList = new VertexList<SceneryVertex>(Chunk.MAX_TILES);
+		}
+	}
+
 	class ChunkManager : Component
 	{
 		Chunk[] m_chunks;
@@ -183,57 +194,98 @@ namespace Client3D
 			m_oldCameraPos = cameraPos;
 		}
 
+		readonly int VERTEX_CACHE_COUNT = Environment.ProcessorCount * 2;
+		BlockingCollection<VertexListCacheItem> m_vertexLists;
+		BlockingCollection<KeyValuePair<Chunk, VertexListCacheItem>> m_chunkList;
+
 		public void Update(GameTime gameTime)
 		{
+			if (m_vertexLists == null)
+			{
+				var stack = new ConcurrentStack<VertexListCacheItem>();
+				m_vertexLists = new BlockingCollection<VertexListCacheItem>(stack);
+
+				for (int i = 0; i < VERTEX_CACHE_COUNT; ++i)
+					m_vertexLists.Add(new VertexListCacheItem());
+
+				var queue = new ConcurrentQueue<KeyValuePair<Chunk, VertexListCacheItem>>();
+				m_chunkList = new BlockingCollection<KeyValuePair<Chunk, VertexListCacheItem>>(queue);
+			}
+
 			InvalidateDueVisibilityChange();
 
-			var frustum = m_camera.Frustum;
-
-			int numVertices = 0;
-			int numChunks = 0;
-			int numChunkRecalcs = 0;
-
-			var eyePos = m_camera.Position;
-
-#if USE_NONPARALLEL
-			foreach (var chunk in m_chunks)
-#else
-			Parallel.ForEach(m_chunks, chunk =>
-#endif
+			var task = Task.Run(() =>
 			{
-				var res = frustum.Contains(ref chunk.BBox);
+				var frustum = m_camera.Frustum;
 
-				if (res == ContainmentType.Disjoint)
+				int numChunkRecalcs = 0;
+
+				var eyePos = m_camera.Position;
+
+				Parallel.ForEach(m_chunks, chunk =>
 				{
-					chunk.IsEnabled = false;
+					var res = frustum.Contains(ref chunk.BBox);
 
-					chunk.Free();
-				}
-				else
-				{
-					chunk.IsEnabled = true;
+					if (res == ContainmentType.Disjoint)
+					{
+						if (chunk.IsEnabled)
+						{
+							chunk.IsEnabled = false;
+							chunk.Free();
+						}
+					}
+					else
+					{
+						chunk.IsEnabled = true;
 
-					if (chunk.IsInvalid)
-						Interlocked.Increment(ref numChunkRecalcs);
+						if (chunk.IsInvalid)
+						{
+							Interlocked.Increment(ref numChunkRecalcs);
 
-					chunk.Update(m_scene, eyePos);
+							VertexListCacheItem cacheItem;
 
-					Interlocked.Add(ref numVertices, chunk.VertexCount);
-					Interlocked.Increment(ref numChunks);
-				}
-#if USE_NONPARALLEL
-			}
-#else
+							cacheItem = m_vertexLists.Take();
+
+							chunk.Update(m_scene, eyePos, cacheItem);
+
+							m_chunkList.Add(new KeyValuePair<Chunk, VertexListCacheItem>(chunk, cacheItem));
+						}
+					}
+				});
+
+				this.ChunkRecalcs = numChunkRecalcs;
+
+				m_chunkList.Add(new KeyValuePair<Chunk, VertexListCacheItem>(null, null));
 			});
-#endif
-			this.VerticesRendered = numVertices;
-			this.ChunksRendered = numChunks;
-			this.ChunkRecalcs = numChunkRecalcs;
+
+			KeyValuePair<Chunk, VertexListCacheItem> item;
+
+			while (m_chunkList.TryTake(out item, -1))
+			{
+				var chunk = item.Key;
+				var vertexLists = item.Value;
+
+				if (chunk == null)
+					break;
+
+				chunk.UpdateBuffers(m_scene.Game.GraphicsDevice, vertexLists);
+
+				m_vertexLists.Add(vertexLists);
+			}
+
+			task.Wait();
+			task.Dispose();
+
+			System.Diagnostics.Trace.Assert(m_vertexLists.Count == VERTEX_CACHE_COUNT);
+			System.Diagnostics.Trace.Assert(m_chunkList.Count == 0);
 		}
 
 		public void Draw(GameTime gameTime)
 		{
 			var device = m_scene.Game.GraphicsDevice;
+
+			int numVertices = 0;
+			int numChunks = 0;
 
 			foreach (var chunk in m_chunks)
 			{
@@ -242,9 +294,14 @@ namespace Client3D
 
 				m_scene.Effect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
-				chunk.UpdateVertexBuffer(device);
 				chunk.Render(device);
+
+				numVertices += chunk.VertexCount;
+				numChunks++;
 			}
+
+			this.VerticesRendered = numVertices;
+			this.ChunksRendered = numChunks;
 		}
 
 		public void DrawTrees()
@@ -258,7 +315,6 @@ namespace Client3D
 
 				m_scene.SymbolEffect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
-				chunk.UpdateSceneryVertices(device);
 				chunk.RenderTrees(device);
 			}
 		}
