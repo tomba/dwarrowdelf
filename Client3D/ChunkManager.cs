@@ -12,20 +12,20 @@ using System.Threading.Tasks;
 
 namespace Client3D
 {
-	class VertexListCacheItem
-	{
-		public VertexList<TerrainVertex> TerrainVertexList;
-		public VertexList<SceneryVertex> SceneryVertexList;
-
-		public VertexListCacheItem()
-		{
-			this.TerrainVertexList = new VertexList<TerrainVertex>(Chunk.MAX_VERTICES);
-			this.SceneryVertexList = new VertexList<SceneryVertex>(Chunk.MAX_TILES);
-		}
-	}
-
 	class ChunkManager : Component
 	{
+		class VertexListCacheItem
+		{
+			public VertexList<TerrainVertex> TerrainVertexList;
+			public VertexList<SceneryVertex> SceneryVertexList;
+
+			public VertexListCacheItem()
+			{
+				this.TerrainVertexList = new VertexList<TerrainVertex>(Chunk.MAX_VERTICES);
+				this.SceneryVertexList = new VertexList<SceneryVertex>(Chunk.MAX_TILES);
+			}
+		}
+
 		Chunk[] m_chunks;
 
 		TerrainRenderer m_scene;
@@ -245,7 +245,7 @@ namespace Client3D
 
 							cacheItem = m_vertexLists.Take();
 
-							chunk.Update(m_scene, eyePos, cacheItem);
+							chunk.Update(m_scene, eyePos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
 
 							m_chunkList.Add(new KeyValuePair<Chunk, VertexListCacheItem>(chunk, cacheItem));
 						}
@@ -265,7 +265,8 @@ namespace Client3D
 				if (chunk == null)
 					break;
 
-				chunk.UpdateBuffers(m_scene.Game.GraphicsDevice, vertexLists);
+				chunk.UpdateVertexBuffer(m_scene.Game.GraphicsDevice, vertexLists.TerrainVertexList);
+				chunk.UpdateSceneryVertices(m_scene.Game.GraphicsDevice, vertexLists.SceneryVertexList);
 
 				m_vertexLists.Add(vertexLists);
 			}

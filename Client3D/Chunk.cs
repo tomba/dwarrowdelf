@@ -79,20 +79,22 @@ namespace Client3D
 			this.IsInvalid = true;
 		}
 
-		public void Update(TerrainRenderer scene, Vector3 cameraPos, VertexListCacheItem vertexLists)
+		public void Update(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,
+			VertexList<SceneryVertex> sceneryVertexList)
 		{
 			if (this.IsInvalid == false)
 				return;
 
-			UpdateVoxels(scene, cameraPos, vertexLists);
+			UpdateVoxels(scene, cameraPos, terrainVertexList, sceneryVertexList);
 
 			this.IsInvalid = false;
 		}
 
-		void UpdateVoxels(TerrainRenderer scene, Vector3 cameraPos, VertexListCacheItem vertexLists)
+		void UpdateVoxels(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,
+			VertexList<SceneryVertex> sceneryVertexList)
 		{
-			vertexLists.TerrainVertexList.Clear();
-			vertexLists.SceneryVertexList.Clear();
+			terrainVertexList.Clear();
+			sceneryVertexList.Clear();
 
 			var device = scene.Game.GraphicsDevice;
 
@@ -113,19 +115,13 @@ namespace Client3D
 			if (diff.Z <= 0)
 				mask |= FaceDirectionBits.NegativeZ;
 
-			GenerateVertices(scene, mask, vertexLists);
+			GenerateVertices(scene, mask, terrainVertexList, sceneryVertexList);
 
 			m_vertexBufferInvalid = true;
 			m_sceneryVertexBufferInvalid = true;
 
-			this.VertexCount = vertexLists.TerrainVertexList.Count;
-			this.SceneryVertexCount = vertexLists.SceneryVertexList.Count;
-		}
-
-		public void UpdateBuffers(GraphicsDevice device, VertexListCacheItem vertexLists)
-		{
-			UpdateVertexBuffer(device, vertexLists.TerrainVertexList);
-			UpdateSceneryVertices(device, vertexLists.SceneryVertexList);
+			this.VertexCount = terrainVertexList.Count;
+			this.SceneryVertexCount = sceneryVertexList.Count;
 		}
 
 		public void UpdateVertexBuffer(GraphicsDevice device, VertexList<TerrainVertex> vertexList)
@@ -189,7 +185,8 @@ namespace Client3D
 			device.Draw(PrimitiveType.PointList, this.SceneryVertexCount);
 		}
 
-		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask, VertexListCacheItem vertexLists)
+		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask, VertexList<TerrainVertex> terrainVertexList,
+			VertexList<SceneryVertex> sceneryVertexList)
 		{
 			IntVector3 cutn = scene.ViewCorner1;
 			IntVector3 cutp = scene.ViewCorner2;
@@ -217,7 +214,7 @@ namespace Client3D
 						if ((td.Flags & VoxelFlags.Tree) != 0)
 						{
 							var pos = p - this.ChunkOffset;
-							vertexLists.SceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
+							sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
 								(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
 						}
 
@@ -263,7 +260,7 @@ namespace Client3D
 							}
 						}
 
-						CreateCubicBlock(p, scene, baseTexture, topTexture, mask, vertexLists);
+						CreateCubicBlock(p, scene, baseTexture, topTexture, mask, terrainVertexList);
 					}
 				}
 			}
@@ -271,7 +268,7 @@ namespace Client3D
 
 		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene,
 			FaceTexture baseTexture, FaceTexture topTexture,
-			FaceDirectionBits globalFaceMask, VertexListCacheItem vertexLists)
+			FaceDirectionBits globalFaceMask, VertexList<TerrainVertex> vertexList)
 		{
 			int x = p.X;
 			int y = p.Y;
@@ -334,7 +331,7 @@ namespace Client3D
 			if (sides == 0)
 				return;
 
-			CreateCube(p, sides, hiddenSides, baseTexture, topTexture, vertexLists);
+			CreateCube(p, sides, hiddenSides, baseTexture, topTexture, vertexList);
 		}
 
 		bool IsBlocker(IntVector3 p)
@@ -351,7 +348,7 @@ namespace Client3D
 		}
 
 		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,
-			FaceTexture baseTexture, FaceTexture topTexture, VertexListCacheItem vertexLists)
+			FaceTexture baseTexture, FaceTexture topTexture, VertexList<TerrainVertex> vertexList)
 		{
 			var grid = m_map.Grid;
 
@@ -377,7 +374,7 @@ namespace Client3D
 
 					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, occ,
 						side == (int)FaceDirection.PositiveZ ? topTexture : baseTexture);
-					vertexLists.TerrainVertexList.Add(vd);
+					vertexList.Add(vd);
 				}
 			}
 		}
