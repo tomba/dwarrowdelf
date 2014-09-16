@@ -32,7 +32,8 @@ namespace Client3D
 
 		public int VerticesRendered { get; private set; }
 		public int ChunksRendered { get; private set; }
-		public int ChunkRecalcs { get; private set; }
+		public int ChunkRecalcs { get { return m_chunkRecalcs; } set { m_chunkRecalcs = value; } }
+		int m_chunkRecalcs;
 
 		/// <summary>
 		/// Size in chunks
@@ -218,8 +219,6 @@ namespace Client3D
 			{
 				var frustum = m_camera.Frustum;
 
-				int numChunkRecalcs = 0;
-
 				var eyePos = m_camera.Position;
 
 				Parallel.ForEach(m_chunks, chunk =>
@@ -240,7 +239,7 @@ namespace Client3D
 
 						if (chunk.IsInvalid)
 						{
-							Interlocked.Increment(ref numChunkRecalcs);
+							Interlocked.Increment(ref m_chunkRecalcs);
 
 							VertexListCacheItem cacheItem;
 
@@ -252,8 +251,6 @@ namespace Client3D
 						}
 					}
 				});
-
-				this.ChunkRecalcs = numChunkRecalcs;
 
 				m_chunkList.Add(new KeyValuePair<Chunk, VertexListCacheItem>(null, null));
 			});

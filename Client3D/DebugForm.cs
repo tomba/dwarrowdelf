@@ -144,6 +144,7 @@ namespace Client3D
 			this.vertRendTextBox.Text = m_scene.VerticesRendered.ToString();
 			this.chunksRenderedTextBox.Text = m_scene.ChunksRendered.ToString();
 			this.chunkRecalcsTextBox.Text = m_scene.ChunkRecalcs.ToString();
+			m_scene.ChunkRecalcs = 0;
 
 			var c0 = GC.CollectionCount(0);
 			var c1 = GC.CollectionCount(1);

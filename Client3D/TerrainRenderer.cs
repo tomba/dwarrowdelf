@@ -24,7 +24,7 @@ namespace Client3D
 		public bool ShowBorders { get; set; }
 		public int VerticesRendered { get { return m_chunkManager.VerticesRendered; } }
 		public int ChunksRendered { get { return m_chunkManager.ChunksRendered; } }
-		public int ChunkRecalcs { get { return m_chunkManager.ChunkRecalcs; } }
+		public int ChunkRecalcs { get { return m_chunkManager.ChunkRecalcs; } set { m_chunkManager.ChunkRecalcs = value; } }
 
 		DirectionalLight m_directionalLight;
 
