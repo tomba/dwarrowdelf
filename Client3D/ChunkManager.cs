@@ -16,6 +16,7 @@ namespace Client3D
 	{
 		class VertexListCacheItem
 		{
+			public Chunk Chunk;
 			public VertexList<TerrainVertex> TerrainVertexList;
 			public VertexList<SceneryVertex> SceneryVertexList;
 
@@ -197,7 +198,7 @@ namespace Client3D
 
 		readonly int VERTEX_CACHE_COUNT = Environment.ProcessorCount * 2;
 		BlockingCollection<VertexListCacheItem> m_vertexLists;
-		BlockingCollection<KeyValuePair<Chunk, VertexListCacheItem>> m_chunkList;
+		BlockingCollection<VertexListCacheItem> m_chunkList;
 
 		public void Update(GameTime gameTime)
 		{
@@ -209,8 +210,8 @@ namespace Client3D
 				for (int i = 0; i < VERTEX_CACHE_COUNT; ++i)
 					m_vertexLists.Add(new VertexListCacheItem());
 
-				var queue = new ConcurrentQueue<KeyValuePair<Chunk, VertexListCacheItem>>();
-				m_chunkList = new BlockingCollection<KeyValuePair<Chunk, VertexListCacheItem>>(queue);
+				var queue = new ConcurrentQueue<VertexListCacheItem>();
+				m_chunkList = new BlockingCollection<VertexListCacheItem>(queue);
 			}
 
 			InvalidateDueVisibilityChange();
@@ -247,28 +248,29 @@ namespace Client3D
 
 							chunk.Update(m_scene, eyePos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
 
-							m_chunkList.Add(new KeyValuePair<Chunk, VertexListCacheItem>(chunk, cacheItem));
+							cacheItem.Chunk = chunk;
+							m_chunkList.Add(cacheItem);
 						}
 					}
 				});
 
-				m_chunkList.Add(new KeyValuePair<Chunk, VertexListCacheItem>(null, null));
+				m_chunkList.Add(null);
 			});
 
-			KeyValuePair<Chunk, VertexListCacheItem> item;
+			VertexListCacheItem item;
 
 			while (m_chunkList.TryTake(out item, -1))
 			{
-				var chunk = item.Key;
-				var vertexLists = item.Value;
-
-				if (chunk == null)
+				if (item == null)
 					break;
 
-				chunk.UpdateVertexBuffer(m_scene.Game.GraphicsDevice, vertexLists.TerrainVertexList);
-				chunk.UpdateSceneryVertices(m_scene.Game.GraphicsDevice, vertexLists.SceneryVertexList);
+				var chunk = item.Chunk;
 
-				m_vertexLists.Add(vertexLists);
+				chunk.UpdateVertexBuffer(m_scene.Game.GraphicsDevice, item.TerrainVertexList);
+				chunk.UpdateSceneryVertices(m_scene.Game.GraphicsDevice, item.SceneryVertexList);
+
+				item.Chunk = null;
+				m_vertexLists.Add(item);
 			}
 
 			task.Wait();
