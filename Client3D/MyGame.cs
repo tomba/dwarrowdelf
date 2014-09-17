@@ -21,8 +21,6 @@ namespace Client3D
 		readonly TestRenderer m_testRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
 
-		KeyboardState m_keyboardState;
-
 		int m_frameCount;
 		readonly Stopwatch m_fpsClock;
 
@@ -147,30 +145,11 @@ namespace Client3D
 			base.EndRun();
 		}
 
-		protected override void Update(GameTime gameTime)
-		{
-			m_frameCount++;
-			if (m_fpsClock.ElapsedMilliseconds > 1000.0f)
-			{
-				var fpsText = string.Format("{0:F2} FPS", (float)m_frameCount * 1000 / m_fpsClock.ElapsedMilliseconds);
-				m_frameCount = 0;
-				m_fpsClock.Restart();
-
-				this.Window.Title = fpsText;
-			}
-
-			m_keyboardState = m_keyboardManager.GetState();
-
-			base.Update(gameTime);
-		}
-
-		protected override void Draw(GameTime gameTime)
+		void HandleKeyboard(KeyboardState m_keyboardState)
 		{
 			const float walkSpeek = 20f;
 			const float rotSpeed = MathUtil.PiOverTwo;
-			float dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-			this.GraphicsDevice.Clear(Color.CornflowerBlue);
+			float dTime = (float)this.gameTime.ElapsedGameTime.TotalSeconds;
 
 			if (m_keyboardState.IsKeyDown(Keys.F4) && m_keyboardState.IsKeyDown(Keys.LeftAlt))
 				this.Exit();
@@ -199,6 +178,30 @@ namespace Client3D
 				m_cameraProvider.RotateZ(-rotSpeed * dTime);
 			else if (m_keyboardState.IsKeyDown(Keys.Right))
 				m_cameraProvider.RotateZ(rotSpeed * dTime);
+		}
+
+		protected override void Update(GameTime gameTime)
+		{
+			m_frameCount++;
+			if (m_fpsClock.ElapsedMilliseconds > 1000.0f)
+			{
+				var fpsText = string.Format("{0:F2} FPS", (float)m_frameCount * 1000 / m_fpsClock.ElapsedMilliseconds);
+				m_frameCount = 0;
+				m_fpsClock.Restart();
+
+				this.Window.Title = fpsText;
+			}
+
+			var keyboardState = m_keyboardManager.GetState();
+
+			HandleKeyboard(keyboardState);
+
+			base.Update(gameTime);
+		}
+
+		protected override void Draw(GameTime gameTime)
+		{
+			this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			this.GraphicsDevice.SetRasterizerState(this.RasterizerState);
 
