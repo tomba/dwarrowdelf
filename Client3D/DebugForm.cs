@@ -142,7 +142,7 @@ namespace Client3D
 				campos.X, campos.Y, campos.Z,
 				chunkpos.X, chunkpos.Y, chunkpos.Z);
 			this.vertRendTextBox.Text = m_scene.VerticesRendered.ToString();
-			this.chunksRenderedTextBox.Text = m_scene.ChunksRendered.ToString();
+			this.chunksRenderedTextBox.Text = m_scene.ChunkManager.ChunkCountDebug;
 			this.chunkRecalcsTextBox.Text = m_scene.ChunkRecalcs.ToString();
 			m_scene.ChunkRecalcs = 0;
 

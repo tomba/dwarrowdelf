@@ -38,7 +38,7 @@ namespace Client3D
 		// Maximum number of vertices this Chunk has had
 		int m_maxVertices;
 
-		public bool IsInvalid { get; private set; }
+		public bool IsValid { get; set; }
 
 		Buffer<TerrainVertex> m_vertexBuffer;
 		public int VertexCount { get; private set; }
@@ -50,14 +50,10 @@ namespace Client3D
 
 		public BoundingBox BBox;
 
-		public bool IsEnabled { get; set; }
-
 		public Chunk(VoxelMap map, IntVector3 chunkPosition)
 		{
 			this.ChunkPosition = chunkPosition;
 			this.ChunkOffset = chunkPosition * CHUNK_SIZE;
-
-			this.IsInvalid = true;
 
 			m_map = map;
 
@@ -66,28 +62,16 @@ namespace Client3D
 			this.BBox = new BoundingBox(v1, v2);
 		}
 
-		public void InvalidateChunk()
-		{
-			this.IsInvalid = true;
-		}
-
 		public void Free()
 		{
 			Utilities.Dispose(ref m_vertexBuffer);
 			Utilities.Dispose(ref m_sceneryVertexBuffer);
-
-			this.IsInvalid = true;
 		}
 
 		public void GenerateVertices(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
-			if (this.IsInvalid == false)
-				return;
-
 			UpdateVoxels(scene, cameraPos, terrainVertexList, sceneryVertexList);
-
-			this.IsInvalid = false;
 		}
 
 		void UpdateVoxels(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,

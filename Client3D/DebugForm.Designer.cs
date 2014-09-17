@@ -32,6 +32,8 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.camPosTextBox = new System.Windows.Forms.TextBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.chunksRenderedTextBox = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
@@ -59,8 +61,6 @@
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.label10 = new System.Windows.Forms.Label();
-			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -117,14 +117,31 @@
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Scene";
 			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(107, 97);
+			this.textBox1.Name = "textBox1";
+			this.textBox1.ReadOnly = true;
+			this.textBox1.Size = new System.Drawing.Size(147, 20);
+			this.textBox1.TabIndex = 7;
+			// 
+			// label10
+			// 
+			this.label10.AutoSize = true;
+			this.label10.Location = new System.Drawing.Point(6, 100);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(22, 13);
+			this.label10.TabIndex = 6;
+			this.label10.Text = "GC";
+			// 
 			// label9
 			// 
 			this.label9.AutoSize = true;
 			this.label9.Location = new System.Drawing.Point(6, 46);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(93, 13);
+			this.label9.Size = new System.Drawing.Size(43, 13);
 			this.label9.TabIndex = 5;
-			this.label9.Text = "Chunks Rendered";
+			this.label9.Text = "Chunks";
 			// 
 			// chunksRenderedTextBox
 			// 
@@ -370,23 +387,6 @@
 			this.checkBox1.TabIndex = 0;
 			this.checkBox1.Text = "Disable Culling";
 			this.checkBox1.UseVisualStyleBackColor = true;
-			// 
-			// label10
-			// 
-			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point(6, 100);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(22, 13);
-			this.label10.TabIndex = 6;
-			this.label10.Text = "GC";
-			// 
-			// textBox1
-			// 
-			this.textBox1.Location = new System.Drawing.Point(107, 97);
-			this.textBox1.Name = "textBox1";
-			this.textBox1.ReadOnly = true;
-			this.textBox1.Size = new System.Drawing.Size(147, 20);
-			this.textBox1.TabIndex = 7;
 			// 
 			// DebugForm
 			// 

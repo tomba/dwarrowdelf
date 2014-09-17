@@ -18,6 +18,7 @@ namespace Client3D
 		public SymbolEffect SymbolEffect { get { return m_symbolEffect; } }
 		SymbolEffect m_symbolEffect;
 
+		public ChunkManager ChunkManager { get { return m_chunkManager; } }
 		ChunkManager m_chunkManager;
 
 		public bool IsRotationEnabled { get; set; }
