@@ -314,5 +314,15 @@ namespace Dwarrowdelf
 
 			return new IntVector3(x / count, y / count, z / count);
 		}
+
+		public static IntVector3 Min(IntVector3 v1, IntVector3 v2)
+		{
+			return new IntVector3(Math.Min(v1.X, v2.X), Math.Min(v1.Y, v2.Y), Math.Min(v1.Z, v2.Z));
+		}
+
+		public static IntVector3 Max(IntVector3 v1, IntVector3 v2)
+		{
+			return new IntVector3(Math.Max(v1.X, v2.X), Math.Max(v1.Y, v2.Y), Math.Max(v1.Z, v2.Z));
+		}
 	}
 }
