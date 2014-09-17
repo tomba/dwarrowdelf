@@ -9,6 +9,10 @@ namespace Client3D
 		{
 			//SharpDX.Configuration.EnableObjectTracking = true;
 
+			System.Threading.Thread.CurrentThread.Name = "Main";
+
+			System.Diagnostics.Trace.TraceInformation("Start");
+
 			using (var game = new MyGame())
 				game.Run();
 		}
