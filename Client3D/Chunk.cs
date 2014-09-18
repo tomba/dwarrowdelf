@@ -71,12 +71,6 @@ namespace Client3D
 		public void GenerateVertices(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
-			UpdateVoxels(scene, cameraPos, terrainVertexList, sceneryVertexList);
-		}
-
-		void UpdateVoxels(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,
-			VertexList<SceneryVertex> sceneryVertexList)
-		{
 			terrainVertexList.Clear();
 			sceneryVertexList.Clear();
 
