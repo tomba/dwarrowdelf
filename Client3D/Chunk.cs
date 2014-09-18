@@ -84,7 +84,7 @@ namespace Client3D
 					{
 						var td = m_map.Grid[z, y, x];
 
-						if (td.IsEmpty == false)
+						if (!(td.IsUndefined || td.IsEmpty))
 						{
 							this.IsEmpty = false;
 							return;
