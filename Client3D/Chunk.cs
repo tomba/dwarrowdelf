@@ -39,6 +39,7 @@ namespace Client3D
 		int m_maxVertices;
 
 		public bool IsValid { get; set; }
+		public bool IsEmpty { get; private set; }
 
 		Buffer<TerrainVertex> m_vertexBuffer;
 		public int VertexCount { get; private set; }
@@ -60,6 +61,39 @@ namespace Client3D
 			var v1 = this.ChunkOffset.ToVector3();
 			var v2 = v1 + new Vector3(Chunk.CHUNK_SIZE);
 			this.BBox = new BoundingBox(v1, v2);
+
+			CheckIfEmpty();
+		}
+
+		void CheckIfEmpty()
+		{
+			int x0 = this.ChunkOffset.X;
+			int x1 = this.ChunkOffset.X + CHUNK_SIZE - 1;
+
+			int y0 = this.ChunkOffset.Y;
+			int y1 = this.ChunkOffset.Y + CHUNK_SIZE - 1;
+
+			int z0 = this.ChunkOffset.Z;
+			int z1 = this.ChunkOffset.Z + CHUNK_SIZE - 1;
+
+			for (int z = z0; z <= z1; ++z)
+			{
+				for (int y = y0; y <= y1; ++y)
+				{
+					for (int x = x0; x <= x1; ++x)
+					{
+						var td = m_map.Grid[z, y, x];
+
+						if (td.IsEmpty == false)
+						{
+							this.IsEmpty = false;
+							return;
+						}
+					}
+				}
+			}
+
+			this.IsEmpty = true;
 		}
 
 		public void Free()

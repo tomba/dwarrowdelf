@@ -229,6 +229,9 @@ namespace Client3D
 
 			foreach (var chunk in m_chunks)
 			{
+				if (chunk.IsEmpty)
+					continue;
+
 				var chunkCenter = chunk.ChunkOffset.ToVector3() + new Vector3(Chunk.CHUNK_SIZE / 2);
 
 				if (Vector3.Distance(eye, chunkCenter) - chunkRadius <= camRadius)
