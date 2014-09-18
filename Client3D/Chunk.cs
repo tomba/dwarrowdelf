@@ -43,11 +43,9 @@ namespace Client3D
 
 		Buffer<TerrainVertex> m_vertexBuffer;
 		public int VertexCount { get; private set; }
-		bool m_vertexBufferInvalid;
 
 		Buffer<SceneryVertex> m_sceneryVertexBuffer;
 		public int SceneryVertexCount { get; private set; }
-		bool m_sceneryVertexBufferInvalid;
 
 		public BoundingBox BBox;
 
@@ -104,45 +102,35 @@ namespace Client3D
 
 		public void UpdateVertexBuffer(GraphicsDevice device, VertexList<TerrainVertex> vertexList)
 		{
-			if (!m_vertexBufferInvalid)
+			if (vertexList.Count == 0)
 				return;
 
-			if (vertexList.Count > 0)
+			if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < vertexList.Count)
 			{
-				if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < vertexList.Count)
-				{
-					if (vertexList.Count > m_maxVertices)
-						m_maxVertices = vertexList.Count;
+				if (vertexList.Count > m_maxVertices)
+					m_maxVertices = vertexList.Count;
 
-					//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
+				//System.Diagnostics.Trace.TraceError("Alloc {0}: {1} verts", this.ChunkOffset, m_maxVertices);
 
-					Utilities.Dispose(ref m_vertexBuffer);
-					m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
-				}
-
-				m_vertexBuffer.SetData(vertexList.Data, 0, vertexList.Count);
+				Utilities.Dispose(ref m_vertexBuffer);
+				m_vertexBuffer = Buffer.Vertex.New<TerrainVertex>(device, m_maxVertices);
 			}
 
-			m_vertexBufferInvalid = false;
+			m_vertexBuffer.SetData(vertexList.Data, 0, vertexList.Count);
 		}
 
 		public void UpdateSceneryVertexBuffer(GraphicsDevice device, VertexList<SceneryVertex> vertexList)
 		{
-			if (!m_sceneryVertexBufferInvalid)
+			if (vertexList.Count == 0)
 				return;
 
-			if (vertexList.Count > 0)
+			if (m_sceneryVertexBuffer == null || m_sceneryVertexBuffer.ElementCount < vertexList.Count)
 			{
-				if (m_sceneryVertexBuffer == null || m_sceneryVertexBuffer.ElementCount < vertexList.Count)
-				{
-					Utilities.Dispose(ref m_sceneryVertexBuffer);
-					m_sceneryVertexBuffer = Buffer.Vertex.New<SceneryVertex>(device, vertexList.Data.Length);
-				}
-
-				m_sceneryVertexBuffer.SetData(vertexList.Data, 0, vertexList.Count);
+				Utilities.Dispose(ref m_sceneryVertexBuffer);
+				m_sceneryVertexBuffer = Buffer.Vertex.New<SceneryVertex>(device, vertexList.Data.Length);
 			}
 
-			m_sceneryVertexBufferInvalid = false;
+			m_sceneryVertexBuffer.SetData(vertexList.Data, 0, vertexList.Count);
 		}
 
 		public void DrawTerrain(GraphicsDevice device)
@@ -186,9 +174,6 @@ namespace Client3D
 				mask |= FaceDirectionBits.NegativeZ;
 
 			GenerateVertices(scene, mask, terrainVertexList, sceneryVertexList);
-
-			m_vertexBufferInvalid = true;
-			m_sceneryVertexBufferInvalid = true;
 
 			this.VertexCount = terrainVertexList.Count;
 			this.SceneryVertexCount = sceneryVertexList.Count;
