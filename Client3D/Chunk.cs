@@ -249,9 +249,7 @@ namespace Client3D
 			int y = p.Y;
 			int z = p.Z;
 
-			var grid = m_map.Grid;
-
-			var vd = grid[z, y, x];
+			var vd = m_map.Grid[z, y, x];
 
 			FaceDirectionBits sides = globalFaceMask & vd.VisibleFaces;
 			FaceDirectionBits hiddenSides = 0;	/* sides that are shown, but are really hidden */
@@ -325,8 +323,6 @@ namespace Client3D
 		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,
 			FaceTexture baseTexture, FaceTexture topTexture, VertexList<TerrainVertex> vertexList)
 		{
-			var grid = m_map.Grid;
-
 			var offset = p - this.ChunkOffset;
 
 			int sides = (int)faceMask;
