@@ -68,13 +68,12 @@ namespace Client3D
 			Utilities.Dispose(ref m_sceneryVertexBuffer);
 		}
 
-		public void GenerateVertices(TerrainRenderer scene, Vector3 cameraPos, VertexList<TerrainVertex> terrainVertexList,
-			VertexList<SceneryVertex> sceneryVertexList)
+		public void GenerateVertices(TerrainRenderer scene, IntVector3 cameraChunkPos,
+			VertexList<TerrainVertex> terrainVertexList, VertexList<SceneryVertex> sceneryVertexList)
 		{
 			terrainVertexList.Clear();
 			sceneryVertexList.Clear();
 
-			var cameraChunkPos = (cameraPos / CHUNK_SIZE).ToFloorIntVector3();
 			var diff = cameraChunkPos - this.ChunkPosition;
 
 			FaceDirectionBits mask = 0;

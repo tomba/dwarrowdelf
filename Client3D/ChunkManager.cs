@@ -265,7 +265,7 @@ namespace Client3D
 			}
 		}
 
-		void ProcessRebuildList()
+		void ProcessRebuildList(IntVector3 cameraChunkPos)
 		{
 			if (m_rebuildList.Count == 0)
 				return;
@@ -284,13 +284,11 @@ namespace Client3D
 
 			var task = Task.Run(() =>
 			{
-				var eyePos = m_camera.Position;
-
 				Parallel.ForEach(m_rebuildList, chunk =>
 				{
 					var cacheItem = m_vertexCacheStack.Take();
 
-					chunk.GenerateVertices(m_scene, eyePos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
+					chunk.GenerateVertices(m_scene, cameraChunkPos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
 
 					cacheItem.Chunk = chunk;
 					m_vertexCacheQueue.Add(cacheItem);
@@ -343,7 +341,7 @@ namespace Client3D
 			if (m_forceDrawListUpdate || m_cameraPos != cameraPos || m_cameraLook != cameraLook)
 				UpdateDrawList();
 
-			ProcessRebuildList();
+			ProcessRebuildList(cameraChunkPos);
 
 			m_cameraPos = cameraPos;
 			m_cameraLook = cameraLook;
