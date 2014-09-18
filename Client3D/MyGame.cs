@@ -147,37 +147,41 @@ namespace Client3D
 
 		void HandleKeyboard(KeyboardState m_keyboardState)
 		{
-			const float walkSpeek = 20f;
-			const float rotSpeed = MathUtil.PiOverTwo;
+			const float walkSpeek = 40f;
+			const float rotSpeed = MathUtil.PiOverTwo*1.5f;
 			float dTime = (float)this.gameTime.ElapsedGameTime.TotalSeconds;
+			float mul = 1f;
 
 			if (m_keyboardState.IsKeyDown(Keys.F4) && m_keyboardState.IsKeyDown(Keys.LeftAlt))
 				this.Exit();
 
+			if (m_keyboardState.IsKeyDown(Keys.Shift))
+				mul = 0.2f;
+
 			if (m_keyboardState.IsKeyDown(Keys.W))
-				m_cameraProvider.Walk(walkSpeek * dTime);
+				m_cameraProvider.Walk(walkSpeek * dTime * mul);
 			else if (m_keyboardState.IsKeyDown(Keys.S))
-				m_cameraProvider.Walk(-walkSpeek * dTime);
+				m_cameraProvider.Walk(-walkSpeek * dTime * mul);
 
 			if (m_keyboardState.IsKeyDown(Keys.D))
-				m_cameraProvider.Strafe(walkSpeek * dTime);
+				m_cameraProvider.Strafe(walkSpeek * dTime * mul);
 			else if (m_keyboardState.IsKeyDown(Keys.A))
-				m_cameraProvider.Strafe(-walkSpeek * dTime);
+				m_cameraProvider.Strafe(-walkSpeek * dTime * mul);
 
 			if (m_keyboardState.IsKeyDown(Keys.E))
-				m_cameraProvider.Climb(walkSpeek * dTime);
+				m_cameraProvider.Climb(walkSpeek * dTime * mul);
 			else if (m_keyboardState.IsKeyDown(Keys.Q))
-				m_cameraProvider.Climb(-walkSpeek * dTime);
+				m_cameraProvider.Climb(-walkSpeek * dTime * mul);
 
 			if (m_keyboardState.IsKeyDown(Keys.Up))
-				m_cameraProvider.Pitch(-rotSpeed * dTime);
+				m_cameraProvider.Pitch(-rotSpeed * dTime * mul);
 			else if (m_keyboardState.IsKeyDown(Keys.Down))
-				m_cameraProvider.Pitch(rotSpeed * dTime);
+				m_cameraProvider.Pitch(rotSpeed * dTime * mul);
 
 			if (m_keyboardState.IsKeyDown(Keys.Left))
-				m_cameraProvider.RotateZ(-rotSpeed * dTime);
+				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
 			else if (m_keyboardState.IsKeyDown(Keys.Right))
-				m_cameraProvider.RotateZ(rotSpeed * dTime);
+				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
 		}
 
 		protected override void Update(GameTime gameTime)
