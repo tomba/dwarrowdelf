@@ -68,37 +68,6 @@ namespace Client3D
 			Utilities.Dispose(ref m_sceneryVertexBuffer);
 		}
 
-		public void GenerateVertices(TerrainRenderer scene, IntVector3 cameraChunkPos,
-			VertexList<TerrainVertex> terrainVertexList, VertexList<SceneryVertex> sceneryVertexList)
-		{
-			terrainVertexList.Clear();
-			sceneryVertexList.Clear();
-
-			var diff = cameraChunkPos - this.ChunkPosition;
-
-			FaceDirectionBits mask = 0;
-			if (diff.X >= 0)
-				mask |= FaceDirectionBits.PositiveX;
-			if (diff.X <= 0)
-				mask |= FaceDirectionBits.NegativeX;
-			if (diff.Y >= 0)
-				mask |= FaceDirectionBits.PositiveY;
-			if (diff.Y <= 0)
-				mask |= FaceDirectionBits.NegativeY;
-			if (diff.Z >= 0)
-				mask |= FaceDirectionBits.PositiveZ;
-			if (diff.Z <= 0)
-				mask |= FaceDirectionBits.NegativeZ;
-
-			GenerateVertices(scene, mask, terrainVertexList, sceneryVertexList);
-
-			m_vertexBufferInvalid = true;
-			m_sceneryVertexBufferInvalid = true;
-
-			this.VertexCount = terrainVertexList.Count;
-			this.SceneryVertexCount = sceneryVertexList.Count;
-		}
-
 		public void UpdateVertexBuffer(GraphicsDevice device, VertexList<TerrainVertex> vertexList)
 		{
 			if (!m_vertexBufferInvalid)
@@ -158,6 +127,37 @@ namespace Client3D
 
 			device.SetVertexBuffer(m_sceneryVertexBuffer);
 			device.Draw(PrimitiveType.PointList, this.SceneryVertexCount);
+		}
+
+		public void GenerateVertices(TerrainRenderer scene, IntVector3 cameraChunkPos,
+			VertexList<TerrainVertex> terrainVertexList, VertexList<SceneryVertex> sceneryVertexList)
+		{
+			terrainVertexList.Clear();
+			sceneryVertexList.Clear();
+
+			var diff = cameraChunkPos - this.ChunkPosition;
+
+			FaceDirectionBits mask = 0;
+			if (diff.X >= 0)
+				mask |= FaceDirectionBits.PositiveX;
+			if (diff.X <= 0)
+				mask |= FaceDirectionBits.NegativeX;
+			if (diff.Y >= 0)
+				mask |= FaceDirectionBits.PositiveY;
+			if (diff.Y <= 0)
+				mask |= FaceDirectionBits.NegativeY;
+			if (diff.Z >= 0)
+				mask |= FaceDirectionBits.PositiveZ;
+			if (diff.Z <= 0)
+				mask |= FaceDirectionBits.NegativeZ;
+
+			GenerateVertices(scene, mask, terrainVertexList, sceneryVertexList);
+
+			m_vertexBufferInvalid = true;
+			m_sceneryVertexBufferInvalid = true;
+
+			this.VertexCount = terrainVertexList.Count;
+			this.SceneryVertexCount = sceneryVertexList.Count;
 		}
 
 		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask, VertexList<TerrainVertex> terrainVertexList,
