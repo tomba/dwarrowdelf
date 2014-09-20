@@ -39,7 +39,7 @@ namespace Client3D
 		int m_maxVertices;
 
 		public bool IsValid { get; set; }
-		public bool IsEmpty { get; private set; }
+		public bool IsEmpty { get; set; }
 
 		Buffer<TerrainVertex> m_vertexBuffer;
 		public int VertexCount { get; private set; }
@@ -63,7 +63,7 @@ namespace Client3D
 			CheckIfEmpty();
 		}
 
-		void CheckIfEmpty()
+		public void CheckIfEmpty()
 		{
 			int x0 = this.ChunkOffset.X;
 			int x1 = this.ChunkOffset.X + CHUNK_SIZE - 1;

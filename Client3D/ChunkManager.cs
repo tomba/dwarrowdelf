@@ -110,6 +110,27 @@ namespace Client3D
 
 			m_forceNearListUpdate = true;
 			m_forceDrawListUpdate = true;
+
+			GlobalData.VoxelMap.VoxelChanged += OnVoxelChanged;
+		}
+
+		void OnVoxelChanged(IntVector3 p)
+		{
+			var cp = p / Chunk.CHUNK_SIZE;
+
+			var chunk = m_chunks[this.Size.GetIndex(cp)];
+
+			bool oldIsEmpty = chunk.IsEmpty;
+
+			if (chunk.IsEmpty && GlobalData.VoxelMap.Grid[p.Z, p.Y, p.X].IsVisible)
+				chunk.IsEmpty = false;
+			else if (chunk.IsEmpty == false && GlobalData.VoxelMap.Grid[p.Z, p.Y, p.X].IsNotVisible)
+				chunk.CheckIfEmpty();
+
+			if (oldIsEmpty != chunk.IsEmpty)
+				m_forceNearListUpdate = true;
+
+			InvalidateChunk(chunk);
 		}
 
 		void InvalidateChunk(Chunk chunk)

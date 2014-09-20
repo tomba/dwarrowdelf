@@ -12,6 +12,8 @@ namespace Client3D
 {
 	class VoxelMap
 	{
+		public event Action<IntVector3> VoxelChanged;
+
 		public Voxel[, ,] Grid { get; private set; }
 		public IntSize3 Size { get; private set; }
 
@@ -45,6 +47,34 @@ namespace Client3D
 			});
 		}
 
+		public void SetVoxel(IntVector3 p, Voxel voxel)
+		{
+			this.Grid[p.Z, p.Y, p.X] = voxel;
+
+			CheckVisibleFaces(p);
+
+			if (this.VoxelChanged != null)
+				this.VoxelChanged(p);
+
+			// TODO: optimize, we only need to check the faces towards the voxel that is set
+
+			var neighbors = DirectionSet.CardinalUpDown.ToSurroundingPoints(p);
+
+			foreach (var n in neighbors)
+			{
+				if (!this.Size.Contains(n))
+					continue;
+
+				if (this.Grid[n.Z, n.Y, n.X].Type == VoxelType.Empty)
+					continue;
+
+				CheckVisibleFaces(n);
+
+				if (this.VoxelChanged != null)
+					this.VoxelChanged(n);
+			}
+		}
+
 		public Voxel GetVoxel(IntVector3 p)
 		{
 			return this.Grid[p.Z, p.Y, p.X];
@@ -61,19 +91,26 @@ namespace Client3D
 					{
 						var p = new IntVector3(x, y, z);
 
-						var neighbors = DirectionSet.CardinalUpDown.ToSurroundingPoints(p);
-
-						foreach (var n in neighbors)
-						{
-							if (this.Size.Contains(n) && grid[n.Z, n.Y, n.X].IsOpaque)
-								continue;
-
-							var dir = (n - p).ToDirection();
-
-							grid[z, y, x].VisibleFaces |= dir.ToFaceDirectionBits();
-						}
+						CheckVisibleFaces(p);
 					}
 			});
+		}
+
+		void CheckVisibleFaces(IntVector3 p)
+		{
+			var neighbors = DirectionSet.CardinalUpDown.ToSurroundingPoints(p);
+
+			this.Grid[p.Z, p.Y, p.X].VisibleFaces = 0;
+
+			foreach (var n in neighbors)
+			{
+				if (this.Size.Contains(n) && this.Grid[n.Z, n.Y, n.X].IsOpaque)
+					continue;
+
+				var dir = (n - p).ToDirection();
+
+				this.Grid[p.Z, p.Y, p.X].VisibleFaces |= dir.ToFaceDirectionBits();
+			}
 		}
 
 		public void UndefineHiddenVoxels()
