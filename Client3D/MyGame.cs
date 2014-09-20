@@ -182,6 +182,29 @@ namespace Client3D
 				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
 			else if (m_keyboardState.IsKeyDown(Keys.Right))
 				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
+
+			if (m_keyboardState.IsKeyPressed(Keys.R))
+			{
+				var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+				var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+
+				var camera = this.Services.GetService<ICameraService>();
+
+				var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+
+				VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
+					(x, y, z, vx, dir) =>
+					{
+						var l = new IntVector3(x, y, z);
+
+						if (GlobalData.VoxelMap.Size.Contains(l) == false)
+							return true;
+
+						GlobalData.VoxelMap.SetVoxel(l, Voxel.Rock);
+
+						return false;
+					});
+			}
 		}
 
 		protected override void Update(GameTime gameTime)
