@@ -36,10 +36,25 @@ namespace Client3D
 		[FieldOffset(2)]
 		public VoxelFlags Flags;
 
-		public bool IsOpaque { get { return !(this.Type == VoxelType.Empty || this.Type == VoxelType.Undefined); } }
+		/// <summary>
+		/// The voxel can be seen through, but may contain something to draw
+		/// </summary>
+		public bool IsTransparent { get { return this.Type == VoxelType.Empty; } }
+		/// <summary>
+		/// The voxel cannot be seen through
+		/// </summary>
+		public bool IsOpaque { get { return !this.IsTransparent; } }
+
+		/// <summary>
+		/// The voxel has nothing to draw
+		/// </summary>
+		public bool IsNotVisible { get { return this.VisibleFaces == 0 || (this.Type == VoxelType.Empty && this.Flags == 0); } }
+		/// <summary>
+		/// The voxel has something to draw
+		/// </summary>
+		public bool IsVisible { get { return !this.IsNotVisible; } }
 
 		public bool IsUndefined { get { return this.Type == VoxelType.Undefined; } }
-		public bool IsEmpty { get { return this.Type == VoxelType.Empty; } }
 
 		public readonly static Voxel Undefined = new Voxel() { Type = VoxelType.Undefined };
 		public readonly static Voxel Empty = new Voxel() { Type = VoxelType.Empty };

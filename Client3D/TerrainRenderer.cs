@@ -224,7 +224,7 @@ namespace Client3D
 			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
 				(x, y, z, vx, dir) =>
 				{
-					if (vx.IsEmpty)
+					if (vx.IsNotVisible)
 						return false;
 
 					var l = new IntVector3(x, y, z);

@@ -65,7 +65,7 @@ namespace Client3D
 
 						foreach (var n in neighbors)
 						{
-							if (this.Size.Contains(n) == true && grid[n.Z, n.Y, n.X].IsEmpty == false)
+							if (this.Size.Contains(n) && grid[n.Z, n.Y, n.X].IsOpaque)
 								continue;
 
 							var dir = (n - p).ToDirection();
@@ -93,7 +93,7 @@ namespace Client3D
 						bool visible;
 
 						// Air tiles are always visible
-						if (this.Grid[z, y, x].IsEmpty)
+						if (this.Grid[z, y, x].IsTransparent)
 						{
 							visible = true;
 						}
@@ -102,7 +102,7 @@ namespace Client3D
 							var p = new IntVector3(x, y, z);
 							visible = DirectionSet.All.ToSurroundingPoints(p)
 								.Where(this.Size.Contains)
-								.Any(n => GetVoxel(n).IsEmpty);
+								.Any(n => GetVoxel(n).IsTransparent);
 						}
 
 						if (visible)
