@@ -19,8 +19,7 @@ namespace Client3D
 	{
 		public const int CHUNK_SIZE = 16;
 		public const int VOXELS_PER_CHUNK = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
-		const int MAX_VERTICES_PER_VOXEL = 6 * 4;
-		public const int MAX_VERTICES_PER_CHUNK = VOXELS_PER_CHUNK * MAX_VERTICES_PER_VOXEL;
+		public const int MAX_VERTICES_PER_CHUNK = VOXELS_PER_CHUNK * 6;
 
 		static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
@@ -139,7 +138,7 @@ namespace Client3D
 				return;
 
 			device.SetVertexBuffer(m_vertexBuffer);
-			device.Draw(PrimitiveType.LineListWithAdjacency, this.VertexCount);
+			device.Draw(PrimitiveType.PointList, this.VertexCount);
 		}
 
 		public void DrawTrees(GraphicsDevice device)
@@ -357,19 +356,30 @@ namespace Client3D
 
 				var vertices = s_intCubeFaces[side];
 
-				for (int i = 0; i < 4; ++i)
+				int occ0, occ1, occ2, occ3;
+
+				if (((int)hiddenFaceMask & (1 << side)) != 0)
 				{
-					int occ;
-
-					if (((int)hiddenFaceMask & (1 << side)) != 0)
-						occ = 4;
-					else
-						occ = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[i]);
-
-					var vd = new TerrainVertex(vertices[s_cubeIndices[i]] + offset, occ,
-						side == (int)FaceDirection.PositiveZ ? topTexture : baseTexture);
-					vertexList.Add(vd);
+					occ0 = occ1 = occ2 = occ3 = 4;
 				}
+				else
+				{
+					occ0 = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[0]);
+					occ1 = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[1]);
+					occ2 = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[2]);
+					occ3 = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[3]);
+				}
+
+				IntVector3 v0, v1, v2, v3;
+
+				v0 = vertices[s_cubeIndices[0]] + offset;
+				v1 = vertices[s_cubeIndices[1]] + offset;
+				v2 = vertices[s_cubeIndices[2]] + offset;
+				v3 = vertices[s_cubeIndices[3]] + offset;
+
+				var vd = new TerrainVertex(v0, v1, v2, v3, occ0, occ1, occ2, occ3,
+					side == (int)FaceDirection.PositiveZ ? topTexture : baseTexture);
+				vertexList.Add(vd);
 			}
 		}
 

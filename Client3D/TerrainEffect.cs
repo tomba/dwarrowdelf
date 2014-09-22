@@ -139,19 +139,29 @@ namespace Client3D
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	struct TerrainVertex
 	{
-		[VertexElement("POSITION", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
-		public Byte4 Position;
-		[VertexElement("OCCLUSION")]
-		public int Occlusion;	/* xxx pack into some other field */
+		[VertexElement("POSITION0", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+		public Byte4 Position0;
+		[VertexElement("POSITION1", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+		public Byte4 Position1;
+		[VertexElement("POSITION2", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+		public Byte4 Position2;
+		[VertexElement("POSITION3", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+		public Byte4 Position3;
+		[VertexElement("OCCLUSION", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
+		public Byte4 Occlusion;
 		[VertexElement("TEX", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 		public Byte4 TexPack;
 		[VertexElement("COLOR", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 		public Byte4 ColorPack;
 
-		public TerrainVertex(IntVector3 pos, int occlusion, FaceTexture tex)
+		public TerrainVertex(IntVector3 p0, IntVector3 p1, IntVector3 p2, IntVector3 p3,
+			int occ0, int occ1, int occ2, int occ3, FaceTexture tex)
 		{
-			this.Position = new Byte4(pos.X, pos.Y, pos.Z, 0);
-			this.Occlusion = occlusion;
+			this.Position0 = new Byte4(p0.X, p0.Y, p0.Z, 1);
+			this.Position1 = new Byte4(p1.X, p1.Y, p1.Z, 1);
+			this.Position2 = new Byte4(p2.X, p2.Y, p2.Z, 1);
+			this.Position3 = new Byte4(p3.X, p3.Y, p3.Z, 1);
+			this.Occlusion = new Byte4(occ0, occ1, occ2, occ3);
 			this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, (byte)0);
 			this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, (byte)tex.Color2, (byte)0);
 		}

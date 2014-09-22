@@ -1,17 +1,26 @@
 ﻿
 struct VS_IN
 {
-	uint4 pos : POSITION;
-	uint occlusion : OCCLUSION;
+	uint4 pos0 : POSITION0;
+	uint4 pos1 : POSITION1;
+	uint4 pos2 : POSITION2;
+	uint4 pos3 : POSITION3;
+	uint4 occlusion : OCCLUSION;
 	uint4 texPack : TEX;
 	uint4 colorPack : COLOR;
 };
 
 struct GS_IN
 {
-	float4 pos : SV_POSITION;
-	float3 posW : POSITION;
-	nointerpolation int occlusion : OCCLUSION;
+	float4 pos0 : POSITION0;
+	float4 pos1 : POSITION1;
+	float4 pos2 : POSITION2;
+	float4 pos3 : POSITION3;
+	float3 posW0 : POSITIONW0;
+	float3 posW1 : POSITIONW1;
+	float3 posW2 : POSITIONW2;
+	float3 posW3 : POSITIONW3;
+	nointerpolation uint4 occlusion : OCCLUSION;
 	nointerpolation uint4 texPack : TEX;
 	nointerpolation uint4 colorPack : COLOR;
 };
@@ -21,7 +30,7 @@ struct PS_IN
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
 	float2 tex : TEXCOORD0;
-	nointerpolation int occlusion[4] : OCCLUSION;
+	nointerpolation uint4 occlusion : OCCLUSION;
 	nointerpolation uint4 texPack : TEX;
 	nointerpolation uint4 colorPack : COLOR;
 };
@@ -60,13 +69,20 @@ GS_IN VSMain(VS_IN input)
 {
 	GS_IN output = (GS_IN)0;
 
-	// Change the position vector to be 4 units for proper matrix calculations.
-	float4 pos = float4(input.pos.xyz, 1.0f);
-	pos.xyz += g_chunkOffset;
+	input.pos0.xyz += g_chunkOffset;
+	input.pos1.xyz += g_chunkOffset;
+	input.pos2.xyz += g_chunkOffset;
+	input.pos3.xyz += g_chunkOffset;
 
-	output.pos = pos;
-	output.posW = output.pos.xyz;
-	output.pos = mul(output.pos, g_viewProjMatrix);
+	output.posW0 = input.pos0.xyz;
+	output.posW1 = input.pos1.xyz;
+	output.posW2 = input.pos2.xyz;
+	output.posW3 = input.pos3.xyz;
+
+	output.pos0 = mul(input.pos0, g_viewProjMatrix);
+	output.pos1 = mul(input.pos1, g_viewProjMatrix);
+	output.pos2 = mul(input.pos2, g_viewProjMatrix);
+	output.pos3 = mul(input.pos3, g_viewProjMatrix);
 
 	output.occlusion = input.occlusion;
 	output.texPack = input.texPack;
@@ -76,36 +92,35 @@ GS_IN VSMain(VS_IN input)
 }
 
 [maxvertexcount(4)]
-void GSMain(lineadj GS_IN input[4], inout TriangleStream<PS_IN> OutputStream)
+void GSMain(point GS_IN inputs[1], inout TriangleStream<PS_IN> OutputStream)
 {
 	PS_IN output = (PS_IN)0;
 
-	output.pos = input[0].pos;
-	output.posW = input[0].posW;
+	GS_IN input = inputs[0];
+
+	output.pos = input.pos0;
+	output.posW = input.posW0;
 	output.tex = float2(0, 0);
 
-	output.texPack = input[0].texPack;
-	output.colorPack = input[0].colorPack;
+	output.texPack = input.texPack;
+	output.colorPack = input.colorPack;
 
-	output.occlusion[0] = input[0].occlusion;
-	output.occlusion[1] = input[1].occlusion;
-	output.occlusion[2] = input[2].occlusion;
-	output.occlusion[3] = input[3].occlusion;
+	output.occlusion = input.occlusion;
 
 	OutputStream.Append(output);
 
-	output.pos = input[1].pos;
-	output.posW = input[1].posW;
+	output.pos = input.pos1;
+	output.posW = input.posW1;
 	output.tex = float2(1, 0);
 	OutputStream.Append(output);
 
-	output.pos = input[2].pos;
-	output.posW = input[2].posW;
+	output.pos = input.pos2;
+	output.posW = input.posW2;
 	output.tex = float2(0, 1);
 	OutputStream.Append(output);
 
-	output.pos = input[3].pos;
-	output.posW = input[3].posW;
+	output.pos = input.pos3;
+	output.posW = input.posW3;
 	output.tex = float2(1, 1);
 	OutputStream.Append(output);
 }
