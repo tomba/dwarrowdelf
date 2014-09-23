@@ -58,10 +58,10 @@ namespace Client3D
 
 			// TODO: optimize, we only need to check the faces towards the voxel that is set
 
-			var neighbors = DirectionSet.CardinalUpDown.ToSurroundingPoints(p);
-
-			foreach (var n in neighbors)
+			foreach (var v in DirectionExtensions.CardinalUpDownDirectionVectors)
 			{
+				var n = p + v;
+
 				if (!this.Size.Contains(n))
 					continue;
 
@@ -98,12 +98,12 @@ namespace Client3D
 
 		void CheckVisibleFaces(IntVector3 p)
 		{
-			var neighbors = DirectionSet.CardinalUpDown.ToSurroundingPoints(p);
-
 			this.Grid[p.Z, p.Y, p.X].VisibleFaces = 0;
 
-			foreach (var n in neighbors)
+			foreach (var v in DirectionExtensions.CardinalUpDownDirectionVectors)
 			{
+				var n = p + v;
+
 				if (this.Size.Contains(n) && this.Grid[n.Z, n.Y, n.X].IsOpaque)
 					continue;
 
@@ -137,9 +137,20 @@ namespace Client3D
 						else
 						{
 							var p = new IntVector3(x, y, z);
-							visible = DirectionSet.All.ToSurroundingPoints(p)
-								.Where(this.Size.Contains)
-								.Any(n => GetVoxel(n).IsTransparent);
+							visible = false;
+							foreach (var v in DirectionExtensions.AllDirectionVectors)
+							{
+								var n = p + v;
+
+								if (this.Size.Contains(n) == false)
+									continue;
+
+								if (this.Grid[n.Z, n.Y, n.X].IsTransparent)
+								{
+									visible = true;
+									break;
+								}
+							}
 						}
 
 						if (visible)
