@@ -324,5 +324,8 @@ namespace Dwarrowdelf
 		{
 			return new IntVector3(Math.Max(v1.X, v2.X), Math.Max(v1.Y, v2.Y), Math.Max(v1.Z, v2.Z));
 		}
+
+		public static readonly IntVector3[] AllDirections = DirectionSet.All.ToVectors().ToArray();
+		public static readonly IntVector3[] CardinalUpDownDirections = DirectionSet.CardinalUpDown.ToVectors().ToArray();
 	}
 }

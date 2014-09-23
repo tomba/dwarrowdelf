@@ -95,7 +95,7 @@ namespace Dwarrowdelf
 
 		public int GetIndex(int x, int y, int z)
 		{
-			return x + y * this.Width + z * this.Width * this.Height;
+			return x + this.Width * (y + this.Height * z);
 		}
 
 		public override int GetHashCode()

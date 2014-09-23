@@ -139,7 +139,7 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public static IEnumerable<IntVector3> ToSurroundingPoints(this DirectionSet dirset, IntVector3 p)
+		public static IEnumerable<IntVector3> ToVectors(this DirectionSet dirset)
 		{
 			int ds = (int)dirset;
 
@@ -156,8 +156,14 @@ namespace Dwarrowdelf
 				y = y - 1;
 				z = z - 1;
 
-				yield return new IntVector3(p.X + x, p.Y + y, p.Z + z);
+				yield return new IntVector3(x, y, z);
 			}
+		}
+
+		public static IEnumerable<IntVector3> ToSurroundingPoints(this DirectionSet dirset, IntVector3 p)
+		{
+			foreach (var v in dirset.ToVectors())
+				yield return p + v;
 		}
 
 		public static IEnumerable<IntVector2> ToSurroundingPoints(this DirectionSet dirset, IntVector2 p)
