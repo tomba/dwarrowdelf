@@ -279,6 +279,23 @@ namespace Client3D
 			return map;
 		}
 
+		public static VoxelMap CreateCubeMap(int side, int offset)
+		{
+			var map = new VoxelMap(new IntSize3(side, side, side));
+
+			var grid = map.Grid;
+
+			map.Clear(Voxel.Empty);
+
+			for (int z = offset; z < side - offset; ++z)
+				for (int y = offset; y < side - offset; ++y)
+					for (int x = offset; x < side - offset; ++x)
+					{
+						grid[z, y, x].Type = VoxelType.Rock;
+					}
+
+			return map;
+		}
 		public static VoxelMap CreateFromTileData(TileData[, ,] tileData)
 		{
 			int d = tileData.GetLength(0);
