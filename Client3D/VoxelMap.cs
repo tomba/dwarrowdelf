@@ -58,7 +58,7 @@ namespace Client3D
 
 			// TODO: optimize, we only need to check the faces towards the voxel that is set
 
-			foreach (var v in DirectionExtensions.CardinalUpDownDirectionVectors)
+			foreach (var v in IntVector3.CardinalUpDownDirections)
 			{
 				var n = p + v;
 
@@ -100,7 +100,7 @@ namespace Client3D
 		{
 			this.Grid[p.Z, p.Y, p.X].VisibleFaces = 0;
 
-			foreach (var v in DirectionExtensions.CardinalUpDownDirectionVectors)
+			foreach (var v in IntVector3.CardinalUpDownDirections)
 			{
 				var n = p + v;
 
@@ -138,7 +138,7 @@ namespace Client3D
 						{
 							var p = new IntVector3(x, y, z);
 							visible = false;
-							foreach (var v in DirectionExtensions.AllDirectionVectors)
+							foreach (var v in IntVector3.AllDirections)
 							{
 								var n = p + v;
 
