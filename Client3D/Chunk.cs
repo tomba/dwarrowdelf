@@ -38,7 +38,16 @@ namespace Client3D
 		int m_maxVertices;
 
 		public bool IsValid { get; set; }
+
+		/// <summary>
+		/// Chunk contains only Empty voxels without trees etc.
+		/// </summary>
 		public bool IsEmpty { get; set; }
+
+		/// <summary>
+		/// The chunk contains only undefined voxels
+		/// </summary>
+		public bool IsUndefined { get; set; }
 
 		Buffer<TerrainVertex> m_vertexBuffer;
 		public int VertexCount { get; private set; }
@@ -59,10 +68,10 @@ namespace Client3D
 			var v2 = v1 + new Vector3(Chunk.CHUNK_SIZE);
 			this.BBox = new BoundingBox(v1, v2);
 
-			CheckIfEmpty();
+			CheckIfEmptyOrUndefined();
 		}
 
-		public void CheckIfEmpty()
+		void CheckIfEmptyOrUndefined()
 		{
 			int x0 = this.ChunkOffset.X;
 			int x1 = this.ChunkOffset.X + CHUNK_SIZE - 1;
@@ -73,16 +82,17 @@ namespace Client3D
 			int z0 = this.ChunkOffset.Z;
 			int z1 = this.ChunkOffset.Z + CHUNK_SIZE - 1;
 
+			uint current = m_map.Grid[z0, y0, x0].Raw;
+
 			for (int z = z0; z <= z1; ++z)
 			{
 				for (int y = y0; y <= y1; ++y)
 				{
 					for (int x = x0; x <= x1; ++x)
 					{
-						var td = m_map.Grid[z, y, x];
-
-						if (!td.IsUndefined && td.IsVisible)
+						if (current != m_map.Grid[z, y, x].Raw)
 						{
+							this.IsUndefined = false;
 							this.IsEmpty = false;
 							return;
 						}
@@ -90,7 +100,12 @@ namespace Client3D
 				}
 			}
 
-			this.IsEmpty = true;
+			Voxel vox = new Voxel() { Raw = current };
+
+			if (vox.IsUndefined)
+				this.IsUndefined = true;
+			else if (vox.IsEmpty)
+				this.IsEmpty = true;
 		}
 
 		public void Free()
@@ -202,7 +217,7 @@ namespace Client3D
 					{
 						var td = m_map.Grid[z, y, x];
 
-						if (td.IsNotVisible)
+						if (td.IsEmpty)
 							continue;
 
 						var p = new IntVector3(x, y, z);
@@ -218,6 +233,9 @@ namespace Client3D
 
 							continue;
 						}
+
+						if (td.Type == VoxelType.Empty)
+							continue;
 
 						FaceTexture baseTexture = new FaceTexture();
 						FaceTexture topTexture = new FaceTexture();
@@ -337,9 +355,7 @@ namespace Client3D
 			if (m_map.Size.Contains(p) == false)
 				return false;
 
-			var td = m_map.Grid[p.Z, p.Y, p.X];
-
-			return td.IsUndefined || td.IsOpaque;
+			return m_map.Grid[p.Z, p.Y, p.X].IsOpaque;
 		}
 
 		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,

@@ -104,7 +104,10 @@ namespace Client3D
 			{
 				var n = p + v;
 
-				if (this.Size.Contains(n) && this.Grid[n.Z, n.Y, n.X].IsOpaque)
+				if (this.Size.Contains(n) == false)
+					continue;
+
+				if (this.Grid[n.Z, n.Y, n.X].IsOpaque)
 					continue;
 
 				var dir = (n - p).ToDirection();

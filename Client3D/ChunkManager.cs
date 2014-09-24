@@ -120,14 +120,13 @@ namespace Client3D
 
 			var chunk = m_chunks[this.Size.GetIndex(cp)];
 
-			bool oldIsEmpty = chunk.IsEmpty;
+			bool wasEmptyOrUndefined = chunk.IsEmpty || chunk.IsUndefined;
 
-			if (chunk.IsEmpty && GlobalData.VoxelMap.Grid[p.Z, p.Y, p.X].IsVisible)
-				chunk.IsEmpty = false;
-			else if (chunk.IsEmpty == false && GlobalData.VoxelMap.Grid[p.Z, p.Y, p.X].IsNotVisible)
-				chunk.CheckIfEmpty();
+			chunk.IsEmpty = false;
+			chunk.IsUndefined = false;
 
-			if (oldIsEmpty != chunk.IsEmpty)
+			// update near list as it doesn't contain empty chunks
+			if (wasEmptyOrUndefined)
 				m_forceNearListUpdate = true;
 
 			InvalidateChunk(chunk);
@@ -250,7 +249,7 @@ namespace Client3D
 
 			foreach (var chunk in m_chunks)
 			{
-				if (chunk.IsEmpty)
+				if (chunk.IsEmpty || chunk.IsUndefined)
 					continue;
 
 				var chunkCenter = chunk.ChunkOffset.ToVector3() + new Vector3(Chunk.CHUNK_SIZE / 2);

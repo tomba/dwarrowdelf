@@ -45,20 +45,17 @@ namespace Client3D
 		/// </summary>
 		public bool IsOpaque { get { return !this.IsTransparent; } }
 
-		/// <summary>
-		/// The voxel has nothing to draw
-		/// </summary>
-		public bool IsNotVisible { get { return this.VisibleFaces == 0 || (this.Type == VoxelType.Empty && this.Flags == 0); } }
-		/// <summary>
-		/// The voxel has something to draw
-		/// </summary>
-		public bool IsVisible { get { return !this.IsNotVisible; } }
-
 		public bool IsUndefined { get { return this.Type == VoxelType.Undefined; } }
+		public bool IsEmpty { get { return this.Type == VoxelType.Empty && this.Flags == 0; } }
 
 		public readonly static Voxel Undefined = new Voxel() { Type = VoxelType.Undefined };
 		public readonly static Voxel Empty = new Voxel() { Type = VoxelType.Empty };
 		public readonly static Voxel Rock = new Voxel() { Type = VoxelType.Rock };
 		public readonly static Voxel Water = new Voxel() { Type = VoxelType.Water };
+
+		public override string ToString()
+		{
+			return string.Format("{0}, [{1}], [{2}]", this.Type, this.VisibleFaces, this.Flags);
+		}
 	}
 }

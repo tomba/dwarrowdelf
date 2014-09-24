@@ -224,12 +224,12 @@ namespace Client3D
 			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
 				(x, y, z, vx, dir) =>
 				{
-					if (vx.IsNotVisible)
+					if (vx.IsEmpty)
 						return false;
 
 					var l = new IntVector3(x, y, z);
 
-					Console.WriteLine("pick: {0} face: {1}", l, dir);
+					System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, vox: {2}", l, dir, vx);
 
 					return true;
 				});
