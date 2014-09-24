@@ -196,24 +196,18 @@ namespace Client3D
 		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask, VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
-			IntVector3 cutn = scene.ViewCorner1;
-			IntVector3 cutp = scene.ViewCorner2;
+			IntGrid3 grid = new IntGrid3(this.ChunkOffset, Chunk.ChunkSize);
+			grid = scene.ViewGrid.Intersect(grid);
 
-			int x0 = Math.Max(cutn.X, this.ChunkOffset.X);
-			int x1 = Math.Min(cutp.X, this.ChunkOffset.X + CHUNK_SIZE - 1);
-
-			int y0 = Math.Max(cutn.Y, this.ChunkOffset.Y);
-			int y1 = Math.Min(cutp.Y, this.ChunkOffset.Y + CHUNK_SIZE - 1);
-
-			int z0 = this.ChunkOffset.Z;
-			int z1 = Math.Min(cutp.Z, this.ChunkOffset.Z + CHUNK_SIZE - 1);
+			if (grid.IsNull)
+				return;
 
 			// Draw from up to down to avoid overdraw
-			for (int z = z1; z >= z0; --z)
+			for (int z = grid.Z2; z >= grid.Z1; --z)
 			{
-				for (int y = y0; y <= y1; ++y)
+				for (int y = grid.Y1; y <= grid.Y2; ++y)
 				{
-					for (int x = x0; x <= x1; ++x)
+					for (int x = grid.X1; x <= grid.X2; ++x)
 					{
 						var td = m_map.Grid[z, y, x];
 

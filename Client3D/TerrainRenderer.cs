@@ -198,6 +198,7 @@ namespace Client3D
 			}
 		}
 
+		public IntGrid3 ViewGrid { get { return new IntGrid3(m_viewCorner1, m_viewCorner2); } }
 
 		public IntVector2? ClickPos;
 
