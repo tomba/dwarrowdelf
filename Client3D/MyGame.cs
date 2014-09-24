@@ -63,9 +63,9 @@ namespace Client3D
 			}
 			else
 			{
-				map = VoxelMap.CreateFromTileData(new GameMap().Grid);
+				//map = VoxelMap.CreateFromTileData(new GameMap().Grid);
 				//map = VoxelMap.CreateBallMap(32, 16);
-				//map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
+				map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
 
 
 				map.UndefineHiddenVoxels();
