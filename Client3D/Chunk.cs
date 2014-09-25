@@ -196,18 +196,18 @@ namespace Client3D
 		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask, VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
-			IntGrid3 grid = new IntGrid3(this.ChunkOffset, Chunk.ChunkSize);
-			grid = scene.ViewGrid.Intersect(grid);
+			IntGrid3 viewGrid = scene.ViewGrid;
+			IntGrid3 chunkGrid = viewGrid.Intersect(new IntGrid3(this.ChunkOffset, Chunk.ChunkSize));
 
-			if (grid.IsNull)
+			if (chunkGrid.IsNull)
 				return;
 
 			// Draw from up to down to avoid overdraw
-			for (int z = grid.Z2; z >= grid.Z1; --z)
+			for (int z = chunkGrid.Z2; z >= chunkGrid.Z1; --z)
 			{
-				for (int y = grid.Y1; y <= grid.Y2; ++y)
+				for (int y = chunkGrid.Y1; y <= chunkGrid.Y2; ++y)
 				{
-					for (int x = grid.X1; x <= grid.X2; ++x)
+					for (int x = chunkGrid.X1; x <= chunkGrid.X2; ++x)
 					{
 						var td = m_map.Grid[z, y, x];
 
@@ -272,13 +272,13 @@ namespace Client3D
 								break;
 						}
 
-						CreateCubicBlock(p, scene, baseTexture, topTexture, mask, terrainVertexList);
+						CreateCubicBlock(p, ref viewGrid, baseTexture, topTexture, mask, terrainVertexList);
 					}
 				}
 			}
 		}
 
-		void CreateCubicBlock(IntVector3 p, TerrainRenderer scene,
+		void CreateCubicBlock(IntVector3 p, ref IntGrid3 viewGrid,
 			FaceTexture baseTexture, FaceTexture topTexture,
 			FaceDirectionBits globalFaceMask, VertexList<TerrainVertex> vertexList)
 		{
@@ -292,7 +292,7 @@ namespace Client3D
 			FaceDirectionBits hiddenSides = 0;	/* sides that are shown, but are really hidden */
 
 			// up
-			if ((globalFaceMask & FaceDirectionBits.PositiveZ) != 0 && z == scene.ViewCorner2.Z)
+			if ((globalFaceMask & FaceDirectionBits.PositiveZ) != 0 && z == viewGrid.Z2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveZ;
 				hiddenSides |= b & ~sides;
@@ -307,7 +307,7 @@ namespace Client3D
 				sides &= ~FaceDirectionBits.NegativeZ;
 
 			// east
-			if ((globalFaceMask & FaceDirectionBits.PositiveX) != 0 && x == scene.ViewCorner2.X)
+			if ((globalFaceMask & FaceDirectionBits.PositiveX) != 0 && x == viewGrid.X2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveX;
 				hiddenSides |= b & ~sides;
@@ -315,7 +315,7 @@ namespace Client3D
 			}
 
 			// west
-			if ((globalFaceMask & FaceDirectionBits.NegativeX) != 0 && x == scene.ViewCorner1.X)
+			if ((globalFaceMask & FaceDirectionBits.NegativeX) != 0 && x == viewGrid.X1)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.NegativeX;
 				hiddenSides |= b & ~sides;
@@ -323,7 +323,7 @@ namespace Client3D
 			}
 
 			// south
-			if ((globalFaceMask & FaceDirectionBits.PositiveY) != 0 && y == scene.ViewCorner2.Y)
+			if ((globalFaceMask & FaceDirectionBits.PositiveY) != 0 && y == viewGrid.Y2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveY;
 				hiddenSides |= b & ~sides;
@@ -331,7 +331,7 @@ namespace Client3D
 			}
 
 			// north
-			if ((globalFaceMask & FaceDirectionBits.NegativeY) != 0 && y == scene.ViewCorner1.Y)
+			if ((globalFaceMask & FaceDirectionBits.NegativeY) != 0 && y == viewGrid.Y1)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.NegativeY;
 				hiddenSides |= b & ~sides;
