@@ -147,6 +147,11 @@ namespace Dwarrowdelf
 			return left + new IntVector3(right);
 		}
 
+		public static IntVector3 operator *(IntVector3 left, IntVector3 right)
+		{
+			return new IntVector3(left.X * right.X, left.Y * right.Y, left.Z * right.Z);
+		}
+
 		public bool IsAdjacentTo(IntVector3 p, DirectionSet positioning)
 		{
 			var v = p - this;
