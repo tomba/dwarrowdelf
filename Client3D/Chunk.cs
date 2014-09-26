@@ -220,70 +220,29 @@ namespace Client3D
 				{
 					for (int x = chunkGrid.X1; x <= chunkGrid.X2; ++x)
 					{
-						var td = m_map.Grid[z, y, x];
+						var vox = m_map.Grid[z, y, x];
 
-						if (td.IsEmpty)
+						if (vox.IsEmpty)
 							continue;
 
 						var p = new IntVector3(x, y, z);
 
-						if ((td.Flags & VoxelFlags.Tree) != 0)
+						if ((vox.Flags & VoxelFlags.Tree) != 0)
 						{
 							var pos = p - this.ChunkOffset;
 							sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
 								(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
 
-							if (td.Type != VoxelType.Empty)
+							if (vox.Type != VoxelType.Empty)
 								throw new Exception();
 
-							continue;
+							continue; ;
 						}
 
-						if (td.Type == VoxelType.Empty)
+						if (vox.Type == VoxelType.Empty)
 							continue;
 
-						FaceTexture baseTexture = new FaceTexture();
-						FaceTexture topTexture = new FaceTexture();
-
-						switch (td.Type)
-						{
-							case VoxelType.Undefined:
-								baseTexture.Symbol1 = SymbolID.Unknown;
-								baseTexture.Color1 = GameColor.LightGray;
-								break;
-
-							case VoxelType.Water:
-								baseTexture.Symbol1 = SymbolID.Water;
-								baseTexture.Color0 = GameColor.MediumBlue;
-								baseTexture.Color1 = GameColor.SeaGreen;
-								topTexture = baseTexture;
-								break;
-
-							case VoxelType.Rock:
-								baseTexture.Color0 = GameColor.LightGray;
-								baseTexture.Symbol1 = SymbolID.Wall;
-								baseTexture.Color1 = GameColor.LightGray;
-
-								if ((td.Flags & VoxelFlags.Grass) != 0)
-								{
-									topTexture.Color0 = GameColor.LightGreen;
-									topTexture.Symbol1 = SymbolID.Grass;
-									topTexture.Color1 = GameColor.LightGreen;
-								}
-								else if ((td.VisibleFaces & FaceDirectionBits.PositiveZ) != 0)
-								{
-									topTexture.Color0 = GameColor.LightGray;
-									topTexture.Symbol1 = SymbolID.Floor;
-									topTexture.Color1 = GameColor.LightGray;
-								}
-								else
-								{
-									topTexture = baseTexture;
-								}
-								break;
-						}
-
-						CreateCubicBlock(p, ref viewGrid, baseTexture, topTexture, visibleChunkFaces, terrainVertexList);
+						HandleVoxel(p, ref vox, ref viewGrid, visibleChunkFaces, terrainVertexList);
 					}
 				}
 			}
@@ -394,6 +353,53 @@ namespace Client3D
 					}
 			}
 #endif
+		}
+
+		void HandleVoxel(IntVector3 p, ref Voxel vox, ref IntGrid3 viewGrid, FaceDirectionBits visibleChunkFaces,
+			VertexList<TerrainVertex> terrainVertexList)
+		{
+			FaceTexture baseTexture = new FaceTexture();
+			FaceTexture topTexture = new FaceTexture();
+
+			switch (vox.Type)
+			{
+				case VoxelType.Undefined:
+					baseTexture.Symbol1 = SymbolID.Unknown;
+					baseTexture.Color1 = GameColor.LightGray;
+					break;
+
+				case VoxelType.Water:
+					baseTexture.Symbol1 = SymbolID.Water;
+					baseTexture.Color0 = GameColor.MediumBlue;
+					baseTexture.Color1 = GameColor.SeaGreen;
+					topTexture = baseTexture;
+					break;
+
+				case VoxelType.Rock:
+					baseTexture.Color0 = GameColor.LightGray;
+					baseTexture.Symbol1 = SymbolID.Wall;
+					baseTexture.Color1 = GameColor.LightGray;
+
+					if ((vox.Flags & VoxelFlags.Grass) != 0)
+					{
+						topTexture.Color0 = GameColor.LightGreen;
+						topTexture.Symbol1 = SymbolID.Grass;
+						topTexture.Color1 = GameColor.LightGreen;
+					}
+					else if ((vox.VisibleFaces & FaceDirectionBits.PositiveZ) != 0)
+					{
+						topTexture.Color0 = GameColor.LightGray;
+						topTexture.Symbol1 = SymbolID.Floor;
+						topTexture.Color1 = GameColor.LightGray;
+					}
+					else
+					{
+						topTexture = baseTexture;
+					}
+					break;
+			}
+
+			CreateCubicBlock(p, ref viewGrid, baseTexture, topTexture, visibleChunkFaces, terrainVertexList);
 		}
 
 		void CreateCubicBlock(IntVector3 p, ref IntGrid3 viewGrid,
