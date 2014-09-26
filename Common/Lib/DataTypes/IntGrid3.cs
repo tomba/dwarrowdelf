@@ -86,6 +86,11 @@ namespace Dwarrowdelf
 			get { return new IntVector3(this.X + this.Columns - 1, this.Y + this.Rows - 1, this.Z + this.Depth - 1); }
 		}
 
+		public IntSize3 Size
+		{
+			get { return new IntSize3(m_columns, m_rows, m_depth); }
+		}
+
 		public IntVector3 Center
 		{
 			get { return new IntVector3(this.X + (this.Columns - 1) / 2, this.Y + (this.Rows - 1) / 2, this.Z + (this.Depth - 1) / 2); }
