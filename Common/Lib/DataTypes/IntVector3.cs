@@ -14,11 +14,25 @@ namespace Dwarrowdelf
 	{
 		// X, Y, Z: 16 bits, from -32768 to 32767
 		// X: bits 0-15, Y: bits 16-31, Z: bits 48-61
-		readonly long m_value;
+		long m_value;
 
-		public int X { get { return (((int)m_value) << 16) >> 16; } }
-		public int Y { get { return ((int)m_value) >> 16; } }
-		public int Z { get { return (int)(m_value >> 48); } }
+		public int X
+		{
+			get { return (((int)m_value) << 16) >> 16; }
+			set { m_value = (m_value & ~0xffffL) | (uint)(value & 0xffff); }
+		}
+
+		public int Y
+		{
+			get { return ((int)m_value) >> 16; }
+			set { m_value = (m_value & ~(0xffffL << 16)) | ((uint)(value & 0xffff) << 16); }
+		}
+
+		public int Z
+		{
+			get { return (int)(m_value >> 48); }
+			set { m_value = (m_value & ~(0xffffL << 48)) | ((long)(value & 0xffff) << 48); }
+		}
 
 		public IntVector3(int x, int y, int z)
 		{
@@ -52,6 +66,31 @@ namespace Dwarrowdelf
 				((long)(x & 0xffff) << 0) |
 				((long)(y & 0xffff) << 16) |
 				((long)(z & 0xffff) << 48);
+		}
+
+		public int this[int idx]
+		{
+			get
+			{
+				switch (idx)
+				{
+					case 0: return this.X;
+					case 1: return this.Y;
+					case 2: return this.Z;
+					default: throw new IndexOutOfRangeException();
+				}
+			}
+
+			set
+			{
+				switch (idx)
+				{
+					case 0: this.X = value; break;
+					case 1: this.Y = value; break;
+					case 2: this.Z = value; break;
+					default: throw new IndexOutOfRangeException();
+				}
+			}
 		}
 
 		#region IEquatable<IntVector3> Members
