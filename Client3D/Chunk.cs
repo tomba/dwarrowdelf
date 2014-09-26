@@ -355,11 +355,10 @@ namespace Client3D
 #endif
 		}
 
-		void HandleVoxel(IntVector3 p, ref Voxel vox, ref IntGrid3 viewGrid, FaceDirectionBits visibleChunkFaces,
-			VertexList<TerrainVertex> terrainVertexList)
+		void GetTextures(ref Voxel vox, out FaceTexture baseTexture, out FaceTexture topTexture)
 		{
-			FaceTexture baseTexture = new FaceTexture();
-			FaceTexture topTexture = new FaceTexture();
+			baseTexture = new FaceTexture();
+			topTexture = new FaceTexture();
 
 			switch (vox.Type)
 			{
@@ -398,29 +397,29 @@ namespace Client3D
 					}
 					break;
 			}
-
-			CreateCubicBlock(p, ref viewGrid, baseTexture, topTexture, visibleChunkFaces, terrainVertexList);
 		}
 
-		void CreateCubicBlock(IntVector3 p, ref IntGrid3 viewGrid,
-			FaceTexture baseTexture, FaceTexture topTexture,
-			FaceDirectionBits visibleChunkFaces, VertexList<TerrainVertex> vertexList)
+		void HandleVoxel(IntVector3 p, ref Voxel vox, ref IntGrid3 viewGrid, FaceDirectionBits visibleChunkFaces,
+			VertexList<TerrainVertex> vertexList)
 		{
+			FaceTexture baseTexture, topTexture;
+
+			GetTextures(ref vox, out baseTexture, out topTexture);
+
 			int x = p.X;
 			int y = p.Y;
 			int z = p.Z;
 
-			var vd = m_map.Grid[z, y, x];
-
-			FaceDirectionBits sides = visibleChunkFaces & vd.VisibleFaces;
-			FaceDirectionBits hiddenSides = 0;	/* sides that are shown, but are really hidden */
+			FaceDirectionBits visibleFaces = visibleChunkFaces & vox.VisibleFaces;
+			/* sides that are shown due to the viewgrid, but are really hidden by other voxels */
+			FaceDirectionBits visibleHiddenFaces = 0;
 
 			// up
 			if ((visibleChunkFaces & FaceDirectionBits.PositiveZ) != 0 && z == viewGrid.Z2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveZ;
-				hiddenSides |= b & ~sides;
-				sides |= b;
+				visibleHiddenFaces |= b & ~visibleFaces;
+				visibleFaces |= b;
 				// override the top tex to remove the grass
 				topTexture = baseTexture;
 			}
@@ -428,60 +427,52 @@ namespace Client3D
 			// down
 			// Note: we never draw the bottommost layer in the map
 			if (z == 0)
-				sides &= ~FaceDirectionBits.NegativeZ;
+				visibleFaces &= ~FaceDirectionBits.NegativeZ;
 
 			// east
 			if ((visibleChunkFaces & FaceDirectionBits.PositiveX) != 0 && x == viewGrid.X2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveX;
-				hiddenSides |= b & ~sides;
-				sides |= b;
+				visibleHiddenFaces |= b & ~visibleFaces;
+				visibleFaces |= b;
 			}
 
 			// west
 			if ((visibleChunkFaces & FaceDirectionBits.NegativeX) != 0 && x == viewGrid.X1)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.NegativeX;
-				hiddenSides |= b & ~sides;
-				sides |= b;
+				visibleHiddenFaces |= b & ~visibleFaces;
+				visibleFaces |= b;
 			}
 
 			// south
 			if ((visibleChunkFaces & FaceDirectionBits.PositiveY) != 0 && y == viewGrid.Y2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveY;
-				hiddenSides |= b & ~sides;
-				sides |= b;
+				visibleHiddenFaces |= b & ~visibleFaces;
+				visibleFaces |= b;
 			}
 
 			// north
 			if ((visibleChunkFaces & FaceDirectionBits.NegativeY) != 0 && y == viewGrid.Y1)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.NegativeY;
-				hiddenSides |= b & ~sides;
-				sides |= b;
+				visibleHiddenFaces |= b & ~visibleFaces;
+				visibleFaces |= b;
 			}
 
-			if (sides == 0)
+			if (visibleFaces == 0)
 				return;
 
-			CreateCube(p, sides, hiddenSides, baseTexture, topTexture, vertexList);
+			CreateCube(p, visibleFaces, visibleHiddenFaces, ref baseTexture, ref topTexture, vertexList);
 		}
 
-		bool IsBlocker(IntVector3 p)
-		{
-			if (m_map.Size.Contains(p) == false)
-				return false;
-
-			return m_map.Grid[p.Z, p.Y, p.X].IsOpaque;
-		}
-
-		void CreateCube(IntVector3 p, FaceDirectionBits faceMask, FaceDirectionBits hiddenFaceMask,
-			FaceTexture baseTexture, FaceTexture topTexture, VertexList<TerrainVertex> vertexList)
+		void CreateCube(IntVector3 p, FaceDirectionBits visibleFaces, FaceDirectionBits visibleHiddenFaces,
+			ref FaceTexture baseTexture, ref FaceTexture topTexture, VertexList<TerrainVertex> vertexList)
 		{
 			var offset = p - this.ChunkOffset;
 
-			int sides = (int)faceMask;
+			int sides = (int)visibleFaces;
 
 			for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
 			{
@@ -492,7 +483,7 @@ namespace Client3D
 
 				int occ0, occ1, occ2, occ3;
 
-				if (((int)hiddenFaceMask & (1 << side)) != 0)
+				if (((int)visibleHiddenFaces & (1 << side)) != 0)
 				{
 					occ0 = occ1 = occ2 = occ3 = 4;
 				}
@@ -515,6 +506,14 @@ namespace Client3D
 					side == (int)FaceDirection.PositiveZ ? topTexture : baseTexture);
 				vertexList.Add(vd);
 			}
+		}
+
+		bool IsBlocker(IntVector3 p)
+		{
+			if (m_map.Size.Contains(p) == false)
+				return false;
+
+			return m_map.Grid[p.Z, p.Y, p.X].IsOpaque;
 		}
 
 		int GetOcclusionForFaceVertex(IntVector3 p, FaceDirection face, int vertexNum)
