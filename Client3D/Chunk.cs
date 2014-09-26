@@ -173,27 +173,28 @@ namespace Client3D
 
 			var diff = cameraChunkPos - this.ChunkPosition;
 
-			FaceDirectionBits mask = 0;
+			FaceDirectionBits visibleChunkFaces = 0;
 			if (diff.X >= 0)
-				mask |= FaceDirectionBits.PositiveX;
+				visibleChunkFaces |= FaceDirectionBits.PositiveX;
 			if (diff.X <= 0)
-				mask |= FaceDirectionBits.NegativeX;
+				visibleChunkFaces |= FaceDirectionBits.NegativeX;
 			if (diff.Y >= 0)
-				mask |= FaceDirectionBits.PositiveY;
+				visibleChunkFaces |= FaceDirectionBits.PositiveY;
 			if (diff.Y <= 0)
-				mask |= FaceDirectionBits.NegativeY;
+				visibleChunkFaces |= FaceDirectionBits.NegativeY;
 			if (diff.Z >= 0)
-				mask |= FaceDirectionBits.PositiveZ;
+				visibleChunkFaces |= FaceDirectionBits.PositiveZ;
 			if (diff.Z <= 0)
-				mask |= FaceDirectionBits.NegativeZ;
+				visibleChunkFaces |= FaceDirectionBits.NegativeZ;
 
-			GenerateVertices(scene, mask, terrainVertexList, sceneryVertexList);
+			GenerateVertices(scene, visibleChunkFaces, terrainVertexList, sceneryVertexList);
 
 			this.VertexCount = terrainVertexList.Count;
 			this.SceneryVertexCount = sceneryVertexList.Count;
 		}
 
-		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits mask, VertexList<TerrainVertex> terrainVertexList,
+		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits visibleChunkFaces,
+			VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
 			IntGrid3 viewGrid = scene.ViewGrid;
@@ -205,7 +206,7 @@ namespace Client3D
 
 			if (this.IsUndefined)
 			{
-				CreateUndefinedChunk(ref viewGrid, ref chunkGrid, terrainVertexList, mask);
+				CreateUndefinedChunk(ref viewGrid, ref chunkGrid, terrainVertexList, visibleChunkFaces);
 				return;
 			}
 
@@ -282,7 +283,7 @@ namespace Client3D
 								break;
 						}
 
-						CreateCubicBlock(p, ref viewGrid, baseTexture, topTexture, mask, terrainVertexList);
+						CreateCubicBlock(p, ref viewGrid, baseTexture, topTexture, visibleChunkFaces, terrainVertexList);
 					}
 				}
 			}
@@ -397,7 +398,7 @@ namespace Client3D
 
 		void CreateCubicBlock(IntVector3 p, ref IntGrid3 viewGrid,
 			FaceTexture baseTexture, FaceTexture topTexture,
-			FaceDirectionBits globalFaceMask, VertexList<TerrainVertex> vertexList)
+			FaceDirectionBits visibleChunkFaces, VertexList<TerrainVertex> vertexList)
 		{
 			int x = p.X;
 			int y = p.Y;
@@ -405,11 +406,11 @@ namespace Client3D
 
 			var vd = m_map.Grid[z, y, x];
 
-			FaceDirectionBits sides = globalFaceMask & vd.VisibleFaces;
+			FaceDirectionBits sides = visibleChunkFaces & vd.VisibleFaces;
 			FaceDirectionBits hiddenSides = 0;	/* sides that are shown, but are really hidden */
 
 			// up
-			if ((globalFaceMask & FaceDirectionBits.PositiveZ) != 0 && z == viewGrid.Z2)
+			if ((visibleChunkFaces & FaceDirectionBits.PositiveZ) != 0 && z == viewGrid.Z2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveZ;
 				hiddenSides |= b & ~sides;
@@ -424,7 +425,7 @@ namespace Client3D
 				sides &= ~FaceDirectionBits.NegativeZ;
 
 			// east
-			if ((globalFaceMask & FaceDirectionBits.PositiveX) != 0 && x == viewGrid.X2)
+			if ((visibleChunkFaces & FaceDirectionBits.PositiveX) != 0 && x == viewGrid.X2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveX;
 				hiddenSides |= b & ~sides;
@@ -432,7 +433,7 @@ namespace Client3D
 			}
 
 			// west
-			if ((globalFaceMask & FaceDirectionBits.NegativeX) != 0 && x == viewGrid.X1)
+			if ((visibleChunkFaces & FaceDirectionBits.NegativeX) != 0 && x == viewGrid.X1)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.NegativeX;
 				hiddenSides |= b & ~sides;
@@ -440,7 +441,7 @@ namespace Client3D
 			}
 
 			// south
-			if ((globalFaceMask & FaceDirectionBits.PositiveY) != 0 && y == viewGrid.Y2)
+			if ((visibleChunkFaces & FaceDirectionBits.PositiveY) != 0 && y == viewGrid.Y2)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.PositiveY;
 				hiddenSides |= b & ~sides;
@@ -448,7 +449,7 @@ namespace Client3D
 			}
 
 			// north
-			if ((globalFaceMask & FaceDirectionBits.NegativeY) != 0 && y == viewGrid.Y1)
+			if ((visibleChunkFaces & FaceDirectionBits.NegativeY) != 0 && y == viewGrid.Y1)
 			{
 				const FaceDirectionBits b = FaceDirectionBits.NegativeY;
 				hiddenSides |= b & ~sides;
