@@ -120,13 +120,13 @@ namespace Client3D
 
 			var chunk = m_chunks[this.Size.GetIndex(cp)];
 
-			bool wasEmptyOrUndefined = chunk.IsEmpty || chunk.IsUndefined;
+			bool wasEmpty = chunk.IsEmpty;
 
 			chunk.IsEmpty = false;
 			chunk.IsUndefined = false;
 
 			// update near list as it doesn't contain empty chunks
-			if (wasEmptyOrUndefined)
+			if (wasEmpty)
 				m_forceNearListUpdate = true;
 
 			InvalidateChunk(chunk);
@@ -249,7 +249,7 @@ namespace Client3D
 
 			foreach (var chunk in m_chunks)
 			{
-				if (chunk.IsEmpty || chunk.IsUndefined)
+				if (chunk.IsEmpty)
 					continue;
 
 				var chunkCenter = chunk.ChunkOffset.ToVector3() + new Vector3(Chunk.CHUNK_SIZE / 2);

@@ -199,8 +199,18 @@ namespace Client3D
 			IntGrid3 viewGrid = scene.ViewGrid;
 			IntGrid3 chunkGrid = viewGrid.Intersect(new IntGrid3(this.ChunkOffset, Chunk.ChunkSize));
 
+			// is the chunk inside frustum, but outside the viewgrid?
 			if (chunkGrid.IsNull)
 				return;
+
+			if (this.IsUndefined)
+			{
+				CreateUndefinedChunk(ref viewGrid, ref chunkGrid, terrainVertexList, mask);
+				return;
+			}
+
+			if (this.IsEmpty)
+				throw new Exception();
 
 			// Draw from up to down to avoid overdraw
 			for (int z = chunkGrid.Z2; z >= chunkGrid.Z1; --z)
@@ -276,6 +286,113 @@ namespace Client3D
 					}
 				}
 			}
+		}
+
+		void CreateUndefinedChunk(ref IntGrid3 viewGrid, ref IntGrid3 chunkGrid, VertexList<TerrainVertex> vertexList,
+			FaceDirectionBits visibleChunkFaces)
+		{
+			// clear the visible chunk faces that are not at the view's edge
+
+			// up
+			if ((visibleChunkFaces & FaceDirectionBits.PositiveZ) != 0 && chunkGrid.Z2 != viewGrid.Z2)
+				visibleChunkFaces &= ~FaceDirectionBits.PositiveZ;
+
+			// down
+			// Note: we never draw the bottommost layer in the map
+			visibleChunkFaces &= ~FaceDirectionBits.NegativeZ;
+
+			// east
+			if ((visibleChunkFaces & FaceDirectionBits.PositiveX) != 0 && chunkGrid.X2 != viewGrid.X2)
+				visibleChunkFaces &= ~FaceDirectionBits.PositiveX;
+
+			// west
+			if ((visibleChunkFaces & FaceDirectionBits.NegativeX) != 0 && chunkGrid.X1 != viewGrid.X1)
+				visibleChunkFaces &= ~FaceDirectionBits.NegativeX;
+
+			// south
+			if ((visibleChunkFaces & FaceDirectionBits.PositiveY) != 0 && chunkGrid.Y2 != viewGrid.Y2)
+				visibleChunkFaces &= ~FaceDirectionBits.PositiveY;
+
+			// north
+			if ((visibleChunkFaces & FaceDirectionBits.NegativeY) != 0 && chunkGrid.Y1 != viewGrid.Y1)
+				visibleChunkFaces &= ~FaceDirectionBits.NegativeY;
+
+			if (visibleChunkFaces == 0)
+				return;
+
+			int sides = (int)visibleChunkFaces;
+
+			var tex = new FaceTexture()
+			{
+				Symbol1 = SymbolID.Unknown,
+				Color1 = GameColor.LightGray,
+			};
+
+			const int occlusion = 4;
+
+#if BIG_CHUNK
+			/* Using chunk sized quads causes t-junction problems */
+
+			var scale = new IntVector3(chunkGrid.Size.Width, chunkGrid.Size.Height, chunkGrid.Size.Depth);
+			var offset = chunkGrid.Corner1 - this.ChunkOffset;
+
+			for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
+			{
+				if ((sides & 1) == 0)
+					continue;
+
+				var vertices = s_intCubeFaces[side];
+
+				IntVector3 v0 = vertices[s_cubeIndices[0]] * scale + offset;
+				IntVector3 v1 = vertices[s_cubeIndices[1]] * scale + offset;
+				IntVector3 v2 = vertices[s_cubeIndices[2]] * scale + offset;
+				IntVector3 v3 = vertices[s_cubeIndices[3]] * scale + offset;
+
+				var vd = new TerrainVertex(v0, v1, v2, v3, occlusion, occlusion, occlusion, occlusion, tex);
+				vertexList.Add(vd);
+			}
+#else
+			var offset = chunkGrid.Corner1 - this.ChunkOffset;
+
+			var dim = new IntVector3(chunkGrid.Size.Width, chunkGrid.Size.Height, chunkGrid.Size.Depth);
+
+			for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
+			{
+				if ((sides & 1) == 0)
+					continue;
+
+				int d0 = side / 2;
+				int d1 = (d0 + 1) % 3;
+				int d2 = (d0 + 2) % 3;
+
+				bool posFace = (side & 1) == 0;
+
+				var vertices = s_intCubeFaces[side];
+
+				IntVector3 v0 = vertices[s_cubeIndices[0]] + offset;
+				IntVector3 v1 = vertices[s_cubeIndices[1]] + offset;
+				IntVector3 v2 = vertices[s_cubeIndices[2]] + offset;
+				IntVector3 v3 = vertices[s_cubeIndices[3]] + offset;
+
+				var vec1 = new IntVector3();
+				vec1[d1] = 1;
+
+				var vec2 = new IntVector3();
+				vec2[d2] = 1;
+
+				for (int v = 0; v < dim[d1]; ++v)
+					for (int u = 0; u < dim[d2]; ++u)
+					{
+						var off = vec1 * v + vec2 * u;
+						if (posFace)
+							off[d0] = dim[d0] - 1;
+
+						var vd = new TerrainVertex(v0 + off, v1 + off, v2 + off, v3 + off,
+							occlusion, occlusion, occlusion, occlusion, tex);
+						vertexList.Add(vd);
+					}
+			}
+#endif
 		}
 
 		void CreateCubicBlock(IntVector3 p, ref IntGrid3 viewGrid,
