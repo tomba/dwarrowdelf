@@ -94,6 +94,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BufferPool.cs" />
     <Compile Include="Byte4.cs" />
     <Compile Include="CameraProvider.cs" />
     <Compile Include="Chunk.cs" />
