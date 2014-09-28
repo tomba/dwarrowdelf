@@ -69,20 +69,25 @@ GS_IN VSMain(VS_IN input)
 {
 	GS_IN output = (GS_IN)0;
 
-	input.pos0.xyz += g_chunkOffset;
-	input.pos1.xyz += g_chunkOffset;
-	input.pos2.xyz += g_chunkOffset;
-	input.pos3.xyz += g_chunkOffset;
+	float3 p0 = input.pos0.xyz;
+	float3 p1 = input.pos1.xyz;
+	float3 p2 = input.pos2.xyz;
+	float3 p3 = input.pos3.xyz;
 
-	output.posW0 = input.pos0.xyz;
-	output.posW1 = input.pos1.xyz;
-	output.posW2 = input.pos2.xyz;
-	output.posW3 = input.pos3.xyz;
+	p0 += g_chunkOffset;
+	p1 += g_chunkOffset;
+	p2 += g_chunkOffset;
+	p3 += g_chunkOffset;
 
-	output.pos0 = mul(input.pos0, g_viewProjMatrix);
-	output.pos1 = mul(input.pos1, g_viewProjMatrix);
-	output.pos2 = mul(input.pos2, g_viewProjMatrix);
-	output.pos3 = mul(input.pos3, g_viewProjMatrix);
+	output.posW0 = p0;
+	output.posW1 = p1;
+	output.posW2 = p2;
+	output.posW3 = p3;
+
+	output.pos0 = mul(float4(p0, 1), g_viewProjMatrix);
+	output.pos1 = mul(float4(p1, 1), g_viewProjMatrix);
+	output.pos2 = mul(float4(p2, 1), g_viewProjMatrix);
+	output.pos3 = mul(float4(p3, 1), g_viewProjMatrix);
 
 	output.occlusion = input.occlusion;
 	output.texPack = input.texPack;
