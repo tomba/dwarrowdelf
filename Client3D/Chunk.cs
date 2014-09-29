@@ -301,12 +301,12 @@ namespace Client3D
 				if ((sides & 1) == 0)
 					continue;
 
-				var vertices = s_intCubeFaces[side];
+				var vertices = s_cubeFaceInfo[side].Vertices;
 
-				IntVector3 v0 = vertices[s_cubeIndices[0]] * scale + offset;
-				IntVector3 v1 = vertices[s_cubeIndices[1]] * scale + offset;
-				IntVector3 v2 = vertices[s_cubeIndices[2]] * scale + offset;
-				IntVector3 v3 = vertices[s_cubeIndices[3]] * scale + offset;
+				IntVector3 v0 = vertices[0] * scale + offset;
+				IntVector3 v1 = vertices[1] * scale + offset;
+				IntVector3 v2 = vertices[2] * scale + offset;
+				IntVector3 v3 = vertices[3] * scale + offset;
 
 				var vd = new TerrainVertex(v0, v1, v2, v3, occlusion, occlusion, occlusion, occlusion, tex);
 				vertexList.Add(vd);
@@ -327,12 +327,12 @@ namespace Client3D
 
 				bool posFace = (side & 1) == 0;
 
-				var vertices = s_intCubeFaces[side];
+				var vertices = s_cubeFaceInfo[side].Vertices;
 
-				IntVector3 v0 = vertices[s_cubeIndices[0]] + offset;
-				IntVector3 v1 = vertices[s_cubeIndices[1]] + offset;
-				IntVector3 v2 = vertices[s_cubeIndices[2]] + offset;
-				IntVector3 v3 = vertices[s_cubeIndices[3]] + offset;
+				IntVector3 v0 = vertices[0] + offset;
+				IntVector3 v1 = vertices[1] + offset;
+				IntVector3 v2 = vertices[2] + offset;
+				IntVector3 v3 = vertices[3] + offset;
 
 				var vec1 = new IntVector3();
 				vec1[d1] = 1;
@@ -479,7 +479,14 @@ namespace Client3D
 				if ((sides & 1) == 0)
 					continue;
 
-				var vertices = s_intCubeFaces[side];
+				var vertices = s_cubeFaceInfo[side].Vertices;
+
+				IntVector3 v0, v1, v2, v3;
+
+				v0 = vertices[0] + offset;
+				v1 = vertices[1] + offset;
+				v2 = vertices[2] + offset;
+				v3 = vertices[3] + offset;
 
 				int occ0, occ1, occ2, occ3;
 
@@ -489,19 +496,9 @@ namespace Client3D
 				}
 				else
 				{
-					occ0 = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[0]);
-					occ1 = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[1]);
-					occ2 = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[2]);
-					occ3 = GetOcclusionForFaceVertex(p, (FaceDirection)side, s_cubeIndices[3]);
+					GetOcclusionsForFace(p, (FaceDirection)side,
+						out occ0, out occ1, out occ2, out occ3);
 				}
-
-				IntVector3 v0, v1, v2, v3;
-
-				v0 = vertices[s_cubeIndices[0]] + offset;
-				v1 = vertices[s_cubeIndices[1]] + offset;
-				v2 = vertices[s_cubeIndices[2]] + offset;
-				v3 = vertices[s_cubeIndices[3]] + offset;
-
 				var vd = new TerrainVertex(v0, v1, v2, v3, occ0, occ1, occ2, occ3,
 					side == (int)FaceDirection.PositiveZ ? topTexture : baseTexture);
 				vertexList.Add(vd);
@@ -516,134 +513,117 @@ namespace Client3D
 			return m_map.Grid[p.Z, p.Y, p.X].IsOpaque;
 		}
 
-		int GetOcclusionForFaceVertex(IntVector3 p, FaceDirection face, int vertexNum)
+		void GetOcclusionsForFace(IntVector3 p, FaceDirection face,
+			out int o0, out int o1, out int o2, out int o3)
 		{
-			var odata = s_occlusionLookup[(int)face, vertexNum];
+			var odata = s_cubeFaceInfo[(int)face].OcclusionVectors;
 
-			bool b_corner = IsBlocker(p + odata.Corner);
-			bool b_edge1 = IsBlocker(p + odata.Edge1);
-			bool b_edge2 = IsBlocker(p + odata.Edge2);
+			o0 = o1 = o2 = o3 = 0;
 
-			int occlusion = 0;
+			bool b_edge2 = IsBlocker(p + odata[0]);
 
-			if (b_edge1 && b_edge2)
-				occlusion = 3;
-			else
+			for (int i = 0; i < 4; ++i)
 			{
-				if (b_edge1)
-					occlusion++;
-				if (b_edge2)
-					occlusion++;
-				if (b_corner)
-					occlusion++;
-			}
+				bool b_edge1 = b_edge2;
+				bool b_corner = IsBlocker(p + odata[i * 2 + 1]);
+				b_edge2 = IsBlocker(p + odata[(i * 2 + 2) % 8]);
 
-			return occlusion;
+				int occlusion;
+
+				if (b_edge1 && b_edge2)
+				{
+					occlusion = 3;
+				}
+				else
+				{
+					occlusion = 0;
+
+					if (b_edge1)
+						occlusion++;
+					if (b_edge2)
+						occlusion++;
+					if (b_corner)
+						occlusion++;
+				}
+
+				switch (i)
+				{
+					case 0:
+						o0 = occlusion; break;
+					case 1:
+						o1 = occlusion; break;
+					case 2:
+						o2 = occlusion; break;
+					case 3:
+						o3 = occlusion; break;
+					default:
+						throw new Exception();
+				}
+			}
+		}
+
+		static CubeFaceInfo CreateFaceInfo(Direction normalDir, Direction upDir, Direction rightDir)
+		{
+			var normal = new IntVector3(normalDir);
+			var up = new IntVector3(upDir);
+			var right = new IntVector3(rightDir);
+
+			var topRight = up + right;
+			var bottomRight = -up + right;
+			var bottomLeft = -up - right;
+			var topLeft = up - right;
+
+			var renderVertices =
+				new[] { topRight, bottomRight, bottomLeft, topLeft, }
+				.Select(v => v + normal)								// add normal to lift from origin
+				.Select(v => v + new IntVector3(1, 1, 1))				// translate to [0,2]
+				.Select(v => v / 2)										// scale to [0,1]
+				.ToArray();
+
+			var occ = new[] {
+				up,
+				up + right,
+				right,
+				-up + right,
+				-up,
+				-up - right,
+				-right,
+				up - right,
+			}.Select(v => v + normal).ToArray();
+
+			var info = new CubeFaceInfo()
+			{
+				Vertices = renderVertices,
+				OcclusionVectors = occ,
+			};
+
+			return info;
 		}
 
 		/// <summary>
-		/// Int cube faces from 0 to 1
+		/// Cube face infos, in the same order as FaceDirection enum
 		/// </summary>
-		static IntVector3[][] s_intCubeFaces;
-
-		/// <summary>
-		/// Float cube faces from -0.5 to 0.5
-		/// </summary>
-		static Vector3[][] s_cubeFaces;
-
-		static int[] s_cubeIndices = { 0, 1, 3, 2 };
-
-		static Chunk()
+		static CubeFaceInfo[] s_cubeFaceInfo =
 		{
-			CreateCubeFaces();
+			CreateFaceInfo(Direction.East, Direction.Up, Direction.North),
+			CreateFaceInfo(Direction.West, Direction.Up, Direction.South),
+			CreateFaceInfo(Direction.South, Direction.Up, Direction.East),
+			CreateFaceInfo(Direction.North, Direction.Up, Direction.West),
+			CreateFaceInfo(Direction.Up, Direction.North, Direction.East),
+			CreateFaceInfo(Direction.Down, Direction.North, Direction.East),
+		};
 
-			InitOcclusionLookup();
-		}
-
-		static void CreateCubeFaces()
+		class CubeFaceInfo
 		{
-			/*  south face */
-			var south = new Vector3[] {
-				new Vector3(-1,  1,  1),
-				new Vector3( 1,  1,  1),
-				new Vector3( 1,  1, -1),
-				new Vector3(-1,  1, -1),
-			};
+			/// <summary>
+			/// Face vertices in [0,1] range
+			/// </summary>
+			public IntVector3[] Vertices;
 
-			var rotQs = new Quaternion[]
-			{
-				Quaternion.RotationAxis(Vector3.UnitZ, -MathUtil.PiOverTwo),
-				Quaternion.RotationAxis(Vector3.UnitZ, MathUtil.PiOverTwo),
-				Quaternion.RotationAxis(Vector3.UnitZ, 0),
-				Quaternion.RotationAxis(Vector3.UnitZ, MathUtil.Pi),
-				Quaternion.RotationAxis(Vector3.UnitX, MathUtil.PiOverTwo),
-				Quaternion.RotationAxis(Vector3.UnitX, -MathUtil.PiOverTwo),
-			};
-
-			s_cubeFaces = new Vector3[6][];
-			s_intCubeFaces = new IntVector3[6][];
-
-			for (int side = 0; side < 6; ++side)
-			{
-				Vector3[] face = new Vector3[4];
-				IntVector3[] intFace = new IntVector3[4];
-
-				for (int vn = 0; vn < 4; ++vn)
-				{
-					face[vn] = Vector3.Transform(south[vn], rotQs[side]) / 2.0f;
-					intFace[vn] = (face[vn] + 0.5f).ToIntVector3();
-				}
-
-				s_cubeFaces[side] = face;
-				s_intCubeFaces[side] = intFace;
-			}
-		}
-
-		struct OcclusionLookupData
-		{
-			public IntVector3 Corner;
-			public IntVector3 Edge1;
-			public IntVector3 Edge2;
-		}
-
-		// OcclusionLookupData[face][vertexnum]
-		static OcclusionLookupData[,] s_occlusionLookup;
-
-		static void InitOcclusionLookup()
-		{
-			s_occlusionLookup = new OcclusionLookupData[6, 4];
-
-			for (int face = 0; face < 6; ++face)
-			{
-				var cubeface = s_cubeFaces[(int)face];
-
-				for (int vertexNum = 0; vertexNum < 4; ++vertexNum)
-				{
-					/*
-					 * For each corner of the face, make a vector from the center of the cube through the corner and
-					 * through the middles of the side edges. These vectors point to three cubes that cause occlusion.
-					 */
-
-					// corner
-					var corner = cubeface[vertexNum];
-					// middle of edge1
-					var edge1 = (cubeface[MyMath.Wrap(vertexNum - 1, 4)] + corner) / 2;
-					// middle of edge2
-					var edge2 = (cubeface[MyMath.Wrap(vertexNum + 1, 4)] + corner) / 2;
-
-					// the cube vertex coordinates are 0.5 units, so multiply by 2
-					corner *= 2;
-					edge1 *= 2;
-					edge2 *= 2;
-
-					s_occlusionLookup[face, vertexNum] = new OcclusionLookupData()
-					{
-						Corner = corner.ToIntVector3(),
-						Edge1 = edge1.ToIntVector3(),
-						Edge2 = edge2.ToIntVector3(),
-					};
-				}
-			}
+			/// <summary>
+			/// Occlusion help vectors. Vectors point to occlusing neighbors in clockwise order, starting from top.
+			/// </summary>
+			public IntVector3[] OcclusionVectors;
 		}
 	}
 }
