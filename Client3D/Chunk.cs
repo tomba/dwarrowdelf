@@ -573,14 +573,14 @@ namespace Client3D
 			var bottomLeft = -up - right;
 			var topLeft = up - right;
 
-			var renderVertices =
+			var vertices =
 				new[] { topRight, bottomRight, bottomLeft, topLeft, }
 				.Select(v => v + normal)								// add normal to lift from origin
 				.Select(v => v + new IntVector3(1, 1, 1))				// translate to [0,2]
 				.Select(v => v / 2)										// scale to [0,1]
 				.ToArray();
 
-			var occ = new[] {
+			var occlusionVectors = new[] {
 				up,
 				up + right,
 				right,
@@ -591,13 +591,7 @@ namespace Client3D
 				up - right,
 			}.Select(v => v + normal).ToArray();
 
-			var info = new CubeFaceInfo()
-			{
-				Vertices = renderVertices,
-				OcclusionVectors = occ,
-			};
-
-			return info;
+			return new CubeFaceInfo(vertices, occlusionVectors);
 		}
 
 		/// <summary>
@@ -615,15 +609,21 @@ namespace Client3D
 
 		class CubeFaceInfo
 		{
+			public CubeFaceInfo(IntVector3[] vertices, IntVector3[] occlusionVectors)
+			{
+				this.Vertices = vertices;
+				this.OcclusionVectors = occlusionVectors;
+			}
+
 			/// <summary>
 			/// Face vertices in [0,1] range
 			/// </summary>
-			public IntVector3[] Vertices;
+			public readonly IntVector3[] Vertices;
 
 			/// <summary>
 			/// Occlusion help vectors. Vectors point to occlusing neighbors in clockwise order, starting from top.
 			/// </summary>
-			public IntVector3[] OcclusionVectors;
+			public readonly IntVector3[] OcclusionVectors;
 		}
 	}
 }
