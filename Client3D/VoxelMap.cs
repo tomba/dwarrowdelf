@@ -229,69 +229,6 @@ namespace Client3D
 
 			return map;
 		}
-		public static VoxelMap CreateFromTileData(TileData[, ,] tileData)
-		{
-			int d = tileData.GetLength(0);
-			int h = tileData.GetLength(1);
-			int w = tileData.GetLength(2);
-
-			var size = new IntSize3(w, h, d);
-
-			var map = new VoxelMap(size);
-
-			for (int z = 0; z < d; ++z)
-				for (int y = 0; y < h; ++y)
-					for (int x = 0; x < w; ++x)
-					{
-						ConvertTile(x, y, z, map.Grid, tileData);
-					}
-
-			return map;
-		}
-
-		static void ConvertTile(int x, int y, int z, Voxel[, ,] grid, TileData[, ,] tileData)
-		{
-			var td = tileData[z, y, x];
-
-			if (td.IsUndefined)
-			{
-				grid[z, y, x].Type = VoxelType.Undefined;
-				return;
-			}
-
-			if (td.IsEmpty)
-			{
-				grid[z, y, x].Type = VoxelType.Empty;
-				return;
-			}
-
-			if (td.InteriorID == InteriorID.NaturalWall)
-			{
-				grid[z, y, x].Type = VoxelType.Rock;
-				return;
-			}
-
-			if (td.WaterLevel > 0)
-			{
-				grid[z, y, x].Type = VoxelType.Water;
-				return;
-			}
-
-			if (td.IsGreen)
-			{
-				grid[z - 1, y, x].Flags |= VoxelFlags.Grass;
-
-				Dwarrowdelf.MWCRandom r = new MWCRandom(new IntVector3(x, y, z), 0);
-
-				if (r.Next(100) < 30)
-				{
-					grid[z, y, x].Flags |= VoxelFlags.Tree;
-					grid[z - 1, y, x].Flags |= VoxelFlags.Tree2;
-				}
-			}
-
-			grid[z, y, x].Type = VoxelType.Empty;
-		}
 
 		public unsafe static VoxelMap Load(string path)
 		{
