@@ -363,49 +363,51 @@ namespace Client3D
 			grid[z, y, x].Type = VoxelType.Empty;
 		}
 
-		public static VoxelMap Load(string path)
+		public unsafe static VoxelMap Load(string path)
 		{
 			using (var stream = File.OpenRead(path))
-			using (var br = new BinaryReader(stream))
 			{
-				int w = br.ReadInt32();
-				int h = br.ReadInt32();
-				int d = br.ReadInt32();
+				VoxelMap map;
 
-				var size = new IntSize3(w, h, d);
+				using (var br = new BinaryReader(stream, Encoding.Default, true))
+				{
+					int w = br.ReadInt32();
+					int h = br.ReadInt32();
+					int d = br.ReadInt32();
 
-				var map = new VoxelMap(size);
+					var size = new IntSize3(w, h, d);
 
-				var grid = map.Grid;
+					map = new VoxelMap(size);
+				}
 
-				for (int z = 0; z < d; ++z)
-					for (int y = 0; y < h; ++y)
-						for (int x = 0; x < w; ++x)
-						{
-							grid[z, y, x].Raw = br.ReadUInt32();
-						}
+				fixed (Voxel* v = map.Grid)
+				{
+					byte* p = (byte*)v;
+					using (var memStream = new UnmanagedMemoryStream(p, 0, map.Size.Volume * sizeof(Voxel), FileAccess.Write))
+						stream.CopyTo(memStream);
+				}
 
 				return map;
 			}
 		}
 
-		public void Save(string path)
+		public unsafe void Save(string path)
 		{
 			using (var stream = File.Create(path))
-			using (var bw = new BinaryWriter(stream))
 			{
-				bw.Write(this.Size.Width);
-				bw.Write(this.Size.Height);
-				bw.Write(this.Size.Depth);
+				using (var bw = new BinaryWriter(stream, Encoding.Default, true))
+				{
+					bw.Write(this.Size.Width);
+					bw.Write(this.Size.Height);
+					bw.Write(this.Size.Depth);
+				}
 
-				int w = this.Width;
-				int h = this.Height;
-				int d = this.Depth;
-
-				for (int z = 0; z < d; ++z)
-					for (int y = 0; y < h; ++y)
-						for (int x = 0; x < w; ++x)
-							bw.Write(this.Grid[z, y, x].Raw);
+				fixed (Voxel* v = this.Grid)
+				{
+					byte* p = (byte*)v;
+					using (var memStream = new UnmanagedMemoryStream(p, this.Size.Volume * sizeof(Voxel)))
+						memStream.CopyTo(stream);
+				}
 			}
 		}
 	}
