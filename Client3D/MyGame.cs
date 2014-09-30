@@ -154,45 +154,45 @@ namespace Client3D
 			base.EndRun();
 		}
 
-		void HandleKeyboard(KeyboardState m_keyboardState)
+		void HandleKeyboard(KeyboardState keyboardState)
 		{
 			const float walkSpeek = 40f;
 			const float rotSpeed = MathUtil.PiOverTwo*1.5f;
 			float dTime = (float)this.gameTime.ElapsedGameTime.TotalSeconds;
 			float mul = 1f;
 
-			if (m_keyboardState.IsKeyDown(Keys.F4) && m_keyboardState.IsKeyDown(Keys.LeftAlt))
+			if (keyboardState.IsKeyDown(Keys.F4) && keyboardState.IsKeyDown(Keys.LeftAlt))
 				this.Exit();
 
-			if (m_keyboardState.IsKeyDown(Keys.Shift))
+			if (keyboardState.IsKeyDown(Keys.Shift))
 				mul = 0.2f;
 
-			if (m_keyboardState.IsKeyDown(Keys.W))
+			if (keyboardState.IsKeyDown(Keys.W))
 				m_cameraProvider.Walk(walkSpeek * dTime * mul);
-			else if (m_keyboardState.IsKeyDown(Keys.S))
+			else if (keyboardState.IsKeyDown(Keys.S))
 				m_cameraProvider.Walk(-walkSpeek * dTime * mul);
 
-			if (m_keyboardState.IsKeyDown(Keys.D))
+			if (keyboardState.IsKeyDown(Keys.D))
 				m_cameraProvider.Strafe(walkSpeek * dTime * mul);
-			else if (m_keyboardState.IsKeyDown(Keys.A))
+			else if (keyboardState.IsKeyDown(Keys.A))
 				m_cameraProvider.Strafe(-walkSpeek * dTime * mul);
 
-			if (m_keyboardState.IsKeyDown(Keys.E))
+			if (keyboardState.IsKeyDown(Keys.E))
 				m_cameraProvider.Climb(walkSpeek * dTime * mul);
-			else if (m_keyboardState.IsKeyDown(Keys.Q))
+			else if (keyboardState.IsKeyDown(Keys.Q))
 				m_cameraProvider.Climb(-walkSpeek * dTime * mul);
 
-			if (m_keyboardState.IsKeyDown(Keys.Up))
+			if (keyboardState.IsKeyDown(Keys.Up))
 				m_cameraProvider.Pitch(-rotSpeed * dTime * mul);
-			else if (m_keyboardState.IsKeyDown(Keys.Down))
+			else if (keyboardState.IsKeyDown(Keys.Down))
 				m_cameraProvider.Pitch(rotSpeed * dTime * mul);
 
-			if (m_keyboardState.IsKeyDown(Keys.Left))
+			if (keyboardState.IsKeyDown(Keys.Left))
 				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
-			else if (m_keyboardState.IsKeyDown(Keys.Right))
+			else if (keyboardState.IsKeyDown(Keys.Right))
 				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
 
-			if (m_keyboardState.IsKeyPressed(Keys.R))
+			if (keyboardState.IsKeyPressed(Keys.R))
 			{
 				var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
 				var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
