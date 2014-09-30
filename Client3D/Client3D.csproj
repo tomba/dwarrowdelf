@@ -109,6 +109,8 @@
     <Compile Include="GlobalData.cs" />
     <Compile Include="ICameraService.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="MovableManager.cs" />
+    <Compile Include="MovableObject.cs" />
     <Compile Include="MyExtensions.cs" />
     <Compile Include="MyGame.cs" />
     <Compile Include="Program.cs" />

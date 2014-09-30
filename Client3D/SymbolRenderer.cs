@@ -14,17 +14,30 @@ namespace Client3D
 	{
 		SymbolEffect m_effect;
 
-		SceneryVertex[] m_vertices;
-
+		int m_vertexCount;
 		Buffer<SceneryVertex> m_vertexBuffer;
 
-		public SymbolRenderer(Game game)
+		MovableManager m_manager;
+
+		bool m_invalid;
+
+		public SymbolRenderer(Game game, MovableManager manager)
 			: base(game)
 		{
 			this.Visible = true;
 			this.Enabled = true;
 
+			m_invalid = true;
+
+			m_manager = manager;
+			MovableObject.MovableMoved += MovableObject_MovableMoved;
+
 			game.GameSystems.Add(this);
+		}
+
+		void MovableObject_MovableMoved(MovableObject obj)
+		{
+			m_invalid = true;
 		}
 
 		public override void Initialize()
@@ -39,35 +52,56 @@ namespace Client3D
 			m_effect = this.Content.Load<SymbolEffect>("SymbolEffect");
 
 			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
+		}
 
+		Color ToColor(GameColor color)
+		{
+			var rgb = color.ToGameColorRGB();
+			return new Color(rgb.R, rgb.G, rgb.B);
+		}
+
+		void UpdateVertexBuffer()
+		{
+			var vertices = new VertexList<SceneryVertex>(m_manager.Movables.Count);
+
+			foreach (var m in m_manager.Movables)
 			{
-				var sl = new Vector3(17, 11, 16);
-
-				List<SceneryVertex> vertices = new List<SceneryVertex>();
-
-				vertices.Add(new SceneryVertex(sl, Color.Red, (int)Dwarrowdelf.Client.SymbolID.Player));
-				vertices.Add(new SceneryVertex(sl + new Vector3(-1, 0, 0), Color.Green, (int)Dwarrowdelf.Client.SymbolID.Wolf));
-
-				m_vertices = vertices.ToArray();
-
-				if (m_vertices.Length > 0)
-					m_vertexBuffer = ToDispose(Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, m_vertices));
+				vertices.Add(new SceneryVertex(m.Position.ToVector3(), ToColor(m.Color), (uint)m.SymbolID));
 			}
+
+			if (vertices.Count > 0)
+			{
+				if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < vertices.Count)
+				{
+					RemoveAndDispose(ref m_vertexBuffer);
+					m_vertexBuffer = ToDispose(Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, vertices.Count));
+				}
+
+				m_vertexBuffer.SetData(vertices.Data, 0, vertices.Count);
+			}
+
+			m_vertexCount = vertices.Count;
 		}
 
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
+
+			if (m_invalid)
+			{
+				UpdateVertexBuffer();
+				m_invalid = false;
+			}
 		}
 
 		public override void Draw(GameTime gameTime)
 		{
 			base.Draw(gameTime);
 
-			var device = this.GraphicsDevice;
-
 			if (m_vertexBuffer == null)
 				return;
+
+			var device = this.GraphicsDevice;
 
 			var camera = this.Services.GetService<ICameraService>();
 
@@ -89,7 +123,7 @@ namespace Client3D
 			device.SetBlendState(device.BlendStates.AlphaBlend);
 			//device.SetDepthStencilState(device.DepthStencilStates.None);
 			device.SetVertexBuffer(m_vertexBuffer);
-			device.Draw(PrimitiveType.PointList, m_vertices.Length);
+			device.Draw(PrimitiveType.PointList, m_vertexCount);
 		}
 	}
 }

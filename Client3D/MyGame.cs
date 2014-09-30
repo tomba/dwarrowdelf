@@ -8,6 +8,7 @@ using SharpDX.Toolkit.Input;
 using System.Diagnostics;
 using SharpDX.Toolkit.Graphics;
 using Dwarrowdelf;
+using Dwarrowdelf.Client;
 
 namespace Client3D
 {
@@ -29,6 +30,8 @@ namespace Client3D
 
 		public RasterizerState RasterizerState { get; set; }
 
+		MovableManager m_movableManager = new MovableManager();
+
 		public MyGame()
 		{
 			GlobalData.VoxelMap = CreateVoxelMap();
@@ -42,11 +45,39 @@ namespace Client3D
 			m_terrainRenderer = new TerrainRenderer(this);
 			//m_sceneRenderer = new SceneRenderer(this);
 			//m_testRenderer = new TestRenderer(this);
-			m_symbolRenderer = new SymbolRenderer(this);
+			m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
 
 			Content.RootDirectory = "Content";
 
 			m_fpsClock = new Stopwatch();
+
+			AddMovables();
+		}
+
+		void AddMovables()
+		{
+			MovableObject ob;
+
+			Func<IntVector2, IntVector3> floor = v2 =>
+			{
+				var map = GlobalData.VoxelMap;
+				for (int z = map.Depth - 1; z > 0; --z)
+				{
+					var v = new IntVector3(v2, z);
+					if (map.GetVoxel(v).IsEmpty == false)
+						return v.Up;
+				}
+
+				throw new Exception();
+			};
+
+			ob = new MovableObject(SymbolID.Player, GameColor.Green);
+			m_movableManager.AddMovable(ob);
+			ob.Move(floor(new IntVector2(10, 10)));
+
+			ob = new MovableObject(SymbolID.Player, GameColor.Blue);
+			m_movableManager.AddMovable(ob);
+			ob.Move(floor(new IntVector2(5, 10)));
 		}
 
 		VoxelMap CreateVoxelMap()
@@ -299,6 +330,8 @@ namespace Client3D
 
 			HandleKeyboard(keyboardState);
 
+			UpdateMovables(gameTime);
+
 			base.Update(gameTime);
 		}
 
@@ -309,6 +342,33 @@ namespace Client3D
 			this.GraphicsDevice.SetRasterizerState(this.RasterizerState);
 
 			base.Draw(gameTime);
+		}
+
+		void UpdateMovables(GameTime gameTime)
+		{
+			if (gameTime.FrameCount % 60 != 0)
+				return;
+
+			var map = GlobalData.VoxelMap;
+
+			foreach (var ob in m_movableManager.Movables)
+			{
+				var p = ob.Position;
+
+				foreach (var d in DirectionExtensions.CardinalDirections)
+				{
+					var n = p + d.Reverse();
+
+					if (map.Size.Contains(n) == false)
+						continue;
+
+					if (GlobalData.VoxelMap.GetVoxel(n).IsEmpty)
+					{
+						ob.Move(n);
+						break;
+					}
+				}
+			}
 		}
 	}
 }
