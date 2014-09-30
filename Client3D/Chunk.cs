@@ -45,9 +45,9 @@ namespace Client3D
 		public bool IsEmpty { get; set; }
 
 		/// <summary>
-		/// The chunk contains only undefined voxels
+		/// The chunk contains only hidden voxels
 		/// </summary>
-		public bool IsUndefined { get; set; }
+		public bool IsHidden { get; set; }
 
 		Buffer<TerrainVertex> m_vertexBuffer;
 		public int VertexCount { get; private set; }
@@ -68,10 +68,10 @@ namespace Client3D
 			var v2 = v1 + new Vector3(Chunk.CHUNK_SIZE);
 			this.BBox = new BoundingBox(v1, v2);
 
-			CheckIfEmptyOrUndefined();
+			CheckIfEmptyOrHidden();
 		}
 
-		void CheckIfEmptyOrUndefined()
+		void CheckIfEmptyOrHidden()
 		{
 			int x0 = this.ChunkOffset.X;
 			int x1 = this.ChunkOffset.X + CHUNK_SIZE - 1;
@@ -92,7 +92,7 @@ namespace Client3D
 					{
 						if (current != m_map.Grid[z, y, x].Raw)
 						{
-							this.IsUndefined = false;
+							this.IsHidden = false;
 							this.IsEmpty = false;
 							return;
 						}
@@ -102,10 +102,10 @@ namespace Client3D
 
 			Voxel vox = new Voxel() { Raw = current };
 
-			if (vox.IsUndefined)
-				this.IsUndefined = true;
-			else if (vox.IsEmpty)
+			if (vox.IsEmpty)
 				this.IsEmpty = true;
+			else if (vox.VisibleFaces == 0)
+				this.IsHidden = true;
 		}
 
 		public void Free()
@@ -204,7 +204,7 @@ namespace Client3D
 			if (chunkGrid.IsNull)
 				return;
 
-			if (this.IsUndefined)
+			if (this.IsHidden)
 			{
 				CreateUndefinedChunk(ref viewGrid, ref chunkGrid, terrainVertexList, visibleChunkFaces);
 				return;
@@ -360,13 +360,15 @@ namespace Client3D
 			baseTexture = new FaceTexture();
 			topTexture = new FaceTexture();
 
+			if (vox.VisibleFaces == 0)
+			{
+				baseTexture.Symbol1 = SymbolID.Unknown;
+				baseTexture.Color1 = GameColor.LightGray;
+				return;
+			}
+
 			switch (vox.Type)
 			{
-				case VoxelType.Undefined:
-					baseTexture.Symbol1 = SymbolID.Unknown;
-					baseTexture.Color1 = GameColor.LightGray;
-					break;
-
 				case VoxelType.Water:
 					baseTexture.Symbol1 = SymbolID.Water;
 					baseTexture.Color0 = GameColor.MediumBlue;
@@ -396,6 +398,9 @@ namespace Client3D
 						topTexture = baseTexture;
 					}
 					break;
+
+				default:
+					throw new Exception();
 			}
 		}
 

@@ -45,10 +45,8 @@ namespace Client3D
 		/// </summary>
 		public bool IsOpaque { get { return !this.IsTransparent; } }
 
-		public bool IsUndefined { get { return this.Type == VoxelType.Undefined; } }
 		public bool IsEmpty { get { return this.Type == VoxelType.Empty && this.Flags == 0; } }
 
-		public readonly static Voxel Undefined = new Voxel() { Type = VoxelType.Undefined };
 		public readonly static Voxel Empty = new Voxel() { Type = VoxelType.Empty };
 		public readonly static Voxel Rock = new Voxel() { Type = VoxelType.Rock };
 		public readonly static Voxel Water = new Voxel() { Type = VoxelType.Water };

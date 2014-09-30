@@ -92,9 +92,6 @@ namespace Client3D
 						var p = new IntVector3(x, y, z);
 
 						CheckVisibleFaces(p);
-
-						if (undefineHidden && this.Grid[z, y, x].VisibleFaces == 0)
-							this.Grid[z, y, x] = Voxel.Undefined;
 					}
 			});
 		}

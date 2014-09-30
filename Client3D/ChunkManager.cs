@@ -123,7 +123,7 @@ namespace Client3D
 			bool wasEmpty = chunk.IsEmpty;
 
 			chunk.IsEmpty = false;
-			chunk.IsUndefined = false;
+			chunk.IsHidden = false;
 
 			// update near list as it doesn't contain empty chunks
 			if (wasEmpty)
