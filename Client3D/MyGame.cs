@@ -156,13 +156,53 @@ namespace Client3D
 
 		void HandleKeyboard(KeyboardState keyboardState)
 		{
-			const float walkSpeek = 40f;
-			const float rotSpeed = MathUtil.PiOverTwo*1.5f;
-			float dTime = (float)this.gameTime.ElapsedGameTime.TotalSeconds;
-			float mul = 1f;
-
 			if (keyboardState.IsKeyDown(Keys.F4) && keyboardState.IsKeyDown(Keys.LeftAlt))
 				this.Exit();
+
+			switch (GlobalData.ControlMode)
+			{
+				case ControlMode.Fps:
+					HandleFpsKeyboard(keyboardState);
+					break;
+
+				case ControlMode.Rts:
+					HandleRtsKeyboard(keyboardState);
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			if (keyboardState.IsKeyPressed(Keys.R))
+			{
+				var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+				var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+
+				var camera = this.Services.GetService<ICameraService>();
+
+				var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+
+				VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
+					(x, y, z, vx, dir) =>
+					{
+						var l = new IntVector3(x, y, z);
+
+						if (GlobalData.VoxelMap.Size.Contains(l) == false)
+							return true;
+
+						GlobalData.VoxelMap.SetVoxel(l, Voxel.Rock);
+
+						return false;
+					});
+			}
+		}
+
+		void HandleFpsKeyboard(KeyboardState keyboardState)
+		{
+			const float walkSpeek = 40f;
+			const float rotSpeed = MathUtil.PiOverTwo * 1.5f;
+			float dTime = (float)this.gameTime.ElapsedGameTime.TotalSeconds;
+			float mul = 1f;
 
 			if (keyboardState.IsKeyDown(Keys.Shift))
 				mul = 0.2f;
@@ -191,29 +231,56 @@ namespace Client3D
 				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
 			else if (keyboardState.IsKeyDown(Keys.Right))
 				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
+		}
 
-			if (keyboardState.IsKeyPressed(Keys.R))
+		void HandleRtsKeyboard(KeyboardState keyboardState)
+		{
+			float dTime = (float)this.gameTime.ElapsedGameTime.TotalSeconds;
+			float mul = 1f;
+			const float walkSpeek = 40f;
+			const float rotSpeed = MathUtil.PiOverTwo * 1.5f;
+
+			if (keyboardState.IsKeyDown(Keys.Shift))
+				mul = 0.2f;
+
+			Vector3 v = new Vector3();
+
+			if (keyboardState.IsKeyDown(Keys.E))
+				v.Z = walkSpeek * dTime * mul;
+			else if (keyboardState.IsKeyDown(Keys.Q))
+				v.Z = -walkSpeek * dTime * mul;
+
+			if (keyboardState.IsKeyDown(Keys.W))
+				v.Y = walkSpeek * dTime * mul;
+			else if (keyboardState.IsKeyDown(Keys.S))
+				v.Y = -walkSpeek * dTime * mul;
+
+			if (keyboardState.IsKeyDown(Keys.D))
+				v.X = walkSpeek * dTime * mul;
+			else if (keyboardState.IsKeyDown(Keys.A))
+				v.X = -walkSpeek * dTime * mul;
+
+			if (!v.IsZero)
 			{
-				var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
-				var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+				m_cameraProvider.Move(v);
 
-				var camera = this.Services.GetService<ICameraService>();
-
-				var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
-
-				VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
-					(x, y, z, vx, dir) =>
-					{
-						var l = new IntVector3(x, y, z);
-
-						if (GlobalData.VoxelMap.Size.Contains(l) == false)
-							return true;
-
-						GlobalData.VoxelMap.SetVoxel(l, Voxel.Rock);
-
-						return false;
-					});
+				if (GlobalData.AlignViewGridToCamera && v.Z != 0)
+				{
+					var c = this.TerrainRenderer.ViewCorner2;
+					c.Z = (int)m_cameraProvider.Position.Z - 32;
+					this.TerrainRenderer.ViewCorner2 = c;
+				}
 			}
+
+			if (keyboardState.IsKeyDown(Keys.Up))
+				m_cameraProvider.Pitch(-rotSpeed * dTime * mul);
+			else if (keyboardState.IsKeyDown(Keys.Down))
+				m_cameraProvider.Pitch(rotSpeed * dTime * mul);
+
+			if (keyboardState.IsKeyDown(Keys.Left))
+				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
+			else if (keyboardState.IsKeyDown(Keys.Right))
+				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
 		}
 
 		protected override void Update(GameTime gameTime)

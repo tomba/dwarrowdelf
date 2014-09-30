@@ -85,6 +85,23 @@ namespace Client3D
 			m_frustumDirty = true;
 		}
 
+		public void Move(Vector3 v)
+		{
+			var vy = m_look;
+			vy.Z = 0;
+			vy.Normalize();
+
+			var vx = m_right;
+			vx.Z = 0;
+			vx.Normalize();
+
+			var vz = new Vector3(0, 0, 1);
+
+			m_position += v.X * vx + v.Y * vy + v.Z * vz;
+			m_viewDirty = true;
+			m_frustumDirty = true;
+		}
+
 		public void Strafe(float d)
 		{
 			m_position += m_right * d;
