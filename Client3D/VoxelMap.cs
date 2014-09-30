@@ -100,17 +100,15 @@ namespace Client3D
 		{
 			this.Grid[p.Z, p.Y, p.X].VisibleFaces = 0;
 
-			foreach (var v in IntVector3.CardinalUpDownDirections)
+			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
 			{
-				var n = p + v;
+				var n = p + dir;
 
 				if (this.Size.Contains(n) == false)
 					continue;
 
 				if (this.Grid[n.Z, n.Y, n.X].IsOpaque)
 					continue;
-
-				var dir = (n - p).ToDirection();
 
 				this.Grid[p.Z, p.Y, p.X].VisibleFaces |= dir.ToFaceDirectionBits();
 			}
