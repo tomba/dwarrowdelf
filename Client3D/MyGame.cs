@@ -59,19 +59,30 @@ namespace Client3D
 
 			if (newmap == false && System.IO.File.Exists(mapname))
 			{
+				var sw = Stopwatch.StartNew();
 				map = VoxelMap.Load(mapname);
+				sw.Stop();
+				Trace.TraceInformation("load map {0} ms", sw.ElapsedMilliseconds);
 			}
 			else
 			{
+				var sw = Stopwatch.StartNew();
+
 				//map = VoxelMap.CreateFromTileData(new GameMap().Grid);
 				//map = VoxelMap.CreateBallMap(32, 16);
+				//map = VoxelMap.CreateCubeMap(32, 1);
 				map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
-
 
 				map.UndefineHiddenVoxels();
 				map.CheckVisibleFaces();
 
+				sw.Stop();
+				Trace.TraceInformation("create map {0} ms", sw.ElapsedMilliseconds);
+
+				sw = Stopwatch.StartNew();
 				map.Save(mapname);
+				sw.Stop();
+				Trace.TraceInformation("save map {0} ms", sw.ElapsedMilliseconds);
 			}
 
 			return map;
