@@ -166,6 +166,11 @@ namespace Dwarrowdelf
 			return new IntVector3(left.X + right.X, left.Y + right.Y, left.Z);
 		}
 
+		public static IntVector3 operator -(IntVector3 v)
+		{
+			return new IntVector3(-v.X, -v.Y, -v.Z);
+		}
+
 		public static IntVector3 operator -(IntVector3 left, IntVector3 right)
 		{
 			return new IntVector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
