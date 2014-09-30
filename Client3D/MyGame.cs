@@ -73,8 +73,7 @@ namespace Client3D
 				//map = VoxelMap.CreateCubeMap(32, 1);
 				map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
 
-				map.UndefineHiddenVoxels();
-				map.CheckVisibleFaces();
+				map.CheckVisibleFaces(true);
 
 				sw.Stop();
 				Trace.TraceInformation("create map {0} ms", sw.ElapsedMilliseconds);

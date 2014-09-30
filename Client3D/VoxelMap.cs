@@ -80,7 +80,7 @@ namespace Client3D
 			return this.Grid[p.Z, p.Y, p.X];
 		}
 
-		public void CheckVisibleFaces()
+		public void CheckVisibleFaces(bool undefineHidden)
 		{
 			var grid = this.Grid;
 
@@ -92,6 +92,9 @@ namespace Client3D
 						var p = new IntVector3(x, y, z);
 
 						CheckVisibleFaces(p);
+
+						if (undefineHidden && this.Grid[z, y, x].VisibleFaces == 0)
+							this.Grid[z, y, x] = Voxel.Undefined;
 					}
 			});
 		}
@@ -111,74 +114,6 @@ namespace Client3D
 					continue;
 
 				this.Grid[p.Z, p.Y, p.X].VisibleFaces |= dir.ToFaceDirectionBits();
-			}
-		}
-
-		public void UndefineHiddenVoxels()
-		{
-			var size = this.Size;
-
-			var visibilityArray = new bool[size.Depth, size.Height, size.Width];
-
-			for (int z = size.Depth - 1; z >= 0; --z)
-			{
-				bool lvlIsHidden = true;
-
-				Parallel.For(0, size.Height, y =>
-				{
-					for (int x = 0; x < size.Width; ++x)
-					{
-						bool visible;
-
-						// Air tiles are always visible
-						if (this.Grid[z, y, x].IsTransparent)
-						{
-							visible = true;
-						}
-						else
-						{
-							var p = new IntVector3(x, y, z);
-							visible = false;
-							foreach (var v in IntVector3.AllDirections)
-							{
-								var n = p + v;
-
-								if (this.Size.Contains(n) == false)
-									continue;
-
-								if (this.Grid[n.Z, n.Y, n.X].IsTransparent)
-								{
-									visible = true;
-									break;
-								}
-							}
-						}
-
-						if (visible)
-						{
-							lvlIsHidden = false;
-							visibilityArray[z, y, x] = true;
-						}
-					}
-				});
-
-				// if the whole level is not visible, the levels below cannot be seen either
-				if (lvlIsHidden)
-					break;
-			}
-
-			for (int z = this.Depth - 1; z >= 0; --z)
-			{
-				Parallel.For(0, this.Height, y =>
-				{
-					for (int x = 0; x < this.Width; ++x)
-					{
-						if (visibilityArray[z, y, x] == false)
-						{
-							this.Grid[z, y, x] = Voxel.Undefined;
-						}
-					}
-				});
 			}
 		}
 
