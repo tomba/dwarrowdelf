@@ -54,7 +54,7 @@ namespace Client3D
 
 			m_chunkManager.Initialize();
 
-			var viewGridProvider = this.Game.Services.GetService<ViewGridProvider>();
+			var viewGridProvider = this.Services.GetService<ViewGridProvider>();
 			viewGridProvider.ViewGridCornerChanged += (oldValue, newValue) =>
 			{
 				var diff = newValue - oldValue;

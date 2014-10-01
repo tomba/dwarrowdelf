@@ -34,7 +34,7 @@ namespace Client3D
 
 			var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
 
-			var viewGrid = this.Game.Services.GetService<ViewGridProvider>();
+			var viewGrid = this.Services.GetService<ViewGridProvider>();
 
 			form.KeyPress += (s, e) =>
 			{
@@ -174,7 +174,7 @@ namespace Client3D
 
 				if (GlobalData.AlignViewGridToCamera && v.Z != 0)
 				{
-					var viewGrid = this.Game.Services.GetService<ViewGridProvider>();
+					var viewGrid = this.Services.GetService<ViewGridProvider>();
 
 					var c = viewGrid.ViewCorner2;
 					c.Z = (int)m_cameraProvider.Position.Z - 32;

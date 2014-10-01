@@ -49,7 +49,7 @@ namespace Client3D
 			base.Initialize();
 
 			// get the camera service from service registry
-			m_cameraService = Services.GetService<CameraProvider>();
+			m_cameraService = this.Services.GetService<CameraProvider>();
 		}
 
 		/// <summary>
