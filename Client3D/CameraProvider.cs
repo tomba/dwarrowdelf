@@ -7,7 +7,7 @@ namespace Client3D
 	/// <summary>
 	/// Component responsible for camera updates
 	/// </summary>
-	sealed class CameraProvider : ICameraService
+	sealed class CameraProvider
 	{
 		// Camera coordinate system with coordinates relative to world space
 		public Vector3 Position { get { return m_position; } }
@@ -51,7 +51,7 @@ namespace Client3D
 			//LookAt(new Vector3(-2, 0, 5), new Vector3(0, 0, 0), Vector3.UnitZ);
 
 			// add this system in the list of services
-			game.Services.AddService(typeof(ICameraService), this);
+			game.Services.AddService(typeof(CameraProvider), this);
 		}
 
 		public void SetAspect(float aspect)

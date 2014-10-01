@@ -9,7 +9,7 @@ namespace Client3D
 	/// </summary>
 	sealed class SceneRenderer : GameSystem
 	{
-		ICameraService m_cameraService;
+		CameraProvider m_cameraService;
 
 		GeometricPrimitive m_cube;
 		Texture2D m_cubeTexture;
@@ -49,7 +49,7 @@ namespace Client3D
 			base.Initialize();
 
 			// get the camera service from service registry
-			m_cameraService = Services.GetService<ICameraService>();
+			m_cameraService = Services.GetService<CameraProvider>();
 		}
 
 		/// <summary>

@@ -54,7 +54,7 @@ namespace Client3D
 		/// </summary>
 		public IntSize3 Size { get; private set; }
 
-		ICameraService m_camera;
+		CameraProvider m_camera;
 
 		bool m_forceNearListUpdate;
 		bool m_forceDrawListUpdate;
@@ -102,7 +102,7 @@ namespace Client3D
 
 		public void Initialize()
 		{
-			m_camera = m_scene.Services.GetService<ICameraService>();
+			m_camera = m_scene.Services.GetService<CameraProvider>();
 
 			m_cameraPos = m_camera.Position;
 			m_cameraLook = m_camera.Look;

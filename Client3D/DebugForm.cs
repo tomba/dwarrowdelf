@@ -133,7 +133,7 @@ namespace Client3D
 
 		void timer_Tick(object sender, EventArgs e)
 		{
-			var cam = m_scene.Services.GetService<ICameraService>();
+			var cam = m_scene.Services.GetService<CameraProvider>();
 
 			var campos = cam.Position;
 			var chunkpos = (campos / Chunk.CHUNK_SIZE).ToFloorIntVector3();

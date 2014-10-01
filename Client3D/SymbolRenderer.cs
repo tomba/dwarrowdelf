@@ -103,7 +103,7 @@ namespace Client3D
 
 			var device = this.GraphicsDevice;
 
-			var camera = this.Services.GetService<ICameraService>();
+			var camera = this.Services.GetService<CameraProvider>();
 
 			m_effect.EyePos = camera.Position;
 			m_effect.ViewProjection = camera.View * camera.Projection;

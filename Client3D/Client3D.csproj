@@ -107,7 +107,6 @@
       <DependentUpon>DebugForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalData.cs" />
-    <Compile Include="ICameraService.cs" />
     <Compile Include="KeyboardHandler.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MovableManager.cs" />

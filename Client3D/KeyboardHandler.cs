@@ -14,7 +14,7 @@ namespace Client3D
 	{
 		readonly KeyboardManager m_keyboardManager;
 
-		ICameraService m_cameraProvider;
+		CameraProvider m_cameraProvider;
 
 		public KeyboardHandler(Game game)
 			: base(game)
@@ -23,7 +23,7 @@ namespace Client3D
 
 			m_keyboardManager = new KeyboardManager(game);
 
-			m_cameraProvider = this.Services.GetService<ICameraService>();
+			m_cameraProvider = this.Services.GetService<CameraProvider>();
 
 			game.GameSystems.Add(this);
 		}
@@ -84,7 +84,7 @@ namespace Client3D
 				var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
 				var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
 
-				var camera = this.Services.GetService<ICameraService>();
+				var camera = this.Services.GetService<CameraProvider>();
 
 				var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
 

@@ -7,7 +7,7 @@ namespace Client3D
 {
 	sealed class TestRenderer : GameSystem
 	{
-		ICameraService m_cameraService;
+		CameraProvider m_cameraService;
 
 		Effect m_effect;
 
@@ -27,7 +27,7 @@ namespace Client3D
 		{
 			base.Initialize();
 
-			m_cameraService = Services.GetService<ICameraService>();
+			m_cameraService = Services.GetService<CameraProvider>();
 		}
 
 		protected override void LoadContent()
