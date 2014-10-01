@@ -44,6 +44,7 @@ namespace Client3D
 			m_timer.Start();
 
 			var viewGridProvider = game.Services.GetService<ViewGridProvider>();
+			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
 
 			this.viewCorner1TextBox.Text = viewGridProvider.ViewCorner1.ToString();
 			this.viewCorner2TextBox.Text = viewGridProvider.ViewCorner2.ToString();
@@ -98,6 +99,17 @@ namespace Client3D
 			this.checkBox4.CheckedChanged += (s, e) => m_scene.Effect.DisableLight = checkBox4.Checked;
 			this.checkBox5.CheckedChanged += (s, e) => m_scene.Effect.DisableOcclusion = checkBox5.Checked;
 			this.checkBox7.CheckedChanged += (s, e) => m_scene.Effect.DisableTexture = checkBox7.Checked;
+		}
+
+		void OnViewGridCornerChanged(Dwarrowdelf.IntVector3 arg1, Dwarrowdelf.IntVector3 arg2)
+		{
+			var viewGridProvider = m_game.Services.GetService<ViewGridProvider>();
+
+			this.zCutTrackBar.Value = viewGridProvider.ViewCorner2.Z;
+			this.xnCutTrackBar.Value = viewGridProvider.ViewCorner1.X;
+			this.xpCutTrackBar.Value = viewGridProvider.ViewCorner2.X;
+			this.ynCutTrackBar.Value = viewGridProvider.ViewCorner1.Y;
+			this.ypCutTrackBar.Value = viewGridProvider.ViewCorner2.Y;
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
