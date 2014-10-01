@@ -307,11 +307,14 @@ namespace Client3D
 
 			var task = Task.Run(() =>
 			{
+				var viewGridProvider = m_scene.Services.GetService<ViewGridProvider>();
+				IntGrid3 viewGrid = viewGridProvider.ViewGrid;
+
 				Parallel.ForEach(m_rebuildList, chunk =>
 				{
 					var cacheItem = m_vertexCacheStack.Take();
 
-					chunk.GenerateVertices(m_scene, cameraChunkPos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
+					chunk.GenerateVertices(ref viewGrid, cameraChunkPos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
 
 					cacheItem.Chunk = chunk;
 					m_vertexCacheQueue.Add(cacheItem);

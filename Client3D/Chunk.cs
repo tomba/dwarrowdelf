@@ -165,7 +165,7 @@ namespace Client3D
 			device.Draw(PrimitiveType.PointList, this.SceneryVertexCount);
 		}
 
-		public void GenerateVertices(TerrainRenderer scene, IntVector3 cameraChunkPos,
+		public void GenerateVertices(ref IntGrid3 viewGrid, IntVector3 cameraChunkPos,
 			VertexList<TerrainVertex> terrainVertexList, VertexList<SceneryVertex> sceneryVertexList)
 		{
 			terrainVertexList.Clear();
@@ -187,18 +187,16 @@ namespace Client3D
 			if (diff.Z <= 0)
 				visibleChunkFaces |= FaceDirectionBits.NegativeZ;
 
-			GenerateVertices(scene, visibleChunkFaces, terrainVertexList, sceneryVertexList);
+			GenerateVertices(ref viewGrid, visibleChunkFaces, terrainVertexList, sceneryVertexList);
 
 			this.VertexCount = terrainVertexList.Count;
 			this.SceneryVertexCount = sceneryVertexList.Count;
 		}
 
-		void GenerateVertices(TerrainRenderer scene, FaceDirectionBits visibleChunkFaces,
+		void GenerateVertices(ref IntGrid3 viewGrid, FaceDirectionBits visibleChunkFaces,
 			VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
-			var viewGridProvider = scene.Game.Services.GetService<ViewGridProvider>();
-			IntGrid3 viewGrid = viewGridProvider.ViewGrid;
 			IntGrid3 chunkGrid = viewGrid.Intersect(new IntGrid3(this.ChunkOffset, Chunk.ChunkSize));
 
 			// is the chunk inside frustum, but outside the viewgrid?
