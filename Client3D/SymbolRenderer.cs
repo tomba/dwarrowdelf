@@ -43,6 +43,9 @@ namespace Client3D
 		public override void Initialize()
 		{
 			base.Initialize();
+
+			this.Services.GetService<ViewGridProvider>().ViewGridCornerChanged +=
+				(oldValue, newValue) => m_invalid = true;
 		}
 
 		protected override void LoadContent()
@@ -62,10 +65,15 @@ namespace Client3D
 
 		void UpdateVertexBuffer()
 		{
+			IntGrid3 viewGrid = this.Services.GetService<ViewGridProvider>().ViewGrid;
+
 			var vertices = new VertexList<SceneryVertex>(m_manager.Movables.Count);
 
 			foreach (var m in m_manager.Movables)
 			{
+				if (viewGrid.Contains(m.Position) == false)
+					continue;
+
 				vertices.Add(new SceneryVertex(m.Position.ToVector3(), ToColor(m.Color), (uint)m.SymbolID));
 			}
 
