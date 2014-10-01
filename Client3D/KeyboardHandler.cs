@@ -33,31 +33,80 @@ namespace Client3D
 			base.Initialize();
 
 			var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
+			form.KeyPress += OnKeyPress;
+		}
 
+		void OnKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+		{
 			var viewGrid = this.Services.GetService<ViewGridProvider>();
 
-			form.KeyPress += (s, e) =>
+			switch (e.KeyChar)
 			{
-				switch (e.KeyChar)
-				{
-					case '>':
-						viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Down;
-						break;
-					case '<':
-						viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
-						break;
-					case '1':
-						m_cameraProvider.LookAt(m_cameraProvider.Position,
-							m_cameraProvider.Position + new Vector3(0, -1, -10),
-							Vector3.UnitZ);
-						break;
-					case '2':
-						m_cameraProvider.LookAt(m_cameraProvider.Position,
-							m_cameraProvider.Position + new Vector3(1, 1, -1),
-							Vector3.UnitZ);
-						break;
-				}
-			};
+				case '>':
+					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Down;
+					break;
+				case '<':
+					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
+					break;
+				case '1':
+					m_cameraProvider.LookAt(m_cameraProvider.Position,
+						m_cameraProvider.Position + new Vector3(0, -1, -10),
+						Vector3.UnitZ);
+					break;
+				case '2':
+					m_cameraProvider.LookAt(m_cameraProvider.Position,
+						m_cameraProvider.Position + new Vector3(1, 1, -1),
+						Vector3.UnitZ);
+					break;
+
+				case 'r':
+					{
+						var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
+						var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+
+						var camera = this.Services.GetService<CameraProvider>();
+
+						var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+
+						VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
+							(x, y, z, vx, dir) =>
+							{
+								var l = new IntVector3(x, y, z);
+
+								if (GlobalData.VoxelMap.Size.Contains(l) == false)
+									return true;
+
+								GlobalData.VoxelMap.SetVoxel(l, Voxel.Rock);
+
+								return false;
+							});
+					}
+					break;
+
+				case 'z':
+					{
+						var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
+						var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+
+						var camera = this.Services.GetService<CameraProvider>();
+
+						var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+
+						VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
+							(x, y, z, vx, dir) =>
+							{
+								var l = new IntVector3(x, y, z);
+
+								if (vx.IsEmpty)
+									return false;
+
+								GlobalData.VoxelMap.SetVoxel(l, Voxel.Empty);
+
+								return true;
+							});
+					}
+					break;
+			}
 		}
 
 		public override void Update(GameTime gameTime)
@@ -79,52 +128,6 @@ namespace Client3D
 
 				default:
 					throw new Exception();
-			}
-
-			if (keyboardState.IsKeyPressed(Keys.R))
-			{
-				var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
-				var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
-
-				var camera = this.Services.GetService<CameraProvider>();
-
-				var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
-
-				VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
-					(x, y, z, vx, dir) =>
-					{
-						var l = new IntVector3(x, y, z);
-
-						if (GlobalData.VoxelMap.Size.Contains(l) == false)
-							return true;
-
-						GlobalData.VoxelMap.SetVoxel(l, Voxel.Rock);
-
-						return false;
-					});
-			}
-
-			if (keyboardState.IsKeyPressed(Keys.Z))
-			{
-				var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
-				var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
-
-				var camera = this.Services.GetService<CameraProvider>();
-
-				var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
-
-				VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
-					(x, y, z, vx, dir) =>
-					{
-						var l = new IntVector3(x, y, z);
-
-						if (vx.IsEmpty)
-							return false;
-
-						GlobalData.VoxelMap.SetVoxel(l, Voxel.Empty);
-
-						return true;
-					});
 			}
 		}
 
