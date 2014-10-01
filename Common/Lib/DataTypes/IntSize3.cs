@@ -103,6 +103,11 @@ namespace Dwarrowdelf
 			return Hash.Hash3D(this.Width, this.Height, this.Depth);
 		}
 
+		public IntVector3 ToIntVector3()
+		{
+			return new IntVector3(m_width, m_height, m_depth);
+		}
+
 		public override string ToString()
 		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
