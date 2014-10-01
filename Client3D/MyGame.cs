@@ -54,6 +54,17 @@ namespace Client3D
 			m_fpsClock = new Stopwatch();
 
 			AddMovables();
+
+			var pos = GlobalData.VoxelMap.Size.ToIntVector3().ToVector3();
+			pos.X /= 2;
+			pos.Y /= 2;
+			pos.Z += 10;
+
+			var target = new Vector3(0, 0, 0);
+
+			//pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
+
+			m_cameraProvider.LookAt(pos, target, Vector3.UnitZ);
 		}
 
 		void AddMovables()
