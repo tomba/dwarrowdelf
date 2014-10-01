@@ -197,7 +197,8 @@ namespace Client3D
 			VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
-			IntGrid3 viewGrid = scene.ViewGrid;
+			var viewGridProvider = scene.Game.Services.GetService<ViewGridProvider>();
+			IntGrid3 viewGrid = viewGridProvider.ViewGrid;
 			IntGrid3 chunkGrid = viewGrid.Intersect(new IntGrid3(this.ChunkOffset, Chunk.ChunkSize));
 
 			// is the chunk inside frustum, but outside the viewgrid?

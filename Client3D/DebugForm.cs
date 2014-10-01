@@ -17,10 +17,10 @@ namespace Client3D
 		TerrainRenderer m_scene;
 		Timer m_timer;
 
-		public DebugForm(MyGame game)
+		public DebugForm(MyGame game, TerrainRenderer terrainRenderer)
 		{
 			m_game = game;
-			m_scene = game.TerrainRenderer;
+			m_scene = terrainRenderer;
 
 			InitializeComponent();
 
@@ -43,53 +43,55 @@ namespace Client3D
 			m_timer.Interval = 1000;
 			m_timer.Start();
 
-			this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
-			this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
+			var viewGridProvider = game.Services.GetService<ViewGridProvider>();
+
+			this.viewCorner1TextBox.Text = viewGridProvider.ViewCorner1.ToString();
+			this.viewCorner2TextBox.Text = viewGridProvider.ViewCorner2.ToString();
 
 			var map = GlobalData.VoxelMap;
 
 			this.zCutTrackBar.Maximum = map.Depth - 1;
-			this.zCutTrackBar.Value = m_scene.ViewCorner2.Z;
+			this.zCutTrackBar.Value = viewGridProvider.ViewCorner2.Z;
 			this.zCutTrackBar.ValueChanged += (s, e) =>
 			{
-				m_scene.ViewCorner2 = m_scene.ViewCorner2.SetZ(this.zCutTrackBar.Value);
-				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
+				viewGridProvider.ViewCorner2 = viewGridProvider.ViewCorner2.SetZ(this.zCutTrackBar.Value);
+				this.viewCorner2TextBox.Text = viewGridProvider.ViewCorner2.ToString();
 			};
 
 			this.xnCutTrackBar.Maximum = map.Width - 1;
-			this.xnCutTrackBar.Value = m_scene.ViewCorner1.X;
+			this.xnCutTrackBar.Value = viewGridProvider.ViewCorner1.X;
 			this.xnCutTrackBar.ValueChanged += (s, e) =>
 			{
-				m_scene.ViewCorner1 = m_scene.ViewCorner1.SetX(this.xnCutTrackBar.Value);
-				this.xnCutTrackBar.Value = m_scene.ViewCorner1.X;
-				this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
+				viewGridProvider.ViewCorner1 = viewGridProvider.ViewCorner1.SetX(this.xnCutTrackBar.Value);
+				this.xnCutTrackBar.Value = viewGridProvider.ViewCorner1.X;
+				this.viewCorner1TextBox.Text = viewGridProvider.ViewCorner1.ToString();
 			};
 
 			this.xpCutTrackBar.Maximum = map.Width - 1;
-			this.xpCutTrackBar.Value = m_scene.ViewCorner2.X;
+			this.xpCutTrackBar.Value = viewGridProvider.ViewCorner2.X;
 			this.xpCutTrackBar.ValueChanged += (s, e) =>
 			{
-				m_scene.ViewCorner2 = m_scene.ViewCorner2.SetX(this.xpCutTrackBar.Value);
-				this.xpCutTrackBar.Value = m_scene.ViewCorner2.X;
-				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
+				viewGridProvider.ViewCorner2 = viewGridProvider.ViewCorner2.SetX(this.xpCutTrackBar.Value);
+				this.xpCutTrackBar.Value = viewGridProvider.ViewCorner2.X;
+				this.viewCorner2TextBox.Text = viewGridProvider.ViewCorner2.ToString();
 			};
 
 			this.ynCutTrackBar.Maximum = map.Width - 1;
-			this.ynCutTrackBar.Value = m_scene.ViewCorner1.Y;
+			this.ynCutTrackBar.Value = viewGridProvider.ViewCorner1.Y;
 			this.ynCutTrackBar.ValueChanged += (s, e) =>
 			{
-				m_scene.ViewCorner1 = m_scene.ViewCorner1.SetY(this.ynCutTrackBar.Value);
-				this.ynCutTrackBar.Value = m_scene.ViewCorner1.Y;
-				this.viewCorner1TextBox.Text = m_scene.ViewCorner1.ToString();
+				viewGridProvider.ViewCorner1 = viewGridProvider.ViewCorner1.SetY(this.ynCutTrackBar.Value);
+				this.ynCutTrackBar.Value = viewGridProvider.ViewCorner1.Y;
+				this.viewCorner1TextBox.Text = viewGridProvider.ViewCorner1.ToString();
 			};
 
 			this.ypCutTrackBar.Maximum = map.Height - 1;
-			this.ypCutTrackBar.Value = m_scene.ViewCorner2.Y;
+			this.ypCutTrackBar.Value = viewGridProvider.ViewCorner2.Y;
 			this.ypCutTrackBar.ValueChanged += (s, e) =>
 			{
-				m_scene.ViewCorner2 = m_scene.ViewCorner2.SetY(this.ypCutTrackBar.Value);
-				this.ypCutTrackBar.Value = m_scene.ViewCorner2.Y;
-				this.viewCorner2TextBox.Text = m_scene.ViewCorner2.ToString();
+				viewGridProvider.ViewCorner2 = viewGridProvider.ViewCorner2.SetY(this.ypCutTrackBar.Value);
+				this.ypCutTrackBar.Value = viewGridProvider.ViewCorner2.Y;
+				this.viewCorner2TextBox.Text = viewGridProvider.ViewCorner2.ToString();
 			};
 
 			this.checkBox3.CheckedChanged += (s, e) => m_scene.Effect.DisableBorders = checkBox3.Checked;

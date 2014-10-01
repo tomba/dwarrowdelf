@@ -34,15 +34,17 @@ namespace Client3D
 
 			var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
 
+			var viewGrid = this.Game.Services.GetService<ViewGridProvider>();
+
 			form.KeyPress += (s, e) =>
 			{
 				switch (e.KeyChar)
 				{
 					case '>':
-						((MyGame)this.Game).TerrainRenderer.ViewCorner2 = ((MyGame)this.Game).TerrainRenderer.ViewCorner2 + Direction.Down;
+						viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Down;
 						break;
 					case '<':
-						((MyGame)this.Game).TerrainRenderer.ViewCorner2 = ((MyGame)this.Game).TerrainRenderer.ViewCorner2 + Direction.Up;
+						viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
 						break;
 					case '1':
 						m_cameraProvider.LookAt(m_cameraProvider.Position,
@@ -172,9 +174,11 @@ namespace Client3D
 
 				if (GlobalData.AlignViewGridToCamera && v.Z != 0)
 				{
-					var c = ((MyGame)this.Game).TerrainRenderer.ViewCorner2;
+					var viewGrid = this.Game.Services.GetService<ViewGridProvider>();
+
+					var c = viewGrid.ViewCorner2;
 					c.Z = (int)m_cameraProvider.Position.Z - 32;
-					((MyGame)this.Game).TerrainRenderer.ViewCorner2 = c;
+					viewGrid.ViewCorner2 = c;
 				}
 			}
 

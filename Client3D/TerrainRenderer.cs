@@ -35,11 +35,6 @@ namespace Client3D
 			this.Visible = true;
 			this.Enabled = true;
 
-			var map = GlobalData.VoxelMap;
-
-			m_viewCorner1 = new IntVector3(0, 0, 0);
-			m_viewCorner2 = new IntVector3(map.Width - 1, map.Height - 1, map.Depth - 1);
-
 			m_directionalLight = new DirectionalLight()
 			{
 				AmbientColor = new Vector3(0.4f),
@@ -58,6 +53,21 @@ namespace Client3D
 			base.Initialize();
 
 			m_chunkManager.Initialize();
+
+			var viewGridProvider = this.Game.Services.GetService<ViewGridProvider>();
+			viewGridProvider.ViewGridCornerChanged += (oldValue, newValue) =>
+			{
+				var diff = newValue - oldValue;
+
+				if (diff.X == 0 && diff.Y == 0)
+				{
+					m_chunkManager.InvalidateChunksZ(Math.Min(oldValue.Z, newValue.Z), Math.Max(oldValue.Z, newValue.Z));
+				}
+				else
+				{
+					m_chunkManager.InvalidateChunks();
+				}
+			};
 		}
 
 		protected override void LoadContent()
@@ -133,72 +143,6 @@ namespace Client3D
 				m_chunkManager.DrawTrees();
 			}
 		}
-
-		IntVector3 m_viewCorner1;
-		public IntVector3 ViewCorner1
-		{
-			get { return m_viewCorner1; }
-
-			set
-			{
-				if (value == m_viewCorner1)
-					return;
-
-				if (GlobalData.VoxelMap.Size.Contains(value) == false)
-					return;
-
-				if (value.X > m_viewCorner2.X || value.Y > m_viewCorner2.Y || value.Z > m_viewCorner2.Z)
-					return;
-
-				var old = m_viewCorner1;
-				m_viewCorner1 = value;
-
-				var diff = value - old;
-
-				if (diff.X == 0 && diff.Y == 0)
-				{
-					m_chunkManager.InvalidateChunksZ(Math.Min(old.Z, value.Z), Math.Max(old.Z, value.Z));
-				}
-				else
-				{
-					m_chunkManager.InvalidateChunks();
-				}
-			}
-		}
-
-		IntVector3 m_viewCorner2;
-		public IntVector3 ViewCorner2
-		{
-			get { return m_viewCorner2; }
-
-			set
-			{
-				if (value == m_viewCorner2)
-					return;
-
-				if (GlobalData.VoxelMap.Size.Contains(value) == false)
-					return;
-
-				if (value.X < m_viewCorner1.X || value.Y < m_viewCorner1.Y || value.Z < m_viewCorner1.Z)
-					return;
-
-				var old = m_viewCorner2;
-				m_viewCorner2 = value;
-
-				var diff = value - old;
-
-				if (diff.X == 0 && diff.Y == 0)
-				{
-					m_chunkManager.InvalidateChunksZ(Math.Min(old.Z, value.Z), Math.Max(old.Z, value.Z));
-				}
-				else
-				{
-					m_chunkManager.InvalidateChunks();
-				}
-			}
-		}
-
-		public IntGrid3 ViewGrid { get { return new IntGrid3(m_viewCorner1, m_viewCorner2); } }
 
 		public IntVector2? ClickPos;
 

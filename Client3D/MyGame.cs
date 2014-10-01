@@ -18,6 +18,7 @@ namespace Client3D
 		readonly SceneRenderer m_sceneRenderer;
 		readonly CameraProvider m_cameraProvider;
 		readonly KeyboardHandler m_keyboardHandler;
+		readonly ViewGridProvider m_viewGridProvider;
 		readonly TerrainRenderer m_terrainRenderer;
 		readonly TestRenderer m_testRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
@@ -26,7 +27,6 @@ namespace Client3D
 		readonly Stopwatch m_fpsClock;
 
 		public GraphicsDeviceManager GraphicsDeviceManager { get { return m_graphicsDeviceManager; } }
-		public TerrainRenderer TerrainRenderer { get { return m_terrainRenderer; } }
 
 		public RasterizerState RasterizerState { get; set; }
 
@@ -42,6 +42,7 @@ namespace Client3D
 			m_cameraProvider = new CameraProvider(this);
 			m_keyboardHandler = new KeyboardHandler(this);
 
+			m_viewGridProvider = new ViewGridProvider(this);
 			m_terrainRenderer = new TerrainRenderer(this);
 			m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
 
@@ -133,7 +134,7 @@ namespace Client3D
 					m_terrainRenderer.ClickPos = new Dwarrowdelf.IntVector2(e.X, e.Y);
 			};
 
-			var debugForm = new DebugForm(this);
+			var debugForm = new DebugForm(this, m_terrainRenderer);
 			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
 			debugForm.Show();
 		}
