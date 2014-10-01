@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Forms = System.Windows.Forms;
 
 namespace Client3D
 {
@@ -34,6 +35,56 @@ namespace Client3D
 
 			var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
 			form.KeyPress += OnKeyPress;
+			form.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+			var viewGrid = this.Services.GetService<ViewGridProvider>();
+
+			bool handled = true;
+
+			switch (e.KeyData)
+			{
+				case Forms.Keys.NumPad4:
+					viewGrid.ViewCorner1 += Direction.West;
+					break;
+
+				case Forms.Keys.NumPad6:
+					viewGrid.ViewCorner1 += Direction.East;
+					break;
+
+				case Forms.Keys.NumPad4 | Forms.Keys.Control:
+					viewGrid.ViewCorner2 += Direction.West;
+					break;
+
+				case Forms.Keys.NumPad6| Forms.Keys.Control:
+					viewGrid.ViewCorner2 += Direction.East;
+					break;
+
+				case Forms.Keys.NumPad8:
+					viewGrid.ViewCorner1 += Direction.North;
+					break;
+
+				case Forms.Keys.NumPad2:
+					viewGrid.ViewCorner1 += Direction.South;
+					break;
+
+				case Forms.Keys.NumPad8 | Forms.Keys.Control:
+					viewGrid.ViewCorner2 += Direction.North;
+					break;
+
+				case Forms.Keys.NumPad2 | Forms.Keys.Control:
+					viewGrid.ViewCorner2 += Direction.South;
+					break;
+
+				default:
+					handled = false;
+					break;
+			}
+
+			e.Handled = handled;
+			e.SuppressKeyPress = handled;
 		}
 
 		void OnKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
