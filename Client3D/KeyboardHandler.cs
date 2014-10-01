@@ -103,6 +103,29 @@ namespace Client3D
 						return false;
 					});
 			}
+
+			if (keyboardState.IsKeyPressed(Keys.Z))
+			{
+				var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
+				var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+
+				var camera = this.Services.GetService<CameraProvider>();
+
+				var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+
+				VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
+					(x, y, z, vx, dir) =>
+					{
+						var l = new IntVector3(x, y, z);
+
+						if (vx.IsEmpty)
+							return false;
+
+						GlobalData.VoxelMap.SetVoxel(l, Voxel.Empty);
+
+						return true;
+					});
+			}
 		}
 
 		void HandleFpsKeyboard(GameTime gameTime, KeyboardState keyboardState)
