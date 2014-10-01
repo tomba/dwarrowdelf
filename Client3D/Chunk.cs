@@ -608,7 +608,7 @@ namespace Client3D
 			CreateFaceInfo(Direction.South, Direction.Up, Direction.East),
 			CreateFaceInfo(Direction.North, Direction.Up, Direction.West),
 			CreateFaceInfo(Direction.Up, Direction.North, Direction.East),
-			CreateFaceInfo(Direction.Down, Direction.North, Direction.East),
+			CreateFaceInfo(Direction.Down, Direction.North, Direction.West),
 		};
 
 		class CubeFaceInfo
