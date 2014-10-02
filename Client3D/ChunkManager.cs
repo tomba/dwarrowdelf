@@ -391,6 +391,9 @@ namespace Client3D
 
 			foreach (var chunk in m_drawList)
 			{
+				if (chunk.VertexCount == 0)
+					continue;
+
 				m_scene.Effect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
 				chunk.DrawTerrain(device);
@@ -407,6 +410,9 @@ namespace Client3D
 
 			foreach (var chunk in m_drawList)
 			{
+				if (chunk.SceneryVertexCount == 0)
+					continue;
+
 				m_scene.SymbolEffect.SetPerObjectConstBuf(chunk.ChunkOffset);
 
 				chunk.DrawTrees(device);
