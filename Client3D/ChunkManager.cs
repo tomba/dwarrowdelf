@@ -315,8 +315,17 @@ namespace Client3D
 
 					chunk.GenerateVertices(ref viewGrid, cameraChunkPos, cacheItem.TerrainVertexList, cacheItem.SceneryVertexList);
 
-					cacheItem.Chunk = chunk;
-					m_vertexCacheQueue.Add(cacheItem);
+					if (chunk.VertexCount == 0 && chunk.SceneryVertexCount == 0)
+					{
+						// nothing more to do, mark as valid and add back to stack
+						chunk.IsValid = true;
+						m_vertexCacheStack.Add(cacheItem);
+					}
+					else
+					{
+						cacheItem.Chunk = chunk;
+						m_vertexCacheQueue.Add(cacheItem);
+					}
 				});
 
 				m_vertexCacheQueue.Add(null);
