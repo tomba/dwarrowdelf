@@ -46,8 +46,7 @@ namespace Client3D
 
 		public int VerticesRendered { get; private set; }
 		public int ChunksRendered { get; private set; }
-		public int ChunkRecalcs { get { return m_chunkRecalcs; } set { m_chunkRecalcs = value; } }
-		int m_chunkRecalcs;
+		public int ChunkRecalcs { get; set; }
 
 		/// <summary>
 		/// Size in chunks
@@ -339,8 +338,6 @@ namespace Client3D
 
 				cacheItem.Chunk = null;
 				m_vertexCacheStack.Add(cacheItem);
-
-				m_chunkRecalcs++;
 			}
 
 			task.Wait();
@@ -348,6 +345,8 @@ namespace Client3D
 
 			System.Diagnostics.Trace.Assert(m_vertexCacheStack.Count == VERTEX_CACHE_COUNT);
 			System.Diagnostics.Trace.Assert(m_vertexCacheQueue.Count == 0);
+
+			this.ChunkRecalcs = m_rebuildList.Count;
 
 			m_rebuildList.Clear();
 		}
