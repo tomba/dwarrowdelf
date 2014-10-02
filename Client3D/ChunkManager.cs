@@ -45,7 +45,6 @@ namespace Client3D
 		TerrainRenderer m_scene;
 
 		public int VerticesRendered { get; private set; }
-		public int ChunksRendered { get; private set; }
 		public int ChunkRecalcs { get; set; }
 
 		/// <summary>
@@ -389,7 +388,6 @@ namespace Client3D
 			var device = m_scene.Game.GraphicsDevice;
 
 			int numVertices = 0;
-			int numChunks = 0;
 
 			foreach (var chunk in m_drawList)
 			{
@@ -398,11 +396,9 @@ namespace Client3D
 				chunk.DrawTerrain(device);
 
 				numVertices += chunk.VertexCount;
-				numChunks++;
 			}
 
 			this.VerticesRendered = numVertices;
-			this.ChunksRendered = numChunks;
 		}
 
 		public void DrawTrees()
