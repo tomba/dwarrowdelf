@@ -37,8 +37,8 @@ namespace Client3D
 		{
 			get
 			{
-				return string.Format("{0}/{1}/{2}",
-					m_drawList.Count, m_nearList.Count, m_chunks.Length);
+				return string.Format("{0}/{1}/{2}/{3}",
+					m_drawList.Count, m_nearList.Count, m_chunks.Where(c => c != null).Count(), m_chunks.Length);
 			}
 		}
 
@@ -85,7 +85,8 @@ namespace Client3D
 			base.Dispose(disposeManagedResources);
 
 			foreach (var chunk in m_chunks)
-				chunk.Free();
+				if (chunk != null)
+					chunk.Free();
 		}
 
 		void CreateChunks()
@@ -107,7 +108,9 @@ namespace Client3D
 					for (int x = 0; x < xChunks; ++x)
 					{
 						var chunkPosition = new IntVector3(x, y, z);
-						var chunk = new Chunk(map, chunkPosition);
+						var chunk = Chunk.CreateOrNull(map, chunkPosition);
+						if (chunk == null)
+							continue;
 						m_chunks[this.Size.GetIndex(x, y, z)] = chunk;
 					}
 				}
@@ -134,14 +137,20 @@ namespace Client3D
 
 			var chunk = m_chunks[this.Size.GetIndex(cp)];
 
-			bool wasEmpty = chunk.IsEmpty;
+			if (chunk == null)
+			{
+				chunk = Chunk.CreateOrNull(GlobalData.VoxelMap, cp);
 
-			chunk.IsEmpty = false;
-			chunk.IsHidden = false;
+				if (chunk == null)
+					return;
 
-			// update near list as it doesn't contain empty chunks
-			if (wasEmpty)
+				m_chunks[this.Size.GetIndex(cp)] = chunk;
 				m_forceNearListUpdate = true;
+			}
+			else
+			{
+				chunk.IsHidden = false;
+			}
 
 			InvalidateChunk(chunk);
 		}
@@ -156,13 +165,15 @@ namespace Client3D
 		public void InvalidateChunks()
 		{
 			foreach (var chunk in m_chunks)
-				InvalidateChunk(chunk);
+				if (chunk != null)
+					InvalidateChunk(chunk);
 		}
 
 		void InvalidateChunk(IntVector3 cp)
 		{
 			var chunk = m_chunks[this.Size.GetIndex(cp)];
-			InvalidateChunk(chunk);
+			if (chunk != null)
+				InvalidateChunk(chunk);
 		}
 
 		public void InvalidateChunksZ(int fromZ, int toZ)
@@ -173,7 +184,8 @@ namespace Client3D
 			for (int idx = fromIdx; idx < toIdx; ++idx)
 			{
 				var chunk = m_chunks[idx];
-				InvalidateChunk(chunk);
+				if (chunk != null)
+					InvalidateChunk(chunk);
 			}
 		}
 
@@ -265,7 +277,7 @@ namespace Client3D
 
 			foreach (var chunk in m_chunks)
 			{
-				if (chunk.IsEmpty)
+				if (chunk == null)
 					continue;
 
 				var chunkGrid = new IntGrid3(chunk.ChunkOffset, Chunk.ChunkSize);

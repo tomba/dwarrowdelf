@@ -40,11 +40,6 @@ namespace Client3D
 		public bool IsValid { get; set; }
 
 		/// <summary>
-		/// Chunk contains only Empty voxels without trees etc.
-		/// </summary>
-		public bool IsEmpty { get; set; }
-
-		/// <summary>
 		/// The chunk contains only hidden voxels
 		/// </summary>
 		public bool IsHidden { get; set; }
@@ -57,7 +52,24 @@ namespace Client3D
 
 		public BoundingBox BBox;
 
-		public Chunk(VoxelMap map, IntVector3 chunkPosition)
+		public static Chunk CreateOrNull(VoxelMap map, IntVector3 chunkPosition)
+		{
+			var chunkOffset = chunkPosition * CHUNK_SIZE;
+
+			bool isEmpty, isHidden;
+
+			CheckIfEmptyOrHidden(map, chunkOffset, out isHidden, out isEmpty);
+
+			if (isEmpty)
+				return null;
+
+			var chunk = new Chunk(map, chunkPosition);
+			chunk.IsHidden = isHidden;
+
+			return chunk;
+		}
+
+		Chunk(VoxelMap map, IntVector3 chunkPosition)
 		{
 			this.ChunkPosition = chunkPosition;
 			this.ChunkOffset = chunkPosition * CHUNK_SIZE;
@@ -67,22 +79,20 @@ namespace Client3D
 			var v1 = this.ChunkOffset.ToVector3();
 			var v2 = v1 + new Vector3(Chunk.CHUNK_SIZE);
 			this.BBox = new BoundingBox(v1, v2);
-
-			CheckIfEmptyOrHidden();
 		}
 
-		void CheckIfEmptyOrHidden()
+		static void CheckIfEmptyOrHidden(VoxelMap map, IntVector3 chunkOffset, out bool isHidden, out bool isEmpty)
 		{
-			int x0 = this.ChunkOffset.X;
-			int x1 = this.ChunkOffset.X + CHUNK_SIZE - 1;
+			int x0 = chunkOffset.X;
+			int x1 = chunkOffset.X + CHUNK_SIZE - 1;
 
-			int y0 = this.ChunkOffset.Y;
-			int y1 = this.ChunkOffset.Y + CHUNK_SIZE - 1;
+			int y0 = chunkOffset.Y;
+			int y1 = chunkOffset.Y + CHUNK_SIZE - 1;
 
-			int z0 = this.ChunkOffset.Z;
-			int z1 = this.ChunkOffset.Z + CHUNK_SIZE - 1;
+			int z0 = chunkOffset.Z;
+			int z1 = chunkOffset.Z + CHUNK_SIZE - 1;
 
-			uint current = m_map.Grid[z0, y0, x0].Raw;
+			uint current = map.Grid[z0, y0, x0].Raw;
 
 			for (int z = z0; z <= z1; ++z)
 			{
@@ -90,10 +100,10 @@ namespace Client3D
 				{
 					for (int x = x0; x <= x1; ++x)
 					{
-						if (current != m_map.Grid[z, y, x].Raw)
+						if (current != map.Grid[z, y, x].Raw)
 						{
-							this.IsHidden = false;
-							this.IsEmpty = false;
+							isHidden = false;
+							isEmpty = false;
 							return;
 						}
 					}
@@ -102,10 +112,8 @@ namespace Client3D
 
 			Voxel vox = new Voxel() { Raw = current };
 
-			if (vox.IsEmpty)
-				this.IsEmpty = true;
-			else if (vox.VisibleFaces == 0)
-				this.IsHidden = true;
+			isEmpty = vox.IsEmpty;
+			isHidden = vox.VisibleFaces == 0;
 		}
 
 		public void Free()
@@ -208,9 +216,6 @@ namespace Client3D
 				CreateUndefinedChunk(ref viewGrid, ref chunkGrid, terrainVertexList, visibleChunkFaces);
 				return;
 			}
-
-			if (this.IsEmpty)
-				throw new Exception();
 
 			// Draw from up to down to avoid overdraw
 			for (int z = chunkGrid.Z2; z >= chunkGrid.Z1; --z)
