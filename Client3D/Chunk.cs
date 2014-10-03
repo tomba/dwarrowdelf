@@ -21,7 +21,7 @@ namespace Client3D
 		public const int VOXELS_PER_CHUNK = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
 		public const int MAX_VERTICES_PER_CHUNK = VOXELS_PER_CHUNK * 6;
 
-		static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
+		public static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
 		VoxelMap m_map;
 

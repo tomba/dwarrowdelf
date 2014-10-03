@@ -52,21 +52,6 @@ namespace Client3D
 			base.Initialize();
 
 			m_chunkManager.Initialize();
-
-			var viewGridProvider = this.Services.GetService<ViewGridProvider>();
-			viewGridProvider.ViewGridCornerChanged += (oldValue, newValue) =>
-			{
-				var diff = newValue - oldValue;
-
-				if (diff.X == 0 && diff.Y == 0)
-				{
-					m_chunkManager.InvalidateChunksZ(Math.Min(oldValue.Z, newValue.Z), Math.Max(oldValue.Z, newValue.Z));
-				}
-				else
-				{
-					m_chunkManager.InvalidateChunks();
-				}
-			};
 		}
 
 		protected override void LoadContent()

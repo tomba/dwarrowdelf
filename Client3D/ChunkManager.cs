@@ -62,6 +62,22 @@ namespace Client3D
 			m_scene = scene;
 
 			CreateChunks();
+
+			var viewGridProvider = m_scene.Services.GetService<ViewGridProvider>();
+			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
+		}
+
+		void OnViewGridCornerChanged(IntVector3 oldValue, IntVector3 newValue)
+		{
+			var diff = newValue - oldValue;
+
+			if (diff.X == 0 && diff.Y == 0)
+				InvalidateChunksZ(Math.Min(oldValue.Z, newValue.Z), Math.Max(oldValue.Z, newValue.Z));
+			else
+				InvalidateChunks();
+
+			m_forceNearListUpdate = true;
+			m_forceDrawListUpdate = true;
 		}
 
 		protected override void Dispose(bool disposeManagedResources)
@@ -245,22 +261,43 @@ namespace Client3D
 
 			float chunkRadius = (float)Math.Sqrt(3) * Chunk.CHUNK_SIZE / 2;
 
+			var viewGrid = m_scene.Services.GetService<ViewGridProvider>().ViewGrid;
+
 			foreach (var chunk in m_chunks)
 			{
 				if (chunk.IsEmpty)
 					continue;
 
+				var chunkGrid = new IntGrid3(chunk.ChunkOffset, Chunk.ChunkSize);
+
+				var containment = viewGrid.Contains2(ref chunkGrid);
+
+				if (containment == ContainmentType2.Disjoint)
+				{
+					// the chunk is outside the view area
+					chunk.Free();
+					chunk.IsValid = false;
+					continue;
+				}
+
+				if (chunk.IsHidden && containment == ContainmentType2.Contains)
+				{
+					// the chunk is fully inside the view area, but has no visible faces
+					chunk.Free();
+					chunk.IsValid = false;
+					continue;
+				}
+
 				var chunkCenter = chunk.ChunkOffset.ToVector3() + new Vector3(Chunk.CHUNK_SIZE / 2);
 
-				if (Vector3.Distance(eye, chunkCenter) - chunkRadius <= camRadius)
-				{
-					m_nearList.Add(chunk);
-				}
-				else
+				if (Vector3.Distance(eye, chunkCenter) - chunkRadius > camRadius)
 				{
 					chunk.Free();
 					chunk.IsValid = false;
+					continue;
 				}
+
+				m_nearList.Add(chunk);
 			}
 
 			m_forceDrawListUpdate = true;
