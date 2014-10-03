@@ -309,18 +309,22 @@ namespace Client3D
 
 			var frustum = m_camera.Frustum;
 
-			foreach (var chunk in m_nearList)
+			Parallel.ForEach(m_nearList, chunk =>
 			{
 				var res = frustum.Contains(ref chunk.BBox);
 
 				if (res == ContainmentType.Disjoint)
-					continue;
+					return;
 
 				if (!chunk.IsValid)
-					m_rebuildList.Add(chunk);
+				{
+					lock (m_rebuildList)
+						m_rebuildList.Add(chunk);
+				}
 
-				m_drawList.Add(chunk);
-			}
+				lock (m_drawList)
+					m_drawList.Add(chunk);
+			});
 		}
 
 		void ProcessRebuildList(IntVector3 cameraChunkPos)
