@@ -15,13 +15,15 @@ namespace Client3D
 	sealed class MyGame : Game
 	{
 		readonly GraphicsDeviceManager m_graphicsDeviceManager;
-		readonly SceneRenderer m_sceneRenderer;
 		readonly CameraProvider m_cameraProvider;
 		readonly KeyboardHandler m_keyboardHandler;
 		readonly ViewGridProvider m_viewGridProvider;
 		readonly TerrainRenderer m_terrainRenderer;
-		readonly TestRenderer m_testRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
+		readonly SelectionRenderer m_selectionRenderer;
+
+		readonly SceneRenderer m_sceneRenderer;
+		readonly TestRenderer m_testRenderer;
 
 		int m_frameCount;
 		readonly Stopwatch m_fpsClock;
@@ -45,6 +47,7 @@ namespace Client3D
 			m_viewGridProvider = new ViewGridProvider(this);
 			m_terrainRenderer = new TerrainRenderer(this);
 			m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
+			m_selectionRenderer = new SelectionRenderer(this);
 
 			//m_sceneRenderer = new SceneRenderer(this);
 			//m_testRenderer = new TestRenderer(this);
@@ -190,6 +193,23 @@ namespace Client3D
 			UpdateMovables(gameTime);
 
 			base.Update(gameTime);
+
+			if (this.GraphicsDevice.Viewport.Width != 0)
+			{
+				IntVector3 p;
+				Direction d;
+
+				if (MousePickVoxel(out p, out d))
+				{
+					m_selectionRenderer.Position = p;
+					m_selectionRenderer.Direction = d;
+					m_selectionRenderer.CursorEnabled = true;
+				}
+				else
+				{
+					m_selectionRenderer.CursorEnabled = false;
+				}
+			}
 		}
 
 		protected override void Draw(GameTime gameTime)
@@ -247,7 +267,9 @@ namespace Client3D
 			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
 				(x, y, z, vx, dir) =>
 				{
-					if (vx.IsEmpty)
+					// XXX IsEmpty would match for voxels with tree flag
+					//if (vx.IsEmpty)
+					if (vx.Type == VoxelType.Empty)
 						return false;
 
 					outpos = new IntVector3(x, y, z);

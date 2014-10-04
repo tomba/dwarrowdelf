@@ -115,6 +115,7 @@
     <Compile Include="MyGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectionRenderer.cs" />
     <Compile Include="SymbolEffect.cs" />
     <Compile Include="SymbolID.cs" />
     <Compile Include="TerrainEffect.cs" />
@@ -174,6 +175,9 @@
   </ItemGroup>
   <ItemGroup>
     <ToolkitFxc Include="Content\SymbolEffect.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ToolkitFxc Include="Content\SelectionEffect.fx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
