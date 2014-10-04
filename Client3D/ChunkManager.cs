@@ -282,9 +282,9 @@ namespace Client3D
 
 				var chunkGrid = new IntGrid3(chunk.ChunkOffset, Chunk.ChunkSize);
 
-				var containment = viewGrid.Contains2(ref chunkGrid);
+				var containment = viewGrid.ContainsExclusive(ref chunkGrid);
 
-				if (containment == ContainmentType2.Disjoint)
+				if (containment == Containment.Disjoint)
 				{
 					// the chunk is outside the view area
 					chunk.Free();
@@ -292,7 +292,7 @@ namespace Client3D
 					continue;
 				}
 
-				if (chunk.IsHidden && containment == ContainmentType2.Contains)
+				if (chunk.IsHidden && containment == Containment.Contains)
 				{
 					// the chunk is fully inside the view area, but has no visible faces
 					chunk.Free();
