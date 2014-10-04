@@ -128,7 +128,7 @@ namespace Client3D
 							break;
 						y += stepY;
 						tMaxY += tDeltaY;
-						face = -stepY > 0 ? Direction.North : Direction.South;
+						face = -stepY > 0 ? Direction.South : Direction.North;
 					}
 					else
 					{
