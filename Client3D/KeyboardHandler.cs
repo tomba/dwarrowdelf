@@ -136,25 +136,30 @@ namespace Client3D
 
 				case 'z':
 					{
-						var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
-						var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+						IntVector3 p;
+						Direction d;
 
-						var camera = this.Services.GetService<CameraProvider>();
+						var game = (MyGame)this.Game;
 
-						var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+						if (game.MousePickVoxel(out p, out d))
+						{
+							GlobalData.VoxelMap.SetVoxel(p, Voxel.Empty);
+						}
+					}
+					break;
 
-						VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
-							(x, y, z, vx, dir) =>
-							{
-								var l = new IntVector3(x, y, z);
+				case 'x':
+					{
+						IntVector3 p;
+						Direction d;
 
-								if (vx.IsEmpty)
-									return false;
+						var game = (MyGame)this.Game;
 
-								GlobalData.VoxelMap.SetVoxel(l, Voxel.Empty);
-
-								return true;
-							});
+						if (game.MousePickVoxel(out p, out d))
+						{
+							if (GlobalData.VoxelMap.Size.Contains(p + d))
+								GlobalData.VoxelMap.SetVoxel(p + d, Voxel.Rock);
+						}
 					}
 					break;
 			}

@@ -227,5 +227,39 @@ namespace Client3D
 				}
 			}
 		}
+		public bool MousePickVoxel(out IntVector3 pos, out Direction face)
+		{
+			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+			var mousePos = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+
+			return MousePickVoxel(new IntVector2(mousePos.X, mousePos.Y), out pos, out face);
+		}
+
+		public bool MousePickVoxel(IntVector2 mousePos, out IntVector3 pos, out Direction face)
+		{
+			var camera = this.Services.GetService<CameraProvider>();
+
+			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+
+			IntVector3 outpos = new IntVector3();
+			Direction outdir = Direction.None;
+
+			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
+				(x, y, z, vx, dir) =>
+				{
+					if (vx.IsEmpty)
+						return false;
+
+					outpos = new IntVector3(x, y, z);
+					outdir = dir;
+
+					return true;
+				});
+
+			pos = outpos;
+			face = outdir;
+			return face != Direction.None;
+		}
+
 	}
 }
