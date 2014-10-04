@@ -45,5 +45,26 @@ namespace Client3D
 					throw new Exception();
 			}
 		}
+
+		public static FaceDirection ToFaceDirection(this Direction dir)
+		{
+			switch (dir)
+			{
+				case Direction.East:
+					return FaceDirection.PositiveX;
+				case Direction.West:
+					return FaceDirection.NegativeX;
+				case Direction.South:
+					return FaceDirection.PositiveY;
+				case Direction.North:
+					return FaceDirection.NegativeY;
+				case Direction.Up:
+					return FaceDirection.PositiveZ;
+				case Direction.Down:
+					return FaceDirection.NegativeZ;
+				default:
+					throw new Exception();
+			}
+		}
 	}
 }
