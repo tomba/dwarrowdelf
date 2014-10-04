@@ -60,6 +60,7 @@
     <Compile Include="Game\LivingExtensions.cs" />
     <Compile Include="Game\Messages\ChangeDatas.cs" />
     <Compile Include="Game\TerrainGen\RiverGen.cs" />
+    <Compile Include="Lib\DataTypes\Containment.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMask.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMask64.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMask32.cs" />

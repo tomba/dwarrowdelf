@@ -121,6 +121,48 @@ namespace Dwarrowdelf
 			return z >= this.Z && z < this.Z + Depth;
 		}
 
+		public Containment ContainsInclusive(ref IntGrid3 other)
+		{
+			if (this.X2 < other.X1 || this.X1 > other.X2)
+				return Containment.Disjoint;
+
+			if (this.Y2 < other.Y1 || this.Y1 > other.Y2)
+				return Containment.Disjoint;
+
+			if (this.Z2 < other.Z1 || this.Z1 > other.Z2)
+				return Containment.Disjoint;
+
+			if (this.X1 <= other.X1 && other.X2 <= this.X2 &&
+				this.Y1 <= other.Y1 && other.Y2 <= this.Y2 &&
+				this.Z1 <= other.Z1 && other.Z2 <= this.Z2)
+			{
+				return Containment.Contains;
+			}
+
+			return Containment.Intersects;
+		}
+
+		public Containment ContainsExclusive(ref IntGrid3 other)
+		{
+			if (this.X2 < other.X1 || this.X1 > other.X2)
+				return Containment.Disjoint;
+
+			if (this.Y2 < other.Y1 || this.Y1 > other.Y2)
+				return Containment.Disjoint;
+
+			if (this.Z2 < other.Z1 || this.Z1 > other.Z2)
+				return Containment.Disjoint;
+
+			if (this.X1 < other.X1 && other.X2 < this.X2 &&
+				this.Y1 < other.Y1 && other.Y2 < this.Y2 &&
+				this.Z1 < other.Z1 && other.Z2 < this.Z2)
+			{
+				return Containment.Contains;
+			}
+
+			return Containment.Intersects;
+		}
+
 		public bool IntersectsWith(IntGrid3 rect)
 		{
 			return rect.X1 <= this.X2 && rect.X2 >= this.X1 &&
