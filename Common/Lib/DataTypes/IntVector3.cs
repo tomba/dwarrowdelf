@@ -52,15 +52,9 @@ namespace Dwarrowdelf
 		{
 			Debug.Assert(dir.IsValid());
 
-			int d = (int)dir;
+			int x, y, z;
 
-			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
-			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
-
-			x = ((x ^ 1) - (x >> 1)) - 1;
-			y = ((y ^ 1) - (y >> 1)) - 1;
-			z = ((z ^ 1) - (z >> 1)) - 1;
+			DirectionExtensions.DirectionToComponents(dir, out x, out y, out z);
 
 			m_value =
 				((long)(x & 0xffff) << 0) |
@@ -240,17 +234,7 @@ namespace Dwarrowdelf
 		{
 			IntVector3 v = Normalize();
 
-			int d = 0;
-
-			int x = ((v.X + 1) ^ 1) - ((v.X + 1) >> 1);
-			int y = ((v.Y + 1) ^ 1) - ((v.Y + 1) >> 1);
-			int z = ((v.Z + 1) ^ 1) - ((v.Z + 1) >> 1);
-
-			d |= x << DirectionConsts.XShift;
-			d |= y << DirectionConsts.YShift;
-			d |= z << DirectionConsts.ZShift;
-
-			return (Direction)d;
+			return DirectionExtensions.ComponentsToDirection(v.X, v.Y, v.Z);
 		}
 
 		public IntVector3 Reverse()
@@ -308,13 +292,9 @@ namespace Dwarrowdelf
 
 		public static Direction RotateDir(Direction dir, int rotate)
 		{
-			int d = (int)dir;
+			int x, y;
 
-			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
-
-			x = ((x ^ 1) - (x >> 1)) - 1;
-			y = ((y ^ 1) - (y >> 1)) - 1;
+			DirectionExtensions.DirectionToComponents(dir, out x, out y);
 
 			var v = new IntVector3(x, y, 0);
 			v.FastRotate(rotate);

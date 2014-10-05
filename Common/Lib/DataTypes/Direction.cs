@@ -22,17 +22,34 @@ namespace Dwarrowdelf
 		public const int ZShift = 4;
 	}
 
+	public enum DirectionOrdinal
+	{
+		NegativeX = 0,
+		PositiveX = 1,
+		NegativeY = 2,
+		PositiveY = 3,
+		NegativeZ = 4,
+		PositiveZ = 5,
+
+		North = NegativeY,
+		South = PositiveY,
+		West = NegativeX,
+		East = PositiveX,
+		Down = NegativeZ,
+		Up = PositiveZ,
+	}
+
 	[Flags]
 	public enum Direction : byte
 	{
 		None = 0,
 
-		PositiveX = DirectionConsts.DirPos << DirectionConsts.XShift,
-		NegativeX = DirectionConsts.DirNeg << DirectionConsts.XShift,
-		PositiveY = DirectionConsts.DirPos << DirectionConsts.YShift,
-		NegativeY = DirectionConsts.DirNeg << DirectionConsts.YShift,
-		PositiveZ = DirectionConsts.DirPos << DirectionConsts.ZShift,
-		NegativeZ = DirectionConsts.DirNeg << DirectionConsts.ZShift,
+		NegativeX = DirectionConsts.DirNeg << DirectionConsts.XShift,	// 1 << 0
+		PositiveX = DirectionConsts.DirPos << DirectionConsts.XShift,	// 1 << 1
+		NegativeY = DirectionConsts.DirNeg << DirectionConsts.YShift,	// 1 << 2
+		PositiveY = DirectionConsts.DirPos << DirectionConsts.YShift,	// 1 << 3
+		NegativeZ = DirectionConsts.DirNeg << DirectionConsts.ZShift,	// 1 << 4
+		PositiveZ = DirectionConsts.DirPos << DirectionConsts.ZShift,	// 1 << 5
 
 		North = NegativeY,
 		South = PositiveY,
@@ -99,17 +116,67 @@ namespace Dwarrowdelf
 			return (dirset & ds) != 0;
 		}
 
-		public static DirectionSet ToDirectionSet(this Direction dir)
+		public static void DirectionToComponents(this Direction dir, out int x, out int y, out int z)
 		{
 			int d = (int)dir;
 
-			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
-			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+			x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			x = (x ^ 1) - (x >> 1);
-			y = (y ^ 1) - (y >> 1);
-			z = (z ^ 1) - (z >> 1);
+			x = (x ^ 1) - (x >> 1) - 1;
+			y = (y ^ 1) - (y >> 1) - 1;
+			z = (z ^ 1) - (z >> 1) - 1;
+		}
+
+		public static Direction ComponentsToDirection(int x, int y, int z)
+		{
+			x += 1;
+			y += 1;
+			z += 1;
+
+			int d = 0;
+
+			d |= ((x ^ 1) - (x >> 1)) << DirectionConsts.XShift;
+			d |= ((y ^ 1) - (y >> 1)) << DirectionConsts.YShift;
+			d |= ((z ^ 1) - (z >> 1)) << DirectionConsts.ZShift;
+
+			return (Direction)d;
+		}
+
+		public static void DirectionToComponents(this Direction dir, out int x, out int y)
+		{
+			int d = (int)dir;
+
+			x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
+
+			x = (x ^ 1) - (x >> 1) - 1;
+			y = (y ^ 1) - (y >> 1) - 1;
+		}
+
+		public static Direction ComponentsToDirection(int x, int y)
+		{
+			x += 1;
+			y += 1;
+
+			int d = 0;
+
+			d |= ((x ^ 1) - (x >> 1)) << DirectionConsts.XShift;
+			d |= ((y ^ 1) - (y >> 1)) << DirectionConsts.YShift;
+
+			return (Direction)d;
+		}
+
+		public static DirectionSet ToDirectionSet(this Direction dir)
+		{
+			int x, y, z;
+
+			DirectionToComponents(dir, out x, out y, out z);
+
+			x += 1;
+			y += 1;
+			z += 1;
 
 			int bit = z * 9 + y * 3 + x;
 
@@ -125,17 +192,11 @@ namespace Dwarrowdelf
 				if ((ds & (1 << i)) == 0)
 					continue;
 
-				int z = i / 9;
-				int y = (i % 9) / 3;
-				int x = (i % 3);
+				int z = i / 9 - 1;
+				int y = (i % 9) / 3 - 1;
+				int x = (i % 3) - 1;
 
-				int d = 0;
-
-				d |= ((x ^ 1) - (x >> 1)) << DirectionConsts.XShift;
-				d |= ((y ^ 1) - (y >> 1)) << DirectionConsts.YShift;
-				d |= ((z ^ 1) - (z >> 1)) << DirectionConsts.ZShift;
-
-				yield return (Direction)d;
+				yield return ComponentsToDirection(x, y, z);
 			}
 		}
 

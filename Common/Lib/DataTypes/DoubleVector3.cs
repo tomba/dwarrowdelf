@@ -38,15 +38,13 @@ namespace Dwarrowdelf
 
 		public DoubleVector3(Direction dir)
 		{
-			int d = (int)dir;
+			int x, y, z;
 
-			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
-			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+			DirectionExtensions.DirectionToComponents(dir, out x, out y, out z);
 
-			m_x = ((x ^ 1) - (x >> 1)) - 1;
-			m_y = ((y ^ 1) - (y >> 1)) - 1;
-			m_z = ((z ^ 1) - (z >> 1)) - 1;
+			m_x = x;
+			m_y = y;
+			m_z = z;
 		}
 
 		public bool IsNull { get { return this.X == 0 && this.Y == 0 && this.Z == 0; } }
@@ -167,15 +165,7 @@ namespace Dwarrowdelf
 			int y = MyMath.Round(v.Y);
 			int z = MyMath.Round(v.Z);
 
-			x = ((x + 1) ^ 1) - ((x + 1) >> 1);
-			y = ((y + 1) ^ 1) - ((y + 1) >> 1);
-			z = ((z + 1) ^ 1) - ((z + 1) >> 1);
-
-			d |= x << DirectionConsts.XShift;
-			d |= y << DirectionConsts.YShift;
-			d |= z << DirectionConsts.ZShift;
-
-			return (Direction)d;
+			return DirectionExtensions.ComponentsToDirection(x, y, z);
 		}
 
 		public DoubleVector3 Reverse()
