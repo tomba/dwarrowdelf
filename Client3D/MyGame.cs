@@ -142,12 +142,7 @@ namespace Client3D
 			form.Height = 800;
 			form.Location = new System.Drawing.Point(300, 0);
 			form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			form.MouseDown += (s, e) =>
-			{
-				if (m_terrainRenderer != null)
-					m_terrainRenderer.ClickPos = new Dwarrowdelf.IntVector2(e.X, e.Y);
-			};
-
+			form.MouseDown += OnMouseDown;
 			var debugForm = new DebugForm(this, m_terrainRenderer);
 			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
 			debugForm.Show();
@@ -247,6 +242,22 @@ namespace Client3D
 				}
 			}
 		}
+
+		void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			var mousePos = new IntVector2(e.X, e.Y);
+
+			IntVector3 p;
+			Direction d;
+
+			if (MousePickVoxel(mousePos, out p, out d))
+			{
+				var vx = GlobalData.VoxelMap.GetVoxel(p);
+
+				System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
+			}
+		}
+
 		public bool MousePickVoxel(out IntVector3 pos, out Direction face)
 		{
 			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;

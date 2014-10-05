@@ -82,8 +82,6 @@ namespace Client3D
 				m_directionalLight.LightDirection = Vector3.TransformNormal(Vector3.Normalize(new Vector3(1, 1, 1)), m);
 			}
 
-			HandleMouseClick();
-
 			m_chunkManager.Update(gameTime);
 		}
 
@@ -126,28 +124,6 @@ namespace Client3D
 
 				m_chunkManager.DrawTrees();
 			}
-		}
-
-		public IntVector2? ClickPos;
-
-		void HandleMouseClick()
-		{
-			if (this.ClickPos == null)
-				return;
-
-			IntVector3 p;
-			Direction d;
-
-			var game = (MyGame)this.Game;
-
-			if (game.MousePickVoxel(this.ClickPos.Value, out p, out d))
-			{
-				var vx = GlobalData.VoxelMap.GetVoxel(p);
-
-				System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
-			}
-
-			this.ClickPos = null;
 		}
 	}
 }
