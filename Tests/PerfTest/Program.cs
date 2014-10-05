@@ -13,7 +13,6 @@ namespace PerfTest
 		{
 			var tests = new TestSuite[] 
 			{
-				new IntVectorMutableTestSuite(),
 				//new MapDataTestSuite(),
 				//new GenericIFaceAccessTestSuite(),
 				//new EnumConvTestSuite(),
