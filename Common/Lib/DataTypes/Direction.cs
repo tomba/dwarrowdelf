@@ -31,10 +31,10 @@ namespace Dwarrowdelf
 		NegativeZ = 4,
 		PositiveZ = 5,
 
-		North = NegativeY,
-		South = PositiveY,
 		West = NegativeX,
 		East = PositiveX,
+		North = NegativeY,
+		South = PositiveY,
 		Down = NegativeZ,
 		Up = PositiveZ,
 	}
@@ -51,10 +51,10 @@ namespace Dwarrowdelf
 		NegativeZ = DirectionConsts.DirNeg << DirectionConsts.ZShift,	// 1 << 4
 		PositiveZ = DirectionConsts.DirPos << DirectionConsts.ZShift,	// 1 << 5
 
-		North = NegativeY,
-		South = PositiveY,
 		West = NegativeX,
 		East = PositiveX,
+		North = NegativeY,
+		South = PositiveY,
 		Down = NegativeZ,
 		Up = PositiveZ,
 
@@ -110,6 +110,27 @@ namespace Dwarrowdelf
 
 	public static class DirectionExtensions
 	{
+		public static DirectionOrdinal ToDirectionOrdinal(this Direction dir)
+		{
+			switch (dir)
+			{
+				case Direction.West:
+					return DirectionOrdinal.West;
+				case Direction.East:
+					return DirectionOrdinal.East;
+				case Direction.North:
+					return DirectionOrdinal.North;
+				case Direction.South:
+					return DirectionOrdinal.South;
+				case Direction.Down:
+					return DirectionOrdinal.Down;
+				case Direction.Up:
+					return DirectionOrdinal.Up;
+				default:
+					throw new Exception();
+			}
+		}
+
 		public static bool Contains(this DirectionSet dirset, Direction dir)
 		{
 			var ds = dir.ToDirectionSet();
