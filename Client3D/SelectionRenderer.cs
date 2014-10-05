@@ -89,7 +89,7 @@ namespace Client3D
 			worldMatrix.Transpose();
 			worldMatrix *= Matrix.RotationQuaternion(s_rotationQuaternions[(int)this.Direction.ToDirectionOrdinal()]);
 			worldMatrix *= Matrix.Translation(this.Position.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
-			worldMatrix *= Matrix.Translation(new IntVector3(this.Direction).ToVector3() / 2.0f);
+			worldMatrix *= Matrix.Translation(this.Direction.ToIntVector3().ToVector3() / 2.0f);
 			m_effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);
 		}
 

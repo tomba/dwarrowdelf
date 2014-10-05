@@ -573,9 +573,9 @@ namespace Client3D
 
 		static CubeFaceInfo CreateFaceInfo(Direction normalDir, Direction upDir, Direction rightDir)
 		{
-			var normal = new IntVector3(normalDir);
-			var up = new IntVector3(upDir);
-			var right = new IntVector3(rightDir);
+			var normal = normalDir.ToIntVector3();
+			var up = upDir.ToIntVector3();
+			var right = rightDir.ToIntVector3();
 
 			var topRight = up + right;
 			var bottomRight = -up + right;
