@@ -143,6 +143,7 @@ namespace Client3D
 			form.Location = new System.Drawing.Point(300, 0);
 			form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			form.MouseDown += OnMouseDown;
+			form.MouseUp += OnMouseUp;
 			var debugForm = new DebugForm(this, m_terrainRenderer);
 			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
 			debugForm.Show();
@@ -198,11 +199,11 @@ namespace Client3D
 				{
 					m_selectionRenderer.Position = p;
 					m_selectionRenderer.Direction = d;
-					m_selectionRenderer.CursorEnabled = true;
+					m_selectionRenderer.CursorVisible = true;
 				}
 				else
 				{
-					m_selectionRenderer.CursorEnabled = false;
+					m_selectionRenderer.CursorVisible = false;
 				}
 			}
 		}
@@ -250,12 +251,47 @@ namespace Client3D
 			IntVector3 p;
 			Direction d;
 
-			if (MousePickVoxel(mousePos, out p, out d))
-			{
-				var vx = GlobalData.VoxelMap.GetVoxel(p);
+			if (MousePickVoxel(mousePos, out p, out d) == false)
+				return;
 
-				System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
-			}
+			var vx = GlobalData.VoxelMap.GetVoxel(p);
+
+			System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
+
+			m_selectionRenderer.SelectionEnabled = true;
+			m_selectionRenderer.SelectionStart = p;
+
+			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+			form.MouseMove += OnMouseMove;
+		}
+
+		void OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			var mousePos = new IntVector2(e.X, e.Y);
+
+			IntVector3 p;
+			Direction d;
+
+			if (MousePickVoxel(mousePos, out p, out d))
+				m_selectionRenderer.SelectionEnd = p;
+		}
+
+		void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			var mousePos = new IntVector2(e.X, e.Y);
+
+			IntVector3 p;
+			Direction d;
+
+			if (MousePickVoxel(mousePos, out p, out d))
+				m_selectionRenderer.SelectionEnd = p;
+
+			m_selectionRenderer.SelectionEnabled = false;
+
+			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+			form.MouseMove -= OnMouseMove;
+
+			Trace.TraceError("Select {0}, {1}", m_selectionRenderer.SelectionStart, m_selectionRenderer.SelectionEnd);
 		}
 
 		public bool MousePickVoxel(out IntVector3 pos, out Direction face)

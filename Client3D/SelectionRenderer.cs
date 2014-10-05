@@ -16,7 +16,11 @@ namespace Client3D
 		Buffer<VertexPositionColor> m_vertexBuffer;
 		VertexInputLayout m_layout;
 
-		public bool CursorEnabled { get; set; }
+		public bool SelectionEnabled { get; set; }
+		public IntVector3 SelectionStart { get; set; }
+		public IntVector3 SelectionEnd { get; set; }
+
+		public bool CursorVisible { get; set; }
 		public IntVector3 Position { get; set; }
 		public Direction Direction { get; set; }
 
@@ -78,7 +82,7 @@ namespace Client3D
 		{
 			base.Update(gameTime);
 
-			if (this.CursorEnabled == false)
+			if (this.CursorVisible == false)
 				return;
 
 			var viewProjMatrix = Matrix.Transpose(m_cameraService.View * m_cameraService.Projection);
@@ -97,7 +101,7 @@ namespace Client3D
 		{
 			base.Draw(gameTime);
 
-			if (this.CursorEnabled == false)
+			if (this.CursorVisible == false)
 				return;
 
 			var device = this.Game.GraphicsDevice;
