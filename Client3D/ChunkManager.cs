@@ -147,9 +147,10 @@ namespace Client3D
 				m_chunks[this.Size.GetIndex(cp)] = chunk;
 				m_forceNearListUpdate = true;
 			}
-			else
+			else if (chunk.IsHidden)
 			{
 				chunk.IsHidden = false;
+				m_forceNearListUpdate = true;
 			}
 
 			InvalidateChunk(chunk);
