@@ -142,7 +142,9 @@ namespace Client3D
 
 			if (game.MousePickVoxel(this.ClickPos.Value, out p, out d))
 			{
-				System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}", p, d);
+				var vx = GlobalData.VoxelMap.GetVoxel(p);
+
+				System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
 			}
 
 			this.ClickPos = null;

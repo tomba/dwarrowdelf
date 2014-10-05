@@ -264,15 +264,24 @@ namespace Client3D
 			IntVector3 outpos = new IntVector3();
 			Direction outdir = Direction.None;
 
+			var viewGrid = this.Services.GetService<ViewGridProvider>().ViewGrid;
+
 			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
-				(x, y, z, vx, dir) =>
+				(x, y, z, dir) =>
 				{
+					var p = new IntVector3(x, y, z);
+
+					if (viewGrid.Contains(p) == false)
+						return false;
+
+					var vx = GlobalData.VoxelMap.GetVoxel(p);
+
 					// XXX IsEmpty would match for voxels with tree flag
 					//if (vx.IsEmpty)
 					if (vx.Type == VoxelType.Empty)
 						return false;
 
-					outpos = new IntVector3(x, y, z);
+					outpos = p;
 					outdir = dir;
 
 					return true;

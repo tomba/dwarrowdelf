@@ -120,7 +120,7 @@ namespace Client3D
 						var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
 
 						VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
-							(x, y, z, vx, dir) =>
+							(x, y, z, dir) =>
 							{
 								var l = new IntVector3(x, y, z);
 

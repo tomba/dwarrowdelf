@@ -11,7 +11,7 @@ namespace Client3D
 	class VoxelRayCast
 	{
 		/**
-		 * Call the callback with (x,y,z,value,face) of all blocks along the line
+		 * Call the callback with (x,y,z,face) of all blocks along the line
 		 * segment from point 'origin' in vector direction 'direction' of length
 		 * 'radius'. 'radius' may be infinite.
 		 * 
@@ -21,14 +21,13 @@ namespace Client3D
 		 * If the callback returns a true value, the traversal will be stopped.
 		 */
 
-		public delegate bool RayCastDelegate(int x, int y, int z, Voxel voxel, Direction dir);
+		public delegate bool RayCastDelegate(int x, int y, int z, Direction dir);
 
 		public static void RunRayCast(Vector3 origin, Vector3 direction, float radius, RayCastDelegate callback)
 		{
 			int wx = GlobalData.VoxelMap.Width;
 			int wy = GlobalData.VoxelMap.Height;
 			int wz = GlobalData.VoxelMap.Depth;
-			var blocks = GlobalData.VoxelMap.Grid;
 
 			// From "A Fast Voxel Traversal Algorithm for Ray Tracing"
 			// by John Amanatides and Andrew Woo, 1987
@@ -90,7 +89,7 @@ namespace Client3D
 				// world.
 				if (!(x < 0 || y < 0 || z < 0 || x >= wx || y >= wy || z >= wz))
 				{
-					if (callback(x, y, z, blocks[z, y, x], face))
+					if (callback(x, y, z, face))
 						break;
 				}
 
