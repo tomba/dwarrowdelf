@@ -24,17 +24,6 @@ namespace Dwarrowdelf
 				((y & 0xffff) << 16);
 		}
 
-		public IntVector2(Direction dir)
-		{
-			int x, y;
-
-			DirectionExtensions.DirectionToComponents(dir, out x, out y);
-
-			m_value =
-				((x & 0xffff) << 0) |
-				((y & 0xffff) << 16);
-		}
-
 		public bool IsNull { get { return m_value == 0; } }
 
 		#region IEquatable<IntVector2> Members
@@ -110,7 +99,11 @@ namespace Dwarrowdelf
 
 		public static IntVector2 operator +(IntVector2 left, Direction right)
 		{
-			return left + new IntVector2(right);
+			int x, y;
+
+			DirectionExtensions.DirectionToComponents(right, out x, out y);
+
+			return new IntVector2(left.X + x, left.Y + y);
 		}
 
 		public override int GetHashCode()
@@ -225,7 +218,7 @@ namespace Dwarrowdelf
 		/// <returns></returns>
 		public static IEnumerable<IntVector2> GetAllXYDirections(Direction startDir)
 		{
-			var v = new IntVector2(startDir);
+			var v = startDir.ToIntVector2();
 			for (int i = 0; i < 8; ++i)
 			{
 				v = v.FastRotate(1);

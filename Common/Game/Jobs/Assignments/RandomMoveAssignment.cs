@@ -57,13 +57,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 			else if (rand < 75)
 			{
-				var v = new IntVector3(dir);
+				var v = dir.ToIntVector3();
 				v = v.FastRotate(random.Next() % 2 == 0 ? 1 : -1);
 				dir = v.ToDirection();
 			}
 			else
 			{
-				var v = new IntVector3(dir);
+				var v = dir.ToIntVector3();
 				v = v.FastRotate(random.Next() % 2 == 0 ? 2 : -2);
 				dir = v.ToDirection();
 			}
@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				var env = this.Worker.Environment;
 				m_dir = dir;
 
-				IntVector2 ov = new IntVector2(dir);
+				IntVector2 ov = dir.ToIntVector2();
 
 				for (int i = 0; i < 7; ++i)
 				{

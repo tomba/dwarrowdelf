@@ -47,21 +47,6 @@ namespace Dwarrowdelf
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public IntVector3(Direction dir)
-		{
-			Debug.Assert(dir.IsValid());
-
-			int x, y, z;
-
-			DirectionExtensions.DirectionToComponents(dir, out x, out y, out z);
-
-			m_value =
-				((long)(x & 0xffff) << 0) |
-				((long)(y & 0xffff) << 16) |
-				((long)(z & 0xffff) << 48);
-		}
-
 		public int this[int idx]
 		{
 			get
@@ -182,7 +167,11 @@ namespace Dwarrowdelf
 
 		public static IntVector3 operator +(IntVector3 left, Direction right)
 		{
-			return left + new IntVector3(right);
+			int x, y, z;
+
+			DirectionExtensions.DirectionToComponents(right, out x, out y, out z);
+
+			return new IntVector3(left.X + x, left.Y + y, left.Z + z);
 		}
 
 		public static IntVector3 operator *(IntVector3 left, IntVector3 right)

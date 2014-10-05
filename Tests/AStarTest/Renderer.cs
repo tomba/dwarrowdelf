@@ -74,7 +74,7 @@ namespace AStarTest
 
 			if (m_renderDirection && data.From != Direction.None)
 			{
-				var iv = new IntVector2(data.From);
+				var iv = data.From.ToIntVector2();
 				var v = new Vector(iv.X, iv.Y);
 				v *= renderSize.Width / 4;
 				Point mp = new Point(renderSize.Width / 2, renderSize.Height / 2);

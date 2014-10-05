@@ -131,7 +131,7 @@ namespace Dwarrowdelf
 		{
 			foreach (var dir in m_target.GetValidDirs(parent.Loc))
 			{
-				IntVector3 childLoc = parent.Loc + new IntVector3(dir);
+				IntVector3 childLoc = parent.Loc + dir;
 
 				AStarNode child;
 				m_nodeMap.TryGetValue(childLoc, out child);
@@ -182,7 +182,7 @@ namespace Dwarrowdelf
 		{
 			foreach (var dir in m_target.GetValidDirs(parent.Loc))
 			{
-				IntVector3 childLoc = parent.Loc + new IntVector3(dir);
+				IntVector3 childLoc = parent.Loc + dir;
 
 				AStarNode child;
 				m_nodeMap.TryGetValue(childLoc, out child);

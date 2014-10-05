@@ -82,7 +82,7 @@ namespace Dwarrowdelf
 		{
 			foreach (var dir in m_target.GetValidDirs(parent))
 			{
-				IntVector3 child = parent + new IntVector3(dir);
+				IntVector3 child = parent + dir;
 
 				if (m_map.Contains(child) == false)
 				{

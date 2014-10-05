@@ -177,7 +177,7 @@ namespace Dwarrowdelf.Client.UI
 					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
 						m = 5;
 
-					this.CursorPosition += new IntVector3(dir) * m;
+					this.CursorPosition += dir.ToIntVector3() * m;
 
 					m_mapControl.KeepOnScreen(this.CursorPosition);
 					UpdateCursorRectangle();

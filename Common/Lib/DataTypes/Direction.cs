@@ -131,6 +131,28 @@ namespace Dwarrowdelf
 			}
 		}
 
+		public static IntVector3 ToIntVector3(this Direction dir)
+		{
+			Debug.Assert(dir.IsValid());
+
+			int x, y, z;
+
+			DirectionExtensions.DirectionToComponents(dir, out x, out y, out z);
+
+			return new IntVector3(x, y, z);
+		}
+
+		public static IntVector2 ToIntVector2(this Direction dir)
+		{
+			Debug.Assert(dir.IsValid());
+
+			int x, y;
+
+			DirectionExtensions.DirectionToComponents(dir, out x, out y);
+
+			return new IntVector2(x, y);
+		}
+
 		public static bool Contains(this DirectionSet dirset, Direction dir)
 		{
 			var ds = dir.ToDirectionSet();

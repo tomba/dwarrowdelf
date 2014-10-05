@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				if (m_pathDirs.Count == 0)
 					m_pathDirs = null;
 
-				m_supposedLocation += new IntVector3(dir);
+				m_supposedLocation += dir;
 
 				var action = new MoveAction(dir);
 				progress = JobStatus.Ok;
