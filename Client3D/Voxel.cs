@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dwarrowdelf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -32,7 +33,7 @@ namespace Client3D
 		[FieldOffset(0)]
 		public VoxelType Type;
 		[FieldOffset(1)]
-		public FaceDirectionBits VisibleFaces;
+		public Direction VisibleFaces;
 		[FieldOffset(2)]
 		public VoxelFlags Flags;
 

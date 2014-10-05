@@ -61,14 +61,18 @@ namespace Client3D
 			m_layout = VertexInputLayout.FromBuffer(0, m_vertexBuffer);
 		}
 
-		static Quaternion[] s_rotationQuaternions = new[] {
-			Quaternion.RotationAxis(Vector3.UnitZ, -MathUtil.PiOverTwo),
-			Quaternion.RotationAxis(Vector3.UnitZ, MathUtil.PiOverTwo),
-			Quaternion.RotationAxis(Vector3.UnitZ, 0),
-			Quaternion.RotationAxis(Vector3.UnitZ, MathUtil.Pi),
-			Quaternion.RotationAxis(Vector3.UnitX, MathUtil.PiOverTwo),
-			Quaternion.RotationAxis(Vector3.UnitX, -MathUtil.PiOverTwo),
-		};
+		static readonly Quaternion[] s_rotationQuaternions;
+
+		static SelectionRenderer()
+		{
+			s_rotationQuaternions = new Quaternion[6];
+			s_rotationQuaternions[(int)DirectionOrdinal.West] = Quaternion.RotationAxis(Vector3.UnitZ, MathUtil.PiOverTwo);
+			s_rotationQuaternions[(int)DirectionOrdinal.East] = Quaternion.RotationAxis(Vector3.UnitZ, -MathUtil.PiOverTwo);
+			s_rotationQuaternions[(int)DirectionOrdinal.North] = Quaternion.RotationAxis(Vector3.UnitZ, MathUtil.Pi);
+			s_rotationQuaternions[(int)DirectionOrdinal.South] = Quaternion.RotationAxis(Vector3.UnitZ, 0);
+			s_rotationQuaternions[(int)DirectionOrdinal.Down] = Quaternion.RotationAxis(Vector3.UnitX, -MathUtil.PiOverTwo);
+			s_rotationQuaternions[(int)DirectionOrdinal.Up] = Quaternion.RotationAxis(Vector3.UnitX, MathUtil.PiOverTwo);
+		}
 
 		public override void Update(GameTime gameTime)
 		{
@@ -83,7 +87,7 @@ namespace Client3D
 
 			var worldMatrix = Matrix.Identity;
 			worldMatrix.Transpose();
-			worldMatrix *= Matrix.RotationQuaternion(s_rotationQuaternions[(int)this.Direction.ToFaceDirection()]);
+			worldMatrix *= Matrix.RotationQuaternion(s_rotationQuaternions[(int)this.Direction.ToDirectionOrdinal()]);
 			worldMatrix *= Matrix.Translation(this.Position.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
 			worldMatrix *= Matrix.Translation(new IntVector3(this.Direction).ToVector3() / 2.0f);
 			m_effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);

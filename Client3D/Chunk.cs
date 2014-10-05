@@ -181,19 +181,19 @@ namespace Client3D
 
 			var diff = cameraChunkPos - this.ChunkPosition;
 
-			FaceDirectionBits visibleChunkFaces = 0;
+			Direction visibleChunkFaces = 0;
 			if (diff.X >= 0)
-				visibleChunkFaces |= FaceDirectionBits.PositiveX;
+				visibleChunkFaces |= Direction.PositiveX;
 			if (diff.X <= 0)
-				visibleChunkFaces |= FaceDirectionBits.NegativeX;
+				visibleChunkFaces |= Direction.NegativeX;
 			if (diff.Y >= 0)
-				visibleChunkFaces |= FaceDirectionBits.PositiveY;
+				visibleChunkFaces |= Direction.PositiveY;
 			if (diff.Y <= 0)
-				visibleChunkFaces |= FaceDirectionBits.NegativeY;
+				visibleChunkFaces |= Direction.NegativeY;
 			if (diff.Z >= 0)
-				visibleChunkFaces |= FaceDirectionBits.PositiveZ;
+				visibleChunkFaces |= Direction.PositiveZ;
 			if (diff.Z <= 0)
-				visibleChunkFaces |= FaceDirectionBits.NegativeZ;
+				visibleChunkFaces |= Direction.NegativeZ;
 
 			GenerateVertices(ref viewGrid, visibleChunkFaces, terrainVertexList, sceneryVertexList);
 
@@ -201,7 +201,7 @@ namespace Client3D
 			this.SceneryVertexCount = sceneryVertexList.Count;
 		}
 
-		void GenerateVertices(ref IntGrid3 viewGrid, FaceDirectionBits visibleChunkFaces,
+		void GenerateVertices(ref IntGrid3 viewGrid, Direction visibleChunkFaces,
 			VertexList<TerrainVertex> terrainVertexList,
 			VertexList<SceneryVertex> sceneryVertexList)
 		{
@@ -253,33 +253,33 @@ namespace Client3D
 		}
 
 		void CreateUndefinedChunk(ref IntGrid3 viewGrid, ref IntGrid3 chunkGrid, VertexList<TerrainVertex> vertexList,
-			FaceDirectionBits visibleChunkFaces)
+			Direction visibleChunkFaces)
 		{
 			// clear the visible chunk faces that are not at the view's edge
 
 			// up
-			if ((visibleChunkFaces & FaceDirectionBits.PositiveZ) != 0 && chunkGrid.Z2 != viewGrid.Z2)
-				visibleChunkFaces &= ~FaceDirectionBits.PositiveZ;
+			if ((visibleChunkFaces & Direction.PositiveZ) != 0 && chunkGrid.Z2 != viewGrid.Z2)
+				visibleChunkFaces &= ~Direction.PositiveZ;
 
 			// down
 			// Note: we never draw the bottommost layer in the map
-			visibleChunkFaces &= ~FaceDirectionBits.NegativeZ;
+			visibleChunkFaces &= ~Direction.NegativeZ;
 
 			// east
-			if ((visibleChunkFaces & FaceDirectionBits.PositiveX) != 0 && chunkGrid.X2 != viewGrid.X2)
-				visibleChunkFaces &= ~FaceDirectionBits.PositiveX;
+			if ((visibleChunkFaces & Direction.PositiveX) != 0 && chunkGrid.X2 != viewGrid.X2)
+				visibleChunkFaces &= ~Direction.PositiveX;
 
 			// west
-			if ((visibleChunkFaces & FaceDirectionBits.NegativeX) != 0 && chunkGrid.X1 != viewGrid.X1)
-				visibleChunkFaces &= ~FaceDirectionBits.NegativeX;
+			if ((visibleChunkFaces & Direction.NegativeX) != 0 && chunkGrid.X1 != viewGrid.X1)
+				visibleChunkFaces &= ~Direction.NegativeX;
 
 			// south
-			if ((visibleChunkFaces & FaceDirectionBits.PositiveY) != 0 && chunkGrid.Y2 != viewGrid.Y2)
-				visibleChunkFaces &= ~FaceDirectionBits.PositiveY;
+			if ((visibleChunkFaces & Direction.PositiveY) != 0 && chunkGrid.Y2 != viewGrid.Y2)
+				visibleChunkFaces &= ~Direction.PositiveY;
 
 			// north
-			if ((visibleChunkFaces & FaceDirectionBits.NegativeY) != 0 && chunkGrid.Y1 != viewGrid.Y1)
-				visibleChunkFaces &= ~FaceDirectionBits.NegativeY;
+			if ((visibleChunkFaces & Direction.NegativeY) != 0 && chunkGrid.Y1 != viewGrid.Y1)
+				visibleChunkFaces &= ~Direction.NegativeY;
 
 			if (visibleChunkFaces == 0)
 				return;
@@ -329,7 +329,7 @@ namespace Client3D
 				int d1 = (d0 + 1) % 3;
 				int d2 = (d0 + 2) % 3;
 
-				bool posFace = (side & 1) == 0;
+				bool posFace = (side & 1) == 1;
 
 				var vertices = s_cubeFaceInfo[side].Vertices;
 
@@ -391,7 +391,7 @@ namespace Client3D
 						topTexture.Symbol1 = SymbolID.Grass;
 						topTexture.Color1 = GameColor.LightGreen;
 					}
-					else if ((vox.VisibleFaces & FaceDirectionBits.PositiveZ) != 0)
+					else if ((vox.VisibleFaces & Direction.PositiveZ) != 0)
 					{
 						topTexture.Color0 = GameColor.LightGray;
 						topTexture.Symbol1 = SymbolID.Floor;
@@ -408,7 +408,7 @@ namespace Client3D
 			}
 		}
 
-		void HandleVoxel(IntVector3 p, ref Voxel vox, ref IntGrid3 viewGrid, FaceDirectionBits visibleChunkFaces,
+		void HandleVoxel(IntVector3 p, ref Voxel vox, ref IntGrid3 viewGrid, Direction visibleChunkFaces,
 			VertexList<TerrainVertex> vertexList)
 		{
 			FaceTexture baseTexture, topTexture;
@@ -419,14 +419,14 @@ namespace Client3D
 			int y = p.Y;
 			int z = p.Z;
 
-			FaceDirectionBits visibleFaces = visibleChunkFaces & vox.VisibleFaces;
+			Direction visibleFaces = visibleChunkFaces & vox.VisibleFaces;
 			/* sides that are shown due to the viewgrid, but are really hidden by other voxels */
-			FaceDirectionBits visibleHiddenFaces = 0;
+			Direction visibleHiddenFaces = 0;
 
 			// up
-			if ((visibleChunkFaces & FaceDirectionBits.PositiveZ) != 0 && z == viewGrid.Z2)
+			if ((visibleChunkFaces & Direction.PositiveZ) != 0 && z == viewGrid.Z2)
 			{
-				const FaceDirectionBits b = FaceDirectionBits.PositiveZ;
+				const Direction b = Direction.PositiveZ;
 				visibleHiddenFaces |= b & ~visibleFaces;
 				visibleFaces |= b;
 				// override the top tex to remove the grass
@@ -436,36 +436,36 @@ namespace Client3D
 			// down
 			// Note: we never draw the bottommost layer in the map
 			if (z == 0)
-				visibleFaces &= ~FaceDirectionBits.NegativeZ;
+				visibleFaces &= ~Direction.NegativeZ;
 
 			// east
-			if ((visibleChunkFaces & FaceDirectionBits.PositiveX) != 0 && x == viewGrid.X2)
+			if ((visibleChunkFaces & Direction.PositiveX) != 0 && x == viewGrid.X2)
 			{
-				const FaceDirectionBits b = FaceDirectionBits.PositiveX;
+				const Direction b = Direction.PositiveX;
 				visibleHiddenFaces |= b & ~visibleFaces;
 				visibleFaces |= b;
 			}
 
 			// west
-			if ((visibleChunkFaces & FaceDirectionBits.NegativeX) != 0 && x == viewGrid.X1)
+			if ((visibleChunkFaces & Direction.NegativeX) != 0 && x == viewGrid.X1)
 			{
-				const FaceDirectionBits b = FaceDirectionBits.NegativeX;
+				const Direction b = Direction.NegativeX;
 				visibleHiddenFaces |= b & ~visibleFaces;
 				visibleFaces |= b;
 			}
 
 			// south
-			if ((visibleChunkFaces & FaceDirectionBits.PositiveY) != 0 && y == viewGrid.Y2)
+			if ((visibleChunkFaces & Direction.PositiveY) != 0 && y == viewGrid.Y2)
 			{
-				const FaceDirectionBits b = FaceDirectionBits.PositiveY;
+				const Direction b = Direction.PositiveY;
 				visibleHiddenFaces |= b & ~visibleFaces;
 				visibleFaces |= b;
 			}
 
 			// north
-			if ((visibleChunkFaces & FaceDirectionBits.NegativeY) != 0 && y == viewGrid.Y1)
+			if ((visibleChunkFaces & Direction.NegativeY) != 0 && y == viewGrid.Y1)
 			{
-				const FaceDirectionBits b = FaceDirectionBits.NegativeY;
+				const Direction b = Direction.NegativeY;
 				visibleHiddenFaces |= b & ~visibleFaces;
 				visibleFaces |= b;
 			}
@@ -476,7 +476,7 @@ namespace Client3D
 			CreateCube(p, visibleFaces, visibleHiddenFaces, ref baseTexture, ref topTexture, vertexList);
 		}
 
-		void CreateCube(IntVector3 p, FaceDirectionBits visibleFaces, FaceDirectionBits visibleHiddenFaces,
+		void CreateCube(IntVector3 p, Direction visibleFaces, Direction visibleHiddenFaces,
 			ref FaceTexture baseTexture, ref FaceTexture topTexture, VertexList<TerrainVertex> vertexList)
 		{
 			var offset = p - this.ChunkOffset;
@@ -505,11 +505,11 @@ namespace Client3D
 				}
 				else
 				{
-					GetOcclusionsForFace(p, (FaceDirection)side,
+					GetOcclusionsForFace(p, (DirectionOrdinal)side,
 						out occ0, out occ1, out occ2, out occ3);
 				}
 				var vd = new TerrainVertex(v0, v1, v2, v3, occ0, occ1, occ2, occ3,
-					side == (int)FaceDirection.PositiveZ ? topTexture : baseTexture);
+					side == (int)DirectionOrdinal.PositiveZ ? topTexture : baseTexture);
 				vertexList.Add(vd);
 			}
 		}
@@ -522,7 +522,7 @@ namespace Client3D
 			return m_map.Grid[p.Z, p.Y, p.X].IsOpaque;
 		}
 
-		void GetOcclusionsForFace(IntVector3 p, FaceDirection face,
+		void GetOcclusionsForFace(IntVector3 p, DirectionOrdinal face,
 			out int o0, out int o1, out int o2, out int o3)
 		{
 			var odata = s_cubeFaceInfo[(int)face].OcclusionVectors;
@@ -604,17 +604,20 @@ namespace Client3D
 		}
 
 		/// <summary>
-		/// Cube face infos, in the same order as FaceDirection enum
+		/// Cube face infos, in the same order as DirectionOrdinal enum
 		/// </summary>
-		static CubeFaceInfo[] s_cubeFaceInfo =
+		static readonly CubeFaceInfo[] s_cubeFaceInfo;
+
+		static Chunk()
 		{
-			CreateFaceInfo(Direction.East, Direction.Up, Direction.North),
-			CreateFaceInfo(Direction.West, Direction.Up, Direction.South),
-			CreateFaceInfo(Direction.South, Direction.Up, Direction.East),
-			CreateFaceInfo(Direction.North, Direction.Up, Direction.West),
-			CreateFaceInfo(Direction.Up, Direction.North, Direction.East),
-			CreateFaceInfo(Direction.Down, Direction.North, Direction.West),
-		};
+			s_cubeFaceInfo = new CubeFaceInfo[6];
+			s_cubeFaceInfo[(int)DirectionOrdinal.West] = CreateFaceInfo(Direction.West, Direction.Up, Direction.South);
+			s_cubeFaceInfo[(int)DirectionOrdinal.East] = CreateFaceInfo(Direction.East, Direction.Up, Direction.North);
+			s_cubeFaceInfo[(int)DirectionOrdinal.North] = CreateFaceInfo(Direction.North, Direction.Up, Direction.West);
+			s_cubeFaceInfo[(int)DirectionOrdinal.South] = CreateFaceInfo(Direction.South, Direction.Up, Direction.East);
+			s_cubeFaceInfo[(int)DirectionOrdinal.Down] = CreateFaceInfo(Direction.Down, Direction.North, Direction.West);
+			s_cubeFaceInfo[(int)DirectionOrdinal.Up] = CreateFaceInfo(Direction.Up, Direction.North, Direction.East);
+		}
 
 		class CubeFaceInfo
 		{

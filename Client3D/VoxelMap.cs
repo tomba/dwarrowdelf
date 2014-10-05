@@ -110,7 +110,7 @@ namespace Client3D
 				if (this.Grid[n.Z, n.Y, n.X].IsOpaque)
 					continue;
 
-				this.Grid[p.Z, p.Y, p.X].VisibleFaces |= dir.ToFaceDirectionBits();
+				this.Grid[p.Z, p.Y, p.X].VisibleFaces |= dir;
 			}
 		}
 
