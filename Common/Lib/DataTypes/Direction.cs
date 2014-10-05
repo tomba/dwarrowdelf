@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public static class DirectionConsts
+	static class DirectionConsts
 	{
 		public const int Mask = 0x3;
 		public const int FullMask = (Mask << XShift) | (Mask << YShift) | (Mask << ZShift);
