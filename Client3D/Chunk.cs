@@ -606,7 +606,7 @@ namespace Client3D
 		/// <summary>
 		/// Cube face infos, in the same order as DirectionOrdinal enum
 		/// </summary>
-		static readonly CubeFaceInfo[] s_cubeFaceInfo;
+		public static readonly CubeFaceInfo[] s_cubeFaceInfo;
 
 		static Chunk()
 		{
@@ -619,7 +619,7 @@ namespace Client3D
 			s_cubeFaceInfo[(int)DirectionOrdinal.Up] = CreateFaceInfo(Direction.Up, Direction.North, Direction.East);
 		}
 
-		class CubeFaceInfo
+		public class CubeFaceInfo
 		{
 			public CubeFaceInfo(IntVector3[] vertices, IntVector3[] occlusionVectors)
 			{

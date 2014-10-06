@@ -17,6 +17,7 @@ namespace Client3D
 		readonly GraphicsDeviceManager m_graphicsDeviceManager;
 		readonly CameraProvider m_cameraProvider;
 		readonly KeyboardHandler m_keyboardHandler;
+		readonly MouseManager m_mouseManager;
 		readonly ViewGridProvider m_viewGridProvider;
 		readonly TerrainRenderer m_terrainRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
@@ -43,6 +44,7 @@ namespace Client3D
 			//this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
 			m_cameraProvider = new CameraProvider(this);
 			m_keyboardHandler = new KeyboardHandler(this);
+			m_mouseManager = new MouseManager(this);
 
 			m_viewGridProvider = new ViewGridProvider(this);
 			m_terrainRenderer = new TerrainRenderer(this);
@@ -65,7 +67,7 @@ namespace Client3D
 
 			var target = new Vector3(0, 0, 0);
 
-			//pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
+			pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
 
 			m_cameraProvider.LookAt(pos, target, Vector3.UnitZ);
 		}
@@ -100,7 +102,7 @@ namespace Client3D
 		{
 			const string mapname = "voxelmap.dat";
 
-			bool newmap = false;
+			bool newmap = true;
 
 			VoxelMap map;
 
@@ -115,9 +117,9 @@ namespace Client3D
 			{
 				var sw = Stopwatch.StartNew();
 
-				//map = VoxelMap.CreateBallMap(32, 16);
-				//map = VoxelMap.CreateCubeMap(32, 1);
-				map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
+				map = VoxelMap.CreateBallMap(32, 16);
+				//map = VoxelMap.CreateCubeMap(16, 1);
+				//map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
 
 				map.CheckVisibleFaces(true);
 
@@ -142,8 +144,6 @@ namespace Client3D
 			form.Height = 800;
 			form.Location = new System.Drawing.Point(300, 0);
 			form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			form.MouseDown += OnMouseDown;
-			form.MouseUp += OnMouseUp;
 			var debugForm = new DebugForm(this, m_terrainRenderer);
 			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
 			debugForm.Show();
@@ -190,13 +190,30 @@ namespace Client3D
 
 			base.Update(gameTime);
 
-			if (this.GraphicsDevice.Viewport.Width != 0)
+			var viewPort = this.GraphicsDevice.Viewport;
+
+			if (viewPort.Bounds.IsEmpty == false)
 			{
+				var mouseState = m_mouseManager.GetState();
+
+				var mousePos = new IntVector2(MyMath.Round(mouseState.X * viewPort.Width), MyMath.Round(mouseState.Y * viewPort.Height));
+
 				IntVector3 p;
 				Direction d;
 
-				if (MousePickVoxel(out p, out d))
+				bool hit = MousePickVoxel(mousePos, out p, out d);
+
+				// cursor
+
+				if (hit)
 				{
+					if (mouseState.LeftButton.Pressed)
+					{
+						var vx = GlobalData.VoxelMap.GetVoxel(p);
+
+						System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
+					}
+
 					m_selectionRenderer.Position = p;
 					m_selectionRenderer.Direction = d;
 					m_selectionRenderer.CursorVisible = true;
@@ -204,6 +221,29 @@ namespace Client3D
 				else
 				{
 					m_selectionRenderer.CursorVisible = false;
+				}
+
+				// selection
+				if (hit)
+				{
+					if (mouseState.LeftButton.Pressed)
+					{
+						m_selectionRenderer.SelectionVisible = true;
+						m_selectionRenderer.SelectionStart = p;
+						m_selectionRenderer.SelectionDirection = d;
+					}
+
+					if (m_selectionRenderer.SelectionVisible)
+					{
+						m_selectionRenderer.SelectionEnd = p;
+					}
+				}
+
+				if (mouseState.LeftButton.Released && m_selectionRenderer.SelectionVisible)
+				{
+					m_selectionRenderer.SelectionVisible = false;
+
+					Trace.TraceError("Select {0}, {1}", m_selectionRenderer.SelectionStart, m_selectionRenderer.SelectionEnd);
 				}
 			}
 		}
@@ -242,56 +282,6 @@ namespace Client3D
 					}
 				}
 			}
-		}
-
-		void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			var mousePos = new IntVector2(e.X, e.Y);
-
-			IntVector3 p;
-			Direction d;
-
-			if (MousePickVoxel(mousePos, out p, out d) == false)
-				return;
-
-			var vx = GlobalData.VoxelMap.GetVoxel(p);
-
-			System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
-
-			m_selectionRenderer.SelectionEnabled = true;
-			m_selectionRenderer.SelectionStart = p;
-
-			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
-			form.MouseMove += OnMouseMove;
-		}
-
-		void OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			var mousePos = new IntVector2(e.X, e.Y);
-
-			IntVector3 p;
-			Direction d;
-
-			if (MousePickVoxel(mousePos, out p, out d))
-				m_selectionRenderer.SelectionEnd = p;
-		}
-
-		void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			var mousePos = new IntVector2(e.X, e.Y);
-
-			IntVector3 p;
-			Direction d;
-
-			if (MousePickVoxel(mousePos, out p, out d))
-				m_selectionRenderer.SelectionEnd = p;
-
-			m_selectionRenderer.SelectionEnabled = false;
-
-			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
-			form.MouseMove -= OnMouseMove;
-
-			Trace.TraceError("Select {0}, {1}", m_selectionRenderer.SelectionStart, m_selectionRenderer.SelectionEnd);
 		}
 
 		public bool MousePickVoxel(out IntVector3 pos, out Direction face)

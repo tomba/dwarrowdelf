@@ -4,6 +4,7 @@ using SharpDX.Toolkit.Graphics;
 using System.Runtime.InteropServices;
 using System.Linq;
 using Dwarrowdelf;
+using System.Collections.Generic;
 
 namespace Client3D
 {
@@ -13,12 +14,13 @@ namespace Client3D
 
 		Effect m_effect;
 
-		Buffer<VertexPositionColor> m_vertexBuffer;
 		VertexInputLayout m_layout;
+		Buffer<VertexPositionColorTexture> m_vertexBuffer;
 
-		public bool SelectionEnabled { get; set; }
+		public bool SelectionVisible { get; set; }
 		public IntVector3 SelectionStart { get; set; }
 		public IntVector3 SelectionEnd { get; set; }
+		public Direction SelectionDirection { get; set; }
 
 		public bool CursorVisible { get; set; }
 		public IntVector3 Position { get; set; }
@@ -48,21 +50,36 @@ namespace Client3D
 
 			var device = this.Game.GraphicsDevice;
 
-			// south face
-			var ver = new[] {
-				new Vector3(0,1,1),
-				new Vector3(1,1,1),
-				new Vector3(0,1,0),
-				new Vector3(1,1,0),
+			var tex = new[] {
+				new Vector2(1, 0),
+				new Vector2(1, 1),
+				new Vector2(0, 1),
+				new Vector2(0, 0),
 			};
 
-			var vertices = ver
-				.Select(v => v + new Vector3(-0.5f, -1f, -0.5f))
-				.Select(v => new VertexPositionColor(v, Color.Blue))
-				.ToArray();
+			var vertices = new List<VertexPositionColorTexture>();
+			for (int i = 0; i < 6; ++i)
+			{
+				var color = i == (int)DirectionOrdinal.South ? new Color(255, 255, 255) : new Color(128, 128, 128);
 
-			m_vertexBuffer = ToDispose(Buffer.Vertex.New<VertexPositionColor>(device, vertices));
-			m_layout = VertexInputLayout.FromBuffer(0, m_vertexBuffer);
+				var ver = Chunk.s_cubeFaceInfo[i].Vertices.Select(v => v.ToVector3())
+					.ToArray();
+
+				var vs = new List<VertexPositionColorTexture>();
+				vs.Add(new VertexPositionColorTexture(ver[0], color, tex[0]));
+				vs.Add(new VertexPositionColorTexture(ver[1], color, tex[1]));
+				vs.Add(new VertexPositionColorTexture(ver[2], color, tex[2]));
+
+				vs.Add(new VertexPositionColorTexture(ver[2], color, tex[2]));
+				vs.Add(new VertexPositionColorTexture(ver[3], color, tex[3]));
+				vs.Add(new VertexPositionColorTexture(ver[0], color, tex[0]));
+
+				vertices.AddRange(vs);
+			}
+
+			m_layout = VertexInputLayout.New<VertexPositionColorTexture>(0);
+
+			m_vertexBuffer = ToDispose(Buffer.Vertex.New<VertexPositionColorTexture>(device, vertices.ToArray()));
 		}
 
 		static readonly Quaternion[] s_rotationQuaternions;
@@ -78,44 +95,74 @@ namespace Client3D
 			s_rotationQuaternions[(int)DirectionOrdinal.Up] = Quaternion.RotationAxis(Vector3.UnitX, MathUtil.PiOverTwo);
 		}
 
+		void SetWorlMatrix(IntVector3 pos, IntSize3 size, Direction dir)
+		{
+			var worldMatrix = Matrix.Identity;
+			worldMatrix.Transpose();
+
+			worldMatrix *= Matrix.Translation(new Vector3(-0.5f));
+			worldMatrix *= Matrix.RotationQuaternion(s_rotationQuaternions[(int)dir.ToDirectionOrdinal()]);
+			worldMatrix *= Matrix.Scaling(size.Width, size.Height, size.Depth);
+			worldMatrix *= Matrix.Scaling(new Vector3(0.01f) / size.ToIntVector3().ToVector3() + 1); // fix z fight
+			worldMatrix *= Matrix.Translation(new Vector3(0.5f));
+			worldMatrix *= Matrix.Translation((size.ToIntVector3().ToVector3() - new Vector3(1)) / 2);
+			worldMatrix *= Matrix.Translation(pos.ToVector3());
+
+			m_effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);
+		}
+
 		public override void Update(GameTime gameTime)
 		{
-			base.Update(gameTime);
-
-			if (this.CursorVisible == false)
+			if (this.CursorVisible == false && this.SelectionVisible == false)
 				return;
+
+			var device = this.Game.GraphicsDevice;
 
 			var viewProjMatrix = Matrix.Transpose(m_cameraService.View * m_cameraService.Projection);
 			viewProjMatrix.Transpose();
 			m_effect.Parameters["viewProjMatrix"].SetValue(ref viewProjMatrix);
 
-			var worldMatrix = Matrix.Identity;
-			worldMatrix.Transpose();
-			worldMatrix *= Matrix.RotationQuaternion(s_rotationQuaternions[(int)this.Direction.ToDirectionOrdinal()]);
-			worldMatrix *= Matrix.Translation(this.Position.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
-			worldMatrix *= Matrix.Translation(this.Direction.ToIntVector3().ToVector3() / 2.0f);
-			m_effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);
+			base.Update(gameTime);
 		}
 
 		public override void Draw(GameTime gameTime)
 		{
-			base.Draw(gameTime);
-
-			if (this.CursorVisible == false)
+			if (this.CursorVisible == false && this.SelectionVisible == false)
 				return;
+
+			base.Draw(gameTime);
 
 			var device = this.Game.GraphicsDevice;
 
 			device.SetRasterizerState(device.RasterizerStates.Default);
 			device.SetBlendState(device.BlendStates.NonPremultiplied);
-			device.SetDepthStencilState(device.DepthStencilStates.None);
+			device.SetDepthStencilState(device.DepthStencilStates.DepthRead);
 
 			var renderPass = m_effect.CurrentTechnique.Passes[0];
 			renderPass.Apply();
 
 			device.SetVertexBuffer(m_vertexBuffer);
 			device.SetVertexInputLayout(m_layout);
-			device.Draw(PrimitiveType.TriangleStrip, 4);
+
+			if (this.CursorVisible)
+			{
+				m_effect.Parameters["s_cubeColor"].SetValue(Color.Red.ToVector3());
+				SetWorlMatrix(this.Position, new IntSize3(1, 1, 1), this.Direction);
+				m_effect.ConstantBuffers["PerObject"].Update();
+
+				device.Draw(PrimitiveType.TriangleList, 6 * 6);
+			}
+
+			if (this.SelectionVisible)
+			{
+				var grid = new IntGrid3(this.SelectionStart, this.SelectionEnd);
+				SetWorlMatrix(grid.Corner1, grid.Size, this.SelectionDirection);
+
+				m_effect.Parameters["s_cubeColor"].SetValue(Color.Blue.ToVector3());
+				m_effect.ConstantBuffers["PerObject"].Update();
+
+				device.Draw(PrimitiveType.TriangleList, 6 * 6);
+			}
 		}
 	}
 }
