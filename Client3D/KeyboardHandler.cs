@@ -138,7 +138,12 @@ namespace Client3D
 					{
 						var sel = this.Services.GetService<SelectionRenderer>();
 
-						if (sel.CursorVisible)
+						if (sel.SelectionVisible)
+						{
+							foreach (var p in sel.SelectionGrid.Range())
+								GlobalData.VoxelMap.SetVoxel(p, Voxel.Empty);
+						}
+						else if (sel.CursorVisible)
 						{
 							var p = sel.Position;
 							GlobalData.VoxelMap.SetVoxel(p, Voxel.Empty);
@@ -150,7 +155,12 @@ namespace Client3D
 					{
 						var sel = this.Services.GetService<SelectionRenderer>();
 
-						if (sel.CursorVisible)
+						if (sel.SelectionVisible)
+						{
+							foreach (var p in sel.SelectionGrid.Range())
+								GlobalData.VoxelMap.SetVoxel(p, Voxel.Rock);
+						}
+						else if (sel.CursorVisible)
 						{
 							var p = sel.Position;
 							var d = sel.Direction;

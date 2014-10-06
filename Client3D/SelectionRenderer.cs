@@ -20,10 +20,11 @@ namespace Client3D
 		VertexInputLayout m_layout;
 		Buffer<VertexPositionColorTexture> m_vertexBuffer;
 
-		bool SelectionVisible { get; set; }
-		IntVector3 SelectionStart { get; set; }
-		IntVector3 SelectionEnd { get; set; }
-		Direction SelectionDirection { get; set; }
+		public bool SelectionVisible { get; private set; }
+		public IntVector3 SelectionStart { get; private set; }
+		public IntVector3 SelectionEnd { get; private set; }
+		public IntGrid3 SelectionGrid { get { return new IntGrid3(this.SelectionStart, SelectionEnd); } }
+		public Direction SelectionDirection { get; private set; }
 
 		public bool CursorVisible { get; private set; }
 		public IntVector3 Position { get; private set; }
@@ -255,7 +256,7 @@ namespace Client3D
 
 			if (this.SelectionVisible)
 			{
-				var grid = new IntGrid3(this.SelectionStart, this.SelectionEnd);
+				var grid = this.SelectionGrid;
 				SetWorlMatrix(grid.Corner1, grid.Size, this.SelectionDirection);
 
 				m_effect.Parameters["s_cubeColor"].SetValue(Color.Blue.ToVector3());
