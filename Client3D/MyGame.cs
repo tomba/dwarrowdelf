@@ -65,7 +65,7 @@ namespace Client3D
 
 			var target = new Vector3(0, 0, 0);
 
-			pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
+			//pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
 
 			m_cameraProvider.LookAt(pos, target, Vector3.UnitZ);
 		}
@@ -100,7 +100,7 @@ namespace Client3D
 		{
 			const string mapname = "voxelmap.dat";
 
-			bool newmap = true;
+			bool newmap = false;
 
 			VoxelMap map;
 
@@ -115,9 +115,9 @@ namespace Client3D
 			{
 				var sw = Stopwatch.StartNew();
 
-				map = VoxelMap.CreateBallMap(32, 16);
+				//map = VoxelMap.CreateBallMap(32, 16);
 				//map = VoxelMap.CreateCubeMap(16, 1);
-				//map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
+				map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
 
 				map.CheckVisibleFaces(true);
 
