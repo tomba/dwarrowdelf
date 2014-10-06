@@ -105,6 +105,7 @@
     <Compile Include="DebugForm.Designer.cs">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FPSCounterSystem.cs" />
     <Compile Include="GlobalData.cs" />
     <Compile Include="KeyboardHandler.cs" />
     <Compile Include="Map.cs" />

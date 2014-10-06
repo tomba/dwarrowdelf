@@ -22,12 +22,10 @@ namespace Client3D
 		readonly TerrainRenderer m_terrainRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
 		readonly SelectionRenderer m_selectionRenderer;
+		readonly FPSCounterSystem m_fpsCounter;
 
 		readonly SceneRenderer m_sceneRenderer;
 		readonly TestRenderer m_testRenderer;
-
-		int m_frameCount;
-		readonly Stopwatch m_fpsClock;
 
 		public GraphicsDeviceManager GraphicsDeviceManager { get { return m_graphicsDeviceManager; } }
 
@@ -51,12 +49,12 @@ namespace Client3D
 			m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
 			m_selectionRenderer = new SelectionRenderer(this);
 
+			m_fpsCounter = new FPSCounterSystem(this, s => this.Window.Title = s);
+
 			//m_sceneRenderer = new SceneRenderer(this);
 			//m_testRenderer = new TestRenderer(this);
 
 			Content.RootDirectory = "Content";
-
-			m_fpsClock = new Stopwatch();
 
 			AddMovables();
 
@@ -161,31 +159,8 @@ namespace Client3D
 			this.RasterizerState = this.GraphicsDevice.RasterizerStates.CullBack;
 		}
 
-		protected override void BeginRun()
-		{
-			base.BeginRun();
-
-			m_fpsClock.Start();
-		}
-
-		protected override void EndRun()
-		{
-			m_fpsClock.Stop();
-
-			base.EndRun();
-		}
 		protected override void Update(GameTime gameTime)
 		{
-			m_frameCount++;
-			if (m_fpsClock.ElapsedMilliseconds > 1000.0f)
-			{
-				var fpsText = string.Format("{0:F2} FPS", (float)m_frameCount * 1000 / m_fpsClock.ElapsedMilliseconds);
-				m_frameCount = 0;
-				m_fpsClock.Restart();
-
-				this.Window.Title = fpsText;
-			}
-
 			UpdateMovables(gameTime);
 
 			base.Update(gameTime);
