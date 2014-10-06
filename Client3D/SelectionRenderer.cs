@@ -5,11 +5,14 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using Dwarrowdelf;
 using System.Collections.Generic;
+using SharpDX.Toolkit.Input;
+using System.Diagnostics;
 
 namespace Client3D
 {
 	sealed class SelectionRenderer : GameSystem
 	{
+		MouseManager m_mouseManager;
 		CameraProvider m_cameraService;
 
 		Effect m_effect;
@@ -17,18 +20,20 @@ namespace Client3D
 		VertexInputLayout m_layout;
 		Buffer<VertexPositionColorTexture> m_vertexBuffer;
 
-		public bool SelectionVisible { get; set; }
-		public IntVector3 SelectionStart { get; set; }
-		public IntVector3 SelectionEnd { get; set; }
-		public Direction SelectionDirection { get; set; }
+		bool SelectionVisible { get; set; }
+		IntVector3 SelectionStart { get; set; }
+		IntVector3 SelectionEnd { get; set; }
+		Direction SelectionDirection { get; set; }
 
-		public bool CursorVisible { get; set; }
-		public IntVector3 Position { get; set; }
-		public Direction Direction { get; set; }
+		bool CursorVisible { get; set; }
+		IntVector3 Position { get; set; }
+		Direction Direction { get; set; }
 
-		public SelectionRenderer(Game game)
+		public SelectionRenderer(Game game, MouseManager mouseManager)
 			: base(game)
 		{
+			m_mouseManager = mouseManager;
+
 			this.Visible = true;
 			this.Enabled = true;
 
@@ -113,6 +118,63 @@ namespace Client3D
 
 		public override void Update(GameTime gameTime)
 		{
+			var viewPort = this.GraphicsDevice.Viewport;
+
+			if (viewPort.Bounds.IsEmpty == false)
+			{
+				var mouseState = m_mouseManager.GetState();
+
+				var mousePos = new IntVector2(MyMath.Round(mouseState.X * viewPort.Width), MyMath.Round(mouseState.Y * viewPort.Height));
+
+				IntVector3 p;
+				Direction d;
+
+				bool hit = ((MyGame)this.Game).MousePickVoxel(mousePos, out p, out d);
+
+				// cursor
+
+				if (hit)
+				{
+					if (mouseState.LeftButton.Pressed)
+					{
+						var vx = GlobalData.VoxelMap.GetVoxel(p);
+
+						System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
+					}
+
+					this.Position = p;
+					this.Direction = d;
+					this.CursorVisible = true;
+				}
+				else
+				{
+					this.CursorVisible = false;
+				}
+
+				// selection
+				if (hit)
+				{
+					if (mouseState.LeftButton.Pressed)
+					{
+						this.SelectionVisible = true;
+						this.SelectionStart = p;
+						this.SelectionDirection = d;
+					}
+
+					if (this.SelectionVisible)
+					{
+						this.SelectionEnd = p;
+					}
+				}
+
+				if (mouseState.LeftButton.Released && this.SelectionVisible)
+				{
+					this.SelectionVisible = false;
+
+					Trace.TraceError("Select {0}, {1}", this.SelectionStart, this.SelectionEnd);
+				}
+			}
+
 			if (this.CursorVisible == false && this.SelectionVisible == false)
 				return;
 

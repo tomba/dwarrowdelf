@@ -47,7 +47,7 @@ namespace Client3D
 			m_viewGridProvider = new ViewGridProvider(this);
 			m_terrainRenderer = new TerrainRenderer(this);
 			m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
-			m_selectionRenderer = new SelectionRenderer(this);
+			m_selectionRenderer = new SelectionRenderer(this, m_mouseManager);
 
 			m_fpsCounter = new FPSCounterSystem(this, s => this.Window.Title = s);
 
@@ -164,63 +164,6 @@ namespace Client3D
 			UpdateMovables(gameTime);
 
 			base.Update(gameTime);
-
-			var viewPort = this.GraphicsDevice.Viewport;
-
-			if (viewPort.Bounds.IsEmpty == false)
-			{
-				var mouseState = m_mouseManager.GetState();
-
-				var mousePos = new IntVector2(MyMath.Round(mouseState.X * viewPort.Width), MyMath.Round(mouseState.Y * viewPort.Height));
-
-				IntVector3 p;
-				Direction d;
-
-				bool hit = MousePickVoxel(mousePos, out p, out d);
-
-				// cursor
-
-				if (hit)
-				{
-					if (mouseState.LeftButton.Pressed)
-					{
-						var vx = GlobalData.VoxelMap.GetVoxel(p);
-
-						System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
-					}
-
-					m_selectionRenderer.Position = p;
-					m_selectionRenderer.Direction = d;
-					m_selectionRenderer.CursorVisible = true;
-				}
-				else
-				{
-					m_selectionRenderer.CursorVisible = false;
-				}
-
-				// selection
-				if (hit)
-				{
-					if (mouseState.LeftButton.Pressed)
-					{
-						m_selectionRenderer.SelectionVisible = true;
-						m_selectionRenderer.SelectionStart = p;
-						m_selectionRenderer.SelectionDirection = d;
-					}
-
-					if (m_selectionRenderer.SelectionVisible)
-					{
-						m_selectionRenderer.SelectionEnd = p;
-					}
-				}
-
-				if (mouseState.LeftButton.Released && m_selectionRenderer.SelectionVisible)
-				{
-					m_selectionRenderer.SelectionVisible = false;
-
-					Trace.TraceError("Select {0}, {1}", m_selectionRenderer.SelectionStart, m_selectionRenderer.SelectionEnd);
-				}
-			}
 		}
 
 		protected override void Draw(GameTime gameTime)
