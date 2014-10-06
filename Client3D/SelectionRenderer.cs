@@ -25,9 +25,9 @@ namespace Client3D
 		IntVector3 SelectionEnd { get; set; }
 		Direction SelectionDirection { get; set; }
 
-		bool CursorVisible { get; set; }
-		IntVector3 Position { get; set; }
-		Direction Direction { get; set; }
+		public bool CursorVisible { get; private set; }
+		public IntVector3 Position { get; private set; }
+		public Direction Direction { get; private set; }
 
 		public SelectionRenderer(Game game, MouseManager mouseManager)
 			: base(game)
@@ -38,6 +38,7 @@ namespace Client3D
 			this.Enabled = true;
 
 			game.GameSystems.Add(this);
+			game.Services.AddService(typeof(SelectionRenderer), this);
 		}
 
 		public override void Initialize()

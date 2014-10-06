@@ -58,7 +58,7 @@ namespace Client3D
 					viewGrid.ViewCorner2 += Direction.West;
 					break;
 
-				case Forms.Keys.NumPad6| Forms.Keys.Control:
+				case Forms.Keys.NumPad6 | Forms.Keys.Control:
 					viewGrid.ViewCorner2 += Direction.East;
 					break;
 
@@ -136,13 +136,11 @@ namespace Client3D
 
 				case 'z':
 					{
-						IntVector3 p;
-						Direction d;
+						var sel = this.Services.GetService<SelectionRenderer>();
 
-						var game = (MyGame)this.Game;
-
-						if (game.MousePickVoxel(out p, out d))
+						if (sel.CursorVisible)
 						{
+							var p = sel.Position;
 							GlobalData.VoxelMap.SetVoxel(p, Voxel.Empty);
 						}
 					}
@@ -150,13 +148,12 @@ namespace Client3D
 
 				case 'x':
 					{
-						IntVector3 p;
-						Direction d;
+						var sel = this.Services.GetService<SelectionRenderer>();
 
-						var game = (MyGame)this.Game;
-
-						if (game.MousePickVoxel(out p, out d))
+						if (sel.CursorVisible)
 						{
+							var p = sel.Position;
+							var d = sel.Direction;
 							if (GlobalData.VoxelMap.Size.Contains(p + d))
 								GlobalData.VoxelMap.SetVoxel(p + d, Voxel.Rock);
 						}

@@ -202,14 +202,6 @@ namespace Client3D
 			}
 		}
 
-		public bool MousePickVoxel(out IntVector3 pos, out Direction face)
-		{
-			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
-			var mousePos = form.PointToClient(System.Windows.Forms.Control.MousePosition);
-
-			return MousePickVoxel(new IntVector2(mousePos.X, mousePos.Y), out pos, out face);
-		}
-
 		public bool MousePickVoxel(IntVector2 mousePos, out IntVector3 pos, out Direction face)
 		{
 			var camera = this.Services.GetService<CameraProvider>();
