@@ -117,6 +117,43 @@ namespace Client3D
 			m_effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);
 		}
 
+		bool MousePickVoxel(IntVector2 mousePos, out IntVector3 pos, out Direction face)
+		{
+			var camera = this.Services.GetService<CameraProvider>();
+
+			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+
+			IntVector3 outpos = new IntVector3();
+			Direction outdir = Direction.None;
+
+			var viewGrid = this.Services.GetService<ViewGridProvider>().ViewGrid;
+
+			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
+				(x, y, z, dir) =>
+				{
+					var p = new IntVector3(x, y, z);
+
+					if (viewGrid.Contains(p) == false)
+						return false;
+
+					var vx = GlobalData.VoxelMap.GetVoxel(p);
+
+					// XXX IsEmpty would match for voxels with tree flag
+					//if (vx.IsEmpty)
+					if (vx.Type == VoxelType.Empty)
+						return false;
+
+					outpos = p;
+					outdir = dir;
+
+					return true;
+				});
+
+			pos = outpos;
+			face = outdir;
+			return face != Direction.None;
+		}
+
 		public override void Update(GameTime gameTime)
 		{
 			var viewPort = this.GraphicsDevice.Viewport;
@@ -130,7 +167,7 @@ namespace Client3D
 				IntVector3 p;
 				Direction d;
 
-				bool hit = ((MyGame)this.Game).MousePickVoxel(mousePos, out p, out d);
+				bool hit = MousePickVoxel(mousePos, out p, out d);
 
 				// cursor
 
