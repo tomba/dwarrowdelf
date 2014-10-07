@@ -69,8 +69,6 @@ namespace Client3D
 
 		public override void Update(GameTime gameTime)
 		{
-			base.Update(gameTime);
-
 			var tTime = (float)gameTime.TotalGameTime.TotalSeconds;
 
 			if (IsRotationEnabled)
@@ -81,13 +79,11 @@ namespace Client3D
 				m *= Matrix.RotationZ(tTime * 0.7f);
 				m_directionalLight.LightDirection = Vector3.TransformNormal(Vector3.Normalize(new Vector3(1, 1, 1)), m);
 			}
-
-			m_chunkManager.Update(gameTime);
 		}
 
 		public override void Draw(GameTime gameTime)
 		{
-			base.Draw(gameTime);
+			m_chunkManager.PrepareDraw(gameTime);
 
 			var camera = this.Services.GetService<CameraProvider>();
 

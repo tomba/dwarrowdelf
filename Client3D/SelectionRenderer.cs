@@ -213,7 +213,10 @@ namespace Client3D
 					Trace.TraceError("Select {0}, {1}", this.SelectionStart, this.SelectionEnd);
 				}
 			}
+		}
 
+		public override void Draw(GameTime gameTime)
+		{
 			if (this.CursorVisible == false && this.SelectionVisible == false)
 				return;
 
@@ -222,18 +225,6 @@ namespace Client3D
 			var viewProjMatrix = Matrix.Transpose(m_cameraService.View * m_cameraService.Projection);
 			viewProjMatrix.Transpose();
 			m_effect.Parameters["viewProjMatrix"].SetValue(ref viewProjMatrix);
-
-			base.Update(gameTime);
-		}
-
-		public override void Draw(GameTime gameTime)
-		{
-			if (this.CursorVisible == false && this.SelectionVisible == false)
-				return;
-
-			base.Draw(gameTime);
-
-			var device = this.Game.GraphicsDevice;
 
 			device.SetRasterizerState(device.RasterizerStates.Default);
 			device.SetBlendState(device.BlendStates.NonPremultiplied);

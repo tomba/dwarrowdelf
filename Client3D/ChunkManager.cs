@@ -413,7 +413,7 @@ namespace Client3D
 			m_rebuildList.Clear();
 		}
 
-		public void Update(GameTime gameTime)
+		public void PrepareDraw(GameTime gameTime)
 		{
 			var cameraPos = m_camera.Position;
 			var cameraLook = m_camera.Look;

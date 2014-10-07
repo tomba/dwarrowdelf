@@ -49,10 +49,8 @@ namespace Client3D
 			m_layout = VertexInputLayout.FromBuffer(0, m_vertexBuffer);
 		}
 
-		public override void Update(GameTime gameTime)
+		public override void Draw(GameTime gameTime)
 		{
-			base.Update(gameTime);
-
 			var viewProjMatrix = Matrix.Transpose(m_cameraService.View * m_cameraService.Projection);
 			viewProjMatrix.Transpose();
 			m_effect.Parameters["viewProjMatrix"].SetValue(ref viewProjMatrix);
@@ -60,12 +58,6 @@ namespace Client3D
 			var worldMatrix = Matrix.Identity;
 			worldMatrix.Transpose();
 			m_effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);
-		}
-
-		public override void Draw(GameTime gameTime)
-		{
-			base.Draw(gameTime);
-
 
 			this.GraphicsDevice.SetRasterizerState(this.GraphicsDevice.RasterizerStates.Default);
 

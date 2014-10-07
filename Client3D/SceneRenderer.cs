@@ -71,32 +71,11 @@ namespace Client3D
 		}
 
 		/// <summary>
-		/// Draw the scene content.
-		/// </summary>
-		/// <param name="gameTime">Structure containing information about elapsed game time.</param>
-		public override void Draw(GameTime gameTime)
-		{
-			base.Draw(gameTime);
-
-			// set the parameters for cube drawing and draw it using the basic effect
-			m_basicEffect.Texture = m_cubeTexture;
-			m_basicEffect.World = m_cubeTransform;
-			m_cube.Draw(m_basicEffect);
-
-			// set the parameters for plane drawing and draw it using the basic effect
-			m_basicEffect.Texture = m_planeTexture;
-			m_basicEffect.World = m_planeTransform;
-			m_plane.Draw(m_basicEffect);
-		}
-
-		/// <summary>
 		/// Update the scene logic.
 		/// </summary>
 		/// <param name="gameTime">Structure containing information about elapsed game time.</param>
 		public override void Update(GameTime gameTime)
 		{
-			base.Update(gameTime);
-
 			// get the total elapsed seconds since the start of the game
 			var time = (float)gameTime.TotalGameTime.TotalSeconds;
 
@@ -106,6 +85,23 @@ namespace Client3D
 			// update view and projection matrices from the camera service
 			m_basicEffect.View = m_cameraService.View;
 			m_basicEffect.Projection = m_cameraService.Projection;
+		}
+
+		/// <summary>
+		/// Draw the scene content.
+		/// </summary>
+		/// <param name="gameTime">Structure containing information about elapsed game time.</param>
+		public override void Draw(GameTime gameTime)
+		{
+			// set the parameters for cube drawing and draw it using the basic effect
+			m_basicEffect.Texture = m_cubeTexture;
+			m_basicEffect.World = m_cubeTransform;
+			m_cube.Draw(m_basicEffect);
+
+			// set the parameters for plane drawing and draw it using the basic effect
+			m_basicEffect.Texture = m_planeTexture;
+			m_basicEffect.World = m_planeTransform;
+			m_plane.Draw(m_basicEffect);
 		}
 
 		/// <summary>

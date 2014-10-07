@@ -91,22 +91,15 @@ namespace Client3D
 			m_vertexCount = vertices.Count;
 		}
 
-		public override void Update(GameTime gameTime)
+		public override void Draw(GameTime gameTime)
 		{
-			base.Update(gameTime);
-
 			if (m_invalid)
 			{
 				UpdateVertexBuffer();
 				m_invalid = false;
 			}
-		}
 
-		public override void Draw(GameTime gameTime)
-		{
-			base.Draw(gameTime);
-
-			if (m_vertexBuffer == null)
+			if (m_vertexCount == 0)
 				return;
 
 			var device = this.GraphicsDevice;
