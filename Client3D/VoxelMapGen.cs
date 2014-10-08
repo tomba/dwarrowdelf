@@ -29,13 +29,11 @@ namespace Client3D
 		{
 			var map = new NoiseMap();
 
-			var terrainNoise = CreateTerrainNoise();
-
 			var build = new SharpNoise.Builders.PlaneNoiseMapBuilder()
 			{
 				DestNoiseMap = map,
 				EnableSeamless = false,
-				SourceModule = terrainNoise,
+				SourceModule = noise,
 			};
 
 			build.SetDestSize(size.Width, size.Height);
