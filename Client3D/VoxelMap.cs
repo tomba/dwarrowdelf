@@ -51,7 +51,7 @@ namespace Client3D
 		{
 			this.Grid[p.Z, p.Y, p.X] = voxel;
 
-			CheckVisibleFaces(p);
+			GetVisibleFaces(p);
 
 			if (this.VoxelChanged != null)
 				this.VoxelChanged(p);
@@ -68,7 +68,7 @@ namespace Client3D
 				if (this.Grid[n.Z, n.Y, n.X].Type == VoxelType.Empty)
 					continue;
 
-				CheckVisibleFaces(n);
+				this.Grid[n.Z, n.Y, n.X].VisibleFaces = GetVisibleFaces(n);
 
 				if (this.VoxelChanged != null)
 					this.VoxelChanged(n);
@@ -91,14 +91,14 @@ namespace Client3D
 					{
 						var p = new IntVector3(x, y, z);
 
-						CheckVisibleFaces(p);
+						this.Grid[p.Z, p.Y, p.X].VisibleFaces = GetVisibleFaces(p);
 					}
 			});
 		}
 
-		void CheckVisibleFaces(IntVector3 p)
+		Direction GetVisibleFaces(IntVector3 p)
 		{
-			this.Grid[p.Z, p.Y, p.X].VisibleFaces = 0;
+			Direction visibleFaces = 0;
 
 			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
 			{
@@ -110,8 +110,10 @@ namespace Client3D
 				if (this.Grid[n.Z, n.Y, n.X].IsOpaque)
 					continue;
 
-				this.Grid[p.Z, p.Y, p.X].VisibleFaces |= dir;
+				visibleFaces |= dir;
 			}
+
+			return visibleFaces;
 		}
 
 		public void FillFromNoiseMap(SharpNoise.NoiseMap map)
