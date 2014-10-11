@@ -164,18 +164,7 @@ namespace TerrainGenTest
 			{
 				Stopwatch sw = Stopwatch.StartNew();
 
-				var corners = new DiamondSquare.CornerData()
-				{
-					NW = NWCorner,
-					NE = NECorner,
-					SW = SWCorner,
-					SE = SECorner,
-				};
-
-				//var terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
-				//terrainGen.Generate(this.Seed);
-				var terrainGen = new TerrainGenerator(m_terrain, new Random(this.Seed));
-				terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Amplify);
+				Gen.Generate(m_terrain);
 
 				sw.Stop();
 
