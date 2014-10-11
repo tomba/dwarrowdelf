@@ -145,6 +145,11 @@ namespace TerrainGenTest
 				int side = this.Side;
 
 				m_size = new IntSize3(side, side, depth);
+
+				this.X = side / 2;
+				this.Y = side / 2;
+				this.Z = depth;
+
 				m_terrain = new TerrainData(m_size);
 				this.Renderer = new Renderer(m_size);
 				Notify("Renderer");
