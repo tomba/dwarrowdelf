@@ -24,11 +24,6 @@ namespace TerrainGenTest
 
 		public static void FillFromNoiseMap(TerrainData data, NoiseMap map)
 		{
-			TileData[, ,] grid;
-			byte[,] levelMap;
-
-			data.GetData(out grid, out levelMap);
-
 			var max = map.Data.Max();
 			var min = map.Data.Min();
 
@@ -43,8 +38,12 @@ namespace TerrainGenTest
 				v += (data.Depth - 1) * 2 / 10;
 
 				map.Data[i] = v;
-				levelMap[i / data.Width, i % data.Width] = (byte)v;
 			});
+
+			TileData[, ,] grid;
+			byte[,] levelMap;
+
+			data.GetData(out grid, out levelMap);
 
 			int waterLimit = data.Depth * 3 / 10;
 			int grassLimit = data.Depth * 8 / 10;
@@ -56,6 +55,8 @@ namespace TerrainGenTest
 					var v = map[x, y];
 
 					int iv = (int)v;
+
+					levelMap[y, x] = (byte)iv;
 
 					for (int z = data.Depth - 1; z >= 0; --z)
 					{
