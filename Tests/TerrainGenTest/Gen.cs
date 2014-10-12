@@ -48,67 +48,67 @@ namespace TerrainGenTest
 			int waterLimit = data.Depth * 3 / 10;
 			int grassLimit = data.Depth * 8 / 10;
 
-			Parallel.For(0, data.Height, y =>
+			Parallel.ForEach(data.Size.Plane.Range(), vec =>
 			{
-				for (int x = 0; x < data.Width; ++x)
+				int x = vec.X;
+				int y = vec.Y;
+
+				var v = map[x, y];
+
+				int iv = (int)v;
+
+				levelMap[y, x] = (byte)iv;
+
+				for (int z = data.Depth - 1; z >= 0; --z)
 				{
-					var v = map[x, y];
-
-					int iv = (int)v;
-
-					levelMap[y, x] = (byte)iv;
-
-					for (int z = data.Depth - 1; z >= 0; --z)
+					/* above ground */
+					if (z > iv)
 					{
-						/* above ground */
-						if (z > iv)
+						/*
+						if (z < waterLimit)
+							grid[z, y, x] = Voxel.Water;
+						else*/
+
+						grid[z, y, x] = TileData.EmptyTileData;
+					}
+					/* surface */
+					else if (z == iv)
+					{
+						grid[z, y, x] = new TileData()
 						{
-							/*
-							if (z < waterLimit)
-								grid[z, y, x] = Voxel.Water;
-							else*/
+							TerrainID = TerrainID.NaturalFloor,
+							TerrainMaterialID = MaterialID.Granite,
+							InteriorID = InteriorID.Empty,
+							InteriorMaterialID = MaterialID.Undefined,
+						};
 
-							grid[z, y, x] = TileData.EmptyTileData;
-						}
-						/* surface */
-						else if (z == iv)
+						if (z < grassLimit)
 						{
-							grid[z, y, x] = new TileData()
-							{
-								TerrainID = TerrainID.NaturalFloor,
-								TerrainMaterialID = MaterialID.Granite,
-								InteriorID = InteriorID.Empty,
-								InteriorMaterialID = MaterialID.Undefined,
-							};
+							grid[z, y, x].InteriorID = InteriorID.Grass;
+							grid[z, y, x].InteriorMaterialID = MaterialID.ReedGrass;
 
-							if (z < grassLimit)
+							Dwarrowdelf.MWCRandom r = new MWCRandom(new IntVector3(x, y, z), 0);
+							if (r.Next(100) < 30)
 							{
-								grid[z, y, x].InteriorID = InteriorID.Grass;
-								grid[z, y, x].InteriorMaterialID = MaterialID.ReedGrass;
-
-								Dwarrowdelf.MWCRandom r = new MWCRandom(new IntVector3(x, y, z), 0);
-								if (r.Next(100) < 30)
-								{
-									grid[z, y, x].InteriorID = InteriorID.Tree;
-									grid[z, y, x].InteriorMaterialID = MaterialID.Oak;
-								}
+								grid[z, y, x].InteriorID = InteriorID.Tree;
+								grid[z, y, x].InteriorMaterialID = MaterialID.Oak;
 							}
 						}
-						/* underground */
-						else if (z < iv)
+					}
+					/* underground */
+					else if (z < iv)
+					{
+						grid[z, y, x] = new TileData()
 						{
-							grid[z, y, x] = new TileData()
-							{
-								TerrainID = TerrainID.NaturalFloor,
-								TerrainMaterialID = MaterialID.Granite,
-								InteriorID = InteriorID.NaturalWall,
-								InteriorMaterialID = MaterialID.Granite,
-							};
-						}
-						else
-						{
-							throw new Exception();
-						}
+							TerrainID = TerrainID.NaturalFloor,
+							TerrainMaterialID = MaterialID.Granite,
+							InteriorID = InteriorID.NaturalWall,
+							InteriorMaterialID = MaterialID.Granite,
+						};
+					}
+					else
+					{
+						throw new Exception();
 					}
 				}
 			});
