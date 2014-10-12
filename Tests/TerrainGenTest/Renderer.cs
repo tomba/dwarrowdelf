@@ -90,25 +90,37 @@ namespace TerrainGenTest
 							break;
 						}
 
-						int d = z - min;
-						double a = (double)d / (max - min);
+						int m = MyMath.Round(MyMath.LinearInterpolation(min, max, 100, 255, z));
 
-						uint c = 31 + (uint)(a * (255 - 31));
+						var cv = GetTileColor(td);
 
-						if (this.ShowWaterEnabled && td.WaterLevel > 0)
-							c = (0 << 16) | (0 << 8) | (c << 0);
-						else
-							c = (c << 16) | (c << 8) | (c << 0);
+						int r = cv.X;
+						int g = cv.Y;
+						int b = cv.Z;
+
+						r = r * m / 255;
+						g = g * m / 255;
+						b = b * m / 255;
 
 						var ptr = pBackBuffer + y * stride + x;
 
-						*ptr = c;
+						*ptr = (uint)((r << 16) | (g << 8) | (b << 0));
 					}
 				});
 			}
 
 			m_sliceBmpXY.AddDirtyRect(new Int32Rect(0, 0, m_sliceBmpXY.PixelWidth, m_sliceBmpXY.PixelHeight));
 			m_sliceBmpXY.Unlock();
+		}
+
+		uint ColorToRaw(Color c)
+		{
+			return (uint)((c.R << 16) | (c.G << 8) | (c.B << 0));
+		}
+
+		uint IntVector3ToRaw(IntVector3 c)
+		{
+			return (uint)((c.X << 16) | (c.Y << 8) | (c.Z << 0));
 		}
 
 		void RenderSliceXY(TerrainData terrain, int level)
@@ -134,7 +146,7 @@ namespace TerrainGenTest
 						if (td.IsEmpty && td.WaterLevel == 0)
 							c = ColorToRaw(Colors.SkyBlue);
 						else
-							c = GetTileColor(td);
+							c = IntVector3ToRaw(GetTileColor(td));
 
 						var ptr = pBackBuffer + y * stride + x;
 
@@ -145,11 +157,6 @@ namespace TerrainGenTest
 
 			m_sliceBmpXY.AddDirtyRect(new Int32Rect(0, 0, m_sliceBmpXY.PixelWidth, m_sliceBmpXY.PixelHeight));
 			m_sliceBmpXY.Unlock();
-		}
-
-		uint ColorToRaw(Color c)
-		{
-			return (uint)((c.R << 16) | (c.G << 8) | (c.B << 0));
 		}
 
 		void RenderSliceXZ(TerrainData terrain, int y)
@@ -179,7 +186,7 @@ namespace TerrainGenTest
 						if (td.IsEmpty && td.WaterLevel == 0)
 							c = ColorToRaw(Colors.SkyBlue);
 						else
-							c = GetTileColor(td);
+							c = IntVector3ToRaw(GetTileColor(td));
 
 						var ptr = pBackBuffer + z * stride + x;
 
@@ -219,7 +226,7 @@ namespace TerrainGenTest
 						if (td.IsEmpty && td.WaterLevel == 0)
 							c = ColorToRaw(Colors.SkyBlue);
 						else
-							c = GetTileColor(td);
+							c = IntVector3ToRaw(GetTileColor(td));
 
 						var ptr = pBackBuffer + y * stride + z;
 
@@ -232,7 +239,7 @@ namespace TerrainGenTest
 			m_sliceBmpYZ.Unlock();
 		}
 
-		uint GetTileColor(TileData td)
+		IntVector3 GetTileColor(TileData td)
 		{
 			byte r, g, b;
 
@@ -240,7 +247,7 @@ namespace TerrainGenTest
 			{
 				r = g = 0;
 				b = 255;
-				return (uint)((r << 16) | (g << 8) | (b << 0));
+				return new IntVector3(r, g, b);
 			}
 
 			switch (td.TerrainID)
@@ -260,24 +267,45 @@ namespace TerrainGenTest
 					switch (td.InteriorID)
 					{
 						case InteriorID.Empty:
-							r = g = b = 0;
+							{
+								var mat = td.TerrainMaterialID;
+
+								var matInfo = Materials.GetMaterial(mat);
+								var rgb = matInfo.Color.ToGameColorRGB();
+
+								r = rgb.R;
+								g = rgb.G;
+								b = rgb.B;
+							}
 							break;
 
 						case InteriorID.NaturalWall:
+							{
+								var mat = td.InteriorMaterialID;
 
-							var mat = td.InteriorMaterialID;
+								var matInfo = Materials.GetMaterial(mat);
+								var rgb = matInfo.Color.ToGameColorRGB();
 
-							var matInfo = Materials.GetMaterial(mat);
-							var rgb = matInfo.Color.ToGameColorRGB();
-
-							r = rgb.R;
-							g = rgb.G;
-							b = rgb.B;
+								r = (byte)(rgb.R / 2);
+								g = (byte)(rgb.G / 2);
+								b = (byte)(rgb.B / 2);
+							}
 							break;
 
 						case InteriorID.Stairs:
 							r = 255;
 							g = b = 0;
+							break;
+
+						case InteriorID.Grass:
+							r = 50;
+							b = 0;
+							g = 255;
+							break;
+
+						case InteriorID.Tree:
+							r = b = 0;
+							g = 200;
 							break;
 
 						default:
@@ -294,7 +322,7 @@ namespace TerrainGenTest
 					throw new Exception();
 			}
 
-			return (uint)((r << 16) | (g << 8) | (b << 0));
+			return new IntVector3(r, g, b);
 		}
 	}
 }

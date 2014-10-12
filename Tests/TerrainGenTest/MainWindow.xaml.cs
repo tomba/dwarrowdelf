@@ -399,18 +399,11 @@ namespace TerrainGenTest
 			else
 				return;
 
-			var terrainMat = m_terrain.GetTerrainMaterialID(mp);
-			var interiorMat = m_terrain.GetInteriorMaterialID(mp);
+			terrainTextBlock.Text = m_terrain.GetTerrainID(mp).ToString();
+			terrainMatTextBlock.Text = m_terrain.GetTerrainMaterialID(mp).ToString();
 
-			if (terrainMat == MaterialID.Undefined)
-				materialTextBlock.Text = "";
-			else
-				materialTextBlock.Text = terrainMat.ToString();
-
-			if (interiorMat == MaterialID.Undefined)
-				oreTextBlock.Text = "";
-			else
-				oreTextBlock.Text = interiorMat.ToString();
+			interiorTextBlock.Text = m_terrain.GetInteriorID(mp).ToString();
+			interiorMatTextBlock.Text = m_terrain.GetInteriorMaterialID(mp).ToString();
 		}
 
 		private void imageXY_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

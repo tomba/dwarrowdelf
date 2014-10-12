@@ -73,27 +73,26 @@ namespace TerrainGenTest
 						/* surface */
 						else if (z == iv)
 						{
-							/*						grid[z, y, x] = Voxel.Rock;
-
-													if (z >= waterLimit && z < grassLimit)
-													{
-														grid[z, y, x].Flags = VoxelFlags.Grass;
-
-														Dwarrowdelf.MWCRandom r = new MWCRandom(new IntVector3(x, y, z), 0);
-														if (r.Next(100) < 30)
-														{
-															grid[z + 1, y, x].Flags |= VoxelFlags.Tree;
-															//grid[z, y, x].Flags |= VoxelFlags.Tree2;
-														}
-													}
-						*/
 							grid[z, y, x] = new TileData()
 							{
 								TerrainID = TerrainID.NaturalFloor,
 								TerrainMaterialID = MaterialID.Granite,
-								InteriorID = InteriorID.NaturalWall,
-								InteriorMaterialID = MaterialID.Granite,
+								InteriorID = InteriorID.Empty,
+								InteriorMaterialID = MaterialID.Undefined,
 							};
+
+							if (z < grassLimit)
+							{
+								grid[z, y, x].InteriorID = InteriorID.Grass;
+								grid[z, y, x].InteriorMaterialID = MaterialID.ReedGrass;
+
+								Dwarrowdelf.MWCRandom r = new MWCRandom(new IntVector3(x, y, z), 0);
+								if (r.Next(100) < 30)
+								{
+									grid[z, y, x].InteriorID = InteriorID.Tree;
+									grid[z, y, x].InteriorMaterialID = MaterialID.Oak;
+								}
+							}
 						}
 						/* underground */
 						else if (z < iv)
