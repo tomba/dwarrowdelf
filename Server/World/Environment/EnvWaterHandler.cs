@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Server
 {
@@ -44,13 +45,26 @@ namespace Dwarrowdelf.Server
 
 		void ScanWaterTiles()
 		{
-			foreach (var p in m_env.Size.Range())
+			m_waterTiles.Clear();
+
+			Parallel.For(0, m_env.Depth, z =>
 			{
-				if (m_env.GetWaterLevel(p) > 0)
-					m_waterTiles.Add(p);
-				else
-					m_waterTiles.Remove(p);
-			}
+				int w = m_env.Width;
+				int h = m_env.Height;
+
+				for (int y = 0; y < h; ++y)
+				{
+					for (int x = 0; x < w; ++x)
+					{
+						var p = new IntVector3(x, y, z);
+						if (m_env.GetWaterLevel(p) > 0)
+						{
+							lock (m_waterTiles)
+								m_waterTiles.Add(p);
+						}
+					}
+				}
+			});
 		}
 
 		void OnTick()
