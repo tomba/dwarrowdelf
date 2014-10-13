@@ -148,64 +148,89 @@ namespace Dwarrowdelf.TerrainGen
 			m_tileGrid[p.Z, p.Y, p.X] = data;
 		}
 
-		public void SaveTerrain(string path)
+		public unsafe void SaveTerrain(string path)
 		{
 			using (var stream = File.Create(path))
-			using (var bw = new BinaryWriter(stream))
 			{
-				bw.Write(this.Size.Width);
-				bw.Write(this.Size.Height);
-				bw.Write(this.Size.Depth);
+				using (var bw = new BinaryWriter(stream, Encoding.Default, true))
+				{
+					bw.Write(this.Size.Width);
+					bw.Write(this.Size.Height);
+					bw.Write(this.Size.Depth);
+				}
 
-				int w = this.Width;
-				int h = this.Height;
-				int d = this.Depth;
+				fixed (TileData* v = this.m_tileGrid)
+				{
+					byte* p = (byte*)v;
+					using (var memStream = new UnmanagedMemoryStream(p, this.Size.Volume * sizeof(TileData)))
+						memStream.CopyTo(stream);
+				}
 
-				for (int z = 0; z < d; ++z)
-					for (int y = 0; y < h; ++y)
-						for (int x = 0; x < w; ++x)
-							bw.Write(GetTileData(x, y, z).Raw);
-
-				for (int y = 0; y < h; ++y)
-					for (int x = 0; x < w; ++x)
-						bw.Write((byte)GetSurfaceLevel(x, y));
+				fixed (byte* v = this.m_levelMap)
+				{
+					byte* p = (byte*)v;
+					using (var memStream = new UnmanagedMemoryStream(p, this.Width * this.Height * sizeof(byte)))
+						memStream.CopyTo(stream);
+				}
 			}
 		}
 
-		public static TerrainData LoadTerrain(string path, IntSize3 expectedSize)
+		public unsafe static TerrainData LoadTerrain(string path, IntSize3 expectedSize)
 		{
 			using (var stream = File.OpenRead(path))
-			using (var br = new BinaryReader(stream))
 			{
-				int w = br.ReadInt32();
-				int h = br.ReadInt32();
-				int d = br.ReadInt32();
+				TerrainData terrain;
 
-				var size = new IntSize3(w, h, d);
-
-				if (size != expectedSize)
-					return null;
-
-				var terrain = new TerrainData(size);
-
-				var grid = terrain.m_tileGrid;
-				for (int z = 0; z < d; ++z)
+				using (var br = new BinaryReader(stream, Encoding.Default, true))
 				{
-					for (int y = 0; y < h; ++y)
-					{
-						for (int x = 0; x < w; ++x)
-						{
-							grid[z, y, x].Raw = br.ReadUInt64();
-						}
-					}
+					int w = br.ReadInt32();
+					int h = br.ReadInt32();
+					int d = br.ReadInt32();
+
+					var size = new IntSize3(w, h, d);
+
+					if (size != expectedSize)
+						return null;
+
+					terrain = new TerrainData(size);
 				}
 
-				var lm = terrain.m_levelMap;
-				for (int y = 0; y < h; ++y)
-					for (int x = 0; x < w; ++x)
-						lm[y, x] = br.ReadByte();
+				fixed (TileData* v = terrain.m_tileGrid)
+				{
+					byte* p = (byte*)v;
+
+					int len = terrain.Size.Volume * sizeof(TileData);
+
+					using (var memStream = new UnmanagedMemoryStream(p, 0, len, FileAccess.Write))
+						CopyTo(stream, memStream, len);
+				}
+
+				fixed (byte* p = terrain.m_levelMap)
+				{
+					int len = terrain.Size.Plane.Area * sizeof(byte);
+
+					using (var memStream = new UnmanagedMemoryStream(p, 0, len, FileAccess.Write))
+						CopyTo(stream, memStream, len);
+				}
 
 				return terrain;
+			}
+		}
+
+		static void CopyTo(Stream input, Stream output, int len)
+		{
+			var arr = new byte[4096 * 8];
+
+			while (len > 0)
+			{
+				int l = input.Read(arr, 0, Math.Min(len, arr.Length));
+
+				if (l == 0)
+					throw new EndOfStreamException();
+
+				output.Write(arr, 0, l);
+
+				len -= l;
 			}
 		}
 	}
