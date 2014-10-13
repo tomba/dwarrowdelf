@@ -544,7 +544,6 @@ namespace Dwarrowdelf.Server
 			player.Send(new Messages.ObjectDataEndMessage() { ObjectID = this.ObjectID });
 		}
 
-		bool m_useCompression = false;
 		bool m_useParallelSend = false;
 
 		void SendMapTiles(IPlayer player)
@@ -573,16 +572,7 @@ namespace Dwarrowdelf.Server
 
 					var bounds = new IntGrid3(new IntVector3(0, 0, z), size);
 
-					if (m_useCompression == false)
-					{
-						WriteTileData(memStream, bounds, visionTracker);
-					}
-					else
-					{
-						using (var compressStream = new DeflateStream(memStream, CompressionMode.Compress, true))
-						using (var bufferedStream = new BufferedStream(compressStream))
-							WriteTileData(bufferedStream, bounds, visionTracker);
-					}
+					WriteTileData(memStream, bounds, visionTracker);
 
 					var arr = memStream.ToArray();
 
@@ -590,7 +580,6 @@ namespace Dwarrowdelf.Server
 					{
 						Environment = this.ObjectID,
 						Bounds = bounds,
-						IsTerrainDataCompressed = m_useCompression,
 						TerrainData = arr,
 					};
 
@@ -621,7 +610,6 @@ namespace Dwarrowdelf.Server
 					{
 						Environment = this.ObjectID,
 						Bounds = new IntGrid3(0, 0, z, w, h, 1),
-						IsTerrainDataCompressed = m_useCompression,
 						TerrainData = arr,
 					};
 
@@ -636,16 +624,7 @@ namespace Dwarrowdelf.Server
 
 				using (var memStream = new MemoryStream())
 				{
-					if (m_useCompression == false)
-					{
-						WriteTileData(memStream, bounds, visionTracker);
-					}
-					else
-					{
-						using (var compStream = new System.IO.Compression.DeflateStream(memStream, CompressionMode.Compress))
-						using (var bufferStream = new BufferedStream(compStream))
-							WriteTileData(bufferStream, bounds, visionTracker);
-					}
+					WriteTileData(memStream, bounds, visionTracker);
 
 					queue.Add(new Tuple<int, byte[]>(z, memStream.ToArray()));
 				}

@@ -185,7 +185,6 @@ namespace Dwarrowdelf.Messages
 	{
 		public ObjectID Environment;
 		public IntGrid3 Bounds;
-		public bool IsTerrainDataCompressed;
 		public byte[] TerrainData;
 
 		public override string ToString()

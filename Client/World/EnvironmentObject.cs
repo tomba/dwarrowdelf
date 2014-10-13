@@ -306,7 +306,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void SetTerrains(IntGrid3 bounds, byte[] tileDataList, bool isCompressed)
+		public void SetTerrains(IntGrid3 bounds, byte[] tileDataList)
 		{
 			this.Version += 1;
 
@@ -317,15 +317,7 @@ namespace Dwarrowdelf.Client
 #if !parallel
 			using (var memStream = new MemoryStream(tileDataList))
 			{
-				if (isCompressed == false)
-				{
-					ReadAndSetTileData(memStream, bounds);
-				}
-				else
-				{
-					using (var decompressStream = new DeflateStream(memStream, CompressionMode.Decompress))
-						ReadAndSetTileData(decompressStream, bounds);
-				}
+				ReadAndSetTileData(memStream, bounds);
 			}
 #else
 			Task.Factory.StartNew(() =>
@@ -333,8 +325,7 @@ namespace Dwarrowdelf.Client
 				var dstStream = new MemoryStream();
 
 				using (var memStream = new MemoryStream(tileDataList))
-				using (var decompressStream = new DeflateStream(memStream, CompressionMode.Decompress))
-					decompressStream.CopyTo(dstStream);
+					memStream.CopyTo(dstStream);
 
 				dstStream.Position = 0;
 				return dstStream;

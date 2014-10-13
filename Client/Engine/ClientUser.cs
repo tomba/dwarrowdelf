@@ -278,7 +278,7 @@ namespace Dwarrowdelf.Client
 		void HandleMessage(MapDataTerrainsMessage msg)
 		{
 			var env = m_world.GetObject<EnvironmentObject>(msg.Environment);
-			env.SetTerrains(msg.Bounds, msg.TerrainData, msg.IsTerrainDataCompressed);
+			env.SetTerrains(msg.Bounds, msg.TerrainData);
 		}
 
 		void HandleMessage(MapDataTerrainsListMessage msg)
