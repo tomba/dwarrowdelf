@@ -61,8 +61,9 @@ namespace Dwarrowdelf.Server.Fortress
 					sw.Stop();
 					Trace.TraceInformation("Load cached terrain {0} ms", sw.ElapsedMilliseconds);
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					Trace.TraceError("Failed to load cached terrain: {0}", e.Message);
 				}
 			}
 
