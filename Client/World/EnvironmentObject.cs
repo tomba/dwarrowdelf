@@ -294,19 +294,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void ReadAndSetTileData(Stream stream, IntGrid3 bounds)
-		{
-			using (var reader = new BinaryReader(stream))
-				m_tileGrid.SetTileDataRange(reader, bounds);
-
-			if (this.MapTileTerrainChanged != null)
-			{
-				foreach (var p in bounds.Range())
-					MapTileTerrainChanged(p);
-			}
-		}
-
-		public void SetTerrains(IntGrid3 bounds, byte[] tileDataList)
+		public void SetTerrains(IntGrid3 bounds, ulong[] tileData)
 		{
 			this.Version += 1;
 
@@ -314,31 +302,13 @@ namespace Dwarrowdelf.Client
 
 			//Trace.TraceError("Recv {0}", bounds.Z);
 
-#if !parallel
-			using (var memStream = new MemoryStream(tileDataList))
+			m_tileGrid.SetTileDataRange(tileData, bounds);
+
+			if (this.MapTileTerrainChanged != null)
 			{
-				ReadAndSetTileData(memStream, bounds);
+				foreach (var p in bounds.Range())
+					MapTileTerrainChanged(p);
 			}
-#else
-			Task.Factory.StartNew(() =>
-			{
-				var dstStream = new MemoryStream();
-
-				using (var memStream = new MemoryStream(tileDataList))
-					memStream.CopyTo(dstStream);
-
-				dstStream.Position = 0;
-				return dstStream;
-			}).ContinueWith(t =>
-			{
-				using (var stream = t.Result)
-					ReadAndSetTileData(stream, bounds);
-
-				//Trace.TraceError("done {0}", bounds.Z);
-
-			}, TaskScheduler.FromCurrentSynchronizationContext());
-
-#endif
 		}
 
 

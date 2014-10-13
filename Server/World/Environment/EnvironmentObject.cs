@@ -544,17 +544,7 @@ namespace Dwarrowdelf.Server
 			player.Send(new Messages.ObjectDataEndMessage() { ObjectID = this.ObjectID });
 		}
 
-		bool m_useParallelSend = false;
-
 		void SendMapTiles(IPlayer player)
-		{
-			if (m_useParallelSend)
-				SendMapTilesParallel(player);
-			else
-				SendMapTilesNonParallel(player);
-		}
-
-		void SendMapTilesNonParallel(IPlayer player)
 		{
 			var visionTracker = player.GetVisionTracker(this);
 
@@ -564,92 +554,38 @@ namespace Dwarrowdelf.Server
 
 			var size = new IntSize3(w, h, 1);
 
-			using (var memStream = new MemoryStream(size.Volume * TileData.SizeOf))
+			var arr = new ulong[w * h];
+
+			for (int z = 0; z < d; ++z)
 			{
-				for (int z = 0; z < d; ++z)
+				var bounds = new IntGrid3(new IntVector3(0, 0, z), size);
+
+				Parallel.For(0, h, y =>
 				{
-					memStream.SetLength(0);
-
-					var bounds = new IntGrid3(new IntVector3(0, 0, z), size);
-
-					WriteTileData(memStream, bounds, visionTracker);
-
-					var arr = memStream.ToArray();
-
-					var msg = new Messages.MapDataTerrainsMessage()
+					for (int x = 0; x < w; ++x)
 					{
-						Environment = this.ObjectID,
-						Bounds = bounds,
-						TerrainData = arr,
-					};
+						var p = new IntVector3(x, y, z);
 
-					player.Send(msg);
-					//Trace.TraceError("Sent {0}", z);
-				}
-			}
-		}
+						ulong v;
 
-		void SendMapTilesParallel(IPlayer player)
-		{
-			var visionTracker = player.GetVisionTracker(this);
+						if (!visionTracker.Sees(p))
+							v = 0;
+						else
+							v = GetTileData(p).Raw;
 
-			int w = this.Width;
-			int h = this.Height;
-			int d = this.Depth;
+						arr[y * w + x] = v;
+					}
+				});
 
-			var queue = new BlockingCollection<Tuple<int, byte[]>>();
-
-			var writerTask = Task.Factory.StartNew(() =>
-			{
-				foreach (var tuple in queue.GetConsumingEnumerable())
+				var msg = new Messages.MapDataTerrainsMessage()
 				{
-					int z = tuple.Item1;
-					var arr = tuple.Item2;
+					Environment = this.ObjectID,
+					Bounds = bounds,
+					TerrainData = arr,
+				};
 
-					var msg = new Messages.MapDataTerrainsMessage()
-					{
-						Environment = this.ObjectID,
-						Bounds = new IntGrid3(0, 0, z, w, h, 1),
-						TerrainData = arr,
-					};
-
-					player.Send(msg);
-					//Trace.TraceError("Sent {0}", z);
-				}
-			});
-
-			Parallel.For(0, d, z =>
-			{
-				var bounds = new IntGrid3(0, 0, z, w, h, 1);
-
-				using (var memStream = new MemoryStream())
-				{
-					WriteTileData(memStream, bounds, visionTracker);
-
-					queue.Add(new Tuple<int, byte[]>(z, memStream.ToArray()));
-				}
-			});
-
-			queue.CompleteAdding();
-
-			writerTask.Wait();
-		}
-
-		void WriteTileData(Stream stream, IntGrid3 bounds, IVisionTracker visionTracker)
-		{
-			using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
-			{
-				foreach (var p in bounds.Range())
-				{
-					ulong v;
-
-					if (!visionTracker.Sees(p))
-						v = 0;
-					else
-						v = GetTileData(p).Raw;
-
-					writer.Write(v);
-				}
+				player.Send(msg);
+				//Trace.TraceError("Sent {0}", z);
 			}
 		}
 
