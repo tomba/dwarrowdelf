@@ -57,6 +57,7 @@ namespace Dwarrowdelf
 			s_acceptStopEvent = null;
 
 			s_listenSocket = null;
+			s_callback = null;
 		}
 
 		static void AcceptCallback(IAsyncResult ar)

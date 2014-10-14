@@ -19,6 +19,7 @@ namespace Dwarrowdelf
 
 		public static void StopListening()
 		{
+			s_callback = null;
 		}
 
 		static void NewAccept()
