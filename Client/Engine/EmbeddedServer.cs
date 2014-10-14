@@ -92,7 +92,8 @@ namespace Dwarrowdelf.Client
 		{
 			return Task.Run(() =>
 			{
-				m_game.Stop();
+				if (m_game != null)
+					m_game.Stop();
 				m_serverThread.Join();
 			});
 		}
