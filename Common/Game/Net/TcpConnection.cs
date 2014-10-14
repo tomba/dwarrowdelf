@@ -93,6 +93,9 @@ namespace Dwarrowdelf
 
 		public async Task<Message> GetMessageAsync()
 		{
+			if (this.IsConnected == false)
+				return null;
+
 			Message msg;
 
 			if (TryGetMessage(out msg))
@@ -109,12 +112,21 @@ namespace Dwarrowdelf
 
 			if (TryGetMessage(out msg) == false)
 			{
+				if (this.IsConnected == false)
+				{
+					this.NewMessageEvent -= handler;
+					return null;
+				}
+
 				await tcs.Task;
 
 				if (TryGetMessage(out msg) == false)
 				{
 					if (this.IsConnected == false)
+					{
+						this.NewMessageEvent -= handler;
 						return null;
+					}
 
 					throw new Exception();
 				}
