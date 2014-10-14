@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Client
 			switch (connectionType)
 			{
 				case ConnectionType.Tcp:
-					connection = await TcpConnection.ConnectAsync(this.NetStats);
+					connection = await TcpConnection.ConnectAsync(this.NetStats, "CNet");
 					break;
 
 				case ConnectionType.Direct:

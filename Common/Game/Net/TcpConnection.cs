@@ -37,7 +37,7 @@ namespace Dwarrowdelf
 
 		public event Action NewMessageEvent;
 
-		public TcpConnection(Socket socket, INetStatCollector netStatCollector = null)
+		public TcpConnection(Socket socket, INetStatCollector netStatCollector = null, string debugName = null)
 		{
 			trace.Header = socket.RemoteEndPoint.ToString();
 			m_netStatCollector = netStatCollector;
@@ -51,6 +51,7 @@ namespace Dwarrowdelf
 			m_netStream = new GameNetStream(socket);
 
 			m_deserializerThread = new Thread(DeserializerMain);
+			m_deserializerThread.Name = debugName;
 			m_deserializerThread.Start();
 		}
 
@@ -240,7 +241,7 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public async static Task<TcpConnection> ConnectAsync(INetStatCollector netStatCollector = null)
+		public async static Task<TcpConnection> ConnectAsync(INetStatCollector netStatCollector = null, string debugName = null)
 		{
 			var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -253,7 +254,7 @@ namespace Dwarrowdelf
 
 			await Task.Factory.FromAsync(socket.BeginConnect, socket.EndConnect, remoteEndPoint, null);
 
-			return new TcpConnection(socket, netStatCollector);
+			return new TcpConnection(socket, netStatCollector, debugName);
 		}
 	}
 }

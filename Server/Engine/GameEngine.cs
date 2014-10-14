@@ -143,7 +143,7 @@ namespace Dwarrowdelf.Server
 			this.World.TurnEnded += OnTurnEnded;
 
 			PipeConnectionListener.StartListening(_OnNewConnection);
-			TcpConnectionListener.StartListening(_OnNewConnection);
+			TcpConnectionListener.StartListening(_OnNewConnection, "SNet");
 			DirectConnectionListener.StartListening(_OnNewConnection);
 
 			trace.TraceInformation("The server is ready.");

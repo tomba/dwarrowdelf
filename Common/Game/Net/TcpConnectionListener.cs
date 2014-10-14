@@ -18,11 +18,14 @@ namespace Dwarrowdelf
 
 		static Action<TcpConnection> s_callback;
 
-		public static void StartListening(Action<TcpConnection> callback)
+		static string s_debugName;
+
+		public static void StartListening(Action<TcpConnection> callback, string debugName)
 		{
 			s_trace.TraceInformation("StartListening");
 
 			s_callback = callback;
+			s_debugName = debugName;
 
 			int port = TcpConnection.PORT;
 
@@ -74,7 +77,7 @@ namespace Dwarrowdelf
 
 			var socket = listenSocket.EndAccept(ar);
 
-			var conn = new TcpConnection(socket);
+			var conn = new TcpConnection(socket, debugName: s_debugName);
 			s_callback(conn);
 
 			ar = s_listenSocket.BeginAccept(AcceptCallback, listenSocket);
