@@ -63,30 +63,14 @@ namespace Dwarrowdelf.Client
 
 
 
-		void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+		static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			var exc = (Exception)e.ExceptionObject;
 
-			DumpException(exc);
+			ExceptionHelper.DumpException(exc, "AppDomain Unhandled Exception");
 
 			if (e.IsTerminating == false)
 				Environment.Exit(0);
-		}
-
-		void DumpException(Exception e)
-		{
-			var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-				"dwarrowdelf-crash.txt");
-
-			StringBuilder sb = new StringBuilder();
-
-			sb.AppendLine(DateTime.Now.ToString());
-
-			sb.AppendLine("---");
-
-			sb.Append(e.ToString());
-
-			File.WriteAllText(path, sb.ToString());
 		}
 	}
 }
