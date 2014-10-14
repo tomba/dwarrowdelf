@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Server
 
 	sealed class AdminVisionTracker : VisionTrackerBase
 	{
-		public static AdminVisionTracker Tracker = new AdminVisionTracker();
+		public readonly static AdminVisionTracker Tracker = new AdminVisionTracker();
 
 		public override bool Sees(IntVector3 p)
 		{
