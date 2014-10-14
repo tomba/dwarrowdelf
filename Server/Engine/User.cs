@@ -68,7 +68,10 @@ namespace Dwarrowdelf.Server
 			if (this.Player != null)
 			{
 				if (m_ipRunner != null)
+				{
 					m_ipRunner.SetPlayer(null);
+					m_ipRunner.Shutdown();
+				}
 
 				this.Player.DisconnectUser();
 				this.Player = null;

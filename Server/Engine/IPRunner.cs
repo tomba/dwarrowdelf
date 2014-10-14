@@ -54,6 +54,12 @@ namespace Dwarrowdelf.Server
 			m_scriptEngine.Execute("import Dwarrowdelf", scope);
 		}
 
+		public void Shutdown()
+		{
+			m_scriptEngine.Runtime.Shutdown();
+			m_scriptEngine.Runtime.IO.RedirectToConsole();
+		}
+
 		public void SetPlayer(Player player)
 		{
 			if (player != null)
