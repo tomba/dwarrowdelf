@@ -27,6 +27,7 @@ namespace Dwarrowdelf
 		Sequential,
 	}
 
+	[Serializable]
 	public class GameOptions
 	{
 		public GameMode Mode;
