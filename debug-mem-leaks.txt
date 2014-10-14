@@ -1,0 +1,12 @@
+project: prefer 32-bit
+project: enable native code debugging
+debug options: use managed compatibility mode
+
+.load sos
+!DumpHeap -type FortressGame
+
+!GCRoot 02b18c84
+
+!DumpHeap -mt 05cf732c
+
+!DumpObj 02b18c84
