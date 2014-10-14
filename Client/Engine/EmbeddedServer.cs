@@ -172,8 +172,13 @@ namespace Dwarrowdelf.Client
 
 			m_game.Run(serverStartWaitHandle);
 
+			m_game = null;
+
 			if (m_serverDomain != null)
 				AppDomain.Unload(m_serverDomain);
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 	}
 }

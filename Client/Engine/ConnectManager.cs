@@ -109,6 +109,9 @@ namespace Dwarrowdelf.Client
 			await m_server.StopAsync();
 
 			m_server = null;
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
 		AutoResetEvent m_disconnectEvent;
