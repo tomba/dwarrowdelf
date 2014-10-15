@@ -144,9 +144,7 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			throw new Exception("doubles shouldn't be hashed");
-			// XXX bad hash
-			//return ((int)this.X << 20) | ((int)this.Y << 10) | (int)this.Z;
+			return this.X.GetHashCode() ^ this.Y.GetHashCode() ^ this.Z.GetHashCode();
 		}
 
 		public override string ToString()

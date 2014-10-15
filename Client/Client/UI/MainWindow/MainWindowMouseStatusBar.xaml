@@ -11,8 +11,12 @@
 			<ui:CoordinateValueConverter x:Key="conv" />
 		</StatusBar.Resources>
 		
-		<TextBlock>SP</TextBlock>
-		<TextBlock Text="{Binding ScreenPos, Converter={StaticResource conv}, FallbackValue=0.0}" />
+		<TextBlock>RP</TextBlock>
+		<TextBlock Text="{Binding RenderPoint, Converter={StaticResource conv}, FallbackValue=0.0}" />
+		<Separator />
+
+		<TextBlock>RT</TextBlock>
+		<TextBlock Text="{Binding RenderTile, Converter={StaticResource conv}, FallbackValue=0.0}" />
 		<Separator />
 
 		<TextBlock>ST</TextBlock>

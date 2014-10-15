@@ -97,10 +97,10 @@ namespace Dwarrowdelf.Client.TileControl
 			return RenderTileToRenderPoint(st);
 		}
 
-		public DoubleVector3 RenderTileToScreen3(Point st)
+		public DoubleVector3 RenderPointToScreen3(Point rp)
 		{
-			var p = RenderTileToScreen(st);
-			return new DoubleVector3(p.X, p.Y, this.ScreenZ);
+			var st = RenderPointToScreen(rp);
+			return new DoubleVector3(st.X, st.Y, this.ScreenZ);
 		}
 	}
 }

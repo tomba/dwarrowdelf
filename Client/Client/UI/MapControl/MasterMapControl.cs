@@ -343,12 +343,13 @@ namespace Dwarrowdelf.Client.UI
 			{
 				var data = MapControlDebugData.Data;
 
-				var sp = Mouse.GetPosition(this);
+				var rp = Mouse.GetPosition(this);
 
-				data.ScreenPos = sp;
-				data.ScreenTile = RenderPointToRenderTile(sp);
-				data.MapTile = RenderPointToScreen(sp);
-				data.MapLocation = RenderPointToMapLocation(sp);
+				data.RenderPoint = rp;
+				data.RenderTile = RenderPointToRenderTile(rp);
+				data.ScreenTile = RenderPointToScreen3(rp);
+				data.MapTile = ScreenToMap(data.ScreenTile);
+				data.MapLocation = RenderPointToMapLocation(rp);
 				data.Update();
 			}
 

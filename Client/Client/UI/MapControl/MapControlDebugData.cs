@@ -17,9 +17,10 @@ namespace Dwarrowdelf.Client.UI
 			Data = new MapControlDebugData();
 		}
 
-		public Point ScreenPos { get; set; }
-		public Point ScreenTile { get; set; }
-		public Point MapTile { get; set; }
+		public Point RenderPoint { get; set; }
+		public Point RenderTile { get; set; }
+		public DoubleVector3 ScreenTile { get; set; }
+		public DoubleVector3 MapTile { get; set; }
 		public IntVector3 MapLocation { get; set; }
 
 		public event PropertyChangedEventHandler PropertyChanged;
