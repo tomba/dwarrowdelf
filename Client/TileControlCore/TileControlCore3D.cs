@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Media3D; // XXX remove when Point3D not used
 
 namespace Dwarrowdelf.Client.TileControl
 {
