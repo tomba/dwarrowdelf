@@ -336,6 +336,7 @@ namespace Dwarrowdelf.Client.UI
 				this.MapCenterPosChanged(this, mcp, ScreenToMap(diff));
 
 			Notify("ScreenCenterPos");
+			Notify("MapCenterPos");
 		}
 
 		void MapChangedCallback(IntVector3 l)

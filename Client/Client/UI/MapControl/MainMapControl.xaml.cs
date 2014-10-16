@@ -17,6 +17,8 @@ namespace Dwarrowdelf.Client.UI
 {
 	sealed partial class MainMapControl : UserControl, IDisposable
 	{
+		public MasterMapControl MainMap { get { return mapXY; } }
+
 		List<MasterMapControl> m_mapList = new List<MasterMapControl>();
 
 		public event Action<MapSelection> GotSelection;
