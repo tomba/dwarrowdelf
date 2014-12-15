@@ -157,8 +157,6 @@ namespace Dwarrowdelf
 		{
 			DoubleVector3 v = Normalize();
 
-			int d = 0;
-
 			int x = MyMath.Round(v.X);
 			int y = MyMath.Round(v.Y);
 			int z = MyMath.Round(v.Z);
