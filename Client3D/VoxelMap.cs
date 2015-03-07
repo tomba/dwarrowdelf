@@ -51,7 +51,7 @@ namespace Client3D
 		{
 			this.Grid[p.Z, p.Y, p.X] = voxel;
 
-			GetVisibleFaces(p);
+			this.Grid[p.Z, p.Y, p.X].VisibleFaces = GetVisibleFaces(p);
 
 			if (this.VoxelChanged != null)
 				this.VoxelChanged(p);
