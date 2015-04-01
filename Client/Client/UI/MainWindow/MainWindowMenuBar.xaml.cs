@@ -167,11 +167,11 @@ namespace Dwarrowdelf.Client.UI
 
 		private void FullScreen_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
+			var item = (System.Windows.Controls.MenuItem)sender;
 
 			var wnd = App.GameWindow;
 
-			if (button.IsChecked.Value)
+			if (item.IsChecked)
 			{
 				wnd.WindowStyle = System.Windows.WindowStyle.None;
 				wnd.Topmost = true;
@@ -184,7 +184,5 @@ namespace Dwarrowdelf.Client.UI
 				wnd.WindowState = System.Windows.WindowState.Normal;
 			}
 		}
-
-
 	}
 }
