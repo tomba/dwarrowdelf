@@ -162,27 +162,5 @@ namespace Dwarrowdelf.Client.UI
 			wnd.Owner = App.GameWindow;
 			wnd.Show();
 		}
-
-		/* Window */
-
-		private void FullScreen_MenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			var item = (System.Windows.Controls.MenuItem)sender;
-
-			var wnd = App.GameWindow;
-
-			if (item.IsChecked)
-			{
-				wnd.WindowStyle = System.Windows.WindowStyle.None;
-				wnd.Topmost = true;
-				wnd.WindowState = System.Windows.WindowState.Maximized;
-			}
-			else
-			{
-				wnd.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
-				wnd.Topmost = false;
-				wnd.WindowState = System.Windows.WindowState.Normal;
-			}
-		}
 	}
 }

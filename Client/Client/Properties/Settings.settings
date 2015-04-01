@@ -5,5 +5,8 @@
     <Setting Name="MainWindowPlacement" Type="Win32.WindowPlacement" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="IsFullScreen" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

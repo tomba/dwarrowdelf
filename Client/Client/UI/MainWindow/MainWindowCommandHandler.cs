@@ -30,6 +30,10 @@ namespace Dwarrowdelf.Client.UI
 				new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler),
 			});
 
+			m_mainWindow.CommandBindings.AddRange(new CommandBinding[] {
+				new CommandBinding(ClientCommands.ToggleFullScreen, ToggleFullScreenHandler),
+			});
+
 			// add mode specific bindings
 			switch (mode)
 			{
@@ -200,6 +204,11 @@ namespace Dwarrowdelf.Client.UI
 			dlg.Title = "Inventory";
 
 			dlg.ShowDialog();
+		}
+
+		void ToggleFullScreenHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			App.GameWindow.ToggleFullScreen();
 		}
 
 		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)

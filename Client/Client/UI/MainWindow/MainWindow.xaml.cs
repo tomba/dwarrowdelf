@@ -83,6 +83,13 @@ namespace Dwarrowdelf.Client.UI
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e)
 		{
+			m_isFullScreen = Properties.Settings.Default.IsFullScreen;
+			if (m_isFullScreen)
+			{
+				m_storedWindowState = System.Windows.WindowState.Normal;
+				this.WindowStyle = System.Windows.WindowStyle.None;
+			}
+
 			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
 			if (p != null)
 				Win32.Helpers.LoadWindowPlacement(this, p);
@@ -99,6 +106,7 @@ namespace Dwarrowdelf.Client.UI
 
 					var p = Win32.Helpers.SaveWindowPlacement(this);
 					Properties.Settings.Default.MainWindowPlacement = p;
+					Properties.Settings.Default.IsFullScreen = m_isFullScreen;
 					Properties.Settings.Default.Save();
 
 					var dlg = OpenLogOnDialog();
@@ -133,6 +141,40 @@ namespace Dwarrowdelf.Client.UI
 		void MainWindow_Closed(object sender, EventArgs e)
 		{
 			map.Dispose();
+		}
+
+		bool m_isFullScreen;
+		System.Windows.WindowState m_storedWindowState;
+
+		protected override void OnStateChanged(EventArgs e)
+		{
+			base.OnStateChanged(e);
+
+			if (this.WindowState != System.Windows.WindowState.Maximized)
+			{
+				this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+				m_isFullScreen = false;
+			}
+		}
+
+		public void ToggleFullScreen()
+		{
+			if (m_isFullScreen == false)
+			{
+				m_storedWindowState = this.WindowState;
+				this.WindowState = System.Windows.WindowState.Normal;
+				this.WindowStyle = System.Windows.WindowStyle.None;
+				this.WindowState = System.Windows.WindowState.Maximized;
+
+				m_isFullScreen = true;
+			}
+			else
+			{
+				this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+				this.WindowState = m_storedWindowState;
+
+				m_isFullScreen = false;
+			}
 		}
 
 		void MainWindowTools_ToolModeChanged(ClientToolMode toolMode)

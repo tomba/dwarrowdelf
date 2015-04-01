@@ -31,7 +31,7 @@
             <MenuItem Header="Get" Command="ui:ClientCommands.GetItemCommand" />
         </MenuItem>
         <MenuItem Header="Window">
-			<MenuItem Header="Full Screen" Click="FullScreen_MenuItem_Click" IsCheckable="True" />
+            <MenuItem Header="Full Screen" Command="ui:ClientCommands.ToggleFullScreen" />
  		</MenuItem>
 	</Menu>
 </UserControl>
