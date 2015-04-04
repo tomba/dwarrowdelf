@@ -25,6 +25,8 @@ namespace Dwarrowdelf.Client
 		// Delete all saves before starting
 		public static bool CleanSaveDir = true;
 
-		public static readonly string SaveGamePath = System.IO.Path.Combine(Win32.SavedGamesFolder.GetSavedGamesPath(), "Dwarrowdelf", "save");
+		//public static readonly string SaveGamePath = System.IO.Path.Combine(Win32.SavedGamesFolder.GetSavedGamesPath(), "Dwarrowdelf", "save");
+		public static readonly string SaveGamePath =
+			System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
 	}
 }

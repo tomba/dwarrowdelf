@@ -15,8 +15,8 @@ namespace Dwarrowdelf.Server
 		{
 			Thread.CurrentThread.Name = "SMain";
 
-			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
+			var path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
+
 			if (!System.IO.Directory.Exists(path))
 				System.IO.Directory.CreateDirectory(path);
 
