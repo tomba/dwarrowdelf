@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -7,6 +8,17 @@ namespace Dwarrowdelf.Client
 {
 	static class ClientConfig
 	{
+		static ClientConfig()
+		{
+			//SaveGamePath = Path.Combine(Win32.SavedGamesFolder.GetSavedGamesPath(), "Dwarrowdelf", "save");
+			SaveGamePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
+
+			if (Directory.Exists(SaveGamePath) == false)
+				Directory.CreateDirectory(SaveGamePath);
+
+			SavedConfig = ClientSavedConfig.Load();
+		}
+
 		public static EmbeddedServerMode EmbeddedServerMode = EmbeddedServerMode.SameAppDomain;
 		public static ConnectionType ConnectionType = ConnectionType.Tcp;
 		public static bool AutoConnect = true;
@@ -25,8 +37,40 @@ namespace Dwarrowdelf.Client
 		// Delete all saves before starting
 		public static bool CleanSaveDir = true;
 
-		//public static readonly string SaveGamePath = System.IO.Path.Combine(Win32.SavedGamesFolder.GetSavedGamesPath(), "Dwarrowdelf", "save");
-		public static readonly string SaveGamePath =
-			System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
+		public static readonly string SaveGamePath;
+
+		public static readonly ClientSavedConfig SavedConfig;
+	}
+
+	class ClientSavedConfig
+	{
+		static string ClientSaveFile { get { return System.IO.Path.Combine(ClientConfig.SaveGamePath, "client-config.json"); } }
+
+		public static ClientSavedConfig Load()
+		{
+			ClientSavedConfig config;
+
+			if (System.IO.File.Exists(ClientSaveFile))
+			{
+				var dataStr = System.IO.File.ReadAllText(ClientSaveFile);
+				config = Newtonsoft.Json.JsonConvert.DeserializeObject<ClientSavedConfig>(dataStr);
+			}
+			else
+			{
+				config = new ClientSavedConfig();
+			}
+
+			return config;
+		}
+
+		public void Save()
+		{
+			var dataStr = Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+
+			System.IO.File.WriteAllText(ClientSaveFile, dataStr);
+		}
+
+		public Win32.WindowPlacement WindowPlacement { get; set; }
+		public bool IsFullScreen { get; set; }
 	}
 }

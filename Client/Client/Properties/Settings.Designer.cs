@@ -22,28 +22,5 @@ namespace Dwarrowdelf.Client.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::Win32.WindowPlacement MainWindowPlacement {
-            get {
-                return ((global::Win32.WindowPlacement)(this["MainWindowPlacement"]));
-            }
-            set {
-                this["MainWindowPlacement"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsFullScreen {
-            get {
-                return ((bool)(this["IsFullScreen"]));
-            }
-            set {
-                this["IsFullScreen"] = value;
-            }
-        }
     }
 }
