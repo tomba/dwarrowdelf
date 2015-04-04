@@ -48,7 +48,8 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static TerrainData CreateOrLoadTerrain(IntSize3 size)
 		{
-			string file = Path.Combine(Directory.GetCurrentDirectory(), "terrain.dat");
+			var path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
+			string file = Path.Combine(path, "terrain-cache-hack.dat");
 
 			TerrainData terrain = null;
 
