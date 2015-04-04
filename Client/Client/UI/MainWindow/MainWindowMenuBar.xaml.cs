@@ -42,14 +42,11 @@ namespace Dwarrowdelf.Client.UI
 			{
 				var prog = new Progress<string>(str => dlg.AppendText(str));
 
-				var path = Win32.SavedGamesFolder.GetSavedGamesPath();
-				path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
-
 				var options = new EmbeddedServerOptions()
 				{
 					ServerMode = ClientConfig.EmbeddedServerMode,
 					NewGameOptions = ClientConfig.NewGameOptions,
-					SaveGamePath = path,
+					SaveGamePath = ClientConfig.SaveGamePath,
 					CleanSaveDir = ClientConfig.CleanSaveDir,
 				};
 
