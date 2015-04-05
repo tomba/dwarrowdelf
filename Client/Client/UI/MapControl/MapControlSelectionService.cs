@@ -164,7 +164,8 @@ namespace Dwarrowdelf.Client.UI
 			if (KeyHelpers.KeyIsDir(key))
 			{
 				m_mapControl.ScrollStop();
-				var dir = KeyHelpers.KeyToDir(key);
+
+				var dir = m_mapControl.ScreenToMap(KeyHelpers.KeyToDir(key));
 
 				if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
 				{

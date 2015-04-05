@@ -170,5 +170,14 @@ namespace Dwarrowdelf.Client.TileControl
 					throw new NotImplementedException();
 			}
 		}
+
+		public Direction ScreenToMap(Direction dir)
+		{
+			var v = dir.ToIntVector3();
+
+			v = ScreenToMap(v);
+
+			return v.ToDirection();
+		}
 	}
 }
