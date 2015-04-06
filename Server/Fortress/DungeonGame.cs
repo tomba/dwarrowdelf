@@ -31,6 +31,12 @@ namespace Dwarrowdelf.Server.Fortress
 			}
 
 			var player = CreatePlayer(env);
+			this.AddPlayer(player);
+		}
+
+		DungeonGame(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		Player CreatePlayer(EnvironmentObject env)

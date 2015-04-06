@@ -255,7 +255,7 @@ namespace Dwarrowdelf.TerrainGen
 					var p = new IntVector3(p2, z);
 
 					var _td = GetTileData(p);
-					if (_td.TerrainID == td.TerrainID)
+					if (_td.InteriorID == td.InteriorID)
 						Debugger.Break();
 
 					SetTileData(p, td);
