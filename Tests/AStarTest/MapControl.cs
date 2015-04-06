@@ -214,15 +214,13 @@ namespace AStarTest
 
 		public IntVector3 ScreenPointToMapLocation(Point p)
 		{
-			var rt = RenderPointToRenderTile(p);
-			var st3 = RenderTileToScreen3(rt);
-			return st3.ToIntVector3();
+			return RenderPointToScreen3(p).ToIntVector3();
 		}
 
 		public IntVector3 ScreenTileToMapLocation(IntVector2 st)
 		{
-			var p = RenderTileToScreen3(new Point(st.X, st.Y));
-			return p.ToIntVector3();
+			var ml = RenderTileToScreen(new Point(st.X, st.Y));
+			return new IntVector3((int)ml.X, (int)ml.Y, (int)this.ScreenZ);
 		}
 
 		void UpdateCurrentTileInfo(Point pos)
