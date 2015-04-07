@@ -12,11 +12,6 @@ namespace Dwarrowdelf.Client
 		{
 			//SaveGamePath = Path.Combine(Win32.SavedGamesFolder.GetSavedGamesPath(), "Dwarrowdelf", "save");
 			SaveGamePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
-
-			if (Directory.Exists(SaveGamePath) == false)
-				Directory.CreateDirectory(SaveGamePath);
-
-			SavedConfig = ClientSavedConfig.Load();
 		}
 
 		public static EmbeddedServerMode EmbeddedServerMode = EmbeddedServerMode.SameAppDomain;
@@ -38,8 +33,6 @@ namespace Dwarrowdelf.Client
 		public static bool CleanSaveDir = true;
 
 		public static readonly string SaveGamePath;
-
-		public static readonly ClientSavedConfig SavedConfig;
 	}
 
 	class ClientSavedConfig
@@ -65,6 +58,9 @@ namespace Dwarrowdelf.Client
 
 		public void Save()
 		{
+			if (!Directory.Exists(ClientConfig.SaveGamePath))
+				Directory.CreateDirectory(ClientConfig.SaveGamePath);
+
 			var dataStr = Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
 
 			System.IO.File.WriteAllText(ClientSaveFile, dataStr);

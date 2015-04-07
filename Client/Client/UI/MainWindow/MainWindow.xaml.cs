@@ -83,15 +83,17 @@ namespace Dwarrowdelf.Client.UI
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e)
 		{
-			m_isFullScreen = ClientConfig.SavedConfig.IsFullScreen;
+			var config = ClientSavedConfig.Load();
+
+			m_isFullScreen = config.IsFullScreen;
 			if (m_isFullScreen)
 			{
 				m_storedWindowState = System.Windows.WindowState.Normal;
 				this.WindowStyle = System.Windows.WindowStyle.None;
 			}
 
-			if (ClientConfig.SavedConfig.WindowPlacement != null)
-				Win32.Helpers.LoadWindowPlacement(this, ClientConfig.SavedConfig.WindowPlacement);
+			if (config.WindowPlacement != null)
+				Win32.Helpers.LoadWindowPlacement(this, config.WindowPlacement);
 		}
 
 		async void MainWindow_Closing(object sender, CancelEventArgs e)
@@ -103,9 +105,10 @@ namespace Dwarrowdelf.Client.UI
 
 					e.Cancel = true;
 
-					ClientConfig.SavedConfig.WindowPlacement = Win32.Helpers.SaveWindowPlacement(this);
-					ClientConfig.SavedConfig.IsFullScreen = m_isFullScreen;
-					ClientConfig.SavedConfig.Save();
+					var config = ClientSavedConfig.Load();
+					config.WindowPlacement = Win32.Helpers.SaveWindowPlacement(this);
+					config.IsFullScreen = m_isFullScreen;
+					config.Save();
 
 					var dlg = OpenLogOnDialog();
 
