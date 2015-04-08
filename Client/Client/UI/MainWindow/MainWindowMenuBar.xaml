@@ -26,10 +26,6 @@
 			<MenuItem Header="Stats" Click="Stats_MenuItem_Click" />
 			<MenuItem Header="GCDebug" Click="GCDebug_MenuItem_Click" />
 		</MenuItem>
-        <MenuItem Header="Actions">
-            <MenuItem Header="Drop" Command="ui:ClientCommands.DropItemCommand" />
-            <MenuItem Header="Get" Command="ui:ClientCommands.GetItemCommand" />
-        </MenuItem>
         <MenuItem Header="Window">
             <MenuItem Header="Full Screen" Command="ui:ClientCommands.ToggleFullScreen" />
  		</MenuItem>

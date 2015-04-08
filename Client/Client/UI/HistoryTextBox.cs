@@ -21,9 +21,11 @@ namespace Dwarrowdelf.Client.UI
 		public HistoryTextBox()
 		{
 			m_stringList = new List<string>(m_maxSize);
-			m_stringList.Add("asd");
+			m_stringList.Add("");
 			m_historyPos = m_stringList.Count - 1;
 		}
+
+		public string Previous { get { return m_stringList.Count > 1 ? m_stringList[m_stringList.Count - 2] : ""; } }
 
 		public string[] History
 		{

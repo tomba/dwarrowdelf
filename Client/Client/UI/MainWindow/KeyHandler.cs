@@ -136,21 +136,7 @@ namespace Dwarrowdelf.Client.UI
 
 			if (dir != Direction.None)
 			{
-				var target = ob.Environment.GetContents(ob.Location + dir).OfType<LivingObject>().FirstOrDefault();
-
-				if (target == null)
-				{
-					var action = new MoveAction(dir);
-					action.GUID = new ActionGUID(ob.World.PlayerID, 0);
-					ob.RequestAction(action);
-				}
-				else
-				{
-					var action = new AttackAction(target);
-					action.GUID = new ActionGUID(ob.World.PlayerID, 0);
-					ob.RequestAction(action);
-				}
-
+				CommandPromptHandler.HandleDirection(dir);
 				return true;
 			}
 
@@ -203,19 +189,11 @@ namespace Dwarrowdelf.Client.UI
 			switch (text)
 			{
 				case ">":
-					{
-						var action = new MoveAction(Direction.Down);
-						action.GUID = new ActionGUID(ob.World.PlayerID, 0);
-						ob.RequestAction(action);
-					}
+					CommandPromptHandler.HandleDirection(Direction.Down);
 					return true;
 
 				case "<":
-					{
-						var action = new MoveAction(Direction.Up);
-						action.GUID = new ActionGUID(ob.World.PlayerID, 0);
-						ob.RequestAction(action);
-					}
+					CommandPromptHandler.HandleDirection(Direction.Up);
 					return true;
 
 				default:

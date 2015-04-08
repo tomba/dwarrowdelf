@@ -24,9 +24,9 @@ namespace Dwarrowdelf.Client
 		// Game mode if new game is created
 		public static GameOptions NewGameOptions = new GameOptions()
 		{
-			Mode = GameMode.Fortress,
-			Map = GameMap.Fortress,
-			TickMethod = WorldTickMethod.Simultaneous,
+			Mode = GameMode.Adventure,
+			Map = GameMap.Adventure,
+			TickMethod = WorldTickMethod.Sequential,
 		};
 
 		// Delete all saves before starting

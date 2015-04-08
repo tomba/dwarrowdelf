@@ -563,5 +563,23 @@ namespace Dwarrowdelf.Client.UI
 
 			map.ScrollTo(msg.Environment, msg.Location);
 		}
+
+		void CommandPromptTextBox_TextEntered(string str)
+		{
+			if (GameData.Data.FocusedObject == null)
+			{
+				Events.AddInformative("No controllable, command not handled");
+				return;
+			}
+
+			if (str == "")
+			{
+				str = this.promptTextBox.Previous;
+				if (str == "")
+					return;
+			}
+
+			CommandPromptHandler.Handle(str);
+		}
 	}
 }

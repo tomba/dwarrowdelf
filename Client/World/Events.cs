@@ -70,6 +70,12 @@ namespace Dwarrowdelf.Client
 			s_previousWasTickEvent = true;
 		}
 
+		public static void AddInformative(string message, params object[] args)
+		{
+			AddGameEventInternal(null, new IntVector3(), String.Format(message, args));
+			s_previousWasTickEvent = false;
+		}
+
 		static void AddGameEventInternal(EnvironmentObject env, IntVector3 location, string message)
 		{
 			if (s_events.Count > 100)

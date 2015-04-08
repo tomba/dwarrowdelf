@@ -20,11 +20,6 @@ namespace Dwarrowdelf.Client.UI
 		public static RoutedUICommand AutoAdvanceTurnCommand;
 		public static RoutedUICommand OpenConsoleCommand;
 		public static RoutedUICommand OpenFocusDebugCommand;
-		public static RoutedUICommand DropItemCommand;
-		public static RoutedUICommand GetItemCommand;
-		public static RoutedUICommand RemoveItemCommand;
-		public static RoutedUICommand WearItemCommand;
-		public static RoutedUICommand InventoryCommand;
 
 		static ClientCommands()
 		{
@@ -38,19 +33,6 @@ namespace Dwarrowdelf.Client.UI
 				new InputGestureCollection() { new GameKeyGesture(Key.Enter, ModifierKeys.Control) });
 
 			OpenFocusDebugCommand = new RoutedUICommand("Open FocusDebug", "OpenFocusDebug", typeof(ClientCommands));
-
-			DropItemCommand = new RoutedUICommand("Drop Item", "DropItem", typeof(ClientCommands),
-				new InputGestureCollection() { new GameKeyGesture(Key.D) });
-			GetItemCommand = new RoutedUICommand("Get Item", "GetItem", typeof(ClientCommands),
-				new InputGestureCollection() { new GameKeyGesture(Key.OemComma, ",") });
-
-			RemoveItemCommand = new RoutedUICommand("Remove Item", "RemoveItem", typeof(ClientCommands),
-				new InputGestureCollection() { new GameKeyGesture(Key.R) });
-			WearItemCommand = new RoutedUICommand("Wear Item", "WearItem", typeof(ClientCommands),
-				new InputGestureCollection() { new GameKeyGesture(Key.W) });
-
-			InventoryCommand = new RoutedUICommand("Inventory", "Inventory", typeof(ClientCommands),
-				new InputGestureCollection() { new GameKeyGesture(Key.I) });
 		}
 	}
 

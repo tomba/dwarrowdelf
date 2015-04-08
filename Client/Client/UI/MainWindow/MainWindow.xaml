@@ -39,6 +39,7 @@
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="200" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
 			<GridSplitter Grid.Column="1" Grid.RowSpan="3" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
@@ -98,6 +99,10 @@
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
+
+			<!-- Command prompt -->
+			<ui:HistoryTextBox x:Name="promptTextBox" Grid.Column="2" Grid.Row="3"
+                               TextEntered="CommandPromptTextBox_TextEntered" FontFamily="Lucida Console" />
 
 			<StackPanel Orientation="Vertical" Grid.Column="4" Grid.RowSpan="3">
 				<StackPanel.Resources>
