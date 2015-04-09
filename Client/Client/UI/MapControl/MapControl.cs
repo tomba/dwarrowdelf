@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Client.UI
 				var zInc = this.ZInc;
 				// XXX
 				RenderResolver.Resolve(m_env, m_renderData, m_isVisibilityCheckEnabled,
-					baseLoc, xInc, yInc, zInc, m_symbolToggler);
+					baseLoc, xInc, yInc, zInc, m_symbolToggler, this.Orientation == TileControlOrientation.XY);
 
 				Debug.Assert(m_renderData.Size == ctx.RenderGridSize);
 

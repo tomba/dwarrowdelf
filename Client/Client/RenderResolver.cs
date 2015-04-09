@@ -20,7 +20,8 @@ namespace Dwarrowdelf.Client
 
 		public static void Resolve(EnvironmentObject env, DataGrid2D<TileControl.RenderTile> renderData,
 			bool isVisibilityCheckEnabled,
-			IntVector3 baseLoc, IntVector3 xInc, IntVector3 yInc, IntVector3 zInc, bool symbolToggler)
+			IntVector3 baseLoc, IntVector3 xInc, IntVector3 yInc, IntVector3 zInc, bool symbolToggler,
+			bool showMultipleLevels)
 		{
 			//Debug.WriteLine("RenderView.Resolve");
 
@@ -49,7 +50,7 @@ namespace Dwarrowdelf.Client
 #endif
 
 #if NONPARALLEL
-			for(int y = 0; y < rows; ++y)
+			for (int y = 0; y < rows; ++y)
 #else
 			// Note: we cannot access WPF stuff from different threads
 			Parallel.For(0, rows, y =>
@@ -66,7 +67,7 @@ namespace Dwarrowdelf.Client
 #if RESOLV_MEASURE
 					count++;
 #endif
-					ResolveDetailed(out renderData.Grid[idx], env, ml, isVisibilityCheckEnabled, symbolToggler, zInc);
+					ResolveDetailed(out renderData.Grid[idx], env, ml, isVisibilityCheckEnabled, symbolToggler, zInc, showMultipleLevels);
 				}
 			}
 #if !NONPARALLEL
@@ -83,7 +84,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		static void ResolveDetailed(out RenderTile tile, EnvironmentObject env, IntVector3 ml, bool isVisibilityCheckEnabled,
-			bool symbolToggler, IntVector3 zInc)
+			bool symbolToggler, IntVector3 zInc, bool showMultipleLevels)
 		{
 			tile = new RenderTile();
 			tile.IsValid = true;
@@ -98,7 +99,9 @@ namespace Dwarrowdelf.Client
 			else
 				visible = TileVisible(ml, env);
 
-			for (int i = 0; i < MAXLEVEL; ++i)
+			int maxLevel = showMultipleLevels ? MAXLEVEL : 1;
+
+			for (int i = 0; i < maxLevel; ++i)
 			{
 				bool seeThrough;
 
