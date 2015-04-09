@@ -138,7 +138,7 @@ namespace Dwarrowdelf.Client
 
 			var dlg = new ItemSelectorDialog();
 			dlg.Owner = GameData.Data.MainWindow;
-			dlg.DataContext = living.Contents;
+			dlg.DataContext = living.Inventory;
 			dlg.Title = "Drop Item";
 
 			var ret = dlg.ShowDialog();
@@ -157,7 +157,7 @@ namespace Dwarrowdelf.Client
 		{
 			var living = GameData.Data.FocusedObject;
 
-			var obs = living.Contents.OfType<ItemObject>()
+			var obs = living.Inventory
 				.Where(o => ((o.IsArmor || o.IsWeapon) && o.IsEquipped == false));
 
 			if (obs.Any() == false)
@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Client
 		{
 			var living = GameData.Data.FocusedObject;
 
-			var obs = living.Contents.OfType<ItemObject>().Where(o => o.IsEquipped);
+			var obs = living.Inventory.Where(o => o.IsEquipped);
 
 			if (obs.Any() == false)
 				return;
@@ -218,7 +218,7 @@ namespace Dwarrowdelf.Client
 		{
 			var living = GameData.Data.FocusedObject;
 
-			var obs = living.Contents;
+			var obs = living.Inventory;
 
 			if (obs.Any() == false)
 				return;
@@ -264,7 +264,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var component in buildableItem.FixedBuildMaterials)
 			{
-				var obs = living.Contents.OfType<ItemObject>().Where(item => component.Match(item));
+				var obs = living.Inventory.Where(item => component.Match(item));
 
 				if (obs.Any() == false)
 				{
@@ -277,7 +277,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var component in buildableItem.FixedBuildMaterials)
 			{
-				var obs = living.Contents.OfType<ItemObject>().Where(item => component.Match(item));
+				var obs = living.Inventory.Where(item => component.Match(item));
 
 				var dlg = new ItemSelectorDialog();
 				dlg.Owner = GameData.Data.MainWindow;

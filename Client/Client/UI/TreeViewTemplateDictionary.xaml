@@ -71,7 +71,7 @@
 	</HierarchicalDataTemplate>
 
 	<!-- Living Object -->
-	<HierarchicalDataTemplate DataType="{x:Type world:LivingObject}" ItemsSource="{Binding Contents}">
+	<HierarchicalDataTemplate DataType="{x:Type world:LivingObject}" ItemsSource="{Binding Inventory}">
 		<HierarchicalDataTemplate.Resources>
 			<ui:AssignmentToStringConverter x:Key="assignmentConverter"/>
 		</HierarchicalDataTemplate.Resources>

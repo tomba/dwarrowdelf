@@ -18,7 +18,7 @@
 		</GroupBox>
 
 		<GroupBox Header="Inventory" Grid.Column="1">
-			<ListBox Name="inventoryListBox" ItemsSource="{Binding Contents}" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
+			<ListBox Name="inventoryListBox" ItemsSource="{Binding Inventory}" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
 				<ListBox.Resources>
 					<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/ListItemInfoTemplateDictionary.xaml" />
 				</ListBox.Resources>
