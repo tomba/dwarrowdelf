@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (!item.IsArmor || !item.IsWeapon)
+			if (!item.IsArmor && !item.IsWeapon)
 			{
 				var report = new EquipItemActionReport(this, item);
 				report.SetFail("not equippable");
