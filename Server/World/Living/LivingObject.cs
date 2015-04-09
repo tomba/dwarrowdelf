@@ -156,7 +156,7 @@ namespace Dwarrowdelf.Server
 
 			if (item.IsArmor)
 			{
-				if (this.Inventory.OfType<ItemObject>().Where(i => i.IsArmor && i.IsEquipped)
+				if (this.Contents.OfType<ItemObject>().Where(i => i.IsArmor && i.IsEquipped)
 					.Any(i => i.ArmorInfo.Slot == item.ArmorInfo.Slot))
 					throw new Exception();
 			}
@@ -184,7 +184,7 @@ namespace Dwarrowdelf.Server
 
 		void RecalcArmorClass()
 		{
-			var ac = this.Inventory
+			var ac = this.Contents
 				.OfType<ItemObject>()
 				.Where(i => i.IsArmor && i.IsEquipped)
 				.Sum(i => i.ArmorInfo.AC);
@@ -199,7 +199,7 @@ namespace Dwarrowdelf.Server
 			get
 			{
 				// XXX cache the result
-				return this.Inventory.OfType<ItemObject>().SingleOrDefault(i => i.IsWeapon && i.IsEquipped);
+				return this.Contents.OfType<ItemObject>().SingleOrDefault(i => i.IsWeapon && i.IsEquipped);
 			}
 		}
 
@@ -288,7 +288,7 @@ namespace Dwarrowdelf.Server
 				Trace.TraceWarning("Failed to move corpse");
 
 			// make a copy, as the collection will be modified
-			foreach (ItemObject item in this.Inventory.ToList())
+			foreach (ItemObject item in this.Contents.ToList())
 			{
 				if (item.IsEquipped)
 					UnequipItem(item);

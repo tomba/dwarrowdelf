@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Server
 		{
 			m_env = env;
 			/*
-						m_env.Inventory
+						m_env.Contents
 							.OfType<LivingObject>()
 							.Where(o => o.LivingCategory == LivingCategory.Herbivore)
 							.Count();

@@ -23,7 +23,7 @@
 	</DataTemplate>
 
 	<!-- Container Object -->
-	<HierarchicalDataTemplate DataType="{x:Type world:ContainerObject}" ItemsSource="{Binding Inventory}">
+	<HierarchicalDataTemplate DataType="{x:Type world:ContainerObject}" ItemsSource="{Binding Contents}">
 		<TextBlock>
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0} ({1})">
@@ -35,7 +35,7 @@
 	</HierarchicalDataTemplate>
 
 	<!-- Concete Object -->
-	<HierarchicalDataTemplate DataType="{x:Type world:ConcreteObject}" ItemsSource="{Binding Inventory}">
+	<HierarchicalDataTemplate DataType="{x:Type world:ConcreteObject}" ItemsSource="{Binding Contents}">
 		<Grid ContextMenu="{StaticResource objectMenu}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -71,7 +71,7 @@
 	</HierarchicalDataTemplate>
 
 	<!-- Living Object -->
-	<HierarchicalDataTemplate DataType="{x:Type world:LivingObject}" ItemsSource="{Binding Inventory}">
+	<HierarchicalDataTemplate DataType="{x:Type world:LivingObject}" ItemsSource="{Binding Contents}">
 		<HierarchicalDataTemplate.Resources>
 			<ui:AssignmentToStringConverter x:Key="assignmentConverter"/>
 		</HierarchicalDataTemplate.Resources>

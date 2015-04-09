@@ -29,7 +29,7 @@ namespace Dwarrowdelf
 
 	public interface IContainerObject : IBaseObject
 	{
-		IEnumerable<IMovableObject> Inventory { get; }
+		IEnumerable<IMovableObject> Contents { get; }
 	}
 
 	public interface IEnvironmentObject : IContainerObject

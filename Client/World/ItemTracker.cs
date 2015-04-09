@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client
 
 			m_items = new List<ItemObject>(1024);
 
-			m_items.AddRange(env.Inventory.OfType<ItemObject>());
+			m_items.AddRange(env.Contents.OfType<ItemObject>());
 
 			m_env.ObjectAdded += Environment_ObjectAdded;
 			m_env.ObjectRemoved += Environment_ObjectRemoved;

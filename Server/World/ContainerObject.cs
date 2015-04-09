@@ -9,28 +9,28 @@ namespace Dwarrowdelf.Server
 {
 	public abstract class ContainerObject : BaseObject, IContainerObject
 	{
-		[SaveGameProperty("Inventory")]
-		KeyedObjectCollection m_children;
-		public ReadOnlyCollection<MovableObject> Inventory { get; private set; }
-		IEnumerable<IMovableObject> IContainerObject.Inventory { get { return this.Inventory; } }
+		[SaveGameProperty("Contents")]
+		KeyedObjectCollection m_contents;
+		public ReadOnlyCollection<MovableObject> Contents { get; private set; }
+		IEnumerable<IMovableObject> IContainerObject.Contents { get { return this.Contents; } }
 
 		protected ContainerObject(ObjectType objectType)
 			: base(objectType)
 		{
-			m_children = new KeyedObjectCollection();
-			this.Inventory = new ReadOnlyCollection<MovableObject>(m_children);
+			m_contents = new KeyedObjectCollection();
+			this.Contents = new ReadOnlyCollection<MovableObject>(m_contents);
 		}
 
 		protected ContainerObject(SaveGameContext ctx, ObjectType objectType)
 			: base(ctx, objectType)
 		{
-			this.Inventory = new ReadOnlyCollection<MovableObject>(m_children);
+			this.Contents = new ReadOnlyCollection<MovableObject>(m_contents);
 		}
 
 		public override void Destruct()
 		{
-			// Make a copy of the inventory
-			foreach (var ob in this.Inventory.ToArray())
+			// Make a copy of the contents
+			foreach (var ob in this.Contents.ToArray())
 				ob.Destruct();
 
 			base.Destruct();
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
-			var items = this.Inventory.AsEnumerable();
+			var items = this.Contents.AsEnumerable();
 
 			// filter non-worn and non-wielded if not private visibility
 			if ((visibility & ObjectVisibility.Private) == 0)
@@ -51,12 +51,12 @@ namespace Dwarrowdelf.Server
 		internal void RemoveChild(MovableObject ob)
 		{
 			OnChildRemoved(ob);
-			m_children.Remove(ob);
+			m_contents.Remove(ob);
 		}
 
 		internal void AddChild(MovableObject ob)
 		{
-			m_children.Add(ob);
+			m_contents.Add(ob);
 			OnChildAdded(ob);
 		}
 

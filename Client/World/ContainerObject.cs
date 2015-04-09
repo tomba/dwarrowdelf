@@ -7,15 +7,15 @@ namespace Dwarrowdelf.Client
 {
 	public abstract class ContainerObject : BaseObject, IContainerObject
 	{
-		MovableObjectCollection m_inventory;
-		public ReadOnlyMovableObjectCollection Inventory { get; private set; }
-		IEnumerable<IMovableObject> IContainerObject.Inventory { get { return this.Inventory; } }
+		MovableObjectCollection m_contents;
+		public ReadOnlyMovableObjectCollection Contents { get; private set; }
+		IEnumerable<IMovableObject> IContainerObject.Contents { get { return this.Contents; } }
 
 		public ContainerObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			m_inventory = new MovableObjectCollection();
-			this.Inventory = new ReadOnlyMovableObjectCollection(m_inventory);
+			m_contents = new MovableObjectCollection();
+			this.Contents = new ReadOnlyMovableObjectCollection(m_contents);
 		}
 
 		protected virtual void ChildAdded(MovableObject child) { }
@@ -24,13 +24,13 @@ namespace Dwarrowdelf.Client
 
 		public void AddChild(MovableObject ob)
 		{
-			m_inventory.Add(ob);
+			m_contents.Add(ob);
 			ChildAdded(ob);
 		}
 
 		public void RemoveChild(MovableObject ob)
 		{
-			m_inventory.Remove(ob);
+			m_contents.Remove(ob);
 			ChildRemoved(ob);
 		}
 

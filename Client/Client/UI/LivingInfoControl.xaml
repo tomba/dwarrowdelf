@@ -79,7 +79,7 @@
 				</Grid.RowDefinitions>
 
 				<GroupBox Grid.Row="0" Header="Inventory">
-					<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch"  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+					<ListBox ItemsSource="{Binding Contents}" HorizontalContentAlignment="Stretch"  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 						<ListBox.Resources>
 							<ResourceDictionary Source="ListItemInfoTemplateDictionary.xaml" />
 						</ListBox.Resources>

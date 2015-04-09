@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Client
 		{
 			Debug.Print("ItemObjectView: ScanAll");
 
-			foreach (var item in m_env.Inventory.OfType<ItemObject>())
+			foreach (var item in m_env.Contents.OfType<ItemObject>())
 			{
 				if (m_filter(item) == false)
 					continue;

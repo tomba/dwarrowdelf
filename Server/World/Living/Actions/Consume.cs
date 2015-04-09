@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Server
 		{
 			if (this.ActionTicksUsed == 1)
 			{
-				var item = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
+				var item = this.Contents.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
 
 				if (CheckConsumeAction(item) == false)
 					return ActionState.Fail;
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
-				var item = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
+				var item = this.Contents.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
 
 				if (CheckConsumeAction(item) == false)
 					return ActionState.Fail;

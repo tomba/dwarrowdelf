@@ -101,7 +101,7 @@ namespace Dwarrowdelf.Server
 			for (int i = 0; i < this.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
 
-			foreach (var ob in this.Inventory)
+			foreach (var ob in this.Contents)
 				m_contentArray[ob.Z].Add(ob);
 
 			CreateLevelMap();
@@ -533,7 +533,7 @@ namespace Dwarrowdelf.Server
 			sw.Stop();
 			Trace.TraceInformation("Sending MapTiles took {0} ms", sw.ElapsedMilliseconds);
 
-			foreach (var ob in this.Inventory)
+			foreach (var ob in this.Contents)
 			{
 				var vis = player.GetObjectVisibility(ob);
 

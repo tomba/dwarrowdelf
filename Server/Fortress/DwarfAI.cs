@@ -121,7 +121,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var env = worker.Environment;
 
-			var ob = env.Inventory
+			var ob = env.Contents
 				.OfType<IItemObject>()
 				.Where(o => o.IsReserved == false && o.NutritionalValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
@@ -148,7 +148,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var env = worker.Environment;
 
-			var ob = env.Inventory
+			var ob = env.Contents
 				.OfType<IItemObject>()
 				.Where(o => o.IsReserved == false && o.RefreshmentValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
@@ -175,7 +175,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var env = worker.Environment;
 
-			var ob = env.Inventory
+			var ob = env.Contents
 				.OfType<IItemObject>()
 				.Where(o => o.ItemID == ItemID.Bed)
 				.Where(o => o.IsReserved == false && o.IsInstalled)
