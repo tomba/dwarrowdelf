@@ -34,6 +34,11 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		// Contents of type IItemObject
+		IEnumerable<IItemObject> IConcreteObject.Inventory { get { return this.Contents.OfType<IItemObject>(); } }
+		// Contents of type ItemObject
+		public IEnumerable<ItemObject> Inventory { get { return this.Contents.OfType<ItemObject>(); } }
+
 		string m_name;
 		public string Name
 		{

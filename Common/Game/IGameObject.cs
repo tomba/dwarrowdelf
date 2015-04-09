@@ -77,6 +77,9 @@ namespace Dwarrowdelf
 		MaterialInfo Material { get; }
 		MaterialCategory MaterialCategory { get; }
 		MaterialID MaterialID { get; }
+
+		// Contents of type IItemObject
+		IEnumerable<IItemObject> Inventory { get; }
 	}
 
 	public interface ILivingObject : IConcreteObject

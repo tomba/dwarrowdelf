@@ -8,6 +8,11 @@ namespace Dwarrowdelf.Server
 	[SaveGameObject]
 	public abstract class ConcreteObject : MovableObject, IConcreteObject
 	{
+		// Contents of type IItemObject
+		IEnumerable<IItemObject> IConcreteObject.Inventory { get { return this.Contents.OfType<IItemObject>(); } }
+		// Contents of type ItemObject
+		public IEnumerable<ItemObject> Inventory { get { return this.Contents.OfType<ItemObject>(); } }
+
 		protected ConcreteObject(ObjectType objectType, ConcreteObjectBuilder builder)
 			: base(objectType, builder)
 		{
