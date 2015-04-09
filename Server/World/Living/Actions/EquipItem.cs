@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.Parent != this)
+			if (item.Container != this)
 			{
 				var report = new EquipItemActionReport(this, item);
 				report.SetFail("doesn't have the object");

@@ -113,7 +113,7 @@ namespace Dwarrowdelf.Server
 				{
 					var sob = ob as MovableObject;
 
-					if (sob == null || sob.Parent == null)
+					if (sob == null || sob.Container == null)
 						ob.SendTo(player, ObjectVisibility.All);
 				}
 			}

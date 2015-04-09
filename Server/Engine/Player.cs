@@ -393,7 +393,7 @@ namespace Dwarrowdelf.Server
 					{
 						var mo = (MovableObject)ob;
 
-						for (MovableObject o = mo; o != null; o = o.Parent as MovableObject)
+						for (MovableObject o = mo; o != null; o = o.Container as MovableObject)
 						{
 							if (this.IsController(o))
 							{
@@ -402,7 +402,7 @@ namespace Dwarrowdelf.Server
 							}
 						}
 
-						if (Sees(mo.Parent, mo.Location))
+						if (Sees(mo.Container, mo.Location))
 							return ObjectVisibility.Public
 								| ObjectVisibility.Debug; // XXX debug also
 						else
@@ -439,7 +439,7 @@ namespace Dwarrowdelf.Server
 				if (m_controllables.Contains(lgo))
 					return true;
 
-				lgo = lgo.Parent as ConcreteObject;
+				lgo = lgo.Container as ConcreteObject;
 			}
 
 			return false;

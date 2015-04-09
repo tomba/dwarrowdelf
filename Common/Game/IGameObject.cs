@@ -63,10 +63,10 @@ namespace Dwarrowdelf
 	public interface IMovableObject : IContainerObject
 	{
 		/// <summary>
-		/// Return Parent as IEnvironmentObject
+		/// Return Container as IEnvironmentObject
 		/// </summary>
 		IEnvironmentObject Environment { get; }
-		IContainerObject Parent { get; }
+		IContainerObject Container { get; }
 		IntVector3 Location { get; }
 	}
 

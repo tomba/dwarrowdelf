@@ -10,14 +10,14 @@ namespace Dwarrowdelf.Server
 	public abstract class MovableObject : ContainerObject, IMovableObject
 	{
 		[SaveGameProperty]
-		public ContainerObject Parent { get; private set; }
-		IContainerObject IMovableObject.Parent { get { return this.Parent; } }
+		public ContainerObject Container { get; private set; }
+		IContainerObject IMovableObject.Container { get { return this.Container; } }
 
 		/// <summary>
-		/// Return Parent as EnvironmentObject
+		/// Return Container as EnvironmentObject
 		/// </summary>
-		public EnvironmentObject Environment { get { return this.Parent as EnvironmentObject; } }
-		IEnvironmentObject IMovableObject.Environment { get { return this.Parent as IEnvironmentObject; } }
+		public EnvironmentObject Environment { get { return this.Container as EnvironmentObject; } }
+		IEnvironmentObject IMovableObject.Environment { get { return this.Container as IEnvironmentObject; } }
 
 		[SaveGameProperty]
 		public IntVector3 Location { get; private set; }
@@ -43,7 +43,7 @@ namespace Dwarrowdelf.Server
 		public override void Destruct()
 		{
 			// use MoveToLow to force the move
-			if (this.Parent != null)
+			if (this.Container != null)
 				MoveToLow(null, new IntVector3());
 
 			base.Destruct();
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Server
 
 			var data = (MovableObjectData)baseData;
 
-			data.Parent = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
+			data.Container = this.Container != null ? this.Container.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
 		}
 
@@ -77,12 +77,12 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		public bool MoveTo(ContainerObject parent)
+		public bool MoveTo(ContainerObject container)
 		{
-			if (this.Parent == parent)
+			if (this.Container == container)
 				return true;
 
-			return MoveTo(parent, new IntVector3());
+			return MoveTo(container, new IntVector3());
 		}
 
 		public bool MoveTo(ContainerObject dst, IntVector3 dstLoc)
@@ -92,13 +92,13 @@ namespace Dwarrowdelf.Server
 			if (!OkToMove())
 				return false;
 
-			if (this.Parent == dst && this.Location == dstLoc)
+			if (this.Container == dst && this.Location == dstLoc)
 				return true;
 
 			if (dst != null && !dst.OkToAddChild(this, dstLoc))
 				return false;
 
-			if (dst != this.Parent)
+			if (dst != this.Container)
 				MoveToLow(dst, dstLoc);
 			else
 				MoveToLow(dstLoc);
@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(this.World.IsWritable);
 
-			if (this.Parent == null)
+			if (this.Container == null)
 				return false;
 
 			if (!OkToMove())
@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Server
 			if (this.Location == location)
 				return true;
 
-			if (this.Parent.OkToAddChild(this, location) == false)
+			if (this.Container.OkToAddChild(this, location) == false)
 				return false;
 
 			MoveToLow(location);
@@ -158,9 +158,9 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(!this.IsDestructed);
-			Debug.Assert(this.Parent != dst);
+			Debug.Assert(this.Container != dst);
 
-			var src = this.Parent;
+			var src = this.Container;
 			var srcLoc = this.Location;
 
 			this.OnParentChanging();
@@ -168,7 +168,7 @@ namespace Dwarrowdelf.Server
 			if (src != null)
 				src.RemoveChild(this);
 
-			this.Parent = dst;
+			this.Container = dst;
 			this.Location = dstLoc;
 
 			if (dst != null)
@@ -183,7 +183,7 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(!this.IsDestructed);
-			Debug.Assert(this.Parent != null);
+			Debug.Assert(this.Container != null);
 
 			var oldLocation = this.Location;
 
@@ -194,7 +194,7 @@ namespace Dwarrowdelf.Server
 
 			this.Location = location;
 
-			this.Parent.MoveChild(this, oldLocation, location);
+			this.Container.MoveChild(this, oldLocation, location);
 
 			this.OnLocationChanged();
 

@@ -7,8 +7,8 @@
 
 	<StackPanel Orientation="Vertical">
 		<UniformGrid Columns="2">
-			<TextBlock>Parent</TextBlock>
-			<TextBlock Text="{Binding Parent}" />
+			<TextBlock>Container</TextBlock>
+			<TextBlock Text="{Binding Container}" />
 
 			<TextBlock>Location</TextBlock>
 			<TextBlock Text="{Binding Location}" />

@@ -150,7 +150,7 @@ namespace Dwarrowdelf.Server
 
 		public void EquipItem(ItemObject item)
 		{
-			Debug.Assert(item.Parent == this);
+			Debug.Assert(item.Container == this);
 			Debug.Assert(item.IsEquipped == false);
 			Debug.Assert((item.IsArmor && item.ArmorInfo != null) || (item.IsWeapon && item.WeaponInfo != null));
 
@@ -175,7 +175,7 @@ namespace Dwarrowdelf.Server
 
 		public void UnequipItem(ItemObject item)
 		{
-			Debug.Assert(item.Parent == this);
+			Debug.Assert(item.Container == this);
 			Debug.Assert(item.IsEquipped);
 			Debug.Assert((item.IsArmor && item.ArmorInfo != null) || (item.IsWeapon && item.WeaponInfo != null));
 

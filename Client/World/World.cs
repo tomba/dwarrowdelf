@@ -185,11 +185,11 @@ namespace Dwarrowdelf.Client
 
 		void MovablePropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName != "Parent")
+			if (e.PropertyName != "Container")
 				return;
 
 			var ob = (MovableObject)sender;
-			if (ob.Parent == null)
+			if (ob.Container == null)
 			{
 				if (m_rootObjects.Contains(ob))
 					return;

@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case State.CarryItem:
-					Debug.Assert(this.Item.Parent == this.Worker);
+					Debug.Assert(this.Item.Container == this.Worker);
 
 					m_state = State.HaulToStockpile;
 					break;

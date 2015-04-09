@@ -41,7 +41,7 @@ namespace Dwarrowdelf
 	public abstract class MovableObjectData : GameObjectData
 	{
 		public IntVector3 Location;
-		public ObjectID Parent;
+		public ObjectID Container;
 	}
 
 	[Serializable]

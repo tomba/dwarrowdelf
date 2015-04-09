@@ -111,14 +111,14 @@ namespace Dwarrowdelf.Server
 			internal set
 			{
 				Debug.Assert(this.IsWeapon || this.IsArmor);
-				Debug.Assert(this.Parent is LivingObject);
+				Debug.Assert(this.Container is LivingObject);
 
 				if (m_isEquipped == value)
 					return;
 
 				m_isEquipped = value;
 
-				var p = (LivingObject)this.Parent;
+				var p = (LivingObject)this.Container;
 				p.OnItemIsEquippedChanged(this, value);
 
 				NotifyBool(PropertyID.IsEquipped, value);
@@ -130,7 +130,7 @@ namespace Dwarrowdelf.Server
 			get
 			{
 				if (this.IsEquipped)
-					return (LivingObject)this.Parent;
+					return (LivingObject)this.Container;
 				else
 					return null;
 			}

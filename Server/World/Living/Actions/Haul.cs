@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Server
 				return ActionState.Fail;
 			}
 
-			Debug.Assert(this.CarriedItem.Parent == this);
+			Debug.Assert(this.CarriedItem.Container == this);
 
 			if (this.CarriedItem != item)
 			{

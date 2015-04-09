@@ -205,7 +205,7 @@ namespace Dwarrowdelf.Client
 
 				m_isEquipped = value;
 
-				var p = this.Parent as LivingObject;
+				var p = this.Container as LivingObject;
 				if (p != null)
 					p.OnItemIsEquippedChanged(this, value);
 
@@ -222,7 +222,7 @@ namespace Dwarrowdelf.Client
 			get
 			{
 				if (this.IsEquipped)
-					return (LivingObject)this.Parent;
+					return (LivingObject)this.Container;
 				else
 					return null;
 			}

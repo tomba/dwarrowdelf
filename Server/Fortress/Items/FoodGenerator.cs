@@ -62,7 +62,7 @@ namespace Dwarrowdelf.Server.Fortress
 				};
 				var ob = builder.Create(this.World);
 
-				var ok = ob.MoveTo(this.Parent, this.Location);
+				var ok = ob.MoveTo(this.Container, this.Location);
 				if (!ok)
 					ob.Destruct();
 			}
@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Server.Fortress
 				};
 				var ob = builder.Create(this.World);
 
-				var ok = ob.MoveTo(this.Parent, this.Location);
+				var ok = ob.MoveTo(this.Container, this.Location);
 				if (!ok)
 					ob.Destruct();
 			}

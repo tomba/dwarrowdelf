@@ -629,7 +629,7 @@ namespace Dwarrowdelf.Client
 
 		void OnArmorIsWornChanged(ItemObject wearable, bool isWorn)
 		{
-			Debug.Assert(wearable.Parent == this);
+			Debug.Assert(wearable.Container == this);
 
 			var slot = wearable.ArmorInfo.Slot;
 
@@ -676,7 +676,7 @@ namespace Dwarrowdelf.Client
 
 		void OnWeaponIsWieldedChanged(ItemObject weapon, bool isWielded)
 		{
-			Debug.Assert(weapon.Parent == this);
+			Debug.Assert(weapon.Container == this);
 
 			if (isWielded)
 			{

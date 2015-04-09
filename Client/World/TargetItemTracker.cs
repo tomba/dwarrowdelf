@@ -79,7 +79,7 @@ namespace Dwarrowdelf.Client
 
 		public void Update(ItemObject item)
 		{
-			if (item.Parent != m_env)
+			if (item.Container != m_env)
 				return;
 
 			RemoveIfExists(item, item.Location);
@@ -115,7 +115,7 @@ namespace Dwarrowdelf.Client
 
 		void Add(ItemObject item)
 		{
-			Debug.Assert(item.Parent == m_env);
+			Debug.Assert(item.Container == m_env);
 
 			List<ItemObject> l;
 

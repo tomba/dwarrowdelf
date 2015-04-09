@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Server
 
 					if (item.IsEquipped)
 					{
-						var equipper = (LivingObject)item.Parent;
+						var equipper = (LivingObject)item.Container;
 
 						if (m_player.IsController(equipper) == false)
 							item.SendTo(m_player, ObjectVisibility.Public);
@@ -161,7 +161,7 @@ namespace Dwarrowdelf.Server
 					return true;
 
 				// XXX
-				var env = ((MovableObject)c.Object).Parent;
+				var env = ((MovableObject)c.Object).Container;
 
 				if (m_player.Sees(env, c.SourceLocation))
 					return true;
@@ -191,7 +191,7 @@ namespace Dwarrowdelf.Server
 
 					var mo = (MovableObject)c.Object;
 
-					for (MovableObject o = mo; o != null; o = o.Parent as MovableObject)
+					for (MovableObject o = mo; o != null; o = o.Container as MovableObject)
 					{
 						var ov = m_player.GetObjectVisibility(o);
 						if ((ov & ObjectVisibility.Public) != 0)

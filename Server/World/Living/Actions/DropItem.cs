@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.Parent != this)
+			if (item.Container != this)
 			{
 				SendFailReport(new DropItemActionReport(this, item), "not in inventory");
 				return false;
