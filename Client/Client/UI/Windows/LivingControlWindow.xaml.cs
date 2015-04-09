@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Client.UI
 			if (!b.HasValue || b.Value == false)
 				return;
 
-			var action = new GetItemAction(dlg.SelectedItem);
+			var action = new GetItemAction((ItemObject)dlg.SelectedItem);
 			AddAction(action);
 		}
 

@@ -31,12 +31,7 @@ namespace Dwarrowdelf.Client.UI
 			okButton.IsEnabled = itemList.SelectedItem != null;
 		}
 
-		public ItemObject SelectedItem
-		{
-			get
-			{
-				return (ItemObject)itemList.SelectedItem;
-			}
-		}
+		public object SelectedItem { get { return itemList.SelectedItem; } }
+		public int SelectedIndex { get { return itemList.SelectedIndex; } }
 	}
 }

@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 		public static GameOptions NewGameOptions = new GameOptions()
 		{
 			Mode = GameMode.Adventure,
-			Map = GameMap.Adventure,
+			Map = GameMap.Fortress,
 			TickMethod = WorldTickMethod.Sequential,
 		};
 

@@ -9,13 +9,20 @@ namespace Dwarrowdelf.Client
 {
 	static class CommandPromptHandler
 	{
+		static void Inform(string fmt, params object[] args)
+		{
+			Events.AddInformative(fmt, args);
+		}
+
 		public static void Handle(string str)
 		{
+			System.Diagnostics.Debug.Assert(GameData.Data.FocusedObject != null);
+
 			Action<string> handler;
 
 			if (s_commandMap.TryGetValue(str, out handler) == false)
 			{
-				Events.AddInformative("Unknown command '{0}'", str);
+				Inform("Unknown command '{0}'", str);
 				return;
 			}
 
@@ -42,6 +49,8 @@ namespace Dwarrowdelf.Client
 			{ "remove", HandleRemoveItem },
 
 			{ "i", HandleInventory },
+
+			{ "build", HandleBuildItem },
 		};
 
 		static Direction StringToDirection(string str)
@@ -101,9 +110,6 @@ namespace Dwarrowdelf.Client
 		{
 			var living = GameData.Data.FocusedObject;
 
-			if (living == null)
-				return;
-
 			var obs = living.Environment.GetContents(living.Location).OfType<ItemObject>();
 
 			if (obs.Any() == false)
@@ -118,7 +124,7 @@ namespace Dwarrowdelf.Client
 
 			if (ret.HasValue && ret.Value == true)
 			{
-				var ob = dlg.SelectedItem;
+				var ob = (ItemObject)dlg.SelectedItem;
 
 				var action = new GetItemAction(ob);
 				action.GUID = new ActionGUID(living.World.PlayerID, 0);
@@ -130,9 +136,6 @@ namespace Dwarrowdelf.Client
 		{
 			var living = GameData.Data.FocusedObject;
 
-			if (living == null)
-				return;
-
 			var dlg = new ItemSelectorDialog();
 			dlg.Owner = GameData.Data.MainWindow;
 			dlg.DataContext = living.Inventory;
@@ -142,7 +145,7 @@ namespace Dwarrowdelf.Client
 
 			if (ret.HasValue && ret.Value == true)
 			{
-				var ob = dlg.SelectedItem;
+				var ob = (ItemObject)dlg.SelectedItem;
 
 				var action = new DropItemAction(ob);
 				action.GUID = new ActionGUID(living.World.PlayerID, 0);
@@ -153,9 +156,6 @@ namespace Dwarrowdelf.Client
 		static void HandleWearItem(string str)
 		{
 			var living = GameData.Data.FocusedObject;
-
-			if (living == null)
-				return;
 
 			var obs = living.Inventory.OfType<ItemObject>()
 				.Where(o => ((o.IsArmor || o.IsWeapon) && o.IsEquipped == false));
@@ -172,7 +172,7 @@ namespace Dwarrowdelf.Client
 
 			if (ret.HasValue && ret.Value == true)
 			{
-				var ob = dlg.SelectedItem;
+				var ob = (ItemObject)dlg.SelectedItem;
 
 				GameAction action;
 				if (ob.IsArmor || ob.IsWeapon)
@@ -188,9 +188,6 @@ namespace Dwarrowdelf.Client
 		{
 			var living = GameData.Data.FocusedObject;
 
-			if (living == null)
-				return;
-
 			var obs = living.Inventory.OfType<ItemObject>().Where(o => o.IsEquipped);
 
 			if (obs.Any() == false)
@@ -205,7 +202,7 @@ namespace Dwarrowdelf.Client
 
 			if (ret.HasValue && ret.Value == true)
 			{
-				var ob = dlg.SelectedItem;
+				var ob = (ItemObject)dlg.SelectedItem;
 
 				GameAction action;
 				if (ob.IsArmor || ob.IsWeapon)
@@ -221,9 +218,6 @@ namespace Dwarrowdelf.Client
 		{
 			var living = GameData.Data.FocusedObject;
 
-			if (living == null)
-				return;
-
 			var obs = living.Inventory;
 
 			if (obs.Any() == false)
@@ -235,6 +229,69 @@ namespace Dwarrowdelf.Client
 			dlg.Title = "Inventory";
 
 			dlg.ShowDialog();
+		}
+
+		static void HandleBuildItem(string str)
+		{
+			var living = GameData.Data.FocusedObject;
+
+			var workbench = living.Environment.GetContents(living.Location).OfType<ItemObject>()
+				.Where(item => item.ItemCategory == ItemCategory.Workbench && item.IsInstalled)
+				.FirstOrDefault();
+
+			if (workbench == null)
+			{
+				Inform("No workbench");
+				return;
+			}
+
+			var wbInfo = Workbenches.GetWorkbenchInfo(workbench.ItemID);
+
+			BuildableItem buildableItem;
+
+			{
+				var dlg = new ItemSelectorDialog();
+				dlg.Owner = GameData.Data.MainWindow;
+				dlg.DataContext = wbInfo.BuildableItems;
+				dlg.Title = "Buildable Items";
+				bool? res = dlg.ShowDialog();
+
+				if (res.HasValue == false || res == false)
+					return;
+
+				buildableItem = (BuildableItem)dlg.SelectedItem;
+			}
+
+			foreach (var component in buildableItem.FixedBuildMaterials)
+			{
+				var obs = living.Inventory.OfType<ItemObject>().Where(item => component.Match(item));
+
+				if (obs.Any() == false)
+				{
+					Inform("Missing required components");
+					return;
+				}
+			}
+
+			List<ItemObject> materials = new List<ItemObject>();
+
+			foreach (var component in buildableItem.FixedBuildMaterials)
+			{
+				var obs = living.Inventory.OfType<ItemObject>().Where(item => component.Match(item));
+
+				var dlg = new ItemSelectorDialog();
+				dlg.Owner = GameData.Data.MainWindow;
+				dlg.DataContext = obs;
+				dlg.Title = "Select component";
+				bool? res = dlg.ShowDialog();
+				if (res.HasValue == false || res == false)
+					return;
+				materials.Add((ItemObject)dlg.SelectedItem);
+			}
+
+			var action = new BuildItemAction(workbench, buildableItem.Key, materials);
+			action.GUID = new ActionGUID(living.World.PlayerID, 0);
+			living.RequestAction(action);
 		}
 	}
 }

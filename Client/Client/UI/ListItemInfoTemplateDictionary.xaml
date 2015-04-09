@@ -4,7 +4,8 @@
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:local="clr-namespace:Dwarrowdelf.Client"
 				    xmlns:world="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.World"
-					xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
+					xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+					xmlns:common="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common">
 
 	<ContextMenu x:Key="objectMenu">
 		<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
@@ -120,5 +121,14 @@
 			<TextBlock Grid.Column="1" VerticalAlignment="Center"
 					   Text="{Binding Description, Converter={StaticResource capitalizeConverter}}" />
 		</Grid>
+	</DataTemplate>
+
+	<!-- BuildableItem -->
+	<DataTemplate DataType="{x:Type common:BuildableItem}">
+		<TextBlock>
+			<TextBlock.Text>
+				<Binding Path="ItemID" />
+			</TextBlock.Text>
+		</TextBlock>
 	</DataTemplate>
 </ResourceDictionary>
