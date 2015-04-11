@@ -86,7 +86,7 @@ namespace FOVTest
 
 			if (m_doPerfTest)
 			{
-				UpdateFOV();
+				PerfTest();
 				return;
 			}
 
@@ -158,10 +158,12 @@ namespace FOVTest
 			m_algoDel(viewerLocation, visionRange, visibilityMap, mapSize, blockerDelegate);
 		}
 
-		void UpdateFOV()
+		void PerfTest()
 		{
-			if (m_doPerfTest)
+			foreach (var algo in (LOSAlgo[])Enum.GetValues(typeof(LOSAlgo)))
 			{
+				SelectAlgo(algo);
+
 				Calc(m_viewerLocation, m_visionRange, m_visionMap, m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
 				GC.Collect();
@@ -173,12 +175,14 @@ namespace FOVTest
 				Calc(m_viewerLocation, m_visionRange, m_visionMap, m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
 				sw.Stop();
-				Trace.TraceInformation("Elapsed {0} ms", sw.ElapsedMilliseconds);
-
-				Application.Current.Shutdown();
-				return;
+				Trace.TraceInformation("{1}: Elapsed {0} ms", sw.ElapsedMilliseconds, algo);
 			}
 
+			Application.Current.Shutdown();
+		}
+
+		void UpdateFOV()
+		{
 			Calc(m_viewerLocation, m_visionRange, m_visionMap, m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
 			canvas.Children.Clear();
