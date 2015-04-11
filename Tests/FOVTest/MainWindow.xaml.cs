@@ -25,50 +25,51 @@ namespace FOVTest
 
 	public partial class MainWindow : Window
 	{
-		int m_visionRange = 12;
+		int m_visionRange = 15;
+		int m_mapSize = 20;
 		Grid2D<bool> m_blockerMap;
 		Grid2D<bool> m_visionMap;
 		double m_tileSize;
 
 		IntVector2 m_viewerLocation;
 
-		Action<IntVector2, int, Grid2D<bool>, IntSize2, Func<IntVector2, bool>> m_algoDel = RayCast.Calculate;
+		Action<IntVector2, int, Grid2D<bool>, IntSize2, Func<IntVector2, bool>> m_algoDel;
 
 		bool m_doPerfTest = false;
 
 		public MainWindow()
 		{
-			m_blockerMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1);
+			m_blockerMap = new Grid2D<bool>(m_mapSize * 2 + 1, m_mapSize * 2 + 1);
+			m_blockerMap.Origin = new IntVector2(m_mapSize, m_mapSize);
+
 			m_visionMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1);
 			m_visionMap.Origin = new IntVector2(m_visionRange, m_visionRange);
 
-			m_viewerLocation = new IntVector2(m_visionRange, m_visionRange);
+			m_viewerLocation = new IntVector2(m_mapSize, m_mapSize);
 
-			m_blockerMap.Origin = new IntVector2(m_visionRange, m_visionRange);
+			m_blockerMap[-1, -4] = true;
+			m_blockerMap[1, -4] = true;
 
-			//m_blockerMap[2, 1] = true;
+			m_blockerMap[2, 8] = true;
+			m_blockerMap[2, 9] = true;
 
-			/*
-			m_blockerMap[12, 8] = true;
-			m_blockerMap[12, 9] = true;
+			m_blockerMap[3, 0] = true;
+			m_blockerMap[3, 1] = true;
 
-			m_blockerMap[13, 0] = true;
-			m_blockerMap[13, 1] = true;
+			m_blockerMap[3, 4] = true;
 
-			m_blockerMap[13, 4] = true;
+			m_blockerMap[3, 7] = true;
+			m_blockerMap[3, 8] = true;
+			m_blockerMap[3, 9] = true;
 
-			m_blockerMap[13, 7] = true;
-			m_blockerMap[13, 8] = true;
-			m_blockerMap[13, 9] = true;
+			m_blockerMap[4, 7] = true;
+			m_blockerMap[4, 8] = true;
+			m_blockerMap[4, 9] = true;
 
-			m_blockerMap[14, 7] = true;
-			m_blockerMap[14, 8] = true;
-			m_blockerMap[14, 9] = true;
+			m_blockerMap[5, 7] = true;
+			m_blockerMap[5, 8] = true;
+			m_blockerMap[5, 9] = true;
 
-			m_blockerMap[15, 7] = true;
-			m_blockerMap[15, 8] = true;
-			m_blockerMap[15, 9] = true;
-			*/
 			m_blockerMap.Origin = new IntVector2();
 
 			m_tileSize = 16;
@@ -79,6 +80,9 @@ namespace FOVTest
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
+
+			var los = (LOSAlgo)losComboBox.SelectedItem;
+			SelectAlgo(los);
 
 			if (m_doPerfTest)
 			{
@@ -158,7 +162,7 @@ namespace FOVTest
 		{
 			if (m_doPerfTest)
 			{
-				Calc(new IntVector2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+				Calc(m_viewerLocation, m_visionRange, m_visionMap, m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
 				GC.Collect();
 				GC.WaitForPendingFinalizers();
@@ -166,11 +170,12 @@ namespace FOVTest
 
 				var sw = Stopwatch.StartNew();
 
-				Calc(new IntVector2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+				Calc(m_viewerLocation, m_visionRange, m_visionMap, m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
 				sw.Stop();
 				Trace.TraceInformation("Elapsed {0} ms", sw.ElapsedMilliseconds);
 
+				Application.Current.Shutdown();
 				return;
 			}
 
