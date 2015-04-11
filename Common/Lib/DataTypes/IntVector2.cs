@@ -77,6 +77,11 @@ namespace Dwarrowdelf
 			return !(left == right);
 		}
 
+		public static IntVector2 operator -(IntVector2 v)
+		{
+			return new IntVector2(-v.X, -v.Y);
+		}
+
 		public static IntVector2 operator +(IntVector2 left, IntVector2 right)
 		{
 			return new IntVector2(left.X + right.X, left.Y + right.Y);
