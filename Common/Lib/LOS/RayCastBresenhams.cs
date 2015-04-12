@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public static class RayCast
+	public static class RayCastBresenhams
 	{
 		public static void Calculate(IntVector2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
 			Func<IntVector2, bool> blockerDelegate)

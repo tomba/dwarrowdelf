@@ -20,7 +20,7 @@ namespace FOVTest
 	{
 		ShadowCastRecursive,
 		ShadowCastRecursiveStrict,
-		RayCast,
+		RayCastBresenhams,
 		RayCastLerp,
 	}
 
@@ -284,8 +284,8 @@ namespace FOVTest
 					m_algoDel = ShadowCastRecursiveStrict.Calculate;
 					break;
 
-				case LOSAlgo.RayCast:
-					m_algoDel = RayCast.Calculate;
+				case LOSAlgo.RayCastBresenhams:
+					m_algoDel = RayCastBresenhams.Calculate;
 					break;
 
 				case LOSAlgo.RayCastLerp:
