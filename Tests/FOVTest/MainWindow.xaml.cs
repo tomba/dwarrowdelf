@@ -123,7 +123,13 @@ namespace FOVTest
 
 			e.Handled = true;
 
+			var l = m_viewerLocation + dir;
+
+			if (m_blockerMap.Bounds.Contains(l) == false)
+				return;
+
 			m_viewerLocation += dir;
+
 			UpdateFOV();
 		}
 
@@ -149,6 +155,9 @@ namespace FOVTest
 			var p = (IntVector2)b.Tag;
 
 			p = p.Offset(m_viewerLocation.X, m_viewerLocation.Y);
+
+			if (m_blockerMap.Bounds.Contains(p) == false)
+				return;
 
 			m_blockerMap[p] = !m_blockerMap[p];
 
