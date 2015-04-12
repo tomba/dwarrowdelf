@@ -21,8 +21,13 @@ namespace Dwarrowdelf
 			var vr = new IntVector2(visionRange, visionRange);
 			g = g.Intersect(new IntGrid2(vr, -vr));
 
+			int visionRangeSquared = (visionRange + 1) * (visionRange + 1);	// +1 to get a bit bigger view area
+
 			foreach (var dst in g.Range())
 			{
+				if (dst.X * dst.X + dst.Y * dst.Y > visionRangeSquared)
+					continue;
+
 				bool vis = FindLos(viewerLocation, dst, blockerDelegate);
 				visibilityMap[dst] = vis;
 			}
