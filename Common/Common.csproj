@@ -73,6 +73,7 @@
     <Compile Include="Game\Jobs\AssignmentGroups\MoveSleepAssignment.cs" />
     <Compile Include="Game\Jobs\Assignments\SleepAssignment.cs" />
     <Compile Include="Lib\LOS\Bresenhams.cs" />
+    <Compile Include="Lib\LOS\LerpLine.cs" />
     <Compile Include="Lib\LOS\RayCast.cs" />
     <Compile Include="Lib\LOS\ShadowCastRecursiveStrict.cs" />
     <Compile Include="Lib\LRU.cs" />

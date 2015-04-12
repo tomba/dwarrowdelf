@@ -8,6 +8,7 @@ namespace Dwarrowdelf
 
 		/// <summary>
 		/// Plot the line from src to dst
+		/// Note: The direction of the line may be either src->dst or dst->src
 		/// </summary>
 		/// <param name="plot">The plotting function (if this returns false, the algorithm stops early)</param>
 		public static void PlotLine(IntVector2 src, IntVector2 dst, Func<IntVector2, bool> plot)
