@@ -121,6 +121,8 @@ namespace FOVTest
 				return;
 			}
 
+			e.Handled = true;
+
 			m_viewerLocation += dir;
 			UpdateFOV();
 		}

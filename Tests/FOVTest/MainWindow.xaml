@@ -19,14 +19,14 @@
 	<DockPanel>
 
 		<ToolBarTray DockPanel.Dock="Top">
-			<ToolBar>
+			<ToolBar KeyboardNavigation.TabNavigation="Continue">
 				<ComboBox x:Name="losComboBox" SelectedIndex="3" SelectionChanged="ComboBox_SelectionChanged"
 						  ItemsSource="{Binding Source={StaticResource losAlgos}}" />
 			</ToolBar>
 		</ToolBarTray>
 
-		<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-			<UniformGrid x:Name="grid" />
+		<Grid HorizontalAlignment="Center" VerticalAlignment="Center" >
+			<UniformGrid x:Name="grid" Focusable="True" />
 			<Canvas x:Name="canvas" />
 		</Grid>
 	</DockPanel>
