@@ -27,10 +27,10 @@ namespace FOVTest
 	public partial class MainWindow : Window
 	{
 		int m_visionRange = 15;
-		int m_mapSize = 20;
+		int m_mapSize = 30;
 		Grid2D<bool> m_blockerMap;
 		Grid2D<bool> m_visionMap;
-		double m_tileSize;
+		double m_tileSize = 24;
 
 		IntVector2 m_viewerLocation;
 
@@ -73,8 +73,6 @@ namespace FOVTest
 
 			m_blockerMap.Origin = new IntVector2();
 
-			m_tileSize = 16;
-
 			InitializeComponent();
 		}
 
@@ -91,24 +89,77 @@ namespace FOVTest
 				return;
 			}
 
-			grid.Columns = m_visionMap.Width;
+			grid.Width = m_visionMap.Width * m_tileSize;
+			grid.Height = m_visionMap.Height * m_tileSize;
 
 			for (int y = -m_visionRange; y <= m_visionRange; ++y)
 			{
 				for (int x = -m_visionRange; x <= m_visionRange; ++x)
 				{
-					var label = new Label();
-					label.Width = m_tileSize;
-					label.Height = m_tileSize;
-					label.BorderBrush = Brushes.Black;
-					label.BorderThickness = new Thickness(1, 1, 0, 0);
-					label.Tag = new IntVector2(x, y);
-					label.MouseDown += new MouseButtonEventHandler(label_MouseDown);
-					grid.Children.Add(label);
+					var rect = new Rectangle()
+					{
+						Width = m_tileSize,
+						Height = m_tileSize,
+						Stroke = Brushes.Black,
+						StrokeThickness = 1,
+						Tag = new IntVector2(x, y),
+					};
+
+					rect.MouseDown += label_MouseDown;
+					rect.MouseMove += rect_MouseMove;
+					grid.Children.Add(rect);
+					Canvas.SetLeft(rect, x * m_tileSize + m_visionRange * m_tileSize);
+					Canvas.SetTop(rect, y * m_tileSize + m_visionRange * m_tileSize);
 				}
 			}
 
 			Dispatcher.BeginInvoke(new Action(UpdateFOV), null);
+		}
+
+		void rect_MouseMove(object sender, MouseEventArgs e)
+		{
+			canvas.Children.Clear();
+
+			var b = (Rectangle)sender;
+			var v = (IntVector2)b.Tag;
+			var p = new Point(v.X, v.Y);
+
+			if (v == new IntVector2(0, 0))
+				return;
+
+			canvas.Children.Add(NewLine(new Point(0, 0), new Point(p.X, p.Y)));
+
+			double dx, dy;
+
+			dx = p.X >= 0 ? 0.5 : -0.5;
+			dy = p.Y >= 0 ? 0.5 : -0.5;
+
+			canvas.Children.Add(NewLine(new Point(0, 0), new Point(p.X - dx, p.Y + (p.X == 0 ? -dy : dy))));
+			canvas.Children.Add(NewLine(new Point(0, 0), new Point(p.X + (p.Y == 0 ? -dx : dx), p.Y - dy)));
+		}
+
+		Line NewLine(Point p1, Point p2)
+		{
+			var ts = m_tileSize;
+
+			// make the lines longer
+			p2 = new Point(p2.X * 100, p2.Y * 100);
+
+			var translatex = new Func<double, double>(v => (m_visionRange + v) * ts + 0.5 * ts);
+			var translatey = new Func<double, double>(v => (m_visionRange + v) * ts + 0.5 * ts);
+
+			var line = new Line()
+			{
+				Stroke = Brushes.Blue,
+				StrokeThickness = 1,
+				X1 = translatex(p1.X),
+				Y1 = translatey(p1.X),
+				X2 = translatex(p2.X),
+				Y2 = translatey(p2.Y),
+				IsHitTestVisible = false,
+			};
+
+			return line;
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -151,7 +202,7 @@ namespace FOVTest
 
 		void label_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			var b = (Label)sender;
+			var b = (Rectangle)sender;
 			var p = (IntVector2)b.Tag;
 
 			p = p.Offset(m_viewerLocation.X, m_viewerLocation.Y);
@@ -197,15 +248,13 @@ namespace FOVTest
 		{
 			Calc(m_viewerLocation, m_visionRange, m_visionMap, m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
-			canvas.Children.Clear();
-
-			foreach (Label b in grid.Children)
+			foreach (Rectangle b in grid.Children)
 			{
 				var p = (IntVector2)b.Tag;
 
 				if (p == new IntVector2())
 				{
-					b.Background = Brushes.Red;
+					b.Fill = Brushes.Red;
 					continue;
 				}
 
@@ -213,7 +262,7 @@ namespace FOVTest
 
 				if (m_blockerMap.Bounds.Contains(ml) == false)
 				{
-					b.Background = Brushes.DarkRed;
+					b.Fill = Brushes.DarkRed;
 					continue;
 				}
 
@@ -223,51 +272,18 @@ namespace FOVTest
 				if (isVis)
 				{
 					if (isBlocker)
-					{
-						b.Background = Brushes.LightGray;
-						bool showLine = false;
-
-						if (showLine && p.X >= 0 && p.Y >= 0 && double.IsNaN(grid.ActualWidth) == false)
-						{
-							var upperLine = CreateLine(new Point(0.0, 0.0), new Point(p.X - 0.5, p.Y + 0.5), Brushes.Yellow);
-							canvas.Children.Add(upperLine);
-
-							var lowerLine = CreateLine(new Point(0.0, 0.0), new Point(p.X + 0.5, p.Y - 0.5), Brushes.Blue);
-							canvas.Children.Add(lowerLine);
-						}
-					}
+						b.Fill = Brushes.LightGray;
 					else
-						b.Background = Brushes.LightGreen;
+						b.Fill = Brushes.LightGreen;
 				}
 				else
 				{
 					if (isBlocker)
-						b.Background = Brushes.DimGray;
+						b.Fill = Brushes.DimGray;
 					else
-						b.Background = Brushes.DarkGreen;
+						b.Fill = Brushes.DarkGreen;
 				}
 			}
-		}
-
-		Line CreateLine(Point p1, Point p2, Brush brush)
-		{
-			var ts = m_tileSize;
-
-			var translatex = new Func<double, double>(v => (m_visionRange + v) * ts + 0.5 * ts);
-			var translatey = new Func<double, double>(v => (m_visionRange + v) * ts + 0.5 * ts);
-
-			var line = new Line()
-			{
-				Stroke = brush,
-				StrokeThickness = 1,
-				X1 = translatex(p1.X),
-				Y1 = translatey(p1.Y),
-				X2 = translatex((p2.X - p1.X) * 10),
-				Y2 = translatey((p2.Y - p1.Y) * 10),
-				IsHitTestVisible = false,
-			};
-
-			return line;
 		}
 
 		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
