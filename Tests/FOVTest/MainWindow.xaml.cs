@@ -21,6 +21,7 @@ namespace FOVTest
 		ShadowCastRecursive,
 		ShadowCastRecursiveStrict,
 		RayCast,
+		RayCastLerp,
 	}
 
 	public partial class MainWindow : Window
@@ -285,6 +286,10 @@ namespace FOVTest
 
 				case LOSAlgo.RayCast:
 					m_algoDel = RayCast.Calculate;
+					break;
+
+				case LOSAlgo.RayCastLerp:
+					m_algoDel = RayCastLerp.Calculate;
 					break;
 
 				default:

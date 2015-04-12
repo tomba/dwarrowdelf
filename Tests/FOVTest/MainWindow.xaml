@@ -20,7 +20,7 @@
 
 		<ToolBarTray DockPanel.Dock="Top">
 			<ToolBar>
-				<ComboBox x:Name="losComboBox" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged"
+				<ComboBox x:Name="losComboBox" SelectedIndex="3" SelectionChanged="ComboBox_SelectionChanged"
 						  ItemsSource="{Binding Source={StaticResource losAlgos}}" />
 			</ToolBar>
 		</ToolBarTray>
