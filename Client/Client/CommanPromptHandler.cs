@@ -98,7 +98,12 @@ namespace Dwarrowdelf.Client
 			GameAction action;
 
 			if (target == null)
+			{
+				dir = ob.Environment.AdjustMoveDir(ob.Location, dir);
+				if (dir == Direction.None)
+					return;
 				action = new MoveAction(dir);
+			}
 			else
 				action = new AttackAction(target);
 
