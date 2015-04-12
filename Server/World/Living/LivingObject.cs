@@ -548,10 +548,7 @@ namespace Dwarrowdelf.Server
 					return true;
 
 				case LivingVisionMode.LOS:
-					if (this.VisionMap[new IntVector2(dl.X, dl.Y)] == false)
-						return false;
-
-					return true;
+					return this.VisionMap[new IntVector2(dl.X, dl.Y)];
 
 				default:
 					throw new Exception();

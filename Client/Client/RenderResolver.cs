@@ -514,40 +514,13 @@ namespace Dwarrowdelf.Client
 
 					var controllables = env.World.Controllables;
 
-					switch (env.World.LivingVisionMode)
+					foreach (var l in controllables)
 					{
-						case LivingVisionMode.LOS:
-							foreach (var l in controllables)
-							{
-								if (l.Environment != env || l.Location.Z != ml.Z)
-									continue;
-
-								IntVector2 vp = new IntVector2(ml.X - l.Location.X, ml.Y - l.Location.Y);
-
-								if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange &&
-									l.VisionMap[vp] == true)
-									return true;
-							}
-
-							return false;
-
-						case LivingVisionMode.SquareFOV:
-							foreach (var l in controllables)
-							{
-								if (l.Environment != env || l.Location.Z != ml.Z)
-									continue;
-
-								IntVector2 vp = new IntVector2(ml.X - l.Location.X, ml.Y - l.Location.Y);
-
-								if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange)
-									return true;
-							}
-
-							return false;
-
-						default:
-							throw new Exception();
+						if (l.Sees(env, ml))
+							return true;
 					}
+
+					return false;
 
 				default:
 					throw new Exception();

@@ -298,6 +298,32 @@ namespace Dwarrowdelf.Client
 			return !this.HasAction || this.ActionPriority < ActionPriority.High;
 		}
 
+		public bool Sees(EnvironmentObject env, IntVector3 p)
+		{
+			if (env != this.Environment)
+				return false;
+
+			IntVector3 dp = p - this.Location;
+
+			// XXX livings don't currently see up or down
+			if (dp.Z != 0)
+				return false;
+
+			if (Math.Abs(dp.X) > this.VisionRange || Math.Abs(dp.Y) > this.VisionRange)
+				return false;
+
+			switch (World.LivingVisionMode)
+			{
+				case LivingVisionMode.SquareFOV:
+					return true;
+
+				case LivingVisionMode.LOS:
+					return this.VisionMap[dp.X, dp.Y];
+
+				default:
+					throw new Exception();
+			}
+		}
 
 		public Grid2D<bool> VisionMap
 		{
