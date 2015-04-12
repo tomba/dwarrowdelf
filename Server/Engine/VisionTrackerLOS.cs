@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Server
 
 			foreach (var l in m_livings)
 			{
-				var locList = l.GetVisibleLocations().Select(p => new IntVector3(p.X, p.Y, l.Z));
+				var locList = l.GetVisibleLocations();
 
 				knownLocs.UnionWith(locList);
 			}

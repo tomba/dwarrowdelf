@@ -305,19 +305,19 @@ namespace Dwarrowdelf.Client
 
 			IntVector3 dp = p - this.Location;
 
-			// XXX livings don't currently see up or down
-			if (dp.Z != 0)
-				return false;
-
-			if (Math.Abs(dp.X) > this.VisionRange || Math.Abs(dp.Y) > this.VisionRange)
-				return false;
-
 			switch (World.LivingVisionMode)
 			{
 				case LivingVisionMode.SquareFOV:
-					return true;
+					return dp.ComponentLength <= this.VisionRange;
 
 				case LivingVisionMode.LOS:
+					// XXX livings don't currently see up or down
+					if (dp.Z != 0)
+						return false;
+
+					if (Math.Abs(dp.X) > this.VisionRange || Math.Abs(dp.Y) > this.VisionRange)
+						return false;
+
 					return this.VisionMap[dp.X, dp.Y];
 
 				default:

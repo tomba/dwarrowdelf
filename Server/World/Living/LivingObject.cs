@@ -527,49 +527,39 @@ namespace Dwarrowdelf.Server
 		}
 
 		// does this living see location l in env
-		public bool Sees(EnvironmentObject env, IntVector3 l)
+		public bool Sees(EnvironmentObject env, IntVector3 p)
 		{
 			if (env != this.Environment)
 				return false;
 
-			IntVector3 dl = l - this.Location;
-
-			// XXX livings don't currently see up or down
-			if (dl.Z != 0)
-				return false;
-
-			// is the target outside range?
-			if (Math.Abs(dl.X) > this.VisionRange || Math.Abs(dl.Y) > this.VisionRange)
-				return false;
+			IntVector3 dp = p - this.Location;
 
 			switch (World.LivingVisionMode)
 			{
 				case LivingVisionMode.SquareFOV:
-					return true;
+					return dp.ComponentLength <= this.VisionRange;
 
 				case LivingVisionMode.LOS:
-					return this.VisionMap[new IntVector2(dl.X, dl.Y)];
+					// XXX livings don't currently see up or down
+					if (dp.Z != 0)
+						return false;
+
+					if (Math.Abs(dp.X) > this.VisionRange || Math.Abs(dp.Y) > this.VisionRange)
+						return false;
+
+					return this.VisionMap[dp.X, dp.Y];
 
 				default:
 					throw new Exception();
 			}
 		}
 
-		IEnumerable<IntVector2> GetVisibleLocationsSimpleFOV()
+		IEnumerable<IntVector3> GetVisibleLocationsSimpleFOV()
 		{
-			var bounds2D = this.Environment.Size.Plane;
+			var g = new IntGrid3(this.Location - this.VisionRange, this.Location + this.VisionRange);
+			g = g.Intersect(new IntGrid3(this.Environment.Size));
 
-			for (int y = this.Y - this.VisionRange; y <= this.Y + this.VisionRange; ++y)
-			{
-				for (int x = this.X - this.VisionRange; x <= this.X + this.VisionRange; ++x)
-				{
-					IntVector2 loc = new IntVector2(x, y);
-					if (!bounds2D.Contains(loc))
-						continue;
-
-					yield return loc;
-				}
-			}
+			return g.Range();
 		}
 
 		IEnumerable<IntVector2> GetVisibleLocationsLOS()
@@ -579,12 +569,12 @@ namespace Dwarrowdelf.Server
 					Select(kvp => kvp.Key + new IntVector2(this.X, this.Y));
 		}
 
-		public IEnumerable<IntVector2> GetVisibleLocations()
+		public IEnumerable<IntVector3> GetVisibleLocations()
 		{
 			switch (World.LivingVisionMode)
 			{
 				case LivingVisionMode.LOS:
-					return GetVisibleLocationsLOS();
+					return GetVisibleLocationsLOS().Select(p => new IntVector3(p.X, p.Y, this.Z));
 
 				case LivingVisionMode.SquareFOV:
 					return GetVisibleLocationsSimpleFOV();

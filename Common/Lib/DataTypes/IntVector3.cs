@@ -108,6 +108,11 @@ namespace Dwarrowdelf
 			get { return Math.Abs(this.X) + Math.Abs(this.Y) + Math.Abs(this.Z); }
 		}
 
+		public int ComponentLength
+		{
+			get { return MyMath.Max(Math.Abs(this.X), Math.Abs(this.Y), Math.Abs(this.Z)); }
+		}
+
 		public IntVector3 Normalize()
 		{
 			if (this.IsNull)
@@ -135,6 +140,11 @@ namespace Dwarrowdelf
 			return !(left == right);
 		}
 
+		public static IntVector3 operator +(IntVector3 left, int right)
+		{
+			return new IntVector3(left.X + right, left.Y + right, left.Z + right);
+		}
+
 		public static IntVector3 operator +(IntVector3 left, IntVector3 right)
 		{
 			return new IntVector3(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
@@ -143,6 +153,11 @@ namespace Dwarrowdelf
 		public static IntVector3 operator +(IntVector3 left, IntVector2 right)
 		{
 			return new IntVector3(left.X + right.X, left.Y + right.Y, left.Z);
+		}
+
+		public static IntVector3 operator -(IntVector3 left, int right)
+		{
+			return new IntVector3(left.X - right, left.Y - right, left.Z - right);
 		}
 
 		public static IntVector3 operator -(IntVector3 v)
