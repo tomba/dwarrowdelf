@@ -404,6 +404,11 @@ namespace Dwarrowdelf.Client.UI
 			this.CommandBindings.Clear();
 
 			m_cmdHandler.AddCommandBindings(mode);
+
+			if (mode == GameMode.Adventure)
+				GameData.Data.IsAutoAdvanceTurn = true;
+			else
+				GameData.Data.IsAutoAdvanceTurn = false;
 		}
 
 		public LogOnDialog OpenLogOnDialog()
