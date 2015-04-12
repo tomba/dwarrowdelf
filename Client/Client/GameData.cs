@@ -12,6 +12,15 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
+	public enum GameSpeed
+	{
+		Immediate,
+		Fastest,
+		Fast,
+		Normal,
+		Slow,
+	}
+
 	sealed class GameData : INotifyPropertyChanged
 	{
 		public static readonly GameData Data = new GameData();
@@ -233,7 +242,53 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public event Action<GameSpeed> GameSpeedChanged;
 
+		// XXX we should get this from the server
+		GameSpeed m_gameSpeed = GameSpeed.Fast;
+		public GameSpeed GameSpeed
+		{
+			get { return m_gameSpeed; }
+			set
+			{
+				m_gameSpeed = value;
+				Notify("GameSpeed");
+				if (this.GameSpeedChanged != null)
+					this.GameSpeedChanged(value);
+
+				// XXX this should probably be somewhere else
+				if (GameData.Data.User != null)
+				{
+					int ms;
+
+					switch (value)
+					{
+						case Client.GameSpeed.Immediate:
+							ms = 0;
+							break;
+						case Client.GameSpeed.Fastest:
+							ms = 1;
+							break;
+						case Client.GameSpeed.Fast:
+							ms = 50;
+							break;
+						case Client.GameSpeed.Normal:
+							ms = 10;
+							break;
+						case Client.GameSpeed.Slow:
+							ms = 250;
+							break;
+						default:
+							throw new Exception();
+					}
+
+					GameData.Data.User.Send(new Dwarrowdelf.Messages.SetWorldConfigMessage()
+					{
+						MinTickTime = TimeSpan.FromMilliseconds(ms),
+					});
+				}
+			}
+		}
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;

@@ -36,21 +36,6 @@ namespace Dwarrowdelf.Client.UI
 			var dialog = new LaborManagerDialog();
 			dialog.Show();
 		}
-
-		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			var cb = (ComboBox)sender;
-			var cbi = (ComboBoxItem)cb.SelectedItem;
-			int ms = int.Parse((string)cbi.Tag);
-
-			if (GameData.Data.User != null)
-			{
-				GameData.Data.User.Send(new SetWorldConfigMessage()
-				{
-					MinTickTime = TimeSpan.FromMilliseconds(ms),
-				});
-			}
-		}
 	}
 
 	class ComboBoxNullConverter : IValueConverter

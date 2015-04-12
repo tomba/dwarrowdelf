@@ -6,10 +6,17 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+			 xmlns:System="clr-namespace:System;assembly=mscorlib"
 			 mc:Ignorable="d">
 
 	<UserControl.Resources>
 		<ui:ComboBoxNullConverter x:Key="nullConverter" />
+
+		<ObjectDataProvider x:Key="gameSpeeds" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="local:GameSpeed" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
 	</UserControl.Resources>
 
 	<ToolBarTray>
@@ -50,13 +57,8 @@
 
 		<ToolBar Band="1">
 			<Label Content="Speed" />
-			<ComboBox SelectedIndex="2" SelectionChanged="ComboBox_SelectionChanged">
-				<ComboBoxItem Content="Immediate" Tag="0" />
-				<ComboBoxItem Content="Fastest" Tag="1" />
-				<ComboBoxItem Content="Fast" Tag="50" />
-				<ComboBoxItem Content="Normal" Tag="100" />
-				<ComboBoxItem Content="Slow" Tag="250" />
-			</ComboBox>
+			<ComboBox SelectedIndex="2" ItemsSource="{Binding Source={StaticResource gameSpeeds}}"
+					  SelectedItem="{Binding Source={x:Static local:GameData.Data}, Path=GameSpeed}" />
 		</ToolBar>
 
 		<ToolBar Band="1">
