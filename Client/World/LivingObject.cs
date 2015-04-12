@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 
 		uint m_losMapVersion;
 		IntVector3 m_losLocation;
-		Grid2D<bool> m_visionMap;
+		Grid3D<bool> m_visionMap;
 
 		Dwarrowdelf.AI.IAI m_ai;
 		bool m_isControllable;
@@ -311,21 +311,17 @@ namespace Dwarrowdelf.Client
 					return dp.ComponentLength <= this.VisionRange;
 
 				case LivingVisionMode.LOS:
-					// XXX livings don't currently see up or down
-					if (dp.Z != 0)
+					if (Math.Abs(dp.X) > this.VisionRange || Math.Abs(dp.Y) > this.VisionRange || Math.Abs(dp.Z) > this.VisionRange)
 						return false;
 
-					if (Math.Abs(dp.X) > this.VisionRange || Math.Abs(dp.Y) > this.VisionRange)
-						return false;
-
-					return this.VisionMap[dp.X, dp.Y];
+					return this.VisionMap[dp];
 
 				default:
 					throw new Exception();
 			}
 		}
 
-		public Grid2D<bool> VisionMap
+		public Grid3D<bool> VisionMap
 		{
 			get
 			{
@@ -350,19 +346,18 @@ namespace Dwarrowdelf.Client
 
 				if (m_visionMap == null)
 				{
-					m_visionMap = new Grid2D<bool>(visionRange * 2 + 1, visionRange * 2 + 1,
-						visionRange, visionRange);
+					m_visionMap = new Grid3D<bool>(visionRange * 2 + 1, visionRange * 2 + 1, visionRange * 2 + 1,
+						visionRange, visionRange, visionRange);
 					m_losMapVersion = 0;
 				}
 
 				var env = this.Environment;
 				var z = this.Location.Z;
 
-				ShadowCastRecursive.Calculate(this.Location.ToIntVector2(), visionRange,
-					m_visionMap, env.Size.Plane,
-					p2 =>
+				RayCastLerp.Calculate3(this.Location, visionRange, m_visionMap, env.Size,
+					p =>
 					{
-						var td = env.GetTileData(new IntVector3(p2, z));
+						var td = env.GetTileData(p);
 						return !td.IsUndefined && !td.IsSeeThrough;
 					});
 

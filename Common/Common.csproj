@@ -68,6 +68,7 @@
     <Compile Include="Lib\DataTypes\EnumBitMask64.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMask32.cs" />
     <Compile Include="Lib\DataTypes\DataGrid2D.cs" />
+    <Compile Include="Lib\DataTypes\Grid3D.cs" />
     <Compile Include="Lib\DisposeHelper.cs" />
     <Compile Include="Lib\Hash.cs" />
     <Compile Include="Game\Jobs\AssignmentGroups\MoveSleepAssignment.cs" />

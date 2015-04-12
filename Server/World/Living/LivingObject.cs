@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Server
 
 		uint m_losMapVersion;
 		IntVector3 m_losLocation;
-		Grid2D<bool> m_visionMap;
+		Grid3D<bool> m_visionMap;
 		[SaveGameProperty]
 		Dwarrowdelf.AI.IAI m_ai;
 
@@ -255,7 +255,7 @@ namespace Dwarrowdelf.Server
 				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
 
-		public Grid2D<bool> VisionMap
+		public Grid3D<bool> VisionMap
 		{
 			get
 			{
@@ -512,15 +512,15 @@ namespace Dwarrowdelf.Server
 
 			if (m_visionMap == null)
 			{
-				m_visionMap = new Grid2D<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
-					this.VisionRange, this.VisionRange);
+				m_visionMap = new Grid3D<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
+					this.VisionRange, this.VisionRange, this.VisionRange);
 				m_losMapVersion = 0;
 			}
 
 			int z = this.Z;
 			var env = this.Environment;
-			ShadowCastRecursive.Calculate(new IntVector2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Size.Plane,
-				p2 => !env.GetTileData(new IntVector3(p2, z)).IsSeeThrough);
+			RayCastLerp.Calculate3(this.Location, this.VisionRange, m_visionMap, env.Size,
+				p => !env.GetTileData(p).IsSeeThrough);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
@@ -540,14 +540,10 @@ namespace Dwarrowdelf.Server
 					return dp.ComponentLength <= this.VisionRange;
 
 				case LivingVisionMode.LOS:
-					// XXX livings don't currently see up or down
-					if (dp.Z != 0)
+					if (Math.Abs(dp.X) > this.VisionRange || Math.Abs(dp.Y) > this.VisionRange || Math.Abs(dp.Z) > this.VisionRange)
 						return false;
 
-					if (Math.Abs(dp.X) > this.VisionRange || Math.Abs(dp.Y) > this.VisionRange)
-						return false;
-
-					return this.VisionMap[dp.X, dp.Y];
+					return this.VisionMap[dp];
 
 				default:
 					throw new Exception();
@@ -562,11 +558,11 @@ namespace Dwarrowdelf.Server
 			return g.Range();
 		}
 
-		IEnumerable<IntVector2> GetVisibleLocationsLOS()
+		IEnumerable<IntVector3> GetVisibleLocationsLOS()
 		{
 			return this.VisionMap.GetIndexValueEnumerable().
 					Where(kvp => kvp.Value == true).
-					Select(kvp => kvp.Key + new IntVector2(this.X, this.Y));
+					Select(kvp => kvp.Key + new IntVector3(this.X, this.Y, this.Z));
 		}
 
 		public IEnumerable<IntVector3> GetVisibleLocations()
@@ -574,7 +570,7 @@ namespace Dwarrowdelf.Server
 			switch (World.LivingVisionMode)
 			{
 				case LivingVisionMode.LOS:
-					return GetVisibleLocationsLOS().Select(p => new IntVector3(p.X, p.Y, this.Z));
+					return GetVisibleLocationsLOS();
 
 				case LivingVisionMode.SquareFOV:
 					return GetVisibleLocationsSimpleFOV();

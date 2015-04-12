@@ -22,5 +22,10 @@ namespace Dwarrowdelf
 			this.Depth = depth;
 			this.Grid = new T[depth, height, width];
 		}
+
+		public void Clear()
+		{
+			Array.Clear(this.Grid, 0, this.Grid.Length);
+		}
 	}
 }

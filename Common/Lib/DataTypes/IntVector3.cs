@@ -103,6 +103,11 @@ namespace Dwarrowdelf
 			get { return Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z); }
 		}
 
+		public int LengthSquared
+		{
+			get { return this.X * this.X + this.Y * this.Y + this.Z * this.Z; }
+		}
+
 		public int ManhattanLength
 		{
 			get { return Math.Abs(this.X) + Math.Abs(this.Y) + Math.Abs(this.Z); }

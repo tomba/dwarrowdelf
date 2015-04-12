@@ -197,6 +197,11 @@ namespace Dwarrowdelf
 			return new IntGrid3(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
 		}
 
+		public IntGrid3 Offset(int x, int y, int z)
+		{
+			return new IntGrid3(this.X + x, this.Y + y, this.Z + z, this.Columns, this.Rows, this.Depth);
+		}
+
 		public IntGrid3 Inflate(int columns, int rows, int depth)
 		{
 			return new IntGrid3(this.X, this.Y, this.Z, this.Columns + columns, this.Rows + rows, this.Depth + depth);
