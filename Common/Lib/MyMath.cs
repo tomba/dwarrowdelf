@@ -145,6 +145,11 @@ namespace Dwarrowdelf
 			}
 		}
 
+		public static int Max(int v1, int v2, int v3)
+		{
+			return v1 > v2 ? (v1 > v3 ? v1 : v3) : (v2 > v3 ? v2 : v3);
+		}
+
 		public static int Min(int v1, int v2, int v3)
 		{
 			return v1 < v2 ? (v1 < v3 ? v1 : v3) : (v2 < v3 ? v2 : v3);
