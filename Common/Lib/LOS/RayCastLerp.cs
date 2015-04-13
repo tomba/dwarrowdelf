@@ -47,7 +47,7 @@ namespace Dwarrowdelf
 			return true;
 		}
 
-		public static void Calculate3(IntVector3 viewerLocation, int visionRange, Grid3D<bool> visibilityMap, IntSize3 mapSize,
+		public static void Calculate3(IntVector3 viewerLocation, int visionRange, VisionMap visibilityMap, IntSize3 mapSize,
 				Func<IntVector3, bool> blockerDelegate)
 		{
 			visibilityMap.Clear();

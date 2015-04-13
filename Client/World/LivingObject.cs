@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 
 		uint m_losMapVersion;
 		IntVector3 m_losLocation;
-		Grid3D<bool> m_visionMap;
+		VisionMap m_visionMap;
 
 		Dwarrowdelf.AI.IAI m_ai;
 		bool m_isControllable;
@@ -321,7 +321,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public Grid3D<bool> VisionMap
+		public VisionMap VisionMap
 		{
 			get
 			{
@@ -346,8 +346,7 @@ namespace Dwarrowdelf.Client
 
 				if (m_visionMap == null)
 				{
-					m_visionMap = new Grid3D<bool>(visionRange * 2 + 1, visionRange * 2 + 1, visionRange * 2 + 1,
-						visionRange, visionRange, visionRange);
+					m_visionMap = new VisionMap(visionRange);
 					m_losMapVersion = 0;
 				}
 

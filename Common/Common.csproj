@@ -78,6 +78,7 @@
     <Compile Include="Lib\LOS\RayCastLerp.cs" />
     <Compile Include="Lib\LOS\RayCastBresenhams.cs" />
     <Compile Include="Lib\LOS\ShadowCastRecursiveStrict.cs" />
+    <Compile Include="Lib\LOS\VisionMap.cs" />
     <Compile Include="Lib\LRU.cs" />
     <Compile Include="Lib\MWCRandom.cs" />
     <Compile Include="Game\Net\DirectConnectionListener.cs" />

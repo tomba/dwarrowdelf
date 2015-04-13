@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Server
 
 		uint m_losMapVersion;
 		IntVector3 m_losLocation;
-		Grid3D<bool> m_visionMap;
+		VisionMap m_visionMap;
 		[SaveGameProperty]
 		Dwarrowdelf.AI.IAI m_ai;
 
@@ -255,7 +255,7 @@ namespace Dwarrowdelf.Server
 				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
 
-		public Grid3D<bool> VisionMap
+		public VisionMap VisionMap
 		{
 			get
 			{
@@ -512,8 +512,7 @@ namespace Dwarrowdelf.Server
 
 			if (m_visionMap == null)
 			{
-				m_visionMap = new Grid3D<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
-					this.VisionRange, this.VisionRange, this.VisionRange);
+				m_visionMap = new VisionMap(this.VisionRange);
 				m_losMapVersion = 0;
 			}
 
