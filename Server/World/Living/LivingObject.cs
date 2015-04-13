@@ -259,7 +259,7 @@ namespace Dwarrowdelf.Server
 		{
 			get
 			{
-				Debug.Assert(World.LivingVisionMode == LivingVisionMode.LOS);
+				Debug.Assert(this.World.LivingVisionMode == LivingVisionMode.LOS);
 				UpdateLOS();
 				return m_visionMap;
 			}
@@ -502,7 +502,7 @@ namespace Dwarrowdelf.Server
 			if (this.Environment == null)
 				return;
 
-			if (World.LivingVisionMode != LivingVisionMode.LOS)
+			if (this.World.LivingVisionMode != LivingVisionMode.LOS)
 				throw new Exception();
 
 			if (m_losLocation == this.Location &&
@@ -533,7 +533,7 @@ namespace Dwarrowdelf.Server
 
 			IntVector3 dp = p - this.Location;
 
-			switch (World.LivingVisionMode)
+			switch (this.World.LivingVisionMode)
 			{
 				case LivingVisionMode.SquareFOV:
 					return dp.ComponentLength <= this.VisionRange;
@@ -566,7 +566,7 @@ namespace Dwarrowdelf.Server
 
 		public IEnumerable<IntVector3> GetVisibleLocations()
 		{
-			switch (World.LivingVisionMode)
+			switch (this.World.LivingVisionMode)
 			{
 				case LivingVisionMode.LOS:
 					return GetVisibleLocationsLOS();

@@ -305,7 +305,7 @@ namespace Dwarrowdelf.Client
 
 			IntVector3 dp = p - this.Location;
 
-			switch (World.LivingVisionMode)
+			switch (this.World.LivingVisionMode)
 			{
 				case LivingVisionMode.SquareFOV:
 					return dp.ComponentLength <= this.VisionRange;
@@ -325,6 +325,7 @@ namespace Dwarrowdelf.Client
 		{
 			get
 			{
+				Debug.Assert(this.World.LivingVisionMode == LivingVisionMode.LOS);
 				UpdateLOS();
 				return m_visionMap;
 			}
