@@ -65,6 +65,16 @@ namespace Dwarrowdelf.TerrainGen
 				});
 		}
 
+		int GetRandomInt(int max)
+		{
+			return m_random.Next(max);
+		}
+
+		double GetRandomDouble()
+		{
+			return m_random.NextDouble();
+		}
+
 		void CreateTileGrid()
 		{
 			CreateBaseGrid();
@@ -170,16 +180,6 @@ namespace Dwarrowdelf.TerrainGen
 			});
 		}
 
-		void CreateOreClusters()
-		{
-			var clusterMaterials = Materials.GetMaterials(MaterialCategory.Gem).Select(mi => mi.ID).ToArray();
-			for (int i = 0; i < 100; ++i)
-			{
-				var p = GetRandomSubterraneanLocation();
-				CreateOreCluster(p, clusterMaterials[GetRandomInt(clusterMaterials.Length)]);
-			}
-		}
-
 		void CreateOreVeins()
 		{
 			double xk = m_rockLayerSlant.Item1;
@@ -247,28 +247,14 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		void CreateOre(IntVector3 p, MaterialID oreMaterialID)
+		void CreateOreClusters()
 		{
-			if (!m_size.Contains(p))
-				return;
-
-			var td = m_data.GetTileData(p);
-
-			if (td.InteriorID != InteriorID.NaturalWall)
-				return;
-
-			td.InteriorMaterialID = oreMaterialID;
-			m_data.SetTileDataNoHeight(p, td);
-		}
-
-		int GetRandomInt(int max)
-		{
-			return m_random.Next(max);
-		}
-
-		double GetRandomDouble()
-		{
-			return m_random.NextDouble();
+			var clusterMaterials = Materials.GetMaterials(MaterialCategory.Gem).Select(mi => mi.ID).ToArray();
+			for (int i = 0; i < 100; ++i)
+			{
+				var p = GetRandomSubterraneanLocation();
+				CreateOreCluster(p, clusterMaterials[GetRandomInt(clusterMaterials.Length)]);
+			}
 		}
 
 		void CreateOreCluster(IntVector3 p, MaterialID oreMaterialID)
@@ -278,25 +264,34 @@ namespace Dwarrowdelf.TerrainGen
 
 		void CreateOreCluster(IntVector3 p, MaterialID oreMaterialID, int count)
 		{
-			if (!m_size.Contains(p))
+			bool b = CreateOre(p, oreMaterialID);
+			if (b == false)
 				return;
-
-			var td = m_data.GetTileData(p);
-
-			if (td.InteriorID != InteriorID.NaturalWall)
-				return;
-
-			if (Materials.GetMaterial(td.InteriorMaterialID).Category != MaterialCategory.Rock)
-				return;
-
-			td.InteriorMaterialID = oreMaterialID;
-			m_data.SetTileDataNoHeight(p, td);
 
 			if (count > 0)
 			{
 				foreach (var d in DirectionExtensions.CardinalUpDownDirections)
 					CreateOreCluster(p + d, oreMaterialID, count - 1);
 			}
+		}
+
+		bool CreateOre(IntVector3 p, MaterialID oreMaterialID)
+		{
+			if (!m_size.Contains(p))
+				return false;
+
+			var td = m_data.GetTileData(p);
+
+			if (td.InteriorID != InteriorID.NaturalWall)
+				return false;
+
+			if (Materials.GetMaterial(td.InteriorMaterialID).Category != MaterialCategory.Rock)
+				return false;
+
+			td.InteriorMaterialID = oreMaterialID;
+			m_data.SetTileDataNoHeight(p, td);
+
+			return true;
 		}
 
 		IntVector3 GetRandomSubterraneanLocation()
