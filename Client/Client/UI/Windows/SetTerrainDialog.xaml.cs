@@ -60,21 +60,15 @@ namespace Dwarrowdelf.Client.UI
 			switch (s)
 			{
 				case "Empty":
-					td.TerrainID = TerrainID.Empty;
-					td.InteriorID = InteriorID.Empty;
+					td = TileData.EmptyTileData;
 					break;
 
 				case "Wall":
-					td.TerrainID = TerrainID.NaturalFloor;
-					td.TerrainMaterialID = MaterialID.Granite;
-					td.InteriorID = InteriorID.NaturalWall;
-					td.InteriorMaterialID = MaterialID.Granite;
+					td = TileData.GetNaturalWall(MaterialID.Granite);
 					break;
 
 				case "Floor":
-					td.TerrainID = TerrainID.NaturalFloor;
-					td.TerrainMaterialID = MaterialID.Granite;
-					td.InteriorID = InteriorID.Empty;
+					td = TileData.GetNaturalFloor(MaterialID.Granite);
 					break;
 			}
 

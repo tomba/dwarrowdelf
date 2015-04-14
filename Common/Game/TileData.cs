@@ -84,6 +84,28 @@ namespace Dwarrowdelf
 			InteriorMaterialID = MaterialID.Undefined,
 		};
 
+		public static TileData GetNaturalWall(MaterialID materialID)
+		{
+			return new TileData()
+			{
+				TerrainID = TerrainID.NaturalFloor,
+				TerrainMaterialID = materialID,
+				InteriorID = InteriorID.NaturalWall,
+				InteriorMaterialID = materialID,
+			};
+		}
+
+		public static TileData GetNaturalFloor(MaterialID materialID)
+		{
+			return new TileData()
+			{
+				TerrainID = TerrainID.NaturalFloor,
+				TerrainMaterialID = materialID,
+				InteriorID = InteriorID.Empty,
+				InteriorMaterialID = MaterialID.Undefined,
+			};
+		}
+
 		/// <summary>
 		/// Is Interior a sapling or a full grown tree
 		/// </summary>
