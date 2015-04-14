@@ -22,14 +22,14 @@ namespace Dwarrowdelf
 	}
 
 	[Flags]
-	public enum InteriorFlags
+	enum InteriorFlags
 	{
 		None = 0,
 		Blocker = 1 << 0,		// The tile can not be entered
 		BlocksVision = 1 << 2,	// Blocks line of sight
 	}
 
-	public sealed class InteriorInfo
+	sealed class InteriorInfo
 	{
 		public InteriorID ID { get; internal set; }
 		public string Name { get; internal set; }
@@ -39,7 +39,7 @@ namespace Dwarrowdelf
 		public bool IsSeeThrough { get { return (this.Flags & InteriorFlags.BlocksVision) == 0; } }
 	}
 
-	public static class Interiors
+	static class Interiors
 	{
 		static InteriorInfo[] s_interiors;
 
@@ -80,6 +80,14 @@ namespace Dwarrowdelf
 			};
 		}
 
+		public static InteriorInfo GetInterior(InteriorID id)
+		{
+			return s_interiors[(int)id];
+		}
+	}
+
+	public static class InteriorExtensions
+	{
 		/// <summary>
 		/// Is Interior empty or a "soft" item that can be removed automatically
 		/// </summary>
@@ -102,11 +110,6 @@ namespace Dwarrowdelf
 		public static bool IsFellableTree(this InteriorID id)
 		{
 			return id == InteriorID.Tree || id == InteriorID.DeadTree;
-		}
-
-		public static InteriorInfo GetInterior(InteriorID id)
-		{
-			return s_interiors[(int)id];
 		}
 	}
 }

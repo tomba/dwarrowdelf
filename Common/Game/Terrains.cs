@@ -16,7 +16,7 @@ namespace Dwarrowdelf
 	}
 
 	[Flags]
-	public enum TerrainFlags
+	enum TerrainFlags
 	{
 		None = 0,
 		Blocker = 1 << 1,		// The tile can not be entered
@@ -26,7 +26,7 @@ namespace Dwarrowdelf
 		SeeThroughDown = 1 << 6,// The tile below is visible
 	}
 
-	public sealed class TerrainInfo
+	sealed class TerrainInfo
 	{
 		public TerrainID ID { get; internal set; }
 		public string Name { get; internal set; }
@@ -55,7 +55,7 @@ namespace Dwarrowdelf
 		public bool IsSeeThroughDown { get { return (this.Flags & TerrainFlags.SeeThroughDown) != 0; } }
 	}
 
-	public static class Terrains
+	static class Terrains
 	{
 		static TerrainInfo[] s_terrains;
 
@@ -96,6 +96,14 @@ namespace Dwarrowdelf
 			};
 		}
 
+		public static TerrainInfo GetTerrain(TerrainID id)
+		{
+			return s_terrains[(int)id];
+		}
+	}
+
+	public static class TerrainExtensions
+	{
 		public static bool IsSlope(this TerrainID id)
 		{
 			return id == TerrainID.Slope;
@@ -104,11 +112,6 @@ namespace Dwarrowdelf
 		public static bool IsFloor(this TerrainID id)
 		{
 			return id == TerrainID.NaturalFloor || id == TerrainID.BuiltFloor;
-		}
-
-		public static TerrainInfo GetTerrain(TerrainID id)
-		{
-			return s_terrains[(int)id];
 		}
 	}
 }
