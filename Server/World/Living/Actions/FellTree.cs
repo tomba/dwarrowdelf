@@ -19,17 +19,17 @@ namespace Dwarrowdelf.Server
 			IntVector3 p = this.Location + action.Direction;
 
 			var td = this.Environment.GetTileData(p);
-			var id = td.InteriorID;
 
 			var report = new FellTreeActionReport(this, action.Direction);
 
-			if (id.IsTree() == false)
+			if (td.HasTree == false)
 			{
 				SendFailReport(report, "not a tree");
 				return ActionState.Fail;
 			}
 
 			var material = td.InteriorMaterialID;
+			var id = td.InteriorID;
 
 			report.InteriorID = id;
 			report.MaterialID = material;
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Server
 
 			this.Environment.SetTileData(p, td);
 
-			if (id.IsFellableTree())
+			if (td.HasFellableTree)
 			{
 				var builder = new ItemObjectBuilder(ItemID.Log, material)
 				{

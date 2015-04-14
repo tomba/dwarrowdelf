@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Server
 				int sum = 0;
 				for (int y = 0; y < m_env.Size.Height; ++y)
 					for (int x = 0; x < m_env.Size.Width; ++x)
-						if (m_env.GetTileData(x, y, z).InteriorID.IsTree())
+						if (m_env.GetTileData(x, y, z).HasTree)
 							sum++;
 
 				return sum;

@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Client
 				if (m_map[p] != null)
 					return;
 
-				if (m_environment.GetInteriorID(p).IsClear() == false)
+				if (m_environment.GetTileData(p).IsClear == false)
 					return;
 			}
 
@@ -61,13 +61,13 @@ namespace Dwarrowdelf.Client
 			{
 				if (m_map[p] == null)
 				{
-					var interiorID = m_environment.GetInteriorID(p);
+					var td = m_environment.GetTileData(p);
 
-					if (!interiorID.IsClear())
+					if (!td.IsClear)
 					{
 						IJob job;
 
-						if (interiorID == InteriorID.Tree || interiorID == InteriorID.Sapling)
+						if (td.HasFellableTree)
 						{
 							job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveFellTreeAssignment(this, m_environment, p);
 						}

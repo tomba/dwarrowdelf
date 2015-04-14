@@ -85,31 +85,4 @@ namespace Dwarrowdelf
 			return s_interiors[(int)id];
 		}
 	}
-
-	public static class InteriorExtensions
-	{
-		/// <summary>
-		/// Is Interior empty or a "soft" item that can be removed automatically
-		/// </summary>
-		public static bool IsClear(this InteriorID id)
-		{
-			return id == InteriorID.Empty || id == InteriorID.Grass || id == InteriorID.Sapling;
-		}
-
-		/// <summary>
-		/// Is Interior a sapling or a full grown tree (dead or alive)
-		/// </summary>
-		public static bool IsTree(this InteriorID id)
-		{
-			return id == InteriorID.Tree || id == InteriorID.Sapling || id == InteriorID.DeadTree;
-		}
-
-		/// <summary>
-		/// Is Interior a full grown tree (dead or alive)
-		/// </summary>
-		public static bool IsFellableTree(this InteriorID id)
-		{
-			return id == InteriorID.Tree || id == InteriorID.DeadTree;
-		}
-	}
 }

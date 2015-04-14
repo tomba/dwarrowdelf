@@ -66,7 +66,7 @@ namespace Dwarrowdelf
 
 			if (dir.ContainsUp())
 			{
-				if (!td.TerrainID.IsSlope())
+				if (!td.HasSlope)
 					return false;
 
 				if (env.GetTerrainID(srcLoc.Up) != TerrainID.Empty)
@@ -112,7 +112,7 @@ namespace Dwarrowdelf
 
 			if (dir.ContainsDown())
 			{
-				if (!td.TerrainID.IsSlope())
+				if (!td.HasSlope)
 					return false;
 
 				if (env.GetTerrainID(dstLoc.Up) != TerrainID.Empty)

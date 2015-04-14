@@ -87,7 +87,36 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Is Interior a sapling or a full grown tree
 		/// </summary>
-		public bool HasTree { get { return this.InteriorID.IsTree(); } }
+		public bool HasTree
+		{
+			get
+			{
+				var id = this.InteriorID;
+				return id == InteriorID.Tree || id == InteriorID.Sapling || id == InteriorID.DeadTree;
+			}
+		}
+
+		/// <summary>
+		/// Is Interior a full grown tree (dead or alive)
+		/// </summary>
+		public bool HasFellableTree
+		{
+			get
+			{
+				var id = this.InteriorID;
+				return id == InteriorID.Tree || id == InteriorID.DeadTree;
+			}
+		}
+
+		/// <summary>
+		/// Terrain is floor
+		/// </summary>
+		public bool HasFloor { get { return this.TerrainID == TerrainID.NaturalFloor || this.TerrainID == TerrainID.BuiltFloor; } }
+
+		/// <summary>
+		/// Is terrain a slope
+		/// </summary>
+		public bool HasSlope { get { return this.TerrainID == TerrainID.Slope; } }
 
 		/// <summary>
 		/// Check if tile is TerrainID.Empty, MaterialID.Undefined, InteriorID.Empty, MaterialID.Undefined
@@ -100,9 +129,21 @@ namespace Dwarrowdelf
 		public bool IsUndefined { get { return this.RawTile == UndefinedTileData.RawTile; } }
 
 		/// <summary>
+		/// Is Interior empty or a "soft" item that can be removed automatically
+		/// </summary>
+		public bool IsClear
+		{
+			get
+			{
+				var id = this.InteriorID;
+				return id == InteriorID.Empty || id == InteriorID.Grass || id == InteriorID.Sapling;
+			}
+		}
+
+		/// <summary>
 		/// Is the tile a floor with empty or soft interior
 		/// </summary>
-		public bool IsClearFloor { get { return this.TerrainID.IsFloor() && this.InteriorID.IsClear(); } }
+		public bool IsClearFloor { get { return this.HasFloor && this.IsClear; } }
 
 		/// <summary>
 		/// Can one see through this tile in planar directions
@@ -200,8 +241,7 @@ namespace Dwarrowdelf
 		{
 			get
 			{
-				return this.InteriorID == Dwarrowdelf.InteriorID.NaturalWall ||
-					this.TerrainID.IsSlope();
+				return this.InteriorID == InteriorID.NaturalWall || this.HasSlope;
 			}
 		}
 

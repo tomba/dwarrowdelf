@@ -101,17 +101,4 @@ namespace Dwarrowdelf
 			return s_terrains[(int)id];
 		}
 	}
-
-	public static class TerrainExtensions
-	{
-		public static bool IsSlope(this TerrainID id)
-		{
-			return id == TerrainID.Slope;
-		}
-
-		public static bool IsFloor(this TerrainID id)
-		{
-			return id == TerrainID.NaturalFloor || id == TerrainID.BuiltFloor;
-		}
-	}
 }

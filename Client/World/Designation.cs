@@ -302,7 +302,7 @@ namespace Dwarrowdelf.Client
 						(this.Environment.GetHidden(p.Down) || this.Environment.GetTileData(p.Down).IsMinable);
 
 				case DesignationType.FellTree:
-					return td.InteriorID.IsFellableTree();
+					return td.HasFellableTree;
 
 				default:
 					throw new Exception();

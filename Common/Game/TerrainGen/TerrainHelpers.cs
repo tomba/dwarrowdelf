@@ -87,7 +87,7 @@ namespace Dwarrowdelf.TerrainGen
 				if (Materials.GetMaterial(td.TerrainMaterialID).Category != MaterialCategory.Soil)
 					return;
 
-				if (td.TerrainID.IsFloor() == false && td.TerrainID.IsSlope() == false)
+				if (td.HasFloor == false && td.HasSlope == false)
 					return;
 
 				var r = new MWCRandom(p, baseSeed);

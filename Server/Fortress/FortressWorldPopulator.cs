@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			var td = env.GetTileData(p);
 
-			if (td.TerrainID.IsFloor() == false)
+			if (td.HasFloor == false)
 				throw new Exception();
 
 			if (td.IsGreen)

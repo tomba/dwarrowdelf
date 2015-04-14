@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Server
 						td.InteriorID = InteriorID.Empty;
 						td.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
 
-						if (td.TerrainID.IsSlope())
+						if (td.HasSlope)
 							td.TerrainID = TerrainID.NaturalFloor;
 
 						env.SetTileData(p, td);
@@ -129,7 +129,7 @@ namespace Dwarrowdelf.Server
 						if (tdu.TerrainID == TerrainID.NaturalFloor)
 						{
 							tdu.TerrainID = TerrainID.StairsDown;
-							if (tdu.InteriorID.IsClear())
+							if (tdu.IsClear)
 							{
 								tdu.InteriorID = InteriorID.Empty;
 								tdu.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
