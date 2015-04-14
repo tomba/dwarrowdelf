@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public ReadOnlyMovableObjectCollection Objects { get; private set; }
 
-		public IEnumerable<Tuple<InteriorInfo, MaterialInfo>> Interiors
+		public IEnumerable<Tuple<InteriorID, MaterialInfo>> Interiors
 		{
 			get
 			{
@@ -163,12 +163,12 @@ namespace Dwarrowdelf.Client.UI
 					return null;
 
 				return m_adjustedBox.Range().
-					Select(p => Tuple.Create(m_environment.GetInterior(p), m_environment.GetInteriorMaterial(p))).
+					Select(p => Tuple.Create(m_environment.GetInteriorID(p), m_environment.GetInteriorMaterial(p))).
 					Distinct();
 			}
 		}
 
-		public IEnumerable<Tuple<TerrainInfo, MaterialInfo>> Terrains
+		public IEnumerable<Tuple<TerrainID, MaterialInfo>> Terrains
 		{
 			get
 			{
@@ -176,7 +176,7 @@ namespace Dwarrowdelf.Client.UI
 					return null;
 
 				return m_adjustedBox.Range().
-					Select(p => Tuple.Create(m_environment.GetTerrain(p), m_environment.GetTerrainMaterial(p))).
+					Select(p => Tuple.Create(m_environment.GetTerrainID(p), m_environment.GetTerrainMaterial(p))).
 					Distinct();
 			}
 		}

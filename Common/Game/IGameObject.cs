@@ -45,10 +45,8 @@ namespace Dwarrowdelf
 		InteriorID GetInteriorID(IntVector3 l);
 		MaterialID GetInteriorMaterialID(IntVector3 l);
 
-		TerrainInfo GetTerrain(IntVector3 l);
 		MaterialInfo GetTerrainMaterial(IntVector3 l);
 
-		InteriorInfo GetInterior(IntVector3 l);
 		MaterialInfo GetInteriorMaterial(IntVector3 l);
 
 		TileData GetTileData(IntVector3 l);

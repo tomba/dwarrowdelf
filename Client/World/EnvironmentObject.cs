@@ -205,19 +205,9 @@ namespace Dwarrowdelf.Client
 			return m_tileGrid.GetInteriorMaterialID(l);
 		}
 
-		public TerrainInfo GetTerrain(IntVector3 l)
-		{
-			return Terrains.GetTerrain(GetTerrainID(l));
-		}
-
 		public MaterialInfo GetTerrainMaterial(IntVector3 l)
 		{
 			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
-		}
-
-		public InteriorInfo GetInterior(IntVector3 l)
-		{
-			return Interiors.GetInterior(GetInteriorID(l));
 		}
 
 		public MaterialInfo GetInteriorMaterial(IntVector3 l)

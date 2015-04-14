@@ -80,19 +80,9 @@ namespace Dwarrowdelf.TerrainGen
 			return GetTileData(p).InteriorMaterialID;
 		}
 
-		public TerrainInfo GetTerrain(IntVector3 p)
-		{
-			return Terrains.GetTerrain(GetTerrainID(p));
-		}
-
 		public MaterialInfo GetTerrainMaterial(IntVector3 p)
 		{
 			return Materials.GetMaterial(GetTerrainMaterialID(p));
-		}
-
-		public InteriorInfo GetInterior(IntVector3 p)
-		{
-			return Interiors.GetInterior(GetInteriorID(p));
 		}
 
 		public MaterialInfo GetInteriorMaterial(IntVector3 p)
