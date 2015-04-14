@@ -60,34 +60,19 @@ namespace Dwarrowdelf.TerrainGen
 			return new IntVector3(p, GetSurfaceLevel(p));
 		}
 
-		public TerrainID GetTerrainID(IntVector3 p)
+		public TileID GetTileID(IntVector3 p)
 		{
-			return GetTileData(p).TerrainID;
+			return GetTileData(p).ID;
 		}
 
-		public MaterialID GetTerrainMaterialID(IntVector3 p)
+		public MaterialID GetMaterialID(IntVector3 p)
 		{
-			return GetTileData(p).TerrainMaterialID;
+			return GetTileData(p).MaterialID;
 		}
 
-		public InteriorID GetInteriorID(IntVector3 p)
+		public MaterialInfo GetMaterial(IntVector3 p)
 		{
-			return GetTileData(p).InteriorID;
-		}
-
-		public MaterialID GetInteriorMaterialID(IntVector3 p)
-		{
-			return GetTileData(p).InteriorMaterialID;
-		}
-
-		public MaterialInfo GetTerrainMaterial(IntVector3 p)
-		{
-			return Materials.GetMaterial(GetTerrainMaterialID(p));
-		}
-
-		public MaterialInfo GetInteriorMaterial(IntVector3 p)
-		{
-			return Materials.GetMaterial(GetInteriorMaterialID(p));
+			return Materials.GetMaterial(GetMaterialID(p));
 		}
 
 		public TileData GetTileData(int x, int y, int z)
@@ -109,22 +94,24 @@ namespace Dwarrowdelf.TerrainGen
 		{
 			int oldLevel = GetSurfaceLevel(p.X, p.Y);
 
-			if (data.IsEmpty == false && oldLevel < p.Z)
+			if (data.IsWall && oldLevel <= p.Z)
 			{
+				// Surface level has risen
 				Debug.Assert(p.Z >= 0 && p.Z < 256);
-				SetSurfaceLevel(p.X, p.Y, p.Z);
+				SetSurfaceLevel(p.X, p.Y, p.Z + 1);
 			}
-			else if (data.IsEmpty && oldLevel == p.Z)
+			else if (data.IsWall == false && oldLevel == p.Z + 1)
 			{
+				// Surface level has possibly lowered
 				if (p.Z == 0)
 					throw new Exception();
 
 				for (int z = p.Z - 1; z >= 0; --z)
 				{
-					if (GetTileData(new IntVector3(p.X, p.Y, z)).IsEmpty == false)
+					if (GetTileData(p.X, p.Y, z).IsWall)
 					{
 						Debug.Assert(z >= 0 && z < 256);
-						SetSurfaceLevel(p.X, p.Y, z);
+						SetSurfaceLevel(p.X, p.Y, z + 1);
 						break;
 					}
 				}
@@ -135,6 +122,7 @@ namespace Dwarrowdelf.TerrainGen
 
 		public void SetTileDataNoHeight(IntVector3 p, TileData data)
 		{
+			data.Flags |= TileFlags.Error; // ZZZ
 			m_tileGrid[p.Z, p.Y, p.X] = data;
 		}
 

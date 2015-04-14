@@ -47,17 +47,11 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						TileData newtd = td;
-						newtd.InteriorID = InteriorID.Empty;
-						newtd.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
-						if (newtd.HasSlope)
-							newtd.TerrainID = TerrainID.NaturalFloor;
+						env.SetTileData(p, TileData.EmptyTileData);
 
-						env.SetTileData(p, newtd);
-
-						if (td.InteriorID == InteriorID.NaturalWall)
+						if (td.ID == TileID.NaturalWall)
 						{
-							MaterialInfo material = Materials.GetMaterial(td.InteriorMaterialID);
+							MaterialInfo material = Materials.GetMaterial(td.MaterialID);
 							ItemID itemID = ItemID.Undefined;
 
 							switch (material.Category)
@@ -110,7 +104,7 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						if (td.InteriorID != InteriorID.NaturalWall)
+						if (td.ID != TileID.NaturalWall)
 						{
 							SendFailReport(report, "not natural wall");
 							return ActionState.Fail;
@@ -124,21 +118,8 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						td.InteriorID = InteriorID.Stairs;
+						td.ID = TileID.Stairs;
 						env.SetTileData(p, td);
-
-						var tdu = env.GetTileData(p.Up);
-						if (tdu.TerrainID == TerrainID.NaturalFloor)
-						{
-							tdu.TerrainID = TerrainID.StairsDown;
-							if (tdu.IsClear)
-							{
-								tdu.InteriorID = InteriorID.Empty;
-								tdu.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
-							}
-							env.SetTileData(p.Up, tdu);
-						}
-
 					}
 					break;
 
@@ -175,38 +156,9 @@ namespace Dwarrowdelf.Server
 							return ActionState.Abort;
 						}
 
-						var tdd = env.GetTileData(p.Down);
 
-						bool clearDown;
-
-						if (tdd.InteriorID == InteriorID.NaturalWall)
-						{
-							clearDown = true;
-						}
-						else if (tdd.InteriorID == InteriorID.Empty)
-						{
-							clearDown = false;
-						}
-						else
-						{
-							SendFailReport(report, "tile down not empty");
-							return ActionState.Fail;
-						}
-
-						td.TerrainID = TerrainID.Empty;
-						td.TerrainMaterialID = Dwarrowdelf.MaterialID.Undefined;
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
+						td = TileData.EmptyTileData;
 						env.SetTileData(p, td);
-
-						if (clearDown)
-						{
-							tdd = env.GetTileData(p.Down);
-							tdd.TerrainID = TerrainID.NaturalFloor;
-							tdd.InteriorID = InteriorID.Empty;
-							tdd.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
-							env.SetTileData(p.Down, tdd);
-						}
 					}
 					break;
 

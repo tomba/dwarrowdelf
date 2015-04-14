@@ -126,6 +126,9 @@ namespace Dwarrowdelf.Server
 			foreach (var ob in obs)
 				ob.Destruct();
 
+			// ZZZ: TODO
+			throw new Exception();
+/*
 			switch (action.Mode)
 			{
 				case ConstructMode.Floor:
@@ -150,6 +153,7 @@ namespace Dwarrowdelf.Server
 			env.SetTileData(action.Location, td);
 			
 			return ActionState.Done;
+			*/
 		}
 	}
 }

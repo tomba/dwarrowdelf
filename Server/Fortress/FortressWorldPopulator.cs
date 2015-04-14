@@ -43,8 +43,8 @@ namespace Dwarrowdelf.Server.Fortress
 
 			if (td.IsGreen)
 			{
-				td.InteriorID = InteriorID.Grass;
-				td.InteriorMaterialID = GetRandomMaterial(MaterialCategory.Grass);
+				td.ID = TileID.Grass;
+				td.MaterialID = GetRandomMaterial(MaterialCategory.Grass);
 			}
 
 			if (!td.IsClearFloor)

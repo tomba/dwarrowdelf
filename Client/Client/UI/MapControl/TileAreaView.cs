@@ -79,8 +79,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void NotifyTileTerrainChanges()
 		{
-			Notify("Interiors");
-			Notify("Terrains");
+			Notify("Tiles");
 			Notify("WaterLevels");
 			Notify("AreaElements");
 			Notify("Flags");
@@ -155,7 +154,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public ReadOnlyMovableObjectCollection Objects { get; private set; }
 
-		public IEnumerable<Tuple<InteriorID, MaterialInfo>> Interiors
+		public IEnumerable<Tuple<TileID, MaterialInfo>> Tiles
 		{
 			get
 			{
@@ -163,20 +162,7 @@ namespace Dwarrowdelf.Client.UI
 					return null;
 
 				return m_adjustedBox.Range().
-					Select(p => Tuple.Create(m_environment.GetInteriorID(p), m_environment.GetInteriorMaterial(p))).
-					Distinct();
-			}
-		}
-
-		public IEnumerable<Tuple<TerrainID, MaterialInfo>> Terrains
-		{
-			get
-			{
-				if (m_environment == null)
-					return null;
-
-				return m_adjustedBox.Range().
-					Select(p => Tuple.Create(m_environment.GetTerrainID(p), m_environment.GetTerrainMaterial(p))).
+					Select(p => Tuple.Create(m_environment.GetTileID(p), m_environment.GetMaterial(p))).
 					Distinct();
 			}
 		}

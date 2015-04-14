@@ -16,8 +16,7 @@
 				<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/ListItemInfoTemplateDictionary.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 
-			<ui:MyTerrainsConverter x:Key="myTerrainsConverter" />
-			<ui:MyInteriorsConverter x:Key="myInteriorsConverter" />
+			<ui:MyTileConverter x:Key="myTileConverter" />
 			<ui:MyWatersConverter x:Key="myWatersConverter" />
 			<ui:MyAreaElementsConverter x:Key="myAreaElementsConverter" />
 		</ResourceDictionary>
@@ -43,10 +42,7 @@
 					</InlineUIContainer></TextBlock>
 
 			<TextBlock><Run Text="Terrain: "/><InlineUIContainer>
-						<TextBlock Text="{Binding Terrains, Converter={StaticResource myTerrainsConverter}}" />
-					</InlineUIContainer></TextBlock>
-			<TextBlock><Run Text="Interior: "/><InlineUIContainer>
-						<TextBlock Text="{Binding Interiors, Converter={StaticResource myInteriorsConverter}}" />
+						<TextBlock Text="{Binding Tiles, Converter={StaticResource myTileConverter}}" />
 					</InlineUIContainer></TextBlock>
 			<TextBlock><Run Text="Water: "/><InlineUIContainer>
 						<TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />

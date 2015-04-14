@@ -28,15 +28,15 @@ namespace Dwarrowdelf.Server
 				return ActionState.Fail;
 			}
 
-			var material = td.InteriorMaterialID;
-			var id = td.InteriorID;
+			var material = td.MaterialID;
+			var id = td.ID;
 
-			report.InteriorID = id;
+			report.TileID = id;
 			report.MaterialID = material;
 
 			var grassMaterials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
-			td.InteriorID = InteriorID.Grass;
-			td.InteriorMaterialID = grassMaterials[this.World.Random.Next(grassMaterials.Length)].ID;
+			td.ID = TileID.Grass;
+			td.MaterialID = grassMaterials[this.World.Random.Next(grassMaterials.Length)].ID;
 
 			this.Environment.SetTileData(p, td);
 

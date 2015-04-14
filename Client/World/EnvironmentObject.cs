@@ -185,34 +185,19 @@ namespace Dwarrowdelf.Client
 			return this.Size.Contains(p);
 		}
 
-		public TerrainID GetTerrainID(IntVector3 l)
+		public TileID GetTileID(IntVector3 l)
 		{
-			return m_tileGrid.GetTerrainID(l);
+			return m_tileGrid.GetTileID(l);
 		}
 
-		public MaterialID GetTerrainMaterialID(IntVector3 l)
+		public MaterialID GetMaterialID(IntVector3 l)
 		{
-			return m_tileGrid.GetTerrainMaterialID(l);
+			return m_tileGrid.GetMaterialID(l);
 		}
 
-		public InteriorID GetInteriorID(IntVector3 l)
+		public MaterialInfo GetMaterial(IntVector3 l)
 		{
-			return m_tileGrid.GetInteriorID(l);
-		}
-
-		public MaterialID GetInteriorMaterialID(IntVector3 l)
-		{
-			return m_tileGrid.GetInteriorMaterialID(l);
-		}
-
-		public MaterialInfo GetTerrainMaterial(IntVector3 l)
-		{
-			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
-		}
-
-		public MaterialInfo GetInteriorMaterial(IntVector3 l)
-		{
-			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
+			return Materials.GetMaterial(m_tileGrid.GetMaterialID(l));
 		}
 
 		public byte GetWaterLevel(IntVector3 l)
@@ -233,7 +218,7 @@ namespace Dwarrowdelf.Client
 
 		public bool GetHidden(IntVector3 ml)
 		{
-			return m_tileGrid.GetTerrainID(ml) == TerrainID.Undefined;
+			return m_tileGrid.GetTileID(ml) == TileID.Undefined;
 		}
 
 		public TileData GetTileData(IntVector3 p)

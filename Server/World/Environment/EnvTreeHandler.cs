@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Server
 
 				var td = m_env.GetTileData(p);
 
-				if (td.InteriorID == InteriorID.Sapling)
+				if (td.ID == TileID.Sapling)
 				{
 					if (r.Next(100) < 80)
 					{
@@ -96,27 +96,27 @@ namespace Dwarrowdelf.Server
 						if (m_env.HasContents(p) == false)
 						{
 							// A sapling grows to a tree
-							td.InteriorID = InteriorID.Tree;
+							td.ID = TileID.Tree;
 							m_env.SetTileData(p, td);
 						}
 					}
 				}
-				else if (td.InteriorID == InteriorID.Tree)
+				else if (td.ID == TileID.Tree)
 				{
 					if (r.Next(100) < 20)
 					{
 						// A tree dies
-						td.InteriorID = InteriorID.DeadTree;
+						td.ID = TileID.DeadTree;
 						m_env.SetTileData(p, td);
 					}
 				}
-				else if (td.InteriorID == InteriorID.DeadTree)
+				else if (td.ID == TileID.DeadTree)
 				{
 					if (r.Next(100) < 60)
 					{
 						// A dead tree disappears
-						td.InteriorID = InteriorID.Grass;
-						td.InteriorMaterialID = grassMaterials[r.Next(grassMaterials.Length)].ID;
+						td.ID = TileID.Grass;
+						td.MaterialID = grassMaterials[r.Next(grassMaterials.Length)].ID;
 						m_env.SetTileData(p, td);
 					}
 				}
@@ -125,8 +125,8 @@ namespace Dwarrowdelf.Server
 					if (r.Next(100) < 60)
 					{
 						// A new sapling is planted
-						td.InteriorID = InteriorID.Sapling;
-						td.InteriorMaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
+						td.ID = TileID.Sapling;
+						td.MaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
 						m_env.SetTileData(p, td);
 					}
 				}

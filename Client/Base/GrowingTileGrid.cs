@@ -103,24 +103,14 @@ namespace Dwarrowdelf.Client
 			return m_grid[p.Z, p.Y, p.X];
 		}
 
-		public InteriorID GetInteriorID(IntVector3 p)
+		public TileID GetTileID(IntVector3 p)
 		{
-			return m_grid[p.Z, p.Y, p.X].InteriorID;
+			return m_grid[p.Z, p.Y, p.X].ID;
 		}
 
-		public TerrainID GetTerrainID(IntVector3 p)
+		public MaterialID GetMaterialID(IntVector3 p)
 		{
-			return m_grid[p.Z, p.Y, p.X].TerrainID;
-		}
-
-		public MaterialID GetInteriorMaterialID(IntVector3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
-		}
-
-		public MaterialID GetTerrainMaterialID(IntVector3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
+			return m_grid[p.Z, p.Y, p.X].MaterialID;
 		}
 
 		public byte GetWaterLevel(IntVector3 p)

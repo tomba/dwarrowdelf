@@ -54,6 +54,7 @@
     <Compile Include="Game\AI\CarnivoreAI.cs" />
     <Compile Include="Game\AI\MonsterAI.cs" />
     <Compile Include="Game\ExceptionHelper.cs" />
+    <Compile Include="Game\Tiles.cs" />
     <Compile Include="Game\TypeConverters.cs" />
     <Compile Include="Lib\AStar\AStarResult.cs" />
     <Compile Include="Lib\AStar\AStarTarget.cs" />
@@ -170,8 +171,6 @@
     <Compile Include="Game\TerrainGen\TerrainData.cs" />
     <Compile Include="Game\TerrainGen\TerrainGenerator.cs" />
     <Compile Include="Game\TerrainGen\TerrainHelpers.cs" />
-    <Compile Include="Game\Terrains.cs" />
-    <Compile Include="Game\Interiors.cs" />
     <Compile Include="Game\Materials.cs" />
     <Compile Include="Lib\MyMath.cs" />
     <Compile Include="Game\Messages\ObjectData.cs" />
@@ -216,16 +215,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Game\Workbenches.xaml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Game\Interiors.xaml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Game\Terrains.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

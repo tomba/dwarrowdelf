@@ -117,9 +117,9 @@ namespace Dwarrowdelf.Server
 			{
 				for (int z = this.Size.Depth - 1; z >= 0; --z)
 				{
-					if (GetTileData(p.X, p.Y, z).IsEmpty == false)
+					if (GetTileData(p.X, p.Y, z).IsWall)
 					{
-						levelMap[p.Y, p.X] = (byte)z;
+						levelMap[p.Y, p.X] = (byte)(z + 1);
 						break;
 					}
 				}
@@ -134,17 +134,29 @@ namespace Dwarrowdelf.Server
 			{
 				int d = GetSurfaceLevel(p);
 
+				bool support = true;
+				bool wall = true;
+
 				for (int z = 0; z < this.Size.Depth; ++z)
 				{
 					// TerrainGen should not set any flags
-					Debug.Assert(m_tileGrid[z, p.Y, p.X].Flags == 0);
+					Debug.Assert(m_tileGrid[z, p.Y, p.X].Flags == 0 || m_tileGrid[z, p.Y, p.X].Flags == TileFlags.Error);
 
 					TileFlags flags = 0;
 
 					if (z < d)
 						flags |= TileFlags.Subterranean;
 
+					if (support)
+						flags |= TileFlags.HasSupport;
+
+					if (wall)
+						flags |= TileFlags.HasWallBelow;
+
 					m_tileGrid[z, p.Y, p.X].Flags = flags;
+
+					support = m_tileGrid[z, p.Y, p.X].IsSupporting;
+					wall = m_tileGrid[z, p.Y, p.X].IsWall;
 				}
 			});
 		}
@@ -158,9 +170,9 @@ namespace Dwarrowdelf.Server
 			{
 				for (int z = this.Size.Depth - 1; z >= 0; --z)
 				{
-					if (GetTileData(p.X, p.Y, z).IsEmpty == false)
+					if (GetTileData(p.X, p.Y, z).IsWall)
 					{
-						if (levelMap[p.Y, p.X] != z)
+						if (levelMap[p.Y, p.X] != z + 1)
 							throw new Exception();
 
 						break;
@@ -280,34 +292,19 @@ namespace Dwarrowdelf.Server
 			return GetSurfaceLocation(p.X, p.Y);
 		}
 
-		public TerrainID GetTerrainID(IntVector3 p)
+		public TileID GetTileID(IntVector3 p)
 		{
-			return GetTileData(p).TerrainID;
+			return GetTileData(p).ID;
 		}
 
-		public MaterialID GetTerrainMaterialID(IntVector3 p)
+		public MaterialID GetMaterialID(IntVector3 p)
 		{
-			return GetTileData(p).TerrainMaterialID;
+			return GetTileData(p).MaterialID;
 		}
 
-		public InteriorID GetInteriorID(IntVector3 p)
+		public MaterialInfo GetMaterial(IntVector3 p)
 		{
-			return GetTileData(p).InteriorID;
-		}
-
-		public MaterialID GetInteriorMaterialID(IntVector3 p)
-		{
-			return GetTileData(p).InteriorMaterialID;
-		}
-
-		public MaterialInfo GetTerrainMaterial(IntVector3 p)
-		{
-			return Materials.GetMaterial(GetTerrainMaterialID(p));
-		}
-
-		public MaterialInfo GetInteriorMaterial(IntVector3 p)
-		{
-			return Materials.GetMaterial(GetInteriorMaterialID(p));
+			return Materials.GetMaterial(GetMaterialID(p));
 		}
 
 		public TileData GetTileData(IntVector3 p)
@@ -352,31 +349,32 @@ namespace Dwarrowdelf.Server
 			int oldSurfaceLevel = GetSurfaceLevel(p2d);
 			int newSurfaceLevel = oldSurfaceLevel;
 
-			if (data.IsEmpty == false && oldSurfaceLevel < p.Z)
+			if (data.IsWall && oldSurfaceLevel <= p.Z)
 			{
-				// surface level has risen
+				// Surface level has risen
 				Debug.Assert(p.Z >= 0 && p.Z < 256);
-				SetSurfaceLevel(p2d, (byte)p.Z);
-				newSurfaceLevel = p.Z;
+				newSurfaceLevel = p.Z + 1;
 			}
-			else if (data.IsEmpty && oldSurfaceLevel == p.Z)
+			else if (data.IsWall == false && oldSurfaceLevel == p.Z + 1)
 			{
-				// surface level has lowered
-
+				// Surface level has possibly lowered
 				if (p.Z == 0)
 					throw new Exception();
 
 				for (int z = p.Z - 1; z >= 0; --z)
 				{
-					if (GetTileData(new IntVector3(p2d, z)).IsEmpty == false)
+					if (GetTileData(p.X, p.Y, z).IsWall)
 					{
 						Debug.Assert(z >= 0 && z < 256);
-						SetSurfaceLevel(p2d, (byte)z);
-						newSurfaceLevel = z;
+						newSurfaceLevel = z + 1;
 						break;
 					}
 				}
 			}
+
+			if (newSurfaceLevel != oldSurfaceLevel)
+				SetSurfaceLevel(p2d, (byte)newSurfaceLevel);
+
 
 			MapChanged(p, data);
 
@@ -397,6 +395,29 @@ namespace Dwarrowdelf.Server
 			{
 				for (int z = oldSurfaceLevel - 1; z >= newSurfaceLevel; --z)
 					SetTileFlags(new IntVector3(p2d, z), TileFlags.Subterranean, false);
+			}
+
+			// ZZZ notify up
+			if (Contains(p.Up))
+			{
+				// ZZZ we should clear the tile up if there's a tree or grass there
+				// ZZZ if this tile was the only support for the tile above, it should crash down
+				var pu = p.Up;
+
+				if (data.IsSupporting)
+					m_tileGrid[pu.Z, pu.Y, pu.X].Flags |= TileFlags.HasSupport;
+				else
+					m_tileGrid[pu.Z, pu.Y, pu.X].Flags &= ~TileFlags.HasSupport;
+
+				if (data.IsWall)
+					m_tileGrid[pu.Z, pu.Y, pu.X].Flags |= TileFlags.HasWallBelow;
+				else
+					m_tileGrid[pu.Z, pu.Y, pu.X].Flags &= ~TileFlags.HasWallBelow;
+
+				MapChanged(pu, GetTileData(pu));
+
+				//if (this.TerrainOrInteriorChanged != null)
+				//	this.TerrainOrInteriorChanged(p, oldData, data);
 			}
 		}
 

@@ -13,23 +13,23 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class TerrainFilter : ITerrainFilter
 	{
-		EnumBitMask32<TerrainID> m_terrainMask;
-		EnumBitMask32<InteriorID> m_interiorMask;
+		EnumBitMask32<TileID> m_terrainMask;
 
-		public TerrainFilter(IEnumerable<TerrainID> terrains, IEnumerable<InteriorID> interiors)
+		public TerrainFilter(IEnumerable<TileID> terrains)
 		{
-			m_terrainMask = new EnumBitMask32<TerrainID>(terrains);
-			m_interiorMask = new EnumBitMask32<InteriorID>(interiors);
+			m_terrainMask = new EnumBitMask32<TileID>(terrains);
 		}
 
-		public bool Match(TerrainID terrain, InteriorID interior)
+		public bool Match(TileID terrain)
 		{
-			return m_terrainMask.Get(terrain) && m_interiorMask.Get(interior);
+			return m_terrainMask.Get(terrain);
 		}
 
 		public bool Match(TileData td)
 		{
-			return Match(td.TerrainID, td.InteriorID);
+			// ZZZ: todo
+			//return Match(td.TerrainID, td.InteriorID);
+			return false;
 		}
 	}
 
@@ -176,28 +176,34 @@ namespace Dwarrowdelf
 
 	public static class WorkHelpers
 	{
+		// ZZZ: TODO
+		public static readonly TerrainFilter ConstructFloorTerrainFilter = new TerrainFilter(new[] { TileID.Empty });
+		/*
 		public static readonly TerrainFilter ConstructFloorTerrainFilter = new TerrainFilter(
 			new TerrainID[] { TerrainID.Empty },
 			new InteriorID[] { InteriorID.Empty });
-
+		*/
 		public static readonly ItemFilter ConstructFloorItemFilter = new ItemFilter(ItemID.Block, MaterialCategory.Rock);
 
 
+		public static readonly TerrainFilter ConstructPavementTerrainFilter = new TerrainFilter(new[] { TileID.Empty });
+		/*
 		public static readonly TerrainFilter ConstructPavementTerrainFilter = new TerrainFilter(
 			new TerrainID[] { TerrainID.NaturalFloor, TerrainID.BuiltFloor },
 			new InteriorID[] { InteriorID.Empty, InteriorID.Grass });
-
+		*/
 		public static readonly OrItemFilter ConstructPavementItemFilter =
 			new OrItemFilter(
 				new ItemFilter(ItemID.Block, MaterialCategory.Rock),
 				new ItemFilter(ItemID.Log, MaterialCategory.Wood)
 			);
 
-
+		public static readonly TerrainFilter ConstructWallTerrainFilter = new TerrainFilter(new[] { TileID.Empty });
+		/*
 		public static readonly TerrainFilter ConstructWallTerrainFilter = new TerrainFilter(
 			new TerrainID[] { TerrainID.NaturalFloor, TerrainID.BuiltFloor },
 			new InteriorID[] { InteriorID.Empty, InteriorID.Grass });
-
+		*/
 		public static readonly ItemFilter ConstructWallItemFilter = new ItemFilter(ItemID.Block, MaterialCategory.Rock);
 	}
 }

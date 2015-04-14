@@ -57,7 +57,7 @@ namespace Dwarrowdelf.TerrainGen
 
 		void CreateStairs()
 		{
-			for (int z = m_size.Depth - 1; z > 0; --z)
+			for (int z = m_size.Depth - 1; z > 1; z -= 2)
 			{
 				var center = new IntVector2(m_random.Next(m_size.Width), m_random.Next(m_size.Height));
 
@@ -69,22 +69,21 @@ namespace Dwarrowdelf.TerrainGen
 					var p1 = new IntVector3(p, z);
 					var td1 = GetTileData(p1);
 
-					if (td1.IsClearFloor == false)
+					if (td1.IsClear == false)
 						continue;
 
-					var p2 = new IntVector3(p, z - 1);
+					var p2 = new IntVector3(p, z - 2);
 					var td2 = GetTileData(p2);
 
-					if (td2.IsClearFloor == false)
+					if (td2.IsClear == false)
 						continue;
 
-					td1.TerrainID = TerrainID.StairsDown;
-					td1.TerrainMaterialID = MaterialID.Granite;
+					SetTileData(p1, TileData.EmptyTileData);
 
-					td2.InteriorID = InteriorID.Stairs;
-					td2.InteriorMaterialID = MaterialID.Granite;
+					td2.ID = TileID.Stairs;
+					td2.MaterialID = MaterialID.Granite;
 
-					SetTileData(p1, td1);
+					SetTileData(p1.Down, td2);
 					SetTileData(p2, td2);
 
 					break;
@@ -107,15 +106,11 @@ namespace Dwarrowdelf.TerrainGen
 					for (int z = 0; z < depth; ++z)
 					{
 						var p = new IntVector3(x, y, z);
-						var td = new TileData();
+						TileData td;
 
 						if (z < surface)
 						{
 							td = TileData.GetNaturalWall(MaterialID.Granite);
-						}
-						else if (z == surface)
-						{
-							td = TileData.GetNaturalFloor(MaterialID.Granite);
 						}
 						else
 						{
@@ -191,7 +186,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			var bsp = new BSPTree(h);
 
-			for (int z = m_size.Depth - 2; z >= 0; --z)
+			for (int z = m_size.Depth - 3; z > 0; z -= 2)
 				CreateDungeonLevel(bsp, z);
 		}
 
@@ -200,11 +195,7 @@ namespace Dwarrowdelf.TerrainGen
 			var root = new IntGrid2(0, 0, m_size.Width, m_size.Height);
 			CreateNodes(bsp, root, 0);
 
-			var td = new TileData();
-			td.TerrainID = TerrainID.NaturalFloor;
-			td.TerrainMaterialID = MaterialID.Granite;
-			td.InteriorID = InteriorID.Empty;
-			td.InteriorMaterialID = MaterialID.Undefined;
+			var td = TileData.EmptyTileData;
 
 			int leafs = MyMath.Pow2(bsp.Depth - 1);
 
@@ -244,10 +235,6 @@ namespace Dwarrowdelf.TerrainGen
 				foreach (var p2 in grid.Range())
 				{
 					var p = new IntVector3(p2, z);
-
-					var _td = GetTileData(p);
-					if (_td.InteriorID == td.InteriorID)
-						Debugger.Break();
 
 					SetTileData(p, td);
 				}
@@ -304,11 +291,7 @@ namespace Dwarrowdelf.TerrainGen
 
 		void CreateCorridor(IntVector2 from, IntVector2 to, int z, bool horiz)
 		{
-			var td = new TileData();
-			td.TerrainID = TerrainID.NaturalFloor;
-			td.TerrainMaterialID = MaterialID.Granite;
-			td.InteriorID = InteriorID.Empty;
-			td.InteriorMaterialID = MaterialID.Undefined;
+			var td = TileData.EmptyTileData;
 
 			if (horiz)
 			{

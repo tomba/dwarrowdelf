@@ -201,20 +201,10 @@ namespace Dwarrowdelf.TerrainGen
 				{
 					var p = new IntVector3(pp.X, pp.Y, z);
 
-					var td = m_terrain.GetTileData(p);
-					td.InteriorID = InteriorID.Empty;
-					td.InteriorMaterialID = MaterialID.Undefined;
+					var td = TileData.EmptyTileData;
 
 					if (z == minZ - 1)
-					{
-						td.TerrainID = TerrainID.NaturalFloor;
 						td.WaterLevel = TileData.MaxWaterLevel;
-					}
-					else
-					{
-						td.TerrainID = TerrainID.Empty;
-						td.TerrainMaterialID = MaterialID.Undefined;
-					}
 
 					m_terrain.SetTileData(p, td);
 				}

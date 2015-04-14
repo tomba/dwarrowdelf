@@ -54,10 +54,10 @@ namespace Dwarrowdelf
 				return true;
 
 			if (dir == Direction.Up)
-				return td.InteriorID == InteriorID.Stairs;
+				return td.ID == TileID.Stairs;
 
 			if (dir == Direction.Down)
-				return td.TerrainID == TerrainID.StairsDown;
+				return true;
 
 			if (dir.ContainsDown())
 			{
@@ -100,10 +100,10 @@ namespace Dwarrowdelf
 				return true;
 
 			if (dir == Direction.Up)
-				return td.TerrainID == TerrainID.StairsDown;
+				return true;
 
 			if (dir == Direction.Down)
-				return td.InteriorID == InteriorID.Stairs;
+				return td.ID == TileID.Stairs;
 
 			if (dir.ContainsUp())
 			{
@@ -145,16 +145,12 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static bool CanBeSeen(this IEnvironmentObject env, IntVector3 location)
 		{
-			foreach (var d in DirectionExtensions.PlanarDirections)
+			foreach (var d in DirectionExtensions.PlanarUpDownDirections)
 			{
 				var p = location + d;
 				if (env.Contains(p) && env.GetTileData(p).IsSeeThrough)
 					return true;
 			}
-
-			var pu = location.Up;
-			if (env.Contains(pu) && env.GetTileData(pu).IsSeeThroughDown)
-				return true;
 
 			return false;
 		}

@@ -18,6 +18,9 @@ namespace Dwarrowdelf
 		ItemBlocks = 1 << 0,	// an item in the tile blocks movement
 		Subterranean = 1 << 1,
 		WaterStatic = 1 << 2,	// Water in the tile is static
+		HasSupport = 1 << 3,	// Tile below supports, so this one can be stood upon
+		HasWallBelow = 1 << 4,	// Tile below is a Wall, so this one can be stood and built upon, and has a "floor"
+		Error = 1 << 7,			// ZZZ: flags are undefined (in terrain gen), remove
 	}
 
 	//     0         1       2         3        4       5        6        7
@@ -35,17 +38,17 @@ namespace Dwarrowdelf
 
 		[NonSerialized]
 		[FieldOffset(0)]
-		public TerrainID TerrainID;
+		public TileID ID;
 		[NonSerialized]
 		[FieldOffset(1)]
-		public MaterialID TerrainMaterialID;
+		public MaterialID MaterialID;
 
 		[NonSerialized]
 		[FieldOffset(2)]
-		public InteriorID InteriorID;
+		public MaterialID SecondaryMaterialID;
 		[NonSerialized]
 		[FieldOffset(3)]
-		public MaterialID InteriorMaterialID;
+		public byte Unused1;
 
 		[NonSerialized]
 		[FieldOffset(4)]
@@ -57,11 +60,11 @@ namespace Dwarrowdelf
 
 		[NonSerialized]
 		[FieldOffset(6)]
-		public byte Unused1;
+		public byte Unused2;
 
 		[NonSerialized]
 		[FieldOffset(7)]
-		public byte Unused2;
+		public byte Unused3;
 
 		public const int MaxWaterLevel = 7;
 
@@ -69,52 +72,30 @@ namespace Dwarrowdelf
 
 		public static readonly TileData EmptyTileData = new TileData()
 		{
-			TerrainID = TerrainID.Empty,
-			TerrainMaterialID = MaterialID.Undefined,
-			InteriorID = InteriorID.Empty,
-			InteriorMaterialID = MaterialID.Undefined,
-			WaterLevel = 0,
+			ID = TileID.Empty,
+			MaterialID = MaterialID.Undefined,
 		};
 
 		public static readonly TileData UndefinedTileData = new TileData()
 		{
-			TerrainID = TerrainID.Undefined,
-			TerrainMaterialID = MaterialID.Undefined,
-			InteriorID = InteriorID.Undefined,
-			InteriorMaterialID = MaterialID.Undefined,
+			ID = TileID.Undefined,
+			MaterialID = MaterialID.Undefined,
 		};
 
 		public static TileData GetNaturalWall(MaterialID materialID)
 		{
-			return new TileData()
-			{
-				TerrainID = TerrainID.NaturalFloor,
-				TerrainMaterialID = materialID,
-				InteriorID = InteriorID.NaturalWall,
-				InteriorMaterialID = materialID,
-			};
-		}
-
-		public static TileData GetNaturalFloor(MaterialID materialID)
-		{
-			return new TileData()
-			{
-				TerrainID = TerrainID.NaturalFloor,
-				TerrainMaterialID = materialID,
-				InteriorID = InteriorID.Empty,
-				InteriorMaterialID = MaterialID.Undefined,
-			};
+			return new TileData() { ID = TileID.NaturalWall, MaterialID = materialID };
 		}
 
 		/// <summary>
-		/// Is Interior a sapling or a full grown tree
+		/// Is tile a sapling or a full grown tree
 		/// </summary>
 		public bool HasTree
 		{
 			get
 			{
-				var id = this.InteriorID;
-				return id == InteriorID.Tree || id == InteriorID.Sapling || id == InteriorID.DeadTree;
+				var id = this.ID;
+				return id == TileID.Tree || id == TileID.Sapling || id == TileID.DeadTree;
 			}
 		}
 
@@ -125,30 +106,56 @@ namespace Dwarrowdelf
 		{
 			get
 			{
-				var id = this.InteriorID;
-				return id == InteriorID.Tree || id == InteriorID.DeadTree;
+				var id = this.ID;
+				return id == TileID.Tree || id == TileID.DeadTree;
 			}
 		}
 
 		/// <summary>
-		/// Terrain is floor
+		/// Tile below is supporting
 		/// </summary>
-		public bool HasFloor { get { return this.TerrainID == TerrainID.NaturalFloor || this.TerrainID == TerrainID.BuiltFloor; } }
+		public bool HasFloor
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				if ((this.Flags & TileFlags.Error) != 0)
+					System.Diagnostics.Debugger.Break();
+
+				return this.HasWallBelow;
+			}
+		}
+
+		public bool HasSupportBelow
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				if ((this.Flags & TileFlags.Error) != 0)
+					System.Diagnostics.Debugger.Break();
+
+				return (this.Flags & TileFlags.HasSupport) != 0;
+			}
+		}
 
 		/// <summary>
 		/// Is terrain a slope
 		/// </summary>
-		public bool HasSlope { get { return this.TerrainID == TerrainID.Slope; } }
+		public bool HasSlope { get { return this.ID == TileID.Slope; } }
 
 		/// <summary>
-		/// Check if tile is TerrainID.Empty, MaterialID.Undefined, InteriorID.Empty, MaterialID.Undefined
+		/// Check if tile is empty
 		/// </summary>
-		public bool IsEmpty { get { return this.RawTile == EmptyTileData.RawTile; } }
+		public bool IsEmpty { get { return this.ID == TileID.Empty; } }
 
 		/// <summary>
-		/// Check if tile is TerrainID.Undefined, MaterialID.Undefined, InteriorID.Undefined, MaterialID.Undefined
+		/// Check if tile is undefined
 		/// </summary>
-		public bool IsUndefined { get { return this.RawTile == UndefinedTileData.RawTile; } }
+		public bool IsUndefined { get { return this.ID == TileID.Undefined; } }
 
 		/// <summary>
 		/// Is Interior empty or a "soft" item that can be removed automatically
@@ -157,15 +164,32 @@ namespace Dwarrowdelf
 		{
 			get
 			{
-				var id = this.InteriorID;
-				return id == InteriorID.Empty || id == InteriorID.Grass || id == InteriorID.Sapling;
+				switch (this.ID)
+				{
+					case TileID.Empty:
+					case TileID.Grass:
+					case TileID.Sapling:
+						return true;
+
+					default:
+						return false;
+				}
 			}
 		}
 
 		/// <summary>
 		/// Is the tile a floor with empty or soft interior
 		/// </summary>
-		public bool IsClearFloor { get { return this.HasFloor && this.IsClear; } }
+		public bool IsClearFloor
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				return this.HasFloor && this.IsClear;
+			}
+		}
 
 		/// <summary>
 		/// Can one see through this tile in planar directions
@@ -177,25 +201,15 @@ namespace Dwarrowdelf
 				if (this.IsUndefined)
 					throw new Exception();
 
-				var terrain = Terrains.GetTerrain(this.TerrainID);
-				var interior = Interiors.GetInterior(this.InteriorID);
+				switch (this.ID)
+				{
+					case TileID.NaturalWall:
+					case TileID.BuiltWall:
+						return false;
 
-				return terrain.IsSeeThrough && interior.IsSeeThrough;
-			}
-		}
-
-		/// <summary>
-		/// Can one see through this tile's floor
-		/// </summary>
-		public bool IsSeeThroughDown
-		{
-			get
-			{
-				if (this.IsUndefined)
-					throw new Exception();
-
-				var terrain = Terrains.GetTerrain(this.TerrainID);
-				return terrain.IsSeeThroughDown;
+					default:
+						return true;
+				}
 			}
 		}
 
@@ -209,10 +223,20 @@ namespace Dwarrowdelf
 				if (this.IsUndefined)
 					throw new Exception();
 
-				var terrain = Terrains.GetTerrain(this.TerrainID);
-				var interior = Interiors.GetInterior(this.InteriorID);
+				if ((this.Flags & TileFlags.ItemBlocks) != 0)
+					return true;
 
-				return terrain.IsBlocker || interior.IsBlocker || (this.Flags & TileFlags.ItemBlocks) != 0;
+				switch (this.ID)
+				{
+					case TileID.NaturalWall:
+					case TileID.BuiltWall:
+					case TileID.Tree:
+					case TileID.DeadTree:
+						return true;
+
+					default:
+						return false;
+				}
 			}
 		}
 
@@ -226,9 +250,31 @@ namespace Dwarrowdelf
 				if (this.IsUndefined)
 					throw new Exception();
 
-				var terrain = Terrains.GetTerrain(this.TerrainID);
+				return this.HasSupportBelow && !this.IsBlocker;
+			}
+		}
 
-				return this.IsBlocker == false && terrain.IsSupporting;
+		/// <summary>
+		/// Provides support to above tile, i.e. you can walk above this tile
+		/// </summary>
+		public bool IsSupporting
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				if (this.IsWall)
+					return true;
+
+				switch (this.ID)
+				{
+					case TileID.Stairs:
+						return true;
+
+					default:
+						return false;
+				}
 			}
 		}
 
@@ -245,25 +291,21 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Water can flow through the floor
-		/// </summary>
-		public bool IsPermeable
-		{
-			get
-			{
-				var terrain = Terrains.GetTerrain(this.TerrainID);
-				return terrain.IsPermeable;
-			}
-		}
-
-		/// <summary>
 		/// The tile can be mined (interior is NaturalWall or terrain is Slope)
 		/// </summary>
 		public bool IsMinable
 		{
 			get
 			{
-				return this.InteriorID == InteriorID.NaturalWall || this.HasSlope;
+				switch (this.ID)
+				{
+					case TileID.NaturalWall:
+					case TileID.Slope:
+						return true;
+
+					default:
+						return false;
+				}
 			}
 		}
 
@@ -274,13 +316,13 @@ namespace Dwarrowdelf
 		{
 			get
 			{
-				switch (this.InteriorID)
+				if (this.HasTree)
+					return true;
+
+				switch (this.ID)
 				{
-					case InteriorID.Grass:
-					case InteriorID.Tree:
-					case InteriorID.DeadTree:
-					case InteriorID.Sapling:
-					case InteriorID.Shrub:
+					case TileID.Grass:
+					case TileID.Shrub:
 						return true;
 
 					default:
@@ -292,6 +334,51 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Tile flags has Subterranean set
 		/// </summary>
-		public bool IsSubterranean { get { return (this.Flags & TileFlags.Subterranean) != 0; } }
+		public bool IsSubterranean
+		{
+			get
+			{
+				if ((this.Flags & TileFlags.Error) != 0)
+					System.Diagnostics.Debugger.Break();
+
+				return (this.Flags & TileFlags.Subterranean) != 0;
+			}
+		}
+
+		/// <summary>
+		/// Tile is a Wall
+		/// </summary>
+		public bool IsWall
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				switch (this.ID)
+				{
+					case TileID.NaturalWall:
+					case TileID.BuiltWall:
+						return true;
+
+					default:
+						return false;
+				}
+			}
+		}
+
+		/// <summary>
+		/// The tile below is a Wall
+		/// </summary>
+		public bool HasWallBelow
+		{
+			get
+			{
+				if ((this.Flags & TileFlags.Error) != 0)
+					System.Diagnostics.Debugger.Break();
+
+				return (this.Flags & TileFlags.HasWallBelow) != 0;
+			}
+		}
 	}
 }

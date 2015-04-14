@@ -141,20 +141,7 @@ namespace Dwarrowdelf.Server
 				if (!td.IsSeeThrough)
 					yield break;
 
-				var positioning = DirectionSet.Planar;
-
-				if (td.IsSeeThroughDown)
-					positioning |= DirectionSet.Down;
-
-				var pu = p.Up;
-				if (m_env.Contains(pu))
-				{
-					var tdu = m_env.GetTileData(pu);
-					if (tdu.IsSeeThroughDown)
-						positioning |= DirectionSet.Up;
-				}
-
-				foreach (var d in positioning.ToDirections())
+				foreach (var d in DirectionExtensions.PlanarUpDownDirections)
 				{
 					var pp = p + d;
 					if (m_env.Contains(pp) && !m_tracker.GetVisible(pp))
@@ -170,16 +157,7 @@ namespace Dwarrowdelf.Server
 
 		void OnTerrainOrInteriorChanged(IntVector3 location, TileData oldData, TileData newData)
 		{
-			bool check = false;
-
-			if (oldData.IsSeeThroughDown == false && newData.IsSeeThroughDown == true &&
-				(GetVisible(location.Down) || GetVisible(location)))
-				check = true;
-
 			if (oldData.IsSeeThrough == false && newData.IsSeeThrough == true && GetVisible(location))
-				check = true;
-
-			if (check)
 				CheckVisibility(location, oldData, newData);
 		}
 

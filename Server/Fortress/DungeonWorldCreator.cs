@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Server.Fortress
 	public class DungeonWorldCreator
 	{
 		const int MAP_SIZE = 7;	// 2^AREA_SIZE
-		const int MAP_DEPTH = 5;
+		const int MAP_DEPTH = 9;
 
 		World m_world;
 		EnvironmentObject m_env;
@@ -35,11 +35,10 @@ namespace Dwarrowdelf.Server.Fortress
 
 			foreach (var p2 in m_terrainData.Size.Plane.Range())
 			{
-				var z = m_terrainData.GetSurfaceLevel(p2);
+				var p = new IntVector3(p2, m_terrainData.Size.Depth - 1);
 
-				var p = new IntVector3(p2, z);
-				var td = m_terrainData.GetTileData(p);
-				if (td.TerrainID == TerrainID.StairsDown)
+				var td = m_terrainData.GetTileData(p.Down);
+				if (td.ID == TileID.Stairs)
 				{
 					stairs = p;
 					break;
@@ -152,8 +151,8 @@ namespace Dwarrowdelf.Server.Fortress
 
 			tg.Generate(1);
 
-			TerrainHelpers.CreateSoil(terrain, 9999);
-			TerrainHelpers.CreateVegetation(terrain, random, 9999);
+			//TerrainHelpers.CreateSoil(terrain, 9999);
+			//TerrainHelpers.CreateVegetation(terrain, random, 9999);
 
 			m_rooms = tg.Rooms;
 			m_terrainData = terrain;

@@ -155,9 +155,7 @@ namespace Dwarrowdelf.TerrainGen
 						}
 						else if (z == surface)
 						{
-							var materialID = m_data.GetTileData(new IntVector3(x, y, z - 1)).TerrainMaterialID;
-
-							m_data.SetTileDataNoHeight(p, TileData.GetNaturalFloor(materialID));
+							m_data.SetTileDataNoHeight(p, TileData.EmptyTileData);
 						}
 						else
 						{
@@ -270,13 +268,13 @@ namespace Dwarrowdelf.TerrainGen
 
 			var td = m_data.GetTileData(p);
 
-			if (td.InteriorID != InteriorID.NaturalWall)
+			if (td.ID != TileID.NaturalWall)
 				return false;
 
-			if (Materials.GetMaterial(td.InteriorMaterialID).Category != MaterialCategory.Rock)
+			if (Materials.GetMaterial(td.MaterialID).Category != MaterialCategory.Rock)
 				return false;
 
-			td.InteriorMaterialID = oreMaterialID;
+			td.SecondaryMaterialID = oreMaterialID; // ZZZ
 			m_data.SetTileDataNoHeight(p, td);
 
 			return true;

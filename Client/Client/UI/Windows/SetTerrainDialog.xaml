@@ -19,15 +19,9 @@
 			<Setter Property="Padding" Value="10,0" />
 		</Style>
 
-		<ObjectDataProvider x:Key="terrainIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+		<ObjectDataProvider x:Key="tileIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
 			<ObjectDataProvider.MethodParameters>
-				<x:Type TypeName="common:TerrainID" />
-			</ObjectDataProvider.MethodParameters>
-		</ObjectDataProvider>
-
-		<ObjectDataProvider x:Key="interiorIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-			<ObjectDataProvider.MethodParameters>
-				<x:Type TypeName="common:InteriorID" />
+				<x:Type TypeName="common:TileID" />
 			</ObjectDataProvider.MethodParameters>
 		</ObjectDataProvider>
 
@@ -60,7 +54,6 @@
 			<StackPanel Orientation="Horizontal">
 				<Button Content="Empty" Click="Button_Click_Preset" />
 				<Button Content="Wall" Click="Button_Click_Preset" />
-				<Button Content="Floor" Click="Button_Click_Preset" />
 			</StackPanel>
 		</GroupBox>
 
@@ -83,15 +76,13 @@
 				</Style>
 			</Grid.Resources>
 
-			<TextBlock Grid.Column="0" Grid.Row="0" Text="TerrainID" />
+			<TextBlock Grid.Column="0" Grid.Row="0" Text="TileID" />
 			<TextBlock Grid.Column="1" Grid.Row="0" Text="TerrainMaterial" />
 			<TextBlock Grid.Column="2" Grid.Row="0" Text="InteriorID" />
 			<TextBlock Grid.Column="3" Grid.Row="0" Text="InteriorMaterial" />
 
-			<ListBox Grid.Column="0" Grid.Row="1" x:Name="terrainIDListBox" ItemsSource="{Binding Source={StaticResource terrainIDs}}" SelectedValue="{Binding TerrainID}" />
-			<ListBox Grid.Column="1" Grid.Row="1" x:Name="terrainMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding TerrainMaterialID}" />
-			<ListBox Grid.Column="2" Grid.Row="1" x:Name="interiorIDListBox" ItemsSource="{Binding Source={StaticResource interiorIDs}}" SelectedValue="{Binding InteriorID}" />
-			<ListBox Grid.Column="3" Grid.Row="1" x:Name="interiorMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding InteriorMaterialID}" />
+			<ListBox Grid.Column="0" Grid.Row="1" x:Name="tileIDListBox" ItemsSource="{Binding Source={StaticResource tileIDs}}" SelectedValue="{Binding TileID}" />
+			<ListBox Grid.Column="1" Grid.Row="1" x:Name="materialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding MaterialID}" />
 		</Grid>
 
 	</DockPanel>

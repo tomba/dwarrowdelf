@@ -39,7 +39,6 @@ namespace Dwarrowdelf.Server.Fortress
 			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV, startLoc);
 
 			//CreateWaterTest(env);
-			//CreateWaterRiverTest(env);
 
 			FortressWorldPopulator.FinalizeEnv(env);
 
@@ -101,26 +100,6 @@ namespace Dwarrowdelf.Server.Fortress
 			return terrain;
 		}
 
-		static void CreateWaterRiverTest(EnvironmentObject env)
-		{
-			var p = new IntVector3(111, 44, 9);
-			for (int x = 0; x < 6; ++x)
-			{
-				env.SetTileData(p.Offset(x, 0, 0), new TileData()
-				{
-					InteriorID = InteriorID.Empty,
-					TerrainID = TerrainID.Empty,
-				});
-
-				env.SetTileData(p.Offset(x, 0, -1), new TileData()
-				{
-					InteriorID = InteriorID.Empty,
-					TerrainID = TerrainID.NaturalFloor,
-					TerrainMaterialID = MaterialID.Granite,
-				});
-			}
-		}
-
 		static void CreateWaterTest(EnvironmentObject env)
 		{
 			var pos = env.GetSurfaceLocation(env.Width / 2 + 10, env.Height / 2 - 10);
@@ -141,11 +120,11 @@ namespace Dwarrowdelf.Server.Fortress
 				ClearTile(env, new IntVector3(x, y, surface - 2));
 				ClearTile(env, new IntVector3(x, y, surface - 3));
 				ClearTile(env, new IntVector3(x, y, surface - 4));
-				ClearInside(env, new IntVector3(x + 0, y, surface - 5));
-				ClearInside(env, new IntVector3(x + 1, y, surface - 5));
-				ClearInside(env, new IntVector3(x + 2, y, surface - 5));
-				ClearInside(env, new IntVector3(x + 3, y, surface - 5));
-				ClearInside(env, new IntVector3(x + 4, y, surface - 5));
+				ClearTile(env, new IntVector3(x + 0, y, surface - 5));
+				ClearTile(env, new IntVector3(x + 1, y, surface - 5));
+				ClearTile(env, new IntVector3(x + 2, y, surface - 5));
+				ClearTile(env, new IntVector3(x + 3, y, surface - 5));
+				ClearTile(env, new IntVector3(x + 4, y, surface - 5));
 				ClearTile(env, new IntVector3(x + 4, y, surface - 4));
 				ClearTile(env, new IntVector3(x + 4, y, surface - 3));
 				ClearTile(env, new IntVector3(x + 4, y, surface - 2));
@@ -164,11 +143,6 @@ namespace Dwarrowdelf.Server.Fortress
 		public static void ClearTile(EnvironmentObject env, IntVector3 p)
 		{
 			env.SetTileData(p, TileData.EmptyTileData);
-		}
-
-		public static void ClearInside(EnvironmentObject env, IntVector3 p)
-		{
-			env.SetTileData(p, TileData.GetNaturalFloor(MaterialID.Granite));
 		}
 
 		public static void CreateWalls(EnvironmentObject env, IntGrid2Z area)
@@ -195,7 +169,7 @@ namespace Dwarrowdelf.Server.Fortress
 				{
 					var p = new IntVector3(x, y, area.Z);
 
-					ClearInside(env, p);
+					ClearTile(env, p);
 
 					env.SetWaterLevel(p, TileData.MaxWaterLevel);
 				}

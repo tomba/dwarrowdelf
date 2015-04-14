@@ -248,7 +248,7 @@ namespace Dwarrowdelf.Client
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
-				Events.AddGameEvent(living, "{0} fells {1} {2}", living, report.MaterialID, report.InteriorID);
+				Events.AddGameEvent(living, "{0} fells {1} {2}", living, report.MaterialID, report.TileID);
 			else
 				Events.AddGameEvent(living, "{0} fails to fell tree: {1}", living, report.FailReason);
 		}

@@ -97,7 +97,7 @@ namespace Dwarrowdelf
 	public sealed class FellTreeActionReport : ActionReport
 	{
 		public Direction Direction { get; private set; }
-		public InteriorID InteriorID { get; set; }
+		public TileID TileID { get; set; }
 		public MaterialID MaterialID { get; set; }
 
 		public FellTreeActionReport(ILivingObject living, Direction direction)

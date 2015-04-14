@@ -24,20 +24,18 @@ namespace Dwarrowdelf.TerrainGen
 				{
 					int z = data.GetSurfaceLevel(x, y);
 
-					var p = new IntVector3(x, y, z);
-
 					if (z < soilLimit)
 					{
-						var td = data.GetTileData(p);
+						var p = new IntVector3(x, y, z - 1);
 
-						td.TerrainMaterialID = MaterialID.Loam;
-
-						data.SetTileDataNoHeight(p, td);
+						data.SetTileDataNoHeight(p, TileData.GetNaturalWall(MaterialID.Loam));
 					}
 				}
 			}
 		}
 
+		// This expands the map, i.e. creates slopes to empty tiles, instead of changing walls to slopes
+		// XXX if we don't expand, but instead turn Wall tiles to slopes, we'd get the material from the wall
 		public static void CreateSlopes(TerrainData data)
 		{
 			var plane = data.Size.Plane;
@@ -54,7 +52,8 @@ namespace Dwarrowdelf.TerrainGen
 					var p3d = new IntVector3(p, z);
 
 					var td = data.GetTileData(p3d);
-					td.TerrainID = TerrainID.Slope;
+					td.ID = TileID.Slope;
+					td.MaterialID = MaterialID.Granite; // ZZZ
 					data.SetTileDataNoHeight(p3d, td);
 				}
 			});
@@ -84,10 +83,11 @@ namespace Dwarrowdelf.TerrainGen
 				if (td.WaterLevel > 0)
 					return;
 
-				if (Materials.GetMaterial(td.TerrainMaterialID).Category != MaterialCategory.Soil)
+				// ZZZ: no vegetation on slopes
+				if (td.HasSlope)
 					return;
 
-				if (td.HasFloor == false && td.HasSlope == false)
+				if (terrain.GetMaterial(p.Down).Category != MaterialCategory.Soil)
 					return;
 
 				var r = new MWCRandom(p, baseSeed);
@@ -96,23 +96,23 @@ namespace Dwarrowdelf.TerrainGen
 
 				if (v >= 95)
 				{
-					td.InteriorID = InteriorID.Sapling;
-					td.InteriorMaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
+					td.ID = TileID.Sapling;
+					td.MaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
 				}
 				else if (v >= 90)
 				{
-					td.InteriorID = InteriorID.Tree;
-					td.InteriorMaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
+					td.ID = TileID.Tree;
+					td.MaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
 				}
 				else if (v >= 80)
 				{
-					td.InteriorID = InteriorID.Shrub;
-					td.InteriorMaterialID = berryMaterials[r.Next(berryMaterials.Length)].ID;
+					td.ID = TileID.Shrub;
+					td.MaterialID = berryMaterials[r.Next(berryMaterials.Length)].ID;
 				}
 				else
 				{
-					td.InteriorID = InteriorID.Grass;
-					td.InteriorMaterialID = grassMaterials[r.Next(grassMaterials.Length)].ID;
+					td.ID = TileID.Grass;
+					td.MaterialID = grassMaterials[r.Next(grassMaterials.Length)].ID;
 				}
 
 				terrain.SetTileDataNoHeight(p, td);

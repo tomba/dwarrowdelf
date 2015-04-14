@@ -56,10 +56,10 @@ namespace Dwarrowdelf.Server.Fortress
 			foreach (var p in startLocs)
 			{
 				var td = env.GetTileData(p);
-				if (td.InteriorID == InteriorID.Tree)
+				if (td.HasTree)
 				{
-					td.InteriorID = InteriorID.Grass;
-					td.InteriorMaterialID = MaterialID.RyeGrass;
+					td.ID = TileID.Grass;
+					td.MaterialID = MaterialID.RyeGrass;
 					env.SetTileData(p, td);
 				}
 			}
@@ -91,10 +91,9 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			foreach (var p in r.Range())
 			{
-				var terrainID = env.GetTerrainID(p);
-				var interiorID = env.GetInteriorID(p);
+				var td = env.GetTileData(p);
 
-				if (terrainID == TerrainID.NaturalFloor)
+				if (td.IsWalkable)
 					continue;
 				else
 					return false;

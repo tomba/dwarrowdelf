@@ -39,15 +39,9 @@ namespace Dwarrowdelf
 		IntSize3 Size { get; }
 		bool Contains(IntVector3 p);
 
-		TerrainID GetTerrainID(IntVector3 l);
-		MaterialID GetTerrainMaterialID(IntVector3 l);
-
-		InteriorID GetInteriorID(IntVector3 l);
-		MaterialID GetInteriorMaterialID(IntVector3 l);
-
-		MaterialInfo GetTerrainMaterial(IntVector3 l);
-
-		MaterialInfo GetInteriorMaterial(IntVector3 l);
+		TileID GetTileID(IntVector3 l);
+		MaterialID GetMaterialID(IntVector3 l);
+		MaterialInfo GetMaterial(IntVector3 l);
 
 		TileData GetTileData(IntVector3 l);
 

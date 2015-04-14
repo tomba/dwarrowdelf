@@ -17,10 +17,8 @@ namespace Dwarrowdelf.Client
 			{
 				{ "envID", env.ObjectID },
 				{ "cube", cube },
-				{ "terrainID", data.TerrainID },
-				{ "terrainMaterialID", data.TerrainMaterialID },
-				{ "interiorID", data.InteriorID },
-				{ "interiorMaterialID", data.InteriorMaterialID },
+				{ "tileID", data.TileID },
+				{ "materialID", data.MaterialID },
 				{ "waterLevel", data.Water.HasValue ? (data.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null },
 			};
 
@@ -29,15 +27,10 @@ namespace Dwarrowdelf.Client
 for p in cube.Range():
 	td = env.GetTileData(p)
 
-	if terrainID != None:
-		Dwarrowdelf.TileData.TerrainID.SetValue(td, terrainID)
-	if terrainMaterialID != None:
-		Dwarrowdelf.TileData.TerrainMaterialID.SetValue(td, terrainMaterialID)
-
-	if interiorID != None:
-		Dwarrowdelf.TileData.InteriorID.SetValue(td, interiorID)
-	if interiorMaterialID != None:
-		Dwarrowdelf.TileData.InteriorMaterialID.SetValue(td, interiorMaterialID)
+	if tileID != None:
+		Dwarrowdelf.TileData.ID.SetValue(td, tileID)
+	if materialID != None:
+		Dwarrowdelf.TileData.MaterialID.SetValue(td, materialID)
 
 	if waterLevel != None:
 		Dwarrowdelf.TileData.WaterLevel.SetValue(td, waterLevel)

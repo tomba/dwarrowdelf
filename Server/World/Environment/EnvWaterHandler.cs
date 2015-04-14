@@ -101,21 +101,7 @@ namespace Dwarrowdelf.Server
 			if (toTD.IsWaterPassable == false)
 				return false;
 
-			int zDiff = to.Z - from.Z;
-
-			if (zDiff == 0)
-				return true;
-
-			if (zDiff > 0)
-				return toTD.IsPermeable == true;
-
-			if (zDiff < 0)
-			{
-				var fromTD = m_env.GetTileData(from);
-				return fromTD.IsPermeable == true;
-			}
-
-			return false;
+			return true;
 		}
 
 		int GetCurrentWaterLevel(IntVector3 p)

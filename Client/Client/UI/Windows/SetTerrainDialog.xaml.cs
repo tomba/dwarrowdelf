@@ -15,11 +15,8 @@ namespace Dwarrowdelf.Client.UI
 {
 	sealed class SetTerrainData
 	{
-		public TerrainID? TerrainID { get; set; }
-		public MaterialID? TerrainMaterialID { get; set; }
-
-		public InteriorID? InteriorID { get; set; }
-		public MaterialID? InteriorMaterialID { get; set; }
+		public TileID? TileID { get; set; }
+		public MaterialID? MaterialID { get; set; }
 
 		public bool? Water { get; set; }
 	}
@@ -66,16 +63,10 @@ namespace Dwarrowdelf.Client.UI
 				case "Wall":
 					td = TileData.GetNaturalWall(MaterialID.Granite);
 					break;
-
-				case "Floor":
-					td = TileData.GetNaturalFloor(MaterialID.Granite);
-					break;
 			}
 
-			terrainIDListBox.SelectedValue = td.TerrainID;
-			terrainMaterialListBox.SelectedValue = td.TerrainMaterialID;
-			interiorIDListBox.SelectedValue = td.InteriorID;
-			interiorMaterialListBox.SelectedValue = td.InteriorMaterialID;
+			tileIDListBox.SelectedValue = td.ID;
+			materialListBox.SelectedValue = td.MaterialID;
 		}
 	}
 }

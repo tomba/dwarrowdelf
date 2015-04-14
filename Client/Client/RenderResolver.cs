@@ -128,18 +128,10 @@ namespace Dwarrowdelf.Client
 						tile.Layer2DarknessLevel = darkness;
 				}
 
-				if (tile.Layer1.SymbolID == SymbolID.Undefined)
-				{
-					GetInteriorTile(p, env, ref tile.Layer1, out seeThrough);
+				GetTerrainTile(p, env, ref tile.Layer0, ref tile.Layer1, out seeThrough, i);
 
-					if (tile.Layer1.SymbolID != SymbolID.Undefined)
-						tile.Layer1DarknessLevel = darkness;
-
-					if (!seeThrough)
-						break;
-				}
-
-				GetTerrainTile(p, env, ref tile.Layer0, out seeThrough, i);
+				if (tile.Layer1.SymbolID != SymbolID.Undefined)
+					tile.Layer1DarknessLevel = darkness;
 
 				if (tile.Layer0.SymbolID != SymbolID.Undefined)
 					tile.Layer0DarknessLevel = darkness;
@@ -158,65 +150,65 @@ namespace Dwarrowdelf.Client
 				tile.Layer0DarknessLevel = tile.Layer1DarknessLevel;
 		}
 
-		static void GetTerrainTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough,
-			int currentLevel)
+		static void GetTerrainTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer floorTile, ref RenderTileLayer tile,
+			out bool seeThrough, int currentLevel)
 		{
-			seeThrough = false;
-
 			var td = env.GetTileData(ml);
 
-			if (td.TerrainID == TerrainID.Undefined)
+			MaterialInfo matInfo = null;
+			if (td.MaterialID != MaterialID.Undefined)
 			{
-				tile.SymbolID = SymbolID.Hidden;
-				tile.Color = GameColor.DimGray;
+				matInfo = Materials.GetMaterial(td.MaterialID);
+				tile.Color = matInfo.Color;
 				tile.BgColor = GameColor.None;
-				return;
 			}
 
-			if (td.TerrainID == TerrainID.Empty)
+			switch (td.ID)
 			{
-				tile.SymbolID = SymbolID.Empty;
-				tile.Color = GameColor.None;
-				tile.BgColor = GameColor.None;
-				seeThrough = true;
-				return;
-			}
+				case TileID.Undefined:
+					tile.SymbolID = SymbolID.Hidden;
+					tile.Color = GameColor.DimGray;
+					tile.BgColor = GameColor.None;
+					seeThrough = false;
+					return;
 
-			var matInfo = Materials.GetMaterial(td.TerrainMaterialID);
-			tile.Color = matInfo.Color;
-			tile.BgColor = GameColor.None;
+				case TileID.Empty:
+					tile.SymbolID = SymbolID.Empty;
+					tile.Color = GameColor.None;
+					tile.BgColor = GameColor.None;
+					seeThrough = true;
+					break;
 
-			switch (td.TerrainID)
-			{
-				case TerrainID.NaturalFloor:
-					tile.SymbolID = SymbolID.Floor;
+				case TileID.NaturalWall:
+					floorTile.SymbolID = SymbolID.Wall;
+					floorTile.Color = matInfo.Color;
+					floorTile.BgColor = GameColor.None;
 
-					if (matInfo.Category == MaterialCategory.Soil)
-						tile.SymbolID = SymbolID.Sand;
+					var secondaryMatInfo = Materials.GetMaterial(td.SecondaryMaterialID);
 
-					tile.BgColor = GetTerrainBackgroundColor(matInfo);
-
-					// If the interior is "green", override the color to make the terrain greenish
-					if (td.IsGreen)
+					switch (secondaryMatInfo.Category)
 					{
-						tile.SymbolID = SymbolID.Empty;
-						tile.BgColor = GameColor.Green;
-						return;
+						case MaterialCategory.Gem:
+							tile.SymbolID = SymbolID.GemOre;
+							tile.Color = secondaryMatInfo.Color;
+							break;
+
+						case MaterialCategory.Mineral:
+							tile.SymbolID = SymbolID.ValuableOre;
+							tile.Color = secondaryMatInfo.Color;
+							break;
+
+						default:
+							break;
 					}
 
-					break;
+					seeThrough = false;
+					return;
 
-				case TerrainID.BuiltFloor:
-					tile.SymbolID = SymbolID.Floor;
-					break;
-
-				case TerrainID.StairsDown:
-					tile.SymbolID = SymbolID.StairsDown;
-					break;
-
-				case TerrainID.Slope:
+				case TileID.Slope:
 					tile.SymbolID = currentLevel == 0 ? SymbolID.SlopeUp : SymbolID.SlopeDown;
 
+					// ZZZ: IsGreen doesn't work
 					// If the interior is "green", override the color to make the terrain greenish
 					if (td.IsGreen)
 					{
@@ -228,88 +220,70 @@ namespace Dwarrowdelf.Client
 					{
 						tile.BgColor = GetTerrainBackgroundColor(matInfo);
 					}
+					seeThrough = false;
+					return;
 
-					break;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		static GameColor GetTerrainBackgroundColor(MaterialInfo matInfo)
-		{
-			if (matInfo.Category == MaterialCategory.Rock)
-				return GameColor.DarkSlateGray;
-			else if (matInfo.Category == MaterialCategory.Soil)
-				return GameColor.Sienna;
-			else
-				throw new Exception();
-		}
-
-		static void GetInteriorTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)
-		{
-			var td = env.GetTileData(ml);
-
-			seeThrough = true;
-
-			if (td.InteriorID == InteriorID.Undefined)
-				return;
-
-			var matInfo = Materials.GetMaterial(td.InteriorMaterialID);
-			tile.Color = matInfo.Color;
-			tile.BgColor = GameColor.None;
-
-			switch (td.InteriorID)
-			{
-				case InteriorID.Stairs:
-					if (td.TerrainID == TerrainID.StairsDown)
-					{
-						tile.SymbolID = SymbolID.StairsUpDown;
-						// disable seethrough so that the terrain's stairsdown are not visible
-						seeThrough = false;
-					}
-					else
-					{
-						tile.SymbolID = SymbolID.StairsUp;
-					}
-					break;
-
-				case InteriorID.BuiltWall:
-					tile.SymbolID = SymbolID.Wall;
+				case TileID.Stairs:
+					// ZZZ we should use StairsUp/Down/UpDown
+					tile.SymbolID = SymbolID.StairsUpDown;
 					seeThrough = false;
 					break;
 
-				case InteriorID.NaturalWall:
-					switch (matInfo.Category)
+				case TileID.Sapling:
+					switch (td.MaterialID)
 					{
-						case MaterialCategory.Gem:
-							tile.SymbolID = SymbolID.GemOre;
-							seeThrough = true;
+						case MaterialID.Fir:
+							tile.SymbolID = SymbolID.ConiferousSapling;
 							break;
 
-						case MaterialCategory.Mineral:
-							tile.SymbolID = SymbolID.ValuableOre;
-							seeThrough = true;
+						case MaterialID.Pine:
+							tile.SymbolID = SymbolID.ConiferousSapling2;
+							break;
+
+						case MaterialID.Birch:
+							tile.SymbolID = SymbolID.DeciduousSapling;
+							break;
+
+						case MaterialID.Oak:
+							tile.SymbolID = SymbolID.DeciduousSapling2;
 							break;
 
 						default:
-							tile.SymbolID = SymbolID.Wall;
-							seeThrough = false;
-							break;
+							throw new Exception();
 					}
 
+					tile.Color = GameColor.ForestGreen;
+					seeThrough = true;
 					break;
 
-				case InteriorID.Pavement:
-					tile.SymbolID = SymbolID.Floor;
-					seeThrough = false;
+				case TileID.Tree:
+					switch (td.MaterialID)
+					{
+						case MaterialID.Fir:
+							tile.SymbolID = SymbolID.ConiferousTree;
+							break;
+
+						case MaterialID.Pine:
+							tile.SymbolID = SymbolID.ConiferousTree2;
+							break;
+
+						case MaterialID.Birch:
+							tile.SymbolID = SymbolID.DeciduousTree;
+							break;
+
+						case MaterialID.Oak:
+							tile.SymbolID = SymbolID.DeciduousTree2;
+							break;
+
+						default:
+							throw new Exception();
+					}
+
+					tile.Color = GameColor.ForestGreen;
+					seeThrough = true;
 					break;
 
-				case InteriorID.Empty:
-					tile.SymbolID = SymbolID.Undefined;
-					break;
-
-				case InteriorID.Grass:
+				case TileID.Grass:
 					switch (matInfo.ID)
 					{
 						case MaterialID.ReedGrass:
@@ -334,79 +308,59 @@ namespace Dwarrowdelf.Client
 
 					// Grass color should come from the symbol definition
 					tile.Color = GameColor.None;
+					seeThrough = true;
 					break;
 
-				case InteriorID.Sapling:
-					{
-						switch (td.InteriorMaterialID)
-						{
-							case MaterialID.Fir:
-								tile.SymbolID = SymbolID.ConiferousSapling;
-								break;
-
-							case MaterialID.Pine:
-								tile.SymbolID = SymbolID.ConiferousSapling2;
-								break;
-
-							case MaterialID.Birch:
-								tile.SymbolID = SymbolID.DeciduousSapling;
-								break;
-
-							case MaterialID.Oak:
-								tile.SymbolID = SymbolID.DeciduousSapling2;
-								break;
-
-							default:
-								throw new Exception();
-						}
-
-						tile.Color = GameColor.ForestGreen;
-					}
+				case TileID.DeadTree:
+					tile.SymbolID = SymbolID.DeadTree;
+					seeThrough = true;
 					break;
 
-				case InteriorID.Tree:
-					{
-						switch (td.InteriorMaterialID)
-						{
-							case MaterialID.Fir:
-								tile.SymbolID = SymbolID.ConiferousTree;
-								break;
-
-							case MaterialID.Pine:
-								tile.SymbolID = SymbolID.ConiferousTree2;
-								break;
-
-							case MaterialID.Birch:
-								tile.SymbolID = SymbolID.DeciduousTree;
-								break;
-
-							case MaterialID.Oak:
-								tile.SymbolID = SymbolID.DeciduousTree2;
-								break;
-
-							default:
-								throw new Exception();
-						}
-
-						tile.Color = GameColor.ForestGreen;
-					}
-					break;
-
-				case InteriorID.DeadTree:
-					{
-						tile.SymbolID = SymbolID.DeadTree;
-					}
-					break;
-
-				case InteriorID.Shrub:
-					{
-						tile.SymbolID = SymbolID.Shrub;
-					}
+				case TileID.Shrub:
+					tile.SymbolID = SymbolID.Shrub;
+					seeThrough = true;
 					break;
 
 				default:
 					throw new Exception();
 			}
+
+			// ZZZ: do we have a floor here, i.e. wall below, and we can see it?
+			if (seeThrough && td.HasFloor)
+			{
+				// If the interior is "green", override the color to make the terrain greenish
+				if (td.IsGreen)
+				{
+					floorTile.SymbolID = SymbolID.Empty;
+					floorTile.BgColor = GameColor.Green;
+				}
+				else
+				{
+					var matInfoDown = env.GetMaterial(ml.Down);
+
+					if (matInfoDown.ID != MaterialID.Undefined)
+					{
+						if (matInfoDown.Category == MaterialCategory.Soil)
+							floorTile.SymbolID = SymbolID.Sand;
+						else
+							floorTile.SymbolID = SymbolID.Floor;
+
+						floorTile.BgColor = GetTerrainBackgroundColor(matInfoDown);
+					}
+				}
+
+				seeThrough = false;
+			}
+		}
+
+		static GameColor GetTerrainBackgroundColor(MaterialInfo matInfo)
+		{
+			if (matInfo.Category == MaterialCategory.Rock)
+				return GameColor.DarkSlateGray;
+			else if (matInfo.Category == MaterialCategory.Soil)
+				return GameColor.Sienna;
+			else
+				throw new Exception();
 		}
 
 		static void GetObjectTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile)
