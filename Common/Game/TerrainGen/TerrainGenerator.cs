@@ -165,7 +165,7 @@ namespace Dwarrowdelf.TerrainGen
 							td.TerrainMaterialID = m_data.GetTileData(new IntVector3(x, y, z - 1)).TerrainMaterialID;
 							td.InteriorID = InteriorID.Empty;
 							td.InteriorMaterialID = MaterialID.Undefined;
-							m_data.SetTileData(p, td);
+							m_data.SetTileDataNoHeight(p, td);
 						}
 						else
 						{
