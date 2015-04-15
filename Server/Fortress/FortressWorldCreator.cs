@@ -166,26 +166,12 @@ namespace Dwarrowdelf.Server.Fortress
 
 		public static void ClearTile(EnvironmentObject env, IntVector3 p)
 		{
-			var td = env.GetTileData(p);
-
-			td.TerrainID = TerrainID.Empty;
-			td.TerrainMaterialID = MaterialID.Undefined;
-			td.InteriorID = InteriorID.Empty;
-			td.InteriorMaterialID = MaterialID.Undefined;
-
-			env.SetTileData(p, td);
+			env.SetTileData(p, TileData.EmptyTileData);
 		}
 
 		public static void ClearInside(EnvironmentObject env, IntVector3 p)
 		{
-			var td = env.GetTileData(p);
-
-			td.TerrainID = TerrainID.NaturalFloor;
-			td.TerrainMaterialID = MaterialID.Granite;
-			td.InteriorID = InteriorID.Empty;
-			td.InteriorMaterialID = MaterialID.Undefined;
-
-			env.SetTileData(p, td);
+			env.SetTileData(p, TileData.GetNaturalFloor(MaterialID.Granite));
 		}
 
 		public static void CreateWalls(EnvironmentObject env, IntGrid2Z area)
@@ -199,14 +185,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 					var p = new IntVector3(x, y, area.Z);
 
-					var td = new TileData();
-
-					td.TerrainID = TerrainID.NaturalFloor;
-					td.TerrainMaterialID = MaterialID.Granite;
-					td.InteriorID = InteriorID.NaturalWall;
-					td.InteriorMaterialID = MaterialID.Granite;
-
-					env.SetTileData(p, td);
+					env.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
 				}
 			}
 		}
