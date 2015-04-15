@@ -139,7 +139,7 @@ namespace Dwarrowdelf.Client
 						break;
 				}
 
-				GetTerrainTile(p, env, ref tile.Layer0, out seeThrough);
+				GetTerrainTile(p, env, ref tile.Layer0, out seeThrough, i);
 
 				if (tile.Layer0.SymbolID != SymbolID.Undefined)
 					tile.Layer0DarknessLevel = darkness;
@@ -158,7 +158,8 @@ namespace Dwarrowdelf.Client
 				tile.Layer0DarknessLevel = tile.Layer1DarknessLevel;
 		}
 
-		static void GetTerrainTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)
+		static void GetTerrainTile(IntVector3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough,
+			int currentLevel)
 		{
 			seeThrough = false;
 
@@ -214,7 +215,7 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case TerrainID.Slope:
-					tile.SymbolID = SymbolID.SlopeUp;
+					tile.SymbolID = currentLevel == 0 ? SymbolID.SlopeUp : SymbolID.SlopeDown;
 
 					// If the interior is "green", override the color to make the terrain greenish
 					if (td.IsGreen)
