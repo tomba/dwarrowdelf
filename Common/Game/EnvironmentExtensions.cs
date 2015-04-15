@@ -69,7 +69,7 @@ namespace Dwarrowdelf
 				if (!td.HasSlope)
 					return false;
 
-				if (env.GetTerrainID(srcLoc.Up) != TerrainID.Empty)
+				if (env.GetTileData(srcLoc.Up).IsEmpty == false)
 					return false;
 
 				return true;
@@ -115,7 +115,7 @@ namespace Dwarrowdelf
 				if (!td.HasSlope)
 					return false;
 
-				if (env.GetTerrainID(dstLoc.Up) != TerrainID.Empty)
+				if (env.GetTileData(dstLoc.Up).IsEmpty == false)
 					return false;
 
 				return true;
