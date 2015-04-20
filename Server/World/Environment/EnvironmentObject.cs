@@ -346,7 +346,7 @@ namespace Dwarrowdelf.Server
 					if (GetTileData(new IntVector3(p2d, z)).IsEmpty == false)
 					{
 						Debug.Assert(z >= 0 && z < 256);
-						SetSurfaceLevel(p2d, (byte)p.Z);
+						SetSurfaceLevel(p2d, (byte)z);
 						newSurfaceLevel = z;
 						break;
 					}
