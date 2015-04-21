@@ -108,7 +108,6 @@
     <Compile Include="FPSCounterSystem.cs" />
     <Compile Include="GlobalData.cs" />
     <Compile Include="KeyboardHandler.cs" />
-    <Compile Include="Map.cs" />
     <Compile Include="MovableManager.cs" />
     <Compile Include="MovableObject.cs" />
     <Compile Include="MyExtensions.cs" />
