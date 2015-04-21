@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Server
 			this.StartLocation = startLocation;
 
 			InitFlags();
-
+			VerifyLevelMap();
 
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < this.Depth; ++i)
@@ -145,6 +145,26 @@ namespace Dwarrowdelf.Server
 						flags |= TileFlags.Subterranean;
 
 					m_tileGrid[z, p.Y, p.X].Flags = flags;
+				}
+			});
+		}
+
+		[Conditional("DEBUG")]
+		void VerifyLevelMap()
+		{
+			var levelMap = m_levelMap;
+
+			Parallel.ForEach(this.Size.Plane.Range(), p =>
+			{
+				for (int z = this.Size.Depth - 1; z >= 0; --z)
+				{
+					if (GetTileData(p.X, p.Y, z).IsEmpty == false)
+					{
+						if (levelMap[p.Y, p.X] != z)
+							throw new Exception();
+
+						break;
+					}
 				}
 			});
 		}
