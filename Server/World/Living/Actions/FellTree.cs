@@ -28,21 +28,20 @@ namespace Dwarrowdelf.Server
 				return ActionState.Fail;
 			}
 
-			var material = td.MaterialID;
-			var id = td.ID;
-
-			report.TileID = id;
-			report.MaterialID = material;
+			report.TileID = td.ID;
+			report.MaterialID = td.MaterialID;
 
 			var grassMaterials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
-			td.ID = TileID.Grass;
-			td.MaterialID = grassMaterials[this.World.Random.Next(grassMaterials.Length)].ID;
 
-			this.Environment.SetTileData(p, td);
+			this.Environment.SetTileData(p, new TileData()
+			{
+				ID = TileID.Grass,
+				MaterialID = grassMaterials[this.World.Random.Next(grassMaterials.Length)].ID,
+			});
 
 			if (td.HasFellableTree)
 			{
-				var builder = new ItemObjectBuilder(ItemID.Log, material)
+				var builder = new ItemObjectBuilder(ItemID.Log, td.MaterialID)
 				{
 					Name = "Log",
 					Color = GameColor.SaddleBrown,
