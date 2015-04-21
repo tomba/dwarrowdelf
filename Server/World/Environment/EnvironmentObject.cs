@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Server
 
 			this.StartLocation = startLocation;
 
-			SetSubterraneanFlags();
+			InitFlags();
 
 
 			m_contentArray = new KeyedObjectCollection[this.Depth];
@@ -128,18 +128,23 @@ namespace Dwarrowdelf.Server
 			m_levelMap = levelMap;
 		}
 
-		void SetSubterraneanFlags()
+		void InitFlags()
 		{
 			Parallel.ForEach(this.Size.Plane.Range(), p =>
 			{
 				int d = GetSurfaceLevel(p);
 
-				for (int z = this.Size.Depth - 1; z >= 0; --z)
+				for (int z = 0; z < this.Size.Depth; ++z)
 				{
+					// TerrainGen should not set any flags
+					Debug.Assert(m_tileGrid[z, p.Y, p.X].Flags == 0);
+
+					TileFlags flags = 0;
+
 					if (z < d)
-						m_tileGrid[z, p.Y, p.X].Flags |= TileFlags.Subterranean;
-					else
-						m_tileGrid[z, p.Y, p.X].Flags &= ~TileFlags.Subterranean;
+						flags |= TileFlags.Subterranean;
+
+					m_tileGrid[z, p.Y, p.X].Flags = flags;
 				}
 			});
 		}
