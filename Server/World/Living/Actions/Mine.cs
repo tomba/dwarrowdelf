@@ -47,13 +47,18 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						ItemObject item = null;
+						TileData newtd = td;
+						newtd.InteriorID = InteriorID.Empty;
+						newtd.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
+						if (newtd.HasSlope)
+							newtd.TerrainID = TerrainID.NaturalFloor;
 
-						if (td.InteriorID == InteriorID.NaturalWall &&
-							this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
+						env.SetTileData(p, newtd);
+
+						if (td.InteriorID == InteriorID.NaturalWall)
 						{
-							ItemID itemID;
-							MaterialInfo material = env.GetInteriorMaterial(p);
+							MaterialInfo material = Materials.GetMaterial(td.InteriorMaterialID);
+							ItemID itemID = ItemID.Undefined;
 
 							switch (material.Category)
 							{
@@ -68,28 +73,25 @@ namespace Dwarrowdelf.Server
 								case MaterialCategory.Gem:
 									itemID = ItemID.UncutGem;
 									break;
+								case MaterialCategory.Soil:
+									break;
 
 								default:
 									throw new Exception();
 							}
 
-							var builder = new ItemObjectBuilder(itemID, material.ID);
-							item = builder.Create(this.World);
-						}
+							if (itemID != ItemID.Undefined)
+							{
+								if (this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
+								{
+									var builder = new ItemObjectBuilder(itemID, material.ID);
+									var item = builder.Create(this.World);
+									var ok = item.MoveTo(this.Environment, p);
+									if (!ok)
+										throw new Exception();
 
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
-
-						if (td.HasSlope)
-							td.TerrainID = TerrainID.NaturalFloor;
-
-						env.SetTileData(p, td);
-
-						if (item != null)
-						{
-							var ok = item.MoveTo(this.Environment, p);
-							if (!ok)
-								throw new Exception();
+								}
+							}
 						}
 					}
 					break;
