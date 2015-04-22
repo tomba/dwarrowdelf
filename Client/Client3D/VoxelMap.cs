@@ -75,6 +75,11 @@ namespace Client3D
 			}
 		}
 
+		public void SetVoxelDirect(IntVector3 p, Voxel voxel)
+		{
+			this.Grid[p.Z, p.Y, p.X] = voxel;
+		}
+
 		public Voxel GetVoxel(IntVector3 p)
 		{
 			return this.Grid[p.Z, p.Y, p.X];

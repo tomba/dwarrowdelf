@@ -35,7 +35,8 @@ namespace Client3D
 
 		public MyGame()
 		{
-			GlobalData.VoxelMap = CreateVoxelMap();
+			GlobalData.VoxelMap = Map.Create();
+			//GlobalData.VoxelMap = CreateVoxelMap();
 
 			this.IsMouseVisible = true;
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
