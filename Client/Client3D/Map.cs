@@ -30,7 +30,7 @@ namespace Client3D
 					voxelMap.SetVoxelDirect(p, Voxel.Rock);
 			}
 
-			voxelMap.CheckVisibleFaces(false);
+			voxelMap.CheckVisibleFaces();
 
 			return voxelMap;
 		}

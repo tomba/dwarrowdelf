@@ -85,7 +85,7 @@ namespace Client3D
 			return this.Grid[p.Z, p.Y, p.X];
 		}
 
-		public void CheckVisibleFaces(bool undefineHidden)
+		public void CheckVisibleFaces()
 		{
 			var grid = this.Grid;
 
