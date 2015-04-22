@@ -25,7 +25,7 @@ namespace Client3D
 			return map;
 		}
 
-		static NoiseMap CreateTerrainNoiseMap(Module noise, IntSize2 size)
+		public static NoiseMap CreateTerrainNoiseMap(Module noise, IntSize2 size)
 		{
 			var map = new NoiseMap();
 
@@ -46,7 +46,7 @@ namespace Client3D
 			return map;
 		}
 
-		static Module CreateTerrainNoise()
+		public static Module CreateTerrainNoise()
 		{
 			var mountainTerrain = new RidgedMulti()
 			{
