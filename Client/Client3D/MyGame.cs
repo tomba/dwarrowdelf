@@ -35,7 +35,7 @@ namespace Client3D
 
 		public MyGame()
 		{
-			GlobalData.VoxelMap = new Map(new IntSize3(64, 64, 64));
+			GlobalData.Map = new Map(new IntSize3(64, 64, 64));
 
 			this.IsMouseVisible = true;
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
@@ -58,7 +58,7 @@ namespace Client3D
 
 			//AddMovables();
 
-			var pos = GlobalData.VoxelMap.Size.ToIntVector3().ToVector3();
+			var pos = GlobalData.Map.Size.ToIntVector3().ToVector3();
 			pos.X /= 2;
 			pos.Y /= 2;
 			pos.Z += 10;
@@ -76,7 +76,7 @@ namespace Client3D
 
 			Func<IntVector2, IntVector3> floor = v2 =>
 			{
-				var map = GlobalData.VoxelMap;
+				var map = GlobalData.Map;
 				for (int z = map.Depth - 1; z > 0; --z)
 				{
 					var v = new IntVector3(v2, z);
@@ -143,7 +143,7 @@ namespace Client3D
 			if (gameTime.FrameCount % 60 != 0)
 				return;
 
-			var map = GlobalData.VoxelMap;
+			var map = GlobalData.Map;
 
 			foreach (var ob in m_movableManager.Movables)
 			{
@@ -156,7 +156,7 @@ namespace Client3D
 					if (map.Size.Contains(n) == false)
 						continue;
 
-					if (GlobalData.VoxelMap.GetTileData(n).IsEmpty)
+					if (GlobalData.Map.GetTileData(n).IsEmpty)
 					{
 						ob.Move(n);
 						break;

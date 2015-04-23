@@ -124,10 +124,10 @@ namespace Client3D
 							{
 								var l = new IntVector3(x, y, z);
 
-								if (GlobalData.VoxelMap.Size.Contains(l) == false)
+								if (GlobalData.Map.Size.Contains(l) == false)
 									return true;
 
-								GlobalData.VoxelMap.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
+								GlobalData.Map.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
 
 								return false;
 							});
@@ -141,12 +141,12 @@ namespace Client3D
 						if (sel.SelectionVisible)
 						{
 							foreach (var p in sel.SelectionGrid.Range())
-								GlobalData.VoxelMap.SetTileData(p, TileData.EmptyTileData);
+								GlobalData.Map.SetTileData(p, TileData.EmptyTileData);
 						}
 						else if (sel.CursorVisible)
 						{
 							var p = sel.Position;
-							GlobalData.VoxelMap.SetTileData(p, TileData.EmptyTileData);
+							GlobalData.Map.SetTileData(p, TileData.EmptyTileData);
 						}
 					}
 					break;
@@ -158,14 +158,14 @@ namespace Client3D
 						if (sel.SelectionVisible)
 						{
 							foreach (var p in sel.SelectionGrid.Range())
-								GlobalData.VoxelMap.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
+								GlobalData.Map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
 						}
 						else if (sel.CursorVisible)
 						{
 							var p = sel.Position;
 							var d = sel.Direction;
-							if (GlobalData.VoxelMap.Size.Contains(p + d))
-								GlobalData.VoxelMap.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
+							if (GlobalData.Map.Size.Contains(p + d))
+								GlobalData.Map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
 						}
 					}
 					break;

@@ -23,8 +23,8 @@ namespace Client3D
 
 		public static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
-		Map m_mmmap;
-		VoxelMap m_map;
+		Map m_map;
+		VoxelMap m_voxelMap;
 
 		/// <summary>
 		/// Chunk position
@@ -75,20 +75,20 @@ namespace Client3D
 			this.ChunkPosition = chunkPosition;
 			this.ChunkOffset = chunkPosition * CHUNK_SIZE;
 
-			m_mmmap = map;
-			m_map = new VoxelMap(ChunkSize);
+			m_map = map;
+			m_voxelMap = new VoxelMap(ChunkSize);
 
-			foreach (var p in m_map.Size.Range())
+			foreach (var p in m_voxelMap.Size.Range())
 			{
 				var mp = this.ChunkOffset + p;
 
-				var td = m_mmmap.GetTileData(mp);
+				var td = m_map.GetTileData(mp);
 
 				Voxel v = ConvertTileToVoxel(td);
 
-				v.VisibleFaces = m_mmmap.GetVisibleFaces(mp);
+				v.VisibleFaces = m_map.GetVisibleFaces(mp);
 
-				m_map.SetVoxelDirect(p, v);
+				m_voxelMap.SetVoxelDirect(p, v);
 			}
 
 			var v1 = this.ChunkOffset.ToVector3();
@@ -268,7 +268,7 @@ namespace Client3D
 
 						var pos = p - this.ChunkOffset;
 
-						var vox = m_map.Grid[pos.Z, pos.Y, pos.X];
+						var vox = m_voxelMap.Grid[pos.Z, pos.Y, pos.X];
 
 						if (vox.IsEmpty)
 							continue;
@@ -561,10 +561,10 @@ namespace Client3D
 
 		bool IsBlocker(IntVector3 p)
 		{
-			if (m_map.Size.Contains(p) == false)
+			if (m_voxelMap.Size.Contains(p) == false)
 				return false;
 
-			return m_map.Grid[p.Z, p.Y, p.X].IsOpaque;
+			return m_voxelMap.Grid[p.Z, p.Y, p.X].IsOpaque;
 		}
 
 		void GetOcclusionsForFace(IntVector3 p, DirectionOrdinal face,

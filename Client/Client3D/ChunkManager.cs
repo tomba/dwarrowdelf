@@ -91,7 +91,7 @@ namespace Client3D
 
 		void CreateChunks()
 		{
-			var map = GlobalData.VoxelMap;
+			var map = GlobalData.Map;
 
 			int xChunks = map.Size.Width / Chunk.CHUNK_SIZE;
 			int yChunks = map.Size.Height / Chunk.CHUNK_SIZE;
@@ -128,10 +128,10 @@ namespace Client3D
 			m_forceNearListUpdate = true;
 			m_forceDrawListUpdate = true;
 
-			GlobalData.VoxelMap.TileChanged += OnVoxelChanged;
+			GlobalData.Map.TileChanged += OnTileChanged;
 		}
 
-		void OnVoxelChanged(IntVector3 p)
+		void OnTileChanged(IntVector3 p)
 		{
 			var cp = p / Chunk.CHUNK_SIZE;
 
@@ -139,7 +139,7 @@ namespace Client3D
 
 			if (chunk == null)
 			{
-				chunk = Chunk.CreateOrNull(GlobalData.VoxelMap, cp);
+				chunk = Chunk.CreateOrNull(GlobalData.Map, cp);
 
 				if (chunk == null)
 					return;

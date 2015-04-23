@@ -25,9 +25,9 @@ namespace Client3D
 
 		public static void RunRayCast(Vector3 origin, Vector3 direction, float radius, RayCastDelegate callback)
 		{
-			int wx = GlobalData.VoxelMap.Width;
-			int wy = GlobalData.VoxelMap.Height;
-			int wz = GlobalData.VoxelMap.Depth;
+			int wx = GlobalData.Map.Width;
+			int wy = GlobalData.Map.Height;
+			int wz = GlobalData.Map.Depth;
 
 			// From "A Fast Voxel Traversal Algorithm for Ray Tracing"
 			// by John Amanatides and Andrew Woo, 1987

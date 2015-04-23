@@ -12,7 +12,7 @@ namespace Client3D
 	{
 		public ViewGridProvider(Game game)
 		{
-			var map = GlobalData.VoxelMap;
+			var map = GlobalData.Map;
 
 			this.ViewCorner1 = new IntVector3(0, 0, 0);
 			this.ViewCorner2 = new IntVector3(map.Width - 1, map.Height - 1, map.Depth - 1);
@@ -30,7 +30,7 @@ namespace Client3D
 				if (value == m_viewCorner1)
 					return;
 
-				if (GlobalData.VoxelMap.Size.Contains(value) == false)
+				if (GlobalData.Map.Size.Contains(value) == false)
 					return;
 
 				if (value.X > m_viewCorner2.X || value.Y > m_viewCorner2.Y || value.Z > m_viewCorner2.Z)
@@ -66,7 +66,7 @@ namespace Client3D
 				if (value == m_viewCorner2)
 					return;
 
-				if (GlobalData.VoxelMap.Size.Contains(value) == false)
+				if (GlobalData.Map.Size.Contains(value) == false)
 					return;
 
 				if (value.X < m_viewCorner1.X || value.Y < m_viewCorner1.Y || value.Z < m_viewCorner1.Z)
