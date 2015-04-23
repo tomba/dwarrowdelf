@@ -12,19 +12,6 @@ namespace Client3D
 {
 	static class VoxelMapGen
 	{
-		public static VoxelMap CreateTerrain(IntSize3 size)
-		{
-			var map = new VoxelMap(size);
-
-			var noise = CreateTerrainNoise();
-
-			var noisemap = CreateTerrainNoiseMap(noise, new IntSize2(size.Width, size.Height));
-
-			map.FillFromNoiseMap(noisemap);
-
-			return map;
-		}
-
 		public static NoiseMap CreateTerrainNoiseMap(Module noise, IntSize2 size)
 		{
 			var map = new NoiseMap();

@@ -23,6 +23,7 @@ namespace Client3D
 
 		public static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
+		Map m_mmmap;
 		VoxelMap m_map;
 
 		/// <summary>
@@ -52,7 +53,7 @@ namespace Client3D
 
 		public BoundingBox BBox;
 
-		public static Chunk CreateOrNull(VoxelMap map, IntVector3 chunkPosition)
+		public static Chunk CreateOrNull(Map map, IntVector3 chunkPosition)
 		{
 			var chunkOffset = chunkPosition * CHUNK_SIZE;
 
@@ -69,20 +70,58 @@ namespace Client3D
 			return chunk;
 		}
 
-		Chunk(VoxelMap map, IntVector3 chunkPosition)
+		Chunk(Map map, IntVector3 chunkPosition)
 		{
 			this.ChunkPosition = chunkPosition;
 			this.ChunkOffset = chunkPosition * CHUNK_SIZE;
 
-			m_map = map;
+			m_mmmap = map;
+			m_map = new VoxelMap(ChunkSize);
+
+			foreach (var p in m_map.Size.Range())
+			{
+				var mp = this.ChunkOffset + p;
+
+				var td = m_mmmap.GetTileData(mp);
+
+				Voxel v = ConvertTileToVoxel(td);
+
+				v.VisibleFaces = m_mmmap.GetVisibleFaces(mp);
+
+				m_map.SetVoxelDirect(p, v);
+			}
 
 			var v1 = this.ChunkOffset.ToVector3();
 			var v2 = v1 + new Vector3(Chunk.CHUNK_SIZE);
 			this.BBox = new BoundingBox(v1, v2);
 		}
 
-		static void CheckIfEmptyOrHidden(VoxelMap map, IntVector3 chunkOffset, out bool isHidden, out bool isEmpty)
+		Voxel ConvertTileToVoxel(TileData td)
 		{
+			if (td.WaterLevel > 0)
+				return Voxel.Water;
+			else if (td.IsEmpty)
+				return Voxel.Empty;
+			else if (td.HasTree)
+			{
+				return new Voxel()
+				{
+					Type = VoxelType.Empty,
+					Flags = VoxelFlags.Tree,
+				};
+			}
+			else if (td.IsWall)
+				return Voxel.Rock;
+			else // XXX
+				return Voxel.Empty;
+		}
+
+		static void CheckIfEmptyOrHidden(Map map, IntVector3 chunkOffset, out bool isHidden, out bool isEmpty)
+		{
+			isHidden = isEmpty = false;
+
+#warning TODO
+#if asd
 			int x0 = chunkOffset.X;
 			int x1 = chunkOffset.X + CHUNK_SIZE - 1;
 
@@ -114,6 +153,7 @@ namespace Client3D
 
 			isEmpty = vox.IsEmpty;
 			isHidden = vox.VisibleFaces == 0;
+#endif
 		}
 
 		public void Free()
@@ -224,16 +264,17 @@ namespace Client3D
 				{
 					for (int x = chunkGrid.X1; x <= chunkGrid.X2; ++x)
 					{
-						var vox = m_map.Grid[z, y, x];
+						var p = new IntVector3(x, y, z);
+
+						var pos = p - this.ChunkOffset;
+
+						var vox = m_map.Grid[pos.Z, pos.Y, pos.X];
 
 						if (vox.IsEmpty)
 							continue;
 
-						var p = new IntVector3(x, y, z);
-
 						if ((vox.Flags & VoxelFlags.Tree) != 0)
 						{
-							var pos = p - this.ChunkOffset;
 							sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
 								(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
 
@@ -499,6 +540,9 @@ namespace Client3D
 
 				int occ0, occ1, occ2, occ3;
 
+				occ0 = occ1 = occ2 = occ3 = 0;
+
+#if asd
 				if (((int)visibleHiddenFaces & (1 << side)) != 0)
 				{
 					occ0 = occ1 = occ2 = occ3 = 4;
@@ -508,6 +552,7 @@ namespace Client3D
 					GetOcclusionsForFace(p, (DirectionOrdinal)side,
 						out occ0, out occ1, out occ2, out occ3);
 				}
+#endif
 				var vd = new TerrainVertex(v0, v1, v2, v3, occ0, occ1, occ2, occ3,
 					side == (int)DirectionOrdinal.PositiveZ ? topTexture : baseTexture);
 				vertexList.Add(vd);

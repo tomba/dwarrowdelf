@@ -137,11 +137,9 @@ namespace Client3D
 					if (viewGrid.Contains(p) == false)
 						return false;
 
-					var vx = GlobalData.VoxelMap.GetVoxel(p);
+					var td = GlobalData.VoxelMap.GetTileData(p);
 
-					// XXX IsEmpty would match for voxels with tree flag
-					//if (vx.IsEmpty)
-					if (vx.Type == VoxelType.Empty)
+					if (td.IsEmpty)
 						return false;
 
 					outpos = p;
@@ -176,9 +174,9 @@ namespace Client3D
 				{
 					if (mouseState.LeftButton.Pressed)
 					{
-						var vx = GlobalData.VoxelMap.GetVoxel(p);
+						var td = GlobalData.VoxelMap.GetTileData(p);
 
-						System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, vx);
+						System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, td);
 					}
 
 					this.Position = p;

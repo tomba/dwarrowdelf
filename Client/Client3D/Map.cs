@@ -8,8 +8,53 @@ using System.Threading.Tasks;
 
 namespace Client3D
 {
-	class Map
+	class Map : IEnvironmentObject
 	{
+		TerrainData m_terrainData;
+
+		public int Width { get { return this.Size.Width; } }
+		public int Height { get { return this.Size.Height; } }
+		public int Depth { get { return this.Size.Depth; } }
+
+		public event Action<IntVector3> TileChanged;
+
+		public Map(IntSize3 size)
+		{
+			this.Size = size;
+
+			//m_terrainData = CreateTerrain(size);
+			//m_terrainData = CreateNoiseTerrain(size);
+			m_terrainData = CreateBallMap(size, 8);
+			//m_terrainData = CreateCubeMap(size, 4);
+		}
+
+		public void SetTileData(IntVector3 p, TileData td)
+		{
+			m_terrainData.SetTileDataNoHeight(p, td);
+			if (this.TileChanged != null)
+				TileChanged(p);
+		}
+
+		public Direction GetVisibleFaces(IntVector3 p)
+		{
+			Direction visibleFaces = 0;
+
+			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
+			{
+				var n = p + dir;
+
+				if (this.Size.Contains(n) == false)
+					continue;
+
+				if (m_terrainData.GetTileData(n).IsSeeThrough == false)
+					continue;
+
+				visibleFaces |= dir;
+			}
+
+			return visibleFaces;
+		}
+
 		public static VoxelMap Create()
 		{
 			var size = new IntSize3(128, 128, 64);
@@ -169,6 +214,140 @@ namespace Client3D
 					}
 				}
 			});
+		}
+
+		static TerrainData CreateBallMap(IntSize3 size, int innerSide = 0)
+		{
+			var map = new TerrainData(size);
+
+			int side = MyMath.Min(size.Width, size.Height, size.Depth);
+
+			int r = side / 2 - 1;
+			int ir = innerSide / 2 - 1;
+
+			Parallel.For(0, size.Depth, z =>
+			{
+				for (int y = 0; y < size.Height; ++y)
+					for (int x = 0; x < size.Width; ++x)
+					{
+						var pr = Math.Sqrt((x - r) * (x - r) + (y - r) * (y - r) + (z - r) * (z - r));
+
+						var p = new IntVector3(x, y, z);
+
+						if (pr < r && pr >= ir)
+							map.SetTileDataNoHeight(p, TileData.GetNaturalWall(MaterialID.Granite));
+						else
+							map.SetTileDataNoHeight(p, TileData.EmptyTileData);
+					}
+			});
+
+			return map;
+		}
+
+		static TerrainData CreateCubeMap(IntSize3 size, int margin)
+		{
+			var map = new TerrainData(size);
+
+			Parallel.For(0, size.Depth, z =>
+			{
+				for (int y = 0; y < size.Height; ++y)
+					for (int x = 0; x < size.Width; ++x)
+					{
+						var p = new IntVector3(x, y, z);
+
+						if (x < margin || y < margin || z < margin ||
+							x >= size.Width - margin || y >= size.Height - margin || z >= size.Depth - margin)
+							map.SetTileDataNoHeight(p, TileData.EmptyTileData);
+						else
+							map.SetTileDataNoHeight(p, TileData.GetNaturalWall(MaterialID.Granite));
+					}
+			});
+
+			return map;
+		}
+
+
+		public VisibilityMode VisibilityMode
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public IntSize3 Size
+		{
+			get;
+			private set;
+		}
+
+		public bool Contains(IntVector3 p)
+		{
+			return this.Size.Contains(p);
+		}
+
+		public TileID GetTileID(IntVector3 l)
+		{
+			return m_terrainData.GetTileID(l);
+		}
+
+		public MaterialID GetMaterialID(IntVector3 l)
+		{
+			throw new NotImplementedException();
+		}
+
+		public MaterialInfo GetMaterial(IntVector3 l)
+		{
+			throw new NotImplementedException();
+		}
+
+		public TileData GetTileData(IntVector3 l)
+		{
+			return m_terrainData.GetTileData(l);
+		}
+
+		public bool GetTileFlags(IntVector3 l, TileFlags flags)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool HasContents(IntVector3 pos)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<IMovableObject> GetContents(IntVector3 pos)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<IMovableObject> GetContents(IntGrid2Z rect)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<IMovableObject> Contents
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public IWorld World
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public bool IsDestructed
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public event Action<IBaseObject> Destructed;
+
+		public ObjectID ObjectID
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public ObjectType ObjectType
+		{
+			get { throw new NotImplementedException(); }
 		}
 	}
 }

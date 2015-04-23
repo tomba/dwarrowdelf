@@ -128,7 +128,7 @@ namespace Client3D
 			m_forceNearListUpdate = true;
 			m_forceDrawListUpdate = true;
 
-			GlobalData.VoxelMap.VoxelChanged += OnVoxelChanged;
+			GlobalData.VoxelMap.TileChanged += OnVoxelChanged;
 		}
 
 		void OnVoxelChanged(IntVector3 p)

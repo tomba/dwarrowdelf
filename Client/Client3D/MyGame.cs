@@ -35,8 +35,7 @@ namespace Client3D
 
 		public MyGame()
 		{
-			GlobalData.VoxelMap = Map.Create();
-			//GlobalData.VoxelMap = CreateVoxelMap();
+			GlobalData.VoxelMap = new Map(new IntSize3(64, 64, 64));
 
 			this.IsMouseVisible = true;
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
@@ -57,7 +56,7 @@ namespace Client3D
 
 			Content.RootDirectory = "Content";
 
-			AddMovables();
+			//AddMovables();
 
 			var pos = GlobalData.VoxelMap.Size.ToIntVector3().ToVector3();
 			pos.X /= 2;
@@ -81,7 +80,7 @@ namespace Client3D
 				for (int z = map.Depth - 1; z > 0; --z)
 				{
 					var v = new IntVector3(v2, z);
-					if (map.GetVoxel(v).IsEmpty == false)
+					if (map.GetTileData(v).IsEmpty == false)
 						return v.Up;
 				}
 
@@ -95,43 +94,6 @@ namespace Client3D
 			ob = new MovableObject(SymbolID.Player, GameColor.Blue);
 			m_movableManager.AddMovable(ob);
 			ob.Move(floor(new IntVector2(5, 10)));
-		}
-
-		VoxelMap CreateVoxelMap()
-		{
-			const string mapname = "voxelmap.dat";
-
-			bool newmap = false;
-
-			VoxelMap map;
-
-			if (newmap == false && System.IO.File.Exists(mapname))
-			{
-				var sw = Stopwatch.StartNew();
-				map = VoxelMap.Load(mapname);
-				sw.Stop();
-				Trace.TraceInformation("load map {0} ms", sw.ElapsedMilliseconds);
-			}
-			else
-			{
-				var sw = Stopwatch.StartNew();
-
-				//map = VoxelMap.CreateBallMap(32, 16);
-				//map = VoxelMap.CreateCubeMap(16, 1);
-				map = VoxelMapGen.CreateTerrain(new IntSize3(128, 128, 64));
-
-				map.CheckVisibleFaces();
-
-				sw.Stop();
-				Trace.TraceInformation("create map {0} ms", sw.ElapsedMilliseconds);
-
-				sw = Stopwatch.StartNew();
-				map.Save(mapname);
-				sw.Stop();
-				Trace.TraceInformation("save map {0} ms", sw.ElapsedMilliseconds);
-			}
-
-			return map;
 		}
 
 		protected override void OnWindowCreated()
@@ -194,7 +156,7 @@ namespace Client3D
 					if (map.Size.Contains(n) == false)
 						continue;
 
-					if (GlobalData.VoxelMap.GetVoxel(n).IsEmpty)
+					if (GlobalData.VoxelMap.GetTileData(n).IsEmpty)
 					{
 						ob.Move(n);
 						break;

@@ -14,7 +14,7 @@ namespace Client3D
 
 	static class GlobalData
 	{
-		public static VoxelMap VoxelMap;
+		public static Map VoxelMap;
 		public static ControlMode ControlMode = Client3D.ControlMode.Fps;
 		public static bool AlignViewGridToCamera = true;
 	}

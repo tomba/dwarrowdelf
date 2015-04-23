@@ -127,7 +127,7 @@ namespace Client3D
 								if (GlobalData.VoxelMap.Size.Contains(l) == false)
 									return true;
 
-								GlobalData.VoxelMap.SetVoxel(l, Voxel.Rock);
+								GlobalData.VoxelMap.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
 
 								return false;
 							});
@@ -141,12 +141,12 @@ namespace Client3D
 						if (sel.SelectionVisible)
 						{
 							foreach (var p in sel.SelectionGrid.Range())
-								GlobalData.VoxelMap.SetVoxel(p, Voxel.Empty);
+								GlobalData.VoxelMap.SetTileData(p, TileData.EmptyTileData);
 						}
 						else if (sel.CursorVisible)
 						{
 							var p = sel.Position;
-							GlobalData.VoxelMap.SetVoxel(p, Voxel.Empty);
+							GlobalData.VoxelMap.SetTileData(p, TileData.EmptyTileData);
 						}
 					}
 					break;
@@ -158,14 +158,14 @@ namespace Client3D
 						if (sel.SelectionVisible)
 						{
 							foreach (var p in sel.SelectionGrid.Range())
-								GlobalData.VoxelMap.SetVoxel(p, Voxel.Rock);
+								GlobalData.VoxelMap.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
 						}
 						else if (sel.CursorVisible)
 						{
 							var p = sel.Position;
 							var d = sel.Direction;
 							if (GlobalData.VoxelMap.Size.Contains(p + d))
-								GlobalData.VoxelMap.SetVoxel(p + d, Voxel.Rock);
+								GlobalData.VoxelMap.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
 						}
 					}
 					break;
