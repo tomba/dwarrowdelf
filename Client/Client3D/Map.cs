@@ -31,8 +31,24 @@ namespace Client3D
 		public void SetTileData(IntVector3 p, TileData td)
 		{
 			m_terrainData.SetTileDataNoHeight(p, td);
+
 			if (this.TileChanged != null)
 				TileChanged(p);
+
+			// XXX send TileChanged for neighbors, so that their VisibleFaces can be updated.
+			// This could be done inside Chunk, but to update the edges of a chunk we need to touch multiple Chunks.
+			// But as we don't change the content of the neighbors, and only the face towards the changed tile
+			// needs to be changed, there's room for optimization.
+			foreach (var v in IntVector3.CardinalUpDownDirections)
+			{
+				var n = p + v;
+
+				if (!this.Size.Contains(n))
+					continue;
+
+				if (this.TileChanged != null)
+					TileChanged(n);
+			}
 		}
 
 		public Direction GetVisibleFaces(IntVector3 p)
@@ -53,49 +69,6 @@ namespace Client3D
 			}
 
 			return visibleFaces;
-		}
-
-		public static VoxelMap Create()
-		{
-			var size = new IntSize3(128, 128, 64);
-
-			//var terrainData = CreateTerrain(size);
-			var terrainData = CreateNoiseTerrain(size);
-
-			var voxelMap = CreateVoxelMap(terrainData);
-
-			return voxelMap;
-		}
-
-		static VoxelMap CreateVoxelMap(TerrainData terrainData)
-		{
-			var voxelMap = new VoxelMap(terrainData.Size);
-
-			foreach (var p in terrainData.Size.Range())
-			{
-				var td = terrainData.GetTileData(p);
-
-				if (td.WaterLevel > 0)
-					voxelMap.SetVoxelDirect(p, Voxel.Water);
-				else if (td.IsEmpty)
-					voxelMap.SetVoxelDirect(p, Voxel.Empty);
-				else if (td.HasTree)
-				{
-					voxelMap.SetVoxelDirect(p, new Voxel()
-					{
-						Type = VoxelType.Empty,
-						Flags = VoxelFlags.Tree,
-					});
-				}
-				else if (td.IsWall)
-					voxelMap.SetVoxelDirect(p, Voxel.Rock);
-				else // XXX
-					voxelMap.SetVoxelDirect(p, Voxel.Empty);
-			}
-
-			voxelMap.CheckVisibleFaces();
-
-			return voxelMap;
 		}
 
 		static TerrainData CreateTerrain(IntSize3 size)

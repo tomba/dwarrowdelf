@@ -78,22 +78,31 @@ namespace Client3D
 			m_map = map;
 			m_voxelMap = new VoxelMap(ChunkSize);
 
-			foreach (var p in m_voxelMap.Size.Range())
-			{
-				var mp = this.ChunkOffset + p;
-
-				var td = m_map.GetTileData(mp);
-
-				Voxel v = ConvertTileToVoxel(td);
-
-				v.VisibleFaces = m_map.GetVisibleFaces(mp);
-
-				m_voxelMap.SetVoxelDirect(p, v);
-			}
+			FillVoxelMap();
 
 			var v1 = this.ChunkOffset.ToVector3();
 			var v2 = v1 + new Vector3(Chunk.CHUNK_SIZE);
 			this.BBox = new BoundingBox(v1, v2);
+		}
+
+		void FillVoxelMap()
+		{
+			foreach (var p in m_voxelMap.Size.Range())
+			{
+				var mp = this.ChunkOffset + p;
+				UpdateVoxel(mp);
+			}
+		}
+
+		public void UpdateVoxel(IntVector3 mp)
+		{
+			var td = m_map.GetTileData(mp);
+
+			Voxel v = ConvertTileToVoxel(td);
+
+			v.VisibleFaces = m_map.GetVisibleFaces(mp);
+
+			m_voxelMap.SetVoxel(mp - this.ChunkOffset, v);
 		}
 
 		Voxel ConvertTileToVoxel(TileData td)

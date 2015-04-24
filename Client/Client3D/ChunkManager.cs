@@ -151,6 +151,11 @@ namespace Client3D
 			{
 				chunk.IsHidden = false;
 				m_forceNearListUpdate = true;
+				chunk.UpdateVoxel(p);
+			}
+			else
+			{
+				chunk.UpdateVoxel(p);
 			}
 
 			InvalidateChunk(chunk);
