@@ -22,10 +22,21 @@ namespace Client3D
 		{
 			this.Size = size;
 
-			//m_terrainData = CreateTerrain(size);
+			m_terrainData = CreateTerrain(size);
 			//m_terrainData = CreateNoiseTerrain(size);
-			m_terrainData = CreateBallMap(size, 8);
+			//m_terrainData = CreateBallMap(size, 8);
 			//m_terrainData = CreateCubeMap(size, 4);
+
+			//UndefineHiddenTiles();
+		}
+
+		void UndefineHiddenTiles()
+		{
+			foreach (var p in m_terrainData.Size.Range())
+			{
+				if (GetVisibleFaces(p) == 0)
+					SetTileData(p, TileData.UndefinedTileData);
+			}
 		}
 
 		public void SetTileData(IntVector3 p, TileData td)
