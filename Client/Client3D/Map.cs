@@ -62,7 +62,9 @@ namespace Client3D
 				if (this.Size.Contains(n) == false)
 					continue;
 
-				if (m_terrainData.GetTileData(n).IsSeeThrough == false)
+				var td = m_terrainData.GetTileData(n);
+
+				if (td.IsUndefined || td.IsSeeThrough == false)
 					continue;
 
 				visibleFaces |= dir;

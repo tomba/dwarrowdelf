@@ -107,7 +107,9 @@ namespace Client3D
 
 		Voxel ConvertTileToVoxel(TileData td)
 		{
-			if (td.WaterLevel > 0)
+			if (td.IsUndefined)
+				return Voxel.Undefined;
+			else if (td.WaterLevel > 0)
 				return Voxel.Water;
 			else if (td.IsEmpty)
 				return Voxel.Empty;
@@ -414,7 +416,7 @@ namespace Client3D
 			baseTexture = new FaceTexture();
 			topTexture = new FaceTexture();
 
-			if (vox.VisibleFaces == 0)
+			if (vox.Type == VoxelType.Undefined)
 			{
 				baseTexture.Symbol1 = SymbolID.Unknown;
 				baseTexture.Color1 = GameColor.LightGray;
@@ -570,7 +572,9 @@ namespace Client3D
 			if (m_map.Size.Contains(p) == false)
 				return false;
 
-			return m_map.GetTileData(p).IsSeeThrough == false;
+			var td = m_map.GetTileData(p);
+
+			return td.IsUndefined || td.IsSeeThrough == false;
 		}
 
 		void GetOcclusionsForFace(IntVector3 p, DirectionOrdinal face,
