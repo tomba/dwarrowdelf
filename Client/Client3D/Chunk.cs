@@ -270,9 +270,8 @@ namespace Client3D
 
 						if (td.HasTree)
 						{
-							sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
-								(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
-
+							// Add tree as scenery vertex
+							HandleTree(sceneryVertexList, td, ref pos);
 							continue;
 						}
 
@@ -285,6 +284,74 @@ namespace Client3D
 					}
 				}
 			}
+		}
+
+		static void HandleTree(VertexList<SceneryVertex> sceneryVertexList, TileData td, ref IntVector3 pos)
+		{
+			SymbolID symbol;
+			Color color;
+
+			switch (td.ID)
+			{
+				case TileID.Tree:
+					switch (td.MaterialID)
+					{
+						case MaterialID.Fir:
+							symbol = SymbolID.ConiferousTree;
+							break;
+
+						case MaterialID.Pine:
+							symbol = SymbolID.ConiferousTree2;
+							break;
+
+						case MaterialID.Birch:
+							symbol = SymbolID.DeciduousTree;
+							break;
+
+						case MaterialID.Oak:
+							symbol = SymbolID.DeciduousTree2;
+							break;
+
+						default:
+							throw new Exception();
+					}
+					break;
+
+				case TileID.Sapling:
+					switch (td.MaterialID)
+					{
+						case MaterialID.Fir:
+							symbol = SymbolID.ConiferousSapling;
+							break;
+
+						case MaterialID.Pine:
+							symbol = SymbolID.ConiferousSapling2;
+							break;
+
+						case MaterialID.Birch:
+							symbol = SymbolID.DeciduousSapling;
+							break;
+
+						case MaterialID.Oak:
+							symbol = SymbolID.DeciduousSapling2;
+							break;
+
+						default:
+							throw new Exception();
+					}
+					break;
+
+				case TileID.DeadTree:
+					symbol = SymbolID.DeadTree;
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			color = Color.ForestGreen;
+
+			sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen, (uint)symbol));
 		}
 
 		void CreateUndefinedChunk(ref IntGrid3 viewGrid, ref IntGrid3 chunkGrid, VertexList<TerrainVertex> vertexList,
@@ -444,15 +511,53 @@ namespace Client3D
 					// If the top face of the tile is visible, we have a "floor"
 					if ((vox.VisibleFaces & Direction.PositiveZ) != 0)
 					{
-						if (matInfo.Category == MaterialCategory.Soil)
+						if (m_map.Contains(p.Up) && m_map.GetTileData(p.Up).IsGreen)
+						{
+							var tdUp = m_map.GetTileData(p.Up);
+							var matInfoUp = Materials.GetMaterial(tdUp.MaterialID);
+
+							SymbolID symbol;
+
+							switch (matInfoUp.ID)
+							{
+								case MaterialID.ReedGrass:
+									symbol = SymbolID.Grass4;
+									break;
+
+								case MaterialID.RyeGrass:
+									symbol = SymbolID.Grass2;
+									break;
+
+								case MaterialID.MeadowGrass:
+									symbol = SymbolID.Grass3;
+									break;
+
+								case MaterialID.HairGrass:
+									symbol = SymbolID.Grass;
+									break;
+
+								default:
+									symbol = SymbolID.Undefined;
+									break;
+							}
+
+							topTexture.Color0 = GameColor.Green;
+							topTexture.Symbol1 = symbol;
+							topTexture.Color1 = GameColor.Green;
+						}
+						else if (matInfo.Category == MaterialCategory.Soil)
+						{
+							topTexture.Color0 = color;
 							topTexture.Symbol1 = SymbolID.Sand;
+							topTexture.Color1 = color;
+						}
 						else
+						{
+							topTexture.Color0 = color;
 							topTexture.Symbol1 = SymbolID.Floor;
-
+							topTexture.Color1 = color;
+						}
 						//floorTile.BgColor = GetTerrainBackgroundColor(matInfoDown);
-
-						topTexture.Color0 = color;
-						topTexture.Color1 = color;
 					}
 					else
 					{
