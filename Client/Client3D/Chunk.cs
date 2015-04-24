@@ -549,9 +549,6 @@ namespace Client3D
 
 				int occ0, occ1, occ2, occ3;
 
-				occ0 = occ1 = occ2 = occ3 = 0;
-
-#if asd
 				if (((int)visibleHiddenFaces & (1 << side)) != 0)
 				{
 					occ0 = occ1 = occ2 = occ3 = 4;
@@ -561,7 +558,7 @@ namespace Client3D
 					GetOcclusionsForFace(p, (DirectionOrdinal)side,
 						out occ0, out occ1, out occ2, out occ3);
 				}
-#endif
+
 				var vd = new TerrainVertex(v0, v1, v2, v3, occ0, occ1, occ2, occ3,
 					side == (int)DirectionOrdinal.PositiveZ ? topTexture : baseTexture);
 				vertexList.Add(vd);
@@ -570,15 +567,17 @@ namespace Client3D
 
 		bool IsBlocker(IntVector3 p)
 		{
-			if (m_voxelMap.Size.Contains(p) == false)
+			if (m_map.Size.Contains(p) == false)
 				return false;
 
-			return m_voxelMap.Grid[p.Z, p.Y, p.X].IsOpaque;
+			return m_map.GetTileData(p).IsSeeThrough == false;
 		}
 
 		void GetOcclusionsForFace(IntVector3 p, DirectionOrdinal face,
 			out int o0, out int o1, out int o2, out int o3)
 		{
+			// XXX can we store occlusion data to the Voxel?
+
 			var odata = s_cubeFaceInfo[(int)face].OcclusionVectors;
 
 			o0 = o1 = o2 = o3 = 0;
