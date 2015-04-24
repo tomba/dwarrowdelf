@@ -98,33 +98,11 @@ namespace Client3D
 		{
 			var td = m_map.GetTileData(mp);
 
-			Voxel v = ConvertTileToVoxel(td);
+			Voxel v = new Voxel();
 
 			v.VisibleFaces = m_map.GetVisibleFaces(mp);
 
 			m_voxelMap.SetVoxel(mp - this.ChunkOffset, v);
-		}
-
-		Voxel ConvertTileToVoxel(TileData td)
-		{
-			if (td.IsUndefined)
-				return Voxel.Undefined;
-			else if (td.WaterLevel > 0)
-				return Voxel.Water;
-			else if (td.IsEmpty)
-				return Voxel.Empty;
-			else if (td.HasTree)
-			{
-				return new Voxel()
-				{
-					Type = VoxelType.Empty,
-					Flags = VoxelFlags.Tree,
-				};
-			}
-			else if (td.IsWall)
-				return Voxel.Rock;
-			else // XXX
-				return Voxel.Empty;
 		}
 
 		static void CheckIfEmptyOrHidden(Map map, IntVector3 chunkOffset, out bool isHidden, out bool isEmpty)
