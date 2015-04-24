@@ -277,26 +277,31 @@ namespace Client3D
 					{
 						var p = new IntVector3(x, y, z);
 
+						var td = m_map.GetTileData(p);
+
+						if (td.WaterLevel == 0)
+						{
+							if (td.IsEmpty)
+								continue;
+
+							if (td.HasSlope) // XXX
+								continue;
+						}
+
 						var pos = p - this.ChunkOffset;
 
-						var vox = m_voxelMap.Grid[pos.Z, pos.Y, pos.X];
-
-						if (vox.IsEmpty)
-							continue;
-
-						if ((vox.Flags & VoxelFlags.Tree) != 0)
+						if (td.HasTree)
 						{
 							sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen,
 								(int)Dwarrowdelf.Client.SymbolID.ConiferousTree));
 
-							if (vox.Type != VoxelType.Empty)
-								throw new Exception();
-
-							continue; ;
+							continue;
 						}
 
-						if (vox.Type == VoxelType.Empty)
+						if (td.IsGreen) // XXX
 							continue;
+
+						var vox = m_voxelMap.Grid[pos.Z, pos.Y, pos.X];
 
 						HandleVoxel(p, ref vox, ref viewGrid, visibleChunkFaces, terrainVertexList);
 					}
@@ -411,52 +416,71 @@ namespace Client3D
 #endif
 		}
 
-		void GetTextures(ref Voxel vox, out FaceTexture baseTexture, out FaceTexture topTexture)
+		void GetTextures(IntVector3 p, ref Voxel vox, out FaceTexture baseTexture, out FaceTexture topTexture)
 		{
+			var td = m_map.GetTileData(p);
+
 			baseTexture = new FaceTexture();
 			topTexture = new FaceTexture();
 
-			if (vox.Type == VoxelType.Undefined)
+			if (td.IsUndefined)
 			{
 				baseTexture.Symbol1 = SymbolID.Unknown;
 				baseTexture.Color1 = GameColor.LightGray;
 				return;
 			}
 
-			switch (vox.Type)
+			if (td.WaterLevel > 0)
 			{
-				case VoxelType.Water:
-					baseTexture.Symbol1 = SymbolID.Water;
-					baseTexture.Color0 = GameColor.MediumBlue;
-					baseTexture.Color1 = GameColor.SeaGreen;
-					topTexture = baseTexture;
-					break;
+				baseTexture.Symbol1 = SymbolID.Water;
+				baseTexture.Color0 = GameColor.MediumBlue;
+				baseTexture.Color1 = GameColor.SeaGreen;
+				topTexture = baseTexture;
+				return;
+			}
 
-				case VoxelType.Rock:
-					baseTexture.Color0 = GameColor.LightGray;
-					baseTexture.Symbol1 = SymbolID.Wall;
+			switch (td.ID)
+			{
+				case TileID.Undefined:
+					baseTexture.Symbol1 = SymbolID.Unknown;
 					baseTexture.Color1 = GameColor.LightGray;
+					return;
 
-					if ((vox.Flags & VoxelFlags.Grass) != 0)
+				default:
+					baseTexture.Symbol1 = SymbolID.Unknown;
+					baseTexture.Color1 = GameColor.Pink;
+					return;
+
+				case TileID.Empty:
+					throw new Exception();
+
+				case TileID.NaturalWall:
+				case TileID.BuiltWall:
+					var matInfo = Materials.GetMaterial(td.MaterialID);
+					var color = matInfo.Color;
+
+					baseTexture.Color0 = GameColor.None;
+					baseTexture.Symbol1 = SymbolID.Wall;
+					baseTexture.Color1 = color;
+
+					// If the top face of the tile is visible, we have a "floor"
+					if ((vox.VisibleFaces & Direction.PositiveZ) != 0)
 					{
-						topTexture.Color0 = GameColor.LightGreen;
-						topTexture.Symbol1 = SymbolID.Grass;
-						topTexture.Color1 = GameColor.LightGreen;
-					}
-					else if ((vox.VisibleFaces & Direction.PositiveZ) != 0)
-					{
-						topTexture.Color0 = GameColor.LightGray;
-						topTexture.Symbol1 = SymbolID.Floor;
-						topTexture.Color1 = GameColor.LightGray;
+						if (matInfo.Category == MaterialCategory.Soil)
+							topTexture.Symbol1 = SymbolID.Sand;
+						else
+							topTexture.Symbol1 = SymbolID.Floor;
+
+						//floorTile.BgColor = GetTerrainBackgroundColor(matInfoDown);
+
+						topTexture.Color0 = color;
+						topTexture.Color1 = color;
 					}
 					else
 					{
 						topTexture = baseTexture;
 					}
-					break;
-
-				default:
-					throw new Exception();
+					return;
 			}
 		}
 
@@ -465,7 +489,7 @@ namespace Client3D
 		{
 			FaceTexture baseTexture, topTexture;
 
-			GetTextures(ref vox, out baseTexture, out topTexture);
+			GetTextures(p, ref vox, out baseTexture, out topTexture);
 
 			int x = p.X;
 			int y = p.Y;

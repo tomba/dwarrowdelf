@@ -131,8 +131,11 @@ namespace Client3D
 		//public SymbolID Symbol0;
 		public SymbolID Symbol1;
 		public SymbolID Symbol2;
+		// Background Color
 		public GameColor Color0;
+		// Symbol1 Color
 		public GameColor Color1;
+		// Symbol2 Color
 		public GameColor Color2;
 	}
 
