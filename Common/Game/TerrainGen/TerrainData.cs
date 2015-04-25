@@ -138,12 +138,14 @@ namespace Dwarrowdelf.TerrainGen
 			m_tileGrid[p.Z, p.Y, p.X] = data;
 		}
 
-		public unsafe void SaveTerrain(string path)
+		public unsafe void SaveTerrain(string path, string name)
 		{
 			using (var stream = File.Create(path))
 			{
 				using (var bw = new BinaryWriter(stream, Encoding.Default, true))
 				{
+					bw.Write(name);
+
 					bw.Write(this.Size.Width);
 					bw.Write(this.Size.Height);
 					bw.Write(this.Size.Depth);
@@ -165,14 +167,22 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		public unsafe static TerrainData LoadTerrain(string path, IntSize3 expectedSize)
+		public unsafe static TerrainData LoadTerrain(string path, string expectedName, IntSize3 expectedSize)
 		{
+			if (File.Exists(path) == false)
+				return null;
+
 			using (var stream = File.OpenRead(path))
 			{
 				TerrainData terrain;
 
 				using (var br = new BinaryReader(stream, Encoding.Default, true))
 				{
+					var name = br.ReadString();
+
+					if (name != expectedName)
+						return null;
+
 					int w = br.ReadInt32();
 					int h = br.ReadInt32();
 					int d = br.ReadInt32();

@@ -53,26 +53,23 @@ namespace Dwarrowdelf.Server.Fortress
 
 			TerrainData terrain = null;
 
-			if (File.Exists(file))
+			try
 			{
-				try
-				{
-					var sw = Stopwatch.StartNew();
-					terrain = TerrainData.LoadTerrain(file, size);
-					sw.Stop();
-					Trace.TraceInformation("Load cached terrain {0} ms", sw.ElapsedMilliseconds);
-				}
-				catch (Exception e)
-				{
-					Trace.TraceError("Failed to load cached terrain: {0}", e.Message);
-				}
+				var sw = Stopwatch.StartNew();
+				terrain = TerrainData.LoadTerrain(file, "fortress", size);
+				sw.Stop();
+				Trace.TraceInformation("Load cached terrain {0} ms", sw.ElapsedMilliseconds);
+			}
+			catch (Exception e)
+			{
+				Trace.TraceError("Failed to load cached terrain: {0}", e.Message);
 			}
 
 			if (terrain == null)
 			{
 				terrain = CreateTerrain(size);
 				var sw = Stopwatch.StartNew();
-				terrain.SaveTerrain(file);
+				terrain.SaveTerrain(file, "fortress");
 				sw.Stop();
 				Trace.TraceInformation("Save cached terrain {0} ms", sw.ElapsedMilliseconds);
 			}
