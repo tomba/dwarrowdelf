@@ -98,28 +98,17 @@ namespace Client3D
 		{
 			var map = GlobalData.Map;
 
-			int xChunks = map.Size.Width / Chunk.CHUNK_SIZE;
-			int yChunks = map.Size.Height / Chunk.CHUNK_SIZE;
-			int zChunks = map.Size.Depth / Chunk.CHUNK_SIZE;
-
-			this.Size = new IntSize3(xChunks, yChunks, zChunks);
+			this.Size = map.Size / Chunk.CHUNK_SIZE;
 
 			m_chunks = new Chunk[this.Size.Volume];
 
-			for (int z = 0; z < zChunks; ++z)
+			Parallel.ForEach(this.Size.Range(), cp =>
 			{
-				for (int y = 0; y < yChunks; ++y)
-				{
-					for (int x = 0; x < xChunks; ++x)
-					{
-						var chunkPosition = new IntVector3(x, y, z);
-						var chunk = Chunk.CreateOrNull(map, chunkPosition);
-						if (chunk == null)
-							continue;
-						m_chunks[this.Size.GetIndex(x, y, z)] = chunk;
-					}
-				}
-			}
+				var chunk = Chunk.CreateOrNull(map, cp);
+				if (chunk == null)
+					return;
+				m_chunks[this.Size.GetIndex(cp)] = chunk;
+			});
 		}
 
 		public void Initialize()
