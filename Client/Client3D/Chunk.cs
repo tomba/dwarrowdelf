@@ -261,9 +261,6 @@ namespace Client3D
 						{
 							if (td.IsEmpty)
 								continue;
-
-							if (td.HasSlope) // XXX
-								continue;
 						}
 
 						var pos = p - this.ChunkOffset;

@@ -205,24 +205,6 @@ namespace Dwarrowdelf.Client
 					seeThrough = false;
 					return;
 
-				case TileID.Slope:
-					tile.SymbolID = currentLevel == 0 ? SymbolID.SlopeUp : SymbolID.SlopeDown;
-
-					// ZZZ: IsGreen doesn't work
-					// If the interior is "green", override the color to make the terrain greenish
-					if (td.IsGreen)
-					{
-						// override the material color
-						tile.Color = GameColor.DarkGreen;
-						tile.BgColor = GameColor.Green;
-					}
-					else
-					{
-						tile.BgColor = GetTerrainBackgroundColor(matInfo);
-					}
-					seeThrough = false;
-					return;
-
 				case TileID.Stairs:
 					// ZZZ we should use StairsUp/Down/UpDown
 					tile.SymbolID = SymbolID.StairsUpDown;

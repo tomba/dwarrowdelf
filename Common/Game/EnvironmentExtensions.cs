@@ -66,9 +66,6 @@ namespace Dwarrowdelf
 
 			if (dir.ContainsUp())
 			{
-				if (!td.HasSlope)
-					return false;
-
 				if (env.GetTileData(srcLoc.Up).IsEmpty == false)
 					return false;
 
@@ -112,9 +109,6 @@ namespace Dwarrowdelf
 
 			if (dir.ContainsDown())
 			{
-				if (!td.HasSlope)
-					return false;
-
 				if (env.GetTileData(dstLoc.Up).IsEmpty == false)
 					return false;
 

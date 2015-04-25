@@ -34,31 +34,6 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		// This expands the map, i.e. creates slopes to empty tiles, instead of changing walls to slopes
-		// XXX if we don't expand, but instead turn Wall tiles to slopes, we'd get the material from the wall
-		public static void CreateSlopes(TerrainData data)
-		{
-			var plane = data.Size.Plane;
-
-			plane.Range().AsParallel().ForAll(p =>
-			{
-				int z = data.GetSurfaceLevel(p);
-
-				bool create = DirectionSet.Planar.ToSurroundingPoints(p)
-					.Any(pp => plane.Contains(pp) && data.GetSurfaceLevel(pp) > z);
-
-				if (create)
-				{
-					var p3d = new IntVector3(p, z);
-
-					var td = data.GetTileData(p3d);
-					td.ID = TileID.Slope;
-					td.MaterialID = MaterialID.Granite; // ZZZ
-					data.SetTileDataNoHeight(p3d, td);
-				}
-			});
-		}
-
 		public static void CreateVegetation(TerrainData terrain, Random random, int vegetationLimit)
 		{
 			var grassMaterials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
@@ -81,10 +56,6 @@ namespace Dwarrowdelf.TerrainGen
 				var td = terrain.GetTileData(p);
 
 				if (td.WaterLevel > 0)
-					return;
-
-				// ZZZ: no vegetation on slopes
-				if (td.HasSlope)
 					return;
 
 				if (terrain.GetMaterial(p.Down).Category != MaterialCategory.Soil)

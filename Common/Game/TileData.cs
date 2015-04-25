@@ -143,11 +143,6 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Is terrain a slope
-		/// </summary>
-		public bool HasSlope { get { return this.ID == TileID.Slope; } }
-
-		/// <summary>
 		/// Check if tile is empty
 		/// </summary>
 		public bool IsEmpty { get { return this.ID == TileID.Empty; } }
@@ -291,7 +286,7 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// The tile can be mined (interior is NaturalWall or terrain is Slope)
+		/// The tile can be mined (interior is NaturalWall)
 		/// </summary>
 		public bool IsMinable
 		{
@@ -300,7 +295,6 @@ namespace Dwarrowdelf
 				switch (this.ID)
 				{
 					case TileID.NaturalWall:
-					case TileID.Slope:
 						return true;
 
 					default:

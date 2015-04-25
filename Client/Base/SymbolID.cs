@@ -30,9 +30,6 @@ namespace Dwarrowdelf.Client
 		StairsDown,
 		StairsUpDown,
 
-		SlopeUp,
-		SlopeDown,
-
 		ConiferousSapling,
 		DeciduousSapling,
 		ConiferousSapling2,

@@ -79,14 +79,6 @@
 		<CharGfx Char="X" />
 	</Symbol>
 
-	<Symbol ID="SlopeUp">
-		<CharGfx Outline="False" Char="▲" Rotate="0" />
-	</Symbol>
-
-	<Symbol ID="SlopeDown">
-		<CharGfx Outline="False" Char="▲" Rotate="180" />
-	</Symbol>
-
 	<Symbol ID="Player">
 		<BitmapGfx BitmapIndex="0" />
 		<CharGfx Char="☻" Outline="True" OutlineThickness="2" />

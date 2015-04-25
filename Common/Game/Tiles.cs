@@ -13,7 +13,6 @@ namespace Dwarrowdelf
 		Empty,
 
 		NaturalWall,
-		Slope,
 
 		Stairs,
 		BuiltWall,
