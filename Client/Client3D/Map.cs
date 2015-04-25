@@ -2,6 +2,8 @@
 using Dwarrowdelf.TerrainGen;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,16 +20,52 @@ namespace Client3D
 
 		public event Action<IntVector3> TileChanged;
 
-		public Map(IntSize3 size)
+		public Map()
 		{
-			this.Size = size;
+			this.Size = new IntSize3(64, 64, 64);
 
-			m_terrainData = CreateTerrain(size);
-			//m_terrainData = CreateNoiseTerrain(size);
-			//m_terrainData = CreateBallMap(size, 8);
-			//m_terrainData = CreateCubeMap(size, 4);
+			CreateTerrain(this.Size);
+		}
+
+		private void CreateTerrain(IntSize3 size)
+		{
+			var path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
+			string file = Path.Combine(path, "terrain-cache-hack.dat");
+
+			string mapName = "fortress";
+
+			Stopwatch sw = new Stopwatch();
+
+			sw.Restart();
+			m_terrainData = TerrainData.LoadTerrain(file, mapName, size);
+			sw.Stop();
+			Trace.TraceInformation("Load cached terrain {0} ms", sw.ElapsedMilliseconds);
+
+			if (m_terrainData != null)
+				return;
+
+			sw.Restart();
+
+			if (mapName == "fortress")
+				m_terrainData = CreateFortressTerrain(size);
+			else if (mapName == "noise")
+				m_terrainData = CreateNoiseTerrain(size);
+			else if (mapName == "ball")
+				m_terrainData = CreateBallMap(size, 8);
+			else if (mapName == "cube")
+				m_terrainData = CreateCubeMap(size, 4);
+			else
+				throw new Exception();
 
 			//UndefineHiddenTiles();
+
+			sw.Stop();
+			Trace.TraceInformation("Create terrain {0} ms", sw.ElapsedMilliseconds);
+
+			sw.Restart();
+			m_terrainData.SaveTerrain(file, mapName);
+			sw.Stop();
+			Trace.TraceInformation("Save cached terrain {0} ms", sw.ElapsedMilliseconds);
 		}
 
 		void UndefineHiddenTiles()
@@ -84,7 +122,7 @@ namespace Client3D
 			return visibleFaces;
 		}
 
-		static TerrainData CreateTerrain(IntSize3 size)
+		static TerrainData CreateFortressTerrain(IntSize3 size)
 		{
 			//var random = Helpers.Random;
 			var random = new Random(1);

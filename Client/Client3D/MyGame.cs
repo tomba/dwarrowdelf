@@ -35,7 +35,7 @@ namespace Client3D
 
 		public MyGame()
 		{
-			GlobalData.Map = new Map(new IntSize3(64, 64, 32));
+			GlobalData.Map = new Map();
 
 			this.IsMouseVisible = true;
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
