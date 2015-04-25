@@ -88,6 +88,11 @@ namespace Dwarrowdelf
 			return !(left == right);
 		}
 
+		public static IntSize3 operator /(IntSize3 left, int right)
+		{
+			return new IntSize3(left.Width / right, left.Height / right, left.Depth / right);
+		}
+
 		public int GetIndex(IntVector3 p)
 		{
 			return GetIndex(p.X, p.Y, p.Z);
@@ -96,6 +101,16 @@ namespace Dwarrowdelf
 		public int GetIndex(int x, int y, int z)
 		{
 			return x + this.Width * (y + this.Height * z);
+		}
+
+		public IntVector3 GetPositionFromIndex(int idx)
+		{
+			int x, y, z;
+
+			z = Math.DivRem(idx, this.Width * this.Height, out y);
+			y = Math.DivRem(y, this.Width, out x);
+
+			return new IntVector3(x, y, z);
 		}
 
 		public override int GetHashCode()
