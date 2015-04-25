@@ -29,8 +29,13 @@ namespace Client3D
 
 		Chunk[] m_chunks;
 
+		// nearlist contains all chunks within view radius, which are also inside the viewgrid
 		List<Chunk> m_nearList = new List<Chunk>();
+
+		/* rebuildlist contains all chunks that need to be rebuilt */
 		List<Chunk> m_rebuildList = new List<Chunk>();
+
+		/* drawlist contains all chunks inside frustum */
 		List<Chunk> m_drawList = new List<Chunk>();
 
 		public string ChunkCountDebug
