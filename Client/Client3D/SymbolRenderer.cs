@@ -123,8 +123,12 @@ namespace Client3D
 
 			device.SetBlendState(device.BlendStates.AlphaBlend);
 			//device.SetDepthStencilState(device.DepthStencilStates.None);
+
 			device.SetVertexBuffer(m_vertexBuffer);
 			device.Draw(PrimitiveType.PointList, m_vertexCount);
+
+			device.SetBlendState(device.BlendStates.Default);
+			//device.SetDepthStencilState(device.DepthStencilStates.Default);
 		}
 	}
 }

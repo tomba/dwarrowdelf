@@ -88,7 +88,8 @@ namespace Client3D
 			var camera = this.Services.GetService<CameraProvider>();
 
 			var device = this.GraphicsDevice;
-			device.SetBlendState(device.BlendStates.Default);
+
+			this.GraphicsDevice.SetRasterizerState(((MyGame)this.Game).RasterizerState);
 
 			// voxels
 			{
@@ -102,6 +103,8 @@ namespace Client3D
 
 				m_chunkManager.Draw(gameTime);
 			}
+
+			this.GraphicsDevice.SetRasterizerState(device.RasterizerStates.Default);
 
 			// trees
 			{

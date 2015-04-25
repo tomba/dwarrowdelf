@@ -224,7 +224,6 @@ namespace Client3D
 			viewProjMatrix.Transpose();
 			m_effect.Parameters["viewProjMatrix"].SetValue(ref viewProjMatrix);
 
-			device.SetRasterizerState(device.RasterizerStates.Default);
 			device.SetBlendState(device.BlendStates.NonPremultiplied);
 			device.SetDepthStencilState(device.DepthStencilStates.DepthRead);
 
@@ -253,6 +252,9 @@ namespace Client3D
 
 				device.Draw(PrimitiveType.TriangleList, 6 * 6);
 			}
+
+			device.SetBlendState(device.BlendStates.Default);
+			device.SetDepthStencilState(device.DepthStencilStates.Default);
 		}
 	}
 }

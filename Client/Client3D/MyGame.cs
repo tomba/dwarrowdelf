@@ -133,8 +133,6 @@ namespace Client3D
 		{
 			this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			this.GraphicsDevice.SetRasterizerState(this.RasterizerState);
-
 			base.Draw(gameTime);
 		}
 
