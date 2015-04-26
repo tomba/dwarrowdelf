@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client3D", "Client3D\Client3D.csproj", "{C378655B-8A24-461D-A9C6-23E06102FC19}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D00F9F75-E7FE-427E-83C5-B5BA1202E9F2}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -18,7 +16,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMLog", "..\dwarrowdelf\Mem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSerializer", "..\dwarrowdelf\NetSerializer\NetSerializer\NetSerializer.csproj", "{85A11D07-8D18-42D5-ACCF-EF9744EFE825}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexGen", "TexGen\TexGen.csproj", "{CB0514B3-48C7-4961-98A9-07AB42CB0590}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client3D", "Client\Client3D\Client3D.csproj", "{C378655B-8A24-461D-A9C6-23E06102FC19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexGen", "Client\TexGen\TexGen.csproj", "{CB0514B3-48C7-4961-98A9-07AB42CB0590}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
