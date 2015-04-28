@@ -488,11 +488,6 @@ namespace Client3D
 					baseTexture.Color1 = GameColor.LightGray;
 					return;
 
-				default:
-					baseTexture.Symbol1 = SymbolID.Unknown;
-					baseTexture.Color1 = GameColor.Pink;
-					return;
-
 				case TileID.Empty:
 					throw new Exception();
 
@@ -561,6 +556,9 @@ namespace Client3D
 						topTexture = baseTexture;
 					}
 					return;
+
+				default:
+					throw new Exception();
 			}
 		}
 
