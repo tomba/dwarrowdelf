@@ -22,7 +22,7 @@ namespace Client3D
 
 		public Map()
 		{
-			this.Size = new IntSize3(64, 64, 64);
+			this.Size = new IntSize3(256, 256, 64);
 
 			CreateTerrain(this.Size);
 		}
