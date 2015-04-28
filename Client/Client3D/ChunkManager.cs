@@ -236,9 +236,12 @@ namespace Client3D
 			}
 		}
 
-		readonly int VERTEX_CACHE_COUNT = Environment.ProcessorCount * 2;
-		BlockingCollection<VertexListCacheItem> m_vertexCacheStack;
-		BlockingCollection<VertexListCacheItem> m_vertexCacheQueue;
+		readonly static int VERTEX_CACHE_COUNT = Environment.ProcessorCount * 2;
+
+		BlockingBufferPool<VertexListCacheItem> m_vertexCacheStack =
+			new BlockingBufferPool<VertexListCacheItem>(VERTEX_CACHE_COUNT, () => new VertexListCacheItem());
+		BlockingCollection<VertexListCacheItem> m_vertexCacheQueue =
+			new BlockingCollection<VertexListCacheItem>(new ConcurrentQueue<VertexListCacheItem>());
 
 		IntVector3 m_cameraChunkPos;
 		Vector3 m_cameraPos;
@@ -318,18 +321,6 @@ namespace Client3D
 			if (m_rebuildList.Count == 0)
 				return;
 
-			if (m_vertexCacheStack == null)
-			{
-				var stack = new ConcurrentStack<VertexListCacheItem>();
-				m_vertexCacheStack = new BlockingCollection<VertexListCacheItem>(stack);
-
-				for (int i = 0; i < VERTEX_CACHE_COUNT; ++i)
-					m_vertexCacheStack.Add(new VertexListCacheItem());
-
-				var queue = new ConcurrentQueue<VertexListCacheItem>();
-				m_vertexCacheQueue = new BlockingCollection<VertexListCacheItem>(queue);
-			}
-
 			var task = Task.Run(() =>
 			{
 				var viewGridProvider = m_scene.Services.GetService<ViewGridProvider>();
@@ -345,7 +336,7 @@ namespace Client3D
 					{
 						// nothing more to do, mark as valid and add back to stack
 						chunk.IsValid = true;
-						m_vertexCacheStack.Add(cacheItem);
+						m_vertexCacheStack.Return(cacheItem);
 					}
 					else
 					{
@@ -372,7 +363,7 @@ namespace Client3D
 				chunk.IsValid = true;
 
 				cacheItem.Chunk = null;
-				m_vertexCacheStack.Add(cacheItem);
+				m_vertexCacheStack.Return(cacheItem);
 			}
 
 			task.Wait();

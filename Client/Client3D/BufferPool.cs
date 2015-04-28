@@ -57,5 +57,7 @@ namespace Client3D
 		{
 			m_stack.Add(ob);
 		}
+
+		public int Count { get { return m_stack.Count; } }
 	}
 }
