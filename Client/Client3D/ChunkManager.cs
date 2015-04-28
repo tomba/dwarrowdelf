@@ -27,6 +27,9 @@ namespace Client3D
 			}
 		}
 
+		// XXX used by outlinerenderer
+		public Chunk[] DebugChunks { get { return m_chunks; } }
+
 		Chunk[] m_chunks;
 
 		// nearlist contains all chunks within view radius, which are also inside the viewgrid

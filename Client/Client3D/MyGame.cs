@@ -27,6 +27,7 @@ namespace Client3D
 		readonly SceneRenderer m_sceneRenderer;
 		readonly TestRenderer m_testRenderer;
 		readonly DebugAxesRenderer m_debugAxesRenderer;
+		readonly ChunkOutlineRenderer m_outlineRenderer;
 
 		public GraphicsDeviceManager GraphicsDeviceManager { get { return m_graphicsDeviceManager; } }
 
@@ -50,6 +51,7 @@ namespace Client3D
 			m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
 			m_selectionRenderer = new SelectionRenderer(this, m_mouseManager);
 			m_debugAxesRenderer = new DebugAxesRenderer(this);
+			//m_outlineRenderer = new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager);
 
 			m_fpsCounter = new FPSCounterSystem(this, s => this.Window.Title = s);
 
