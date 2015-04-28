@@ -40,11 +40,6 @@ namespace Client3D
 
 		public bool IsValid { get; set; }
 
-		/// <summary>
-		/// The chunk contains only hidden voxels
-		/// </summary>
-		public bool IsHidden { get; set; }
-
 		Buffer<TerrainVertex> m_vertexBuffer;
 		public int VertexCount { get; private set; }
 
@@ -53,24 +48,7 @@ namespace Client3D
 
 		public BoundingBox BBox;
 
-		public static Chunk CreateOrNull(Map map, IntVector3 chunkPosition)
-		{
-			var chunkOffset = chunkPosition * CHUNK_SIZE;
-
-			bool isEmpty, isHidden;
-
-			CheckIfEmptyOrHidden(map, chunkOffset, out isHidden, out isEmpty);
-
-			if (isEmpty)
-				return null;
-
-			var chunk = new Chunk(map, chunkPosition);
-			chunk.IsHidden = isHidden;
-
-			return chunk;
-		}
-
-		Chunk(Map map, IntVector3 chunkPosition)
+		public Chunk(Map map, IntVector3 chunkPosition)
 		{
 			this.ChunkPosition = chunkPosition;
 			this.ChunkOffset = chunkPosition * CHUNK_SIZE;
@@ -103,46 +81,6 @@ namespace Client3D
 			v.VisibleFaces = m_map.GetVisibleFaces(mp);
 
 			m_voxelMap.SetVoxel(mp - this.ChunkOffset, v);
-		}
-
-		static void CheckIfEmptyOrHidden(Map map, IntVector3 chunkOffset, out bool isHidden, out bool isEmpty)
-		{
-			isHidden = isEmpty = false;
-
-#warning TODO
-#if asd
-			int x0 = chunkOffset.X;
-			int x1 = chunkOffset.X + CHUNK_SIZE - 1;
-
-			int y0 = chunkOffset.Y;
-			int y1 = chunkOffset.Y + CHUNK_SIZE - 1;
-
-			int z0 = chunkOffset.Z;
-			int z1 = chunkOffset.Z + CHUNK_SIZE - 1;
-
-			uint current = map.Grid[z0, y0, x0].Raw;
-
-			for (int z = z0; z <= z1; ++z)
-			{
-				for (int y = y0; y <= y1; ++y)
-				{
-					for (int x = x0; x <= x1; ++x)
-					{
-						if (current != map.Grid[z, y, x].Raw)
-						{
-							isHidden = false;
-							isEmpty = false;
-							return;
-						}
-					}
-				}
-			}
-
-			Voxel vox = new Voxel() { Raw = current };
-
-			isEmpty = vox.IsEmpty;
-			isHidden = vox.VisibleFaces == 0;
-#endif
 		}
 
 		public void Free()
@@ -240,12 +178,14 @@ namespace Client3D
 			if (chunkGrid.IsNull)
 				return;
 
+#warning TODO: chunk with all empty can be skipped, and all undefined can be handled below
+#if asd
 			if (this.IsHidden)
 			{
 				CreateUndefinedChunk(ref viewGrid, ref chunkGrid, terrainVertexList, visibleChunkFaces);
 				return;
 			}
-
+#endif
 			// Draw from up to down to avoid overdraw
 			for (int z = chunkGrid.Z2; z >= chunkGrid.Z1; --z)
 			{

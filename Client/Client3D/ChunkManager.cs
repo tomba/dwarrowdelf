@@ -104,9 +104,7 @@ namespace Client3D
 
 			Parallel.ForEach(this.Size.Range(), cp =>
 			{
-				var chunk = Chunk.CreateOrNull(map, cp);
-				if (chunk == null)
-					return;
+				var chunk = new Chunk(map, cp);
 				m_chunks[this.Size.GetIndex(cp)] = chunk;
 			});
 		}
@@ -132,25 +130,9 @@ namespace Client3D
 			var chunk = m_chunks[this.Size.GetIndex(cp)];
 
 			if (chunk == null)
-			{
-				chunk = Chunk.CreateOrNull(GlobalData.Map, cp);
+				return;
 
-				if (chunk == null)
-					return;
-
-				m_chunks[this.Size.GetIndex(cp)] = chunk;
-				m_forceNearListUpdate = true;
-			}
-			else if (chunk.IsHidden)
-			{
-				chunk.IsHidden = false;
-				m_forceNearListUpdate = true;
-				chunk.UpdateVoxel(p);
-			}
-			else
-			{
-				chunk.UpdateVoxel(p);
-			}
+			chunk.UpdateVoxel(p);
 
 			InvalidateChunk(chunk);
 		}
@@ -287,14 +269,6 @@ namespace Client3D
 				if (containment == Containment.Disjoint)
 				{
 					// the chunk is outside the view area
-					chunk.Free();
-					chunk.IsValid = false;
-					continue;
-				}
-
-				if (chunk.IsHidden && containment == Containment.Contains)
-				{
-					// the chunk is fully inside the view area, but has no visible faces
 					chunk.Free();
 					chunk.IsValid = false;
 					continue;
