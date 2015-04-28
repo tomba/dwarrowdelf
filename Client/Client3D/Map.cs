@@ -57,7 +57,7 @@ namespace Client3D
 			else
 				throw new Exception();
 
-			//UndefineHiddenTiles();
+			UndefineHiddenTiles();
 
 			sw.Stop();
 			Trace.TraceInformation("Create terrain {0} ms", sw.ElapsedMilliseconds);
