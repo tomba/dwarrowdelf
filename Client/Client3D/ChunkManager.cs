@@ -66,7 +66,9 @@ namespace Client3D
 		{
 			m_scene = scene;
 
-			CreateChunks();
+			var map = GlobalData.Map;
+			this.Size = map.Size / Chunk.CHUNK_SIZE;
+			m_chunks = new Chunk[this.Size.Volume];
 
 			var viewGridProvider = m_scene.Services.GetService<ViewGridProvider>();
 			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
@@ -94,21 +96,6 @@ namespace Client3D
 					chunk.Free();
 		}
 
-		void CreateChunks()
-		{
-			var map = GlobalData.Map;
-
-			this.Size = map.Size / Chunk.CHUNK_SIZE;
-
-			m_chunks = new Chunk[this.Size.Volume];
-
-			Parallel.ForEach(this.Size.Range(), cp =>
-			{
-				var chunk = new Chunk(map, cp);
-				m_chunks[this.Size.GetIndex(cp)] = chunk;
-			});
-		}
-
 		public void Initialize()
 		{
 			m_camera = m_scene.Services.GetService<CameraProvider>();
@@ -123,11 +110,34 @@ namespace Client3D
 			GlobalData.Map.TileChanged += OnTileChanged;
 		}
 
+		void SetChunk(IntVector3 cp, Chunk chunk)
+		{
+			m_chunks[this.Size.GetIndex(cp)] = chunk;
+		}
+
+		Chunk GetChunk(IntVector3 cp)
+		{
+			return m_chunks[this.Size.GetIndex(cp)];
+		}
+
+		void FreeChunk(Chunk chunk)
+		{
+			chunk.Free();
+			SetChunk(chunk.ChunkPosition, null);
+		}
+
+		Chunk CreateChunk(IntVector3 cp)
+		{
+			var chunk = new Chunk(GlobalData.Map, cp);
+			SetChunk(chunk.ChunkPosition, chunk);
+			return chunk;
+		}
+
 		void OnTileChanged(IntVector3 p)
 		{
 			var cp = p / Chunk.CHUNK_SIZE;
 
-			var chunk = m_chunks[this.Size.GetIndex(cp)];
+			var chunk = GetChunk(cp);
 
 			if (chunk == null)
 				return;
@@ -153,7 +163,7 @@ namespace Client3D
 
 		void InvalidateChunk(IntVector3 cp)
 		{
-			var chunk = m_chunks[this.Size.GetIndex(cp)];
+			var chunk = GetChunk(cp);
 			if (chunk != null)
 				InvalidateChunk(chunk);
 		}
@@ -274,31 +284,39 @@ namespace Client3D
 
 			var viewGrid = m_scene.Services.GetService<ViewGridProvider>().ViewGrid;
 
-			foreach (var chunk in m_chunks)
-			{
-				if (chunk == null)
-					continue;
+			// XXX grid can be reduced to be inside camradius, but we need to somehow free the chunks that go outside near list
+			//var grid = new IntGrid3(viewGrid.Corner1 / Chunk.CHUNK_SIZE, (viewGrid.Corner2 + Chunk.CHUNK_SIZE - 1) / Chunk.CHUNK_SIZE);
+			var grid = this.Size;
 
-				var chunkGrid = new IntGrid3(chunk.ChunkOffset, Chunk.ChunkSize);
+			foreach (var cp in grid.Range())
+			{
+				var chunk = GetChunk(cp);
+
+				IntVector3 chunkOffset = cp * Chunk.CHUNK_SIZE;
+
+				var chunkGrid = new IntGrid3(chunkOffset, Chunk.ChunkSize);
 
 				var containment = viewGrid.ContainsExclusive(ref chunkGrid);
 
 				if (containment == Containment.Disjoint)
 				{
 					// the chunk is outside the view area
-					chunk.Free();
-					chunk.IsValid = false;
+					if (chunk != null)
+						FreeChunk(chunk);
 					continue;
 				}
 
-				var chunkCenter = chunk.ChunkOffset.ToVector3() + new Vector3(Chunk.CHUNK_SIZE / 2);
+				var chunkCenter = chunkOffset.ToVector3() + new Vector3(Chunk.CHUNK_SIZE / 2);
 
 				if (Vector3.Distance(eye, chunkCenter) - chunkRadius > camRadius)
 				{
-					chunk.Free();
-					chunk.IsValid = false;
+					if (chunk != null)
+						FreeChunk(chunk);
 					continue;
 				}
+
+				if (chunk == null)
+					chunk = CreateChunk(cp);
 
 				m_nearList.Add(chunk);
 			}
