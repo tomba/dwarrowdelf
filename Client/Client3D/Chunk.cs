@@ -54,9 +54,6 @@ namespace Client3D
 			this.ChunkOffset = chunkPosition * CHUNK_SIZE;
 
 			m_map = map;
-			m_voxelMap = new VoxelMap(ChunkSize);
-
-			FillVoxelMap();
 
 			var v1 = this.ChunkOffset.ToVector3();
 			var v2 = v1 + new Vector3(Chunk.CHUNK_SIZE);
@@ -65,6 +62,8 @@ namespace Client3D
 
 		void FillVoxelMap()
 		{
+			m_voxelMap = new VoxelMap(ChunkSize);
+
 			foreach (var p in m_voxelMap.Size.Range())
 			{
 				var mp = this.ChunkOffset + p;
@@ -179,6 +178,9 @@ namespace Client3D
 			// is the chunk inside frustum, but outside the viewgrid?
 			if (chunkGrid.IsNull)
 				return;
+
+			if (m_voxelMap == null)
+				FillVoxelMap();
 
 #warning TODO: chunk with all empty can be skipped, and all undefined can be handled below
 #if asd
