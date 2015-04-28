@@ -60,6 +60,34 @@ namespace Client3D
 			this.BBox = new BoundingBox(v1, v2);
 		}
 
+		bool m_scanned;
+		public bool IsAllEmpty { get; private set; }
+		public bool IsAllUndefined { get; private set; }
+
+		void ScanForAllEmptyOrUndefined()
+		{
+			m_scanned = true;
+
+			TileData first = m_map.GetTileData(this.ChunkOffset);
+
+			foreach (var p in Chunk.ChunkSize.Range())
+			{
+				var mp = this.ChunkOffset + p;
+
+				var td = m_map.GetTileData(mp);
+
+				if (td.Raw != first.Raw)
+				{
+					this.IsAllEmpty = false;
+					this.IsAllUndefined = false;
+					return;
+				}
+			}
+
+			this.IsAllEmpty = first.IsEmpty;
+			this.IsAllUndefined = first.IsUndefined;
+		}
+
 		void FillVoxelMap()
 		{
 			m_voxelMap = new VoxelMap(ChunkSize);
@@ -67,12 +95,33 @@ namespace Client3D
 			foreach (var p in m_voxelMap.Size.Range())
 			{
 				var mp = this.ChunkOffset + p;
-				UpdateVoxel(mp);
+
+				var td = m_map.GetTileData(mp);
+
+				// we don't use VisibleFaces for Empty, and Undefined is always hidden
+				if (td.IsEmptyNoWater || td.IsUndefined)
+					continue;
+
+				Voxel v = new Voxel();
+
+				v.VisibleFaces = m_map.GetVisibleFaces(mp);
+
+				m_voxelMap.SetVoxel(mp - this.ChunkOffset, v);
 			}
 		}
 
 		public void UpdateVoxel(IntVector3 mp)
 		{
+			if (this.IsAllEmpty || this.IsAllUndefined)
+			{
+				// presume the chunk is no longer empty or undefined
+				this.IsAllEmpty = this.IsAllUndefined = false;
+				return;
+			}
+
+			if (m_voxelMap == null)
+				return;
+
 			var td = m_map.GetTileData(mp);
 
 			Voxel v = new Voxel();
@@ -179,17 +228,21 @@ namespace Client3D
 			if (chunkGrid.IsNull)
 				return;
 
-			if (m_voxelMap == null)
-				FillVoxelMap();
+			if (m_scanned == false)
+				ScanForAllEmptyOrUndefined();
 
-#warning TODO: chunk with all empty can be skipped, and all undefined can be handled below
-#if asd
-			if (this.IsHidden)
+			if (this.IsAllEmpty)
+				return;
+
+			if (this.IsAllUndefined)
 			{
 				CreateUndefinedChunk(ref viewGrid, ref chunkGrid, terrainVertexList, visibleChunkFaces);
 				return;
 			}
-#endif
+
+			if (m_voxelMap == null)
+				FillVoxelMap();
+
 			// Draw from up to down to avoid overdraw
 			for (int z = chunkGrid.Z2; z >= chunkGrid.Z1; --z)
 			{
