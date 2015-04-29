@@ -44,6 +44,8 @@ namespace Client3D
 			if (m_terrainData != null)
 				return;
 
+			Trace.TraceInformation("Creating new terrain: {0} {1}", mapName, size);
+
 			sw.Restart();
 
 			if (mapName == "fortress")
