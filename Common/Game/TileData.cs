@@ -148,6 +148,11 @@ namespace Dwarrowdelf
 		public bool IsEmpty { get { return this.ID == TileID.Empty; } }
 
 		/// <summary>
+		/// Check if tile is empty and without water
+		/// </summary>
+		public bool IsEmptyNoWater { get { return this.IsEmpty && this.WaterLevel == 0; } }
+
+		/// <summary>
 		/// Check if tile is undefined
 		/// </summary>
 		public bool IsUndefined { get { return this.ID == TileID.Undefined; } }
