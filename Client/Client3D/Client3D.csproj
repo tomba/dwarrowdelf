@@ -86,6 +86,7 @@
     <Compile Include="CameraProvider.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="ChunkManager.cs" />
+    <Compile Include="DebugAxesRenderer.cs" />
     <Compile Include="DebugForm.cs">
       <SubType>Form</SubType>
     </Compile>
