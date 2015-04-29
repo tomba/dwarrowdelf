@@ -70,11 +70,16 @@ namespace Client3D
 
 		void UndefineHiddenTiles()
 		{
-			foreach (var p in m_terrainData.Size.Range())
+			var sw = Stopwatch.StartNew();
+
+			Parallel.ForEach(m_terrainData.Size.Range(), p =>
 			{
 				if (GetVisibleFaces(p) == 0)
 					SetTileData(p, TileData.UndefinedTileData);
-			}
+			});
+
+			sw.Stop();
+			Trace.TraceInformation("UndefineHiddenTiles {0} ms", sw.ElapsedMilliseconds);
 		}
 
 		public void SetTileData(IntVector3 p, TileData td)
