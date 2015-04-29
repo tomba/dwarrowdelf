@@ -210,7 +210,7 @@ namespace TileControlD3DWinFormsTest
 
 		static SymbolID[] s_terrainSymbols = new SymbolID[]
 		{
-			SymbolID.Floor, SymbolID.SlopeUp, SymbolID.Grass, SymbolID.Grass2, SymbolID.Grass3,SymbolID.Grass4
+			SymbolID.Floor, SymbolID.Grass, SymbolID.Grass2, SymbolID.Grass3,SymbolID.Grass4
 		};
 		static SymbolID[] s_interiorSymbols = new SymbolID[]
 		{
