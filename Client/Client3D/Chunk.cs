@@ -78,7 +78,9 @@ namespace Client3D
 
 			Voxel v = new Voxel();
 
-			v.VisibleFaces = m_map.GetVisibleFaces(mp);
+			// we don't use VisibleFaces for Empty, and Undefined is always hidden
+			if (!td.IsEmptyNoWater && !td.IsUndefined)
+				v.VisibleFaces = m_map.GetVisibleFaces(mp);
 
 			m_voxelMap.SetVoxel(mp - this.ChunkOffset, v);
 		}
