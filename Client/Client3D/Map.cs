@@ -75,7 +75,7 @@ namespace Client3D
 			Parallel.ForEach(m_terrainData.Size.Range(), p =>
 			{
 				if (GetVisibleFaces(p) == 0)
-					SetTileData(p, TileData.UndefinedTileData);
+					m_terrainData.SetTileDataNoHeight(p, TileData.UndefinedTileData);
 			});
 
 			sw.Stop();
