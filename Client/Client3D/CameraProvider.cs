@@ -26,49 +26,41 @@ namespace Client3D
 		float m_fovY, m_aspect, m_nearZ, m_farZ;
 		float m_nearWindowHeight, m_farWindowHeight;
 
-		Matrix m_view;
-		bool m_viewDirty;
-		public Matrix View { get { if (m_viewDirty) UpdateView(); return m_view; } }
+		Matrix? m_view;
+		public Matrix View { get { if (!m_view.HasValue) UpdateView(); return m_view.Value; } }
 
-		Matrix m_projection;
-		bool m_projectionDirty;
-		public Matrix Projection { get { if (m_projectionDirty) UpdateProjection(); return m_projection; } }
+		Matrix? m_projection;
+		public Matrix Projection { get { if (!m_projection.HasValue) UpdateProjection(); return m_projection.Value; } }
 
-		BoundingFrustum m_frustum;
-		bool m_frustumDirty;
-		public BoundingFrustum Frustum { get { if (m_frustumDirty) UpdateFrustum(); return m_frustum; } }
+		BoundingFrustum? m_frustum;
+		public BoundingFrustum Frustum { get { if (!m_frustum.HasValue) UpdateFrustum(); return m_frustum.Value; } }
 
-		/// <summary>
-		/// Initialize in constructor anything that doesn't depend on other services.
-		/// </summary>
-		/// <param name="game">The game where this system will be attached to.</param>
 		public CameraProvider(Game game)
 		{
 			SetLens(MathUtil.PiOverFour, 1.0f, 1.0f, 200.0f);
 
-			// add this system in the list of services
 			game.Services.AddService(typeof(CameraProvider), this);
 		}
 
 		public void SetAspect(float aspect)
 		{
 			m_aspect = aspect;
-			m_projectionDirty = true;
-			m_frustumDirty = true;
+			m_projection = null;
+			m_frustum = null;
 		}
 
-		public void SetLens(float fovY, float aspect, float zn, float zf)
+		public void SetLens(float fovY, float aspect, float nearZ, float farZ)
 		{
 			m_fovY = fovY;
 			m_aspect = aspect;
-			m_nearZ = zn;
-			m_farZ = zf;
+			m_nearZ = nearZ;
+			m_farZ = farZ;
 
 			m_nearWindowHeight = 2.0f * m_nearZ * (float)Math.Tan(0.5f * m_fovY);
 			m_farWindowHeight = 2.0f * m_farZ * (float)Math.Tan(0.5f * m_fovY);
 
-			m_projectionDirty = true;
-			m_frustumDirty = true;
+			m_projection = null;
+			m_frustum = null;
 		}
 
 		public void LookAt(Vector3 pos, Vector3 target, Vector3 worldUp)
@@ -77,8 +69,8 @@ namespace Client3D
 			m_look = Vector3.Normalize(target - pos);
 			m_right = Vector3.Normalize(Vector3.Cross(worldUp, m_look));
 			m_up = Vector3.Cross(m_look, m_right);
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			m_view = null;
+			m_frustum = null;
 		}
 
 		public void Move(Vector3 v)
@@ -94,29 +86,29 @@ namespace Client3D
 			var vz = new Vector3(0, 0, 1);
 
 			m_position += v.X * vx + v.Y * vy + v.Z * vz;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			m_view = null;
+			m_frustum = null;
 		}
 
 		public void Strafe(float d)
 		{
 			m_position += m_right * d;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			m_view = null;
+			m_frustum = null;
 		}
 
 		public void Walk(float d)
 		{
 			m_position += m_look * d;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			m_view = null;
+			m_frustum = null;
 		}
 
 		public void Climb(float d)
 		{
 			m_position += m_up * d;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			m_view = null;
+			m_frustum = null;
 		}
 
 		public void Pitch(float angle)
@@ -125,8 +117,8 @@ namespace Client3D
 			var rot = Matrix.RotationAxis(m_right, angle);
 			m_up = Vector3.TransformNormal(m_up, rot);
 			m_look = Vector3.TransformNormal(m_look, rot);
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			m_view = null;
+			m_frustum = null;
 		}
 
 		public void RotateZ(float angle)
@@ -136,15 +128,13 @@ namespace Client3D
 			m_right = Vector3.TransformNormal(m_right, rot);
 			m_up = Vector3.TransformNormal(m_up, rot);
 			m_look = Vector3.TransformNormal(m_look, rot);
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			m_view = null;
+			m_frustum = null;
 		}
 
 		void UpdateProjection()
 		{
 			m_projection = Matrix.PerspectiveFovLH(m_fovY, m_aspect, m_nearZ, m_farZ);
-
-			m_projectionDirty = false;
 		}
 
 		void UpdateView()
@@ -168,16 +158,11 @@ namespace Client3D
 				Column3 = new Vector4(m_look, z),
 				Column4 = new Vector4(0, 0, 0, 1),
 			};
-
-
-			m_viewDirty = false;
 		}
 
 		void UpdateFrustum()
 		{
 			m_frustum = BoundingFrustum.FromCamera(m_position, m_look, m_up, m_fovY, m_nearZ, m_farZ, m_aspect);
-
-			m_frustumDirty = false;
 		}
 	}
 }
