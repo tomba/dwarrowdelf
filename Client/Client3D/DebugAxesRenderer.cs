@@ -43,8 +43,6 @@ namespace Client3D
 
 		public override void Update(GameTime gameTime)
 		{
-			m_basicEffect.View = m_cameraService.View;
-			m_basicEffect.Projection = m_cameraService.Projection;
 		}
 
 		public override void Draw(GameTime gameTime)
