@@ -145,7 +145,6 @@ namespace Client3D
 			m_projection = Matrix.PerspectiveFovLH(m_fovY, m_aspect, m_nearZ, m_farZ);
 
 			m_projectionDirty = false;
-			m_frustumDirty = true;
 		}
 
 		void UpdateView()
