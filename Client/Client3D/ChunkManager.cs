@@ -247,13 +247,27 @@ namespace Client3D
 		Vector3 m_cameraPos;
 		Vector3 m_cameraLook;
 
+		static Vector3 GetFrustumFarthestCorner(ref BoundingFrustum frustum)
+		{
+			Plane p1 = frustum.Far;
+			Plane p2 = frustum.Bottom;
+			Plane p3 = frustum.Right;
+
+			var num = -p1.D * Vector3.Cross(p2.Normal, p3.Normal) - p2.D * Vector3.Cross(p3.Normal, p1.Normal) - p3.D * Vector3.Cross(p1.Normal, p2.Normal);
+			var denom = Vector3.Dot(p1.Normal, Vector3.Cross(p2.Normal, p3.Normal));
+
+			return num / denom;
+		}
+
 		void UpdateNearList()
 		{
 			m_nearList.Clear();
 
 			var eye = m_camera.Position;
+			var frustum = m_camera.Frustum;
 
-			var farCorner = m_camera.Frustum.GetCorners()[4];
+			var farCorner = GetFrustumFarthestCorner(ref frustum);
+
 			float camRadius = (farCorner - eye).Length();
 
 			float chunkRadius = (float)Math.Sqrt(3) * Chunk.CHUNK_SIZE / 2;
