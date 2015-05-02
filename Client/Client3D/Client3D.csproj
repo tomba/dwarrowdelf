@@ -105,7 +105,6 @@
     <Compile Include="ChunkOutlineRenderer.cs" />
     <Compile Include="SelectionRenderer.cs" />
     <Compile Include="SymbolEffect.cs" />
-    <Compile Include="SymbolID.cs" />
     <Compile Include="TerrainEffect.cs" />
     <Compile Include="SymbolRenderer.cs" />
     <Compile Include="TestRenderer.cs" />
@@ -156,6 +155,10 @@
     <ProjectReference Include="..\..\..\dwarrowdelf\Common\Common.csproj">
       <Project>{37d55ac1-bdae-4c0c-8856-8867fe772b2b}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Base\Client.Base.csproj">
+      <Project>{1794f5b1-762e-40d2-a314-040487deefe2}</Project>
+      <Name>Client.Base</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
