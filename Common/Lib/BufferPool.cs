@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client3D
+namespace Dwarrowdelf
 {
-	class BufferPool<T> where T : class
+	public class BufferPool<T> where T : class
 	{
 		ConcurrentStack<T> m_stack;
 		Func<T> m_constr;
@@ -34,7 +34,7 @@ namespace Client3D
 		}
 	}
 
-	class BlockingBufferPool<T> where T : class
+	public class BlockingBufferPool<T> where T : class
 	{
 		BlockingCollection<T> m_stack;
 

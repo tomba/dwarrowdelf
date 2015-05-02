@@ -81,7 +81,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BufferPool.cs" />
     <Compile Include="CameraProvider.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="ChunkManager.cs" />
