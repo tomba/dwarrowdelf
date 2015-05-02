@@ -1,9 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Client3D
+namespace Dwarrowdelf
 {
 	[StructLayout(LayoutKind.Sequential, Size = 4)]
-	struct Byte4
+	public struct Byte4
 	{
 		public byte X;
 		public byte Y;
