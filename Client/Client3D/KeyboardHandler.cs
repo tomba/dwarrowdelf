@@ -33,9 +33,12 @@ namespace Client3D
 		{
 			base.Initialize();
 
-			var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
-			form.KeyPress += OnKeyPress;
-			form.KeyDown += OnKeyDown;
+			if (Program.Mode == ThreeDMode.WinForms)
+			{
+				var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
+				form.KeyPress += OnKeyPress;
+				form.KeyDown += OnKeyDown;
+			}
 		}
 
 		void OnKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)

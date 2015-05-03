@@ -1,10 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Client3D
 {
+	enum ThreeDMode
+	{
+		WpfSharpDXElement,
+		WpfHwndHost,
+		WinForms,
+	}
+
 	static class Program
 	{
+		public static readonly ThreeDMode Mode = ThreeDMode.WinForms;
+
 		[STAThread]
 		static void Main()
 		{
@@ -12,14 +22,25 @@ namespace Client3D
 
 			System.Threading.Thread.CurrentThread.Name = "Main";
 
-			System.Diagnostics.Trace.TraceInformation("Start");
+			Trace.TraceInformation("Start");
 
 			var path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
 			if (Directory.Exists(path) == false)
 				Directory.CreateDirectory(path);
 
-			using (var game = new MyGame())
-				game.Run();
+			if (Mode == ThreeDMode.WinForms)
+			{
+				using (var game = new MyGame())
+					game.Run();
+			}
+			else
+			{
+				var app = new App();
+				app.InitializeComponent();
+				app.Run();
+			}
+
+			Trace.TraceInformation("Stop");
 		}
 	}
 }

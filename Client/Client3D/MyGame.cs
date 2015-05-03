@@ -104,13 +104,18 @@ namespace Client3D
 		{
 			base.OnWindowCreated();
 
-			var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
-			form.Width = 1024;
-			form.Height = 800;
-			form.Location = new System.Drawing.Point(300, 0);
-			form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			if (Program.Mode == ThreeDMode.WinForms)
+			{
+				var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
+				form.Width = 1024;
+				form.Height = 800;
+				form.Location = new System.Drawing.Point(300, 0);
+				form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			}
+
 			var debugForm = new DebugForm(this, m_terrainRenderer);
-			debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
+			if (Program.Mode == ThreeDMode.WinForms)
+				debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
 			debugForm.Show();
 		}
 
