@@ -104,8 +104,8 @@
     <Compile Include="FPSCounterSystem.cs" />
     <Compile Include="GlobalData.cs" />
     <Compile Include="KeyboardHandler.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="MainWindowWpf.xaml.cs">
+      <DependentUpon>MainWindowWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Map.cs" />
     <Compile Include="MyExtensions.cs" />
@@ -189,7 +189,7 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainWindow.xaml">
+    <Page Include="MainWindowWpf.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

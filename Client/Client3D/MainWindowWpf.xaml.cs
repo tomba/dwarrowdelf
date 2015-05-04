@@ -19,11 +19,11 @@ using System.Windows.Shapes;
 
 namespace Client3D
 {
-	public partial class MainWindow : Window
+	public partial class MainWindowWpf : Window
 	{
 		MyGame game;
 
-		public MainWindow()
+		public MainWindowWpf()
 		{
 			InitializeComponent();
 		}
