@@ -92,8 +92,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="CameraProvider.cs" />
-    <Compile Include="Chunk.cs" />
-    <Compile Include="ChunkManager.cs" />
+    <Compile Include="VoxelTerrain\Chunk.cs" />
+    <Compile Include="VoxelTerrain\ChunkManager.cs" />
     <Compile Include="DebugAxesRenderer.cs" />
     <Compile Include="DebugForm.cs">
       <SubType>Form</SubType>
@@ -115,16 +115,16 @@
     <Compile Include="ChunkOutlineRenderer.cs" />
     <Compile Include="SelectionRenderer.cs" />
     <Compile Include="SymbolEffect.cs" />
-    <Compile Include="TerrainEffect.cs" />
+    <Compile Include="VoxelTerrain\TerrainEffect.cs" />
     <Compile Include="SymbolRenderer.cs" />
     <Compile Include="TestRenderer.cs" />
     <Compile Include="SceneRenderer.cs" />
-    <Compile Include="TerrainRenderer.cs" />
+    <Compile Include="VoxelTerrain\TerrainRenderer.cs" />
     <Compile Include="VertexList.cs" />
-    <Compile Include="Voxel.cs" />
-    <Compile Include="VoxelMap.cs" />
-    <Compile Include="VoxelMapGen.cs" />
-    <Compile Include="VoxelRayCast.cs" />
+    <Compile Include="VoxelTerrain\Voxel.cs" />
+    <Compile Include="VoxelTerrain\VoxelMap.cs" />
+    <Compile Include="VoxelTerrain\VoxelMapGen.cs" />
+    <Compile Include="VoxelTerrain\VoxelRayCast.cs" />
     <Compile Include="ViewGridProvider.cs" />
     <EmbeddedResource Include="DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
