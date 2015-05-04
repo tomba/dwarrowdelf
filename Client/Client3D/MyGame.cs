@@ -24,7 +24,7 @@ namespace Client3D
 		readonly SelectionRenderer m_selectionRenderer;
 		readonly FPSCounterSystem m_fpsCounter;
 
-		readonly SceneRenderer m_sceneRenderer;
+		readonly TestCubeRenderer m_testCubeRenderer;
 		readonly DebugAxesRenderer m_debugAxesRenderer;
 		readonly ChunkOutlineRenderer m_outlineRenderer;
 
@@ -52,7 +52,7 @@ namespace Client3D
 
 			m_fpsCounter = new FPSCounterSystem(this, s => this.Window.Title = s);
 
-			//m_sceneRenderer = new SceneRenderer(this);
+			//m_testCubeRenderer = new TestCubeRenderer(this);
 
 			Content.RootDirectory = "Content";
 

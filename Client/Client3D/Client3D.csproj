@@ -117,7 +117,7 @@
     <Compile Include="SymbolEffect.cs" />
     <Compile Include="VoxelTerrain\TerrainEffect.cs" />
     <Compile Include="SymbolRenderer.cs" />
-    <Compile Include="SceneRenderer.cs" />
+    <Compile Include="TestCubeRenderer.cs" />
     <Compile Include="VoxelTerrain\TerrainRenderer.cs" />
     <Compile Include="VertexList.cs" />
     <Compile Include="VoxelTerrain\Voxel.cs" />
