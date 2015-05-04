@@ -89,7 +89,7 @@ namespace Client3D
 
 			var device = this.GraphicsDevice;
 
-			this.GraphicsDevice.SetRasterizerState(((MyGame)this.Game).RasterizerState);
+			device.SetRasterizerState(((MyGame)this.Game).RasterizerState);
 
 			// voxels
 			{
@@ -104,10 +104,13 @@ namespace Client3D
 				m_chunkManager.Draw(gameTime);
 			}
 
-			this.GraphicsDevice.SetRasterizerState(device.RasterizerStates.Default);
+			device.SetRasterizerState(device.RasterizerStates.Default);
 
 			// trees
 			{
+				device.SetRasterizerState(device.RasterizerStates.CullNone);
+				this.GraphicsDevice.SetBlendState(device.BlendStates.AlphaBlend);
+
 				m_symbolEffect.EyePos = camera.Position;
 				m_symbolEffect.ViewProjection = camera.View * camera.Projection;
 
@@ -122,6 +125,9 @@ namespace Client3D
 				renderPass.Apply();
 
 				m_chunkManager.DrawTrees();
+
+				device.SetBlendState(device.BlendStates.Default);
+				device.SetRasterizerState(device.RasterizerStates.Default);
 			}
 		}
 	}

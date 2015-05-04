@@ -36,7 +36,6 @@ namespace Client3D
 		{
 			var device = this.GraphicsDevice;
 
-			device.SetRasterizerState(device.RasterizerStates.CullNone);
 			device.SetVertexInputLayout(m_vertexInputLayout);
 
 			return base.OnApply(pass);
