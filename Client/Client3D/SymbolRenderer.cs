@@ -10,6 +10,15 @@ using System.Threading.Tasks;
 
 namespace Client3D
 {
+	class MovableManager
+	{
+		public List<MovableObject> Movables;
+	}
+
+	class MovableObject
+	{
+	}
+
 	class SymbolRenderer : GameSystem
 	{
 		SymbolEffect m_effect;
@@ -30,7 +39,7 @@ namespace Client3D
 			m_invalid = true;
 
 			m_manager = manager;
-			MovableObject.MovableMoved += MovableObject_MovableMoved;
+			//MovableObject.MovableMoved += MovableObject_MovableMoved;
 
 			game.GameSystems.Add(this);
 		}
@@ -71,10 +80,10 @@ namespace Client3D
 
 			foreach (var m in m_manager.Movables)
 			{
-				if (viewGrid.Contains(m.Position) == false)
-					continue;
+				//if (viewGrid.Contains(m.Position) == false)
+				//	continue;
 
-				vertices.Add(new SceneryVertex(m.Position.ToVector3(), ToColor(m.Color), (uint)m.SymbolID));
+				//vertices.Add(new SceneryVertex(m.Position.ToVector3(), ToColor(m.Color), (uint)m.SymbolID));
 			}
 
 			if (vertices.Count > 0)
