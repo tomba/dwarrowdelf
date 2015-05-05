@@ -35,9 +35,9 @@ namespace Client3D
 
 			if (Program.Mode == ThreeDMode.WinForms)
 			{
-				var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
-				form.KeyPress += OnKeyPress;
-				form.KeyDown += OnKeyDown;
+				var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
+				ctrl.KeyPress += OnKeyPress;
+				ctrl.KeyDown += OnKeyDown;
 			}
 		}
 
@@ -115,8 +115,8 @@ namespace Client3D
 
 				case 'r':
 					{
-						var form = (System.Windows.Forms.Form)this.Game.Window.NativeWindow;
-						var p = form.PointToClient(System.Windows.Forms.Control.MousePosition);
+						var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
+						var p = ctrl.PointToClient(System.Windows.Forms.Control.MousePosition);
 
 						var camera = this.Services.GetService<CameraProvider>();
 

@@ -31,7 +31,17 @@ namespace Client3D
 			if (Mode == ThreeDMode.WinForms)
 			{
 				using (var game = new MyGame())
-					game.Run();
+				{
+					var wnd = new MainForm();
+					wnd.Show();
+
+					var debugForm = new DebugForm(game);
+					debugForm.Show(wnd);
+
+					wnd.Activate();
+
+					game.Run(wnd.GameSurface);
+				}
 			}
 			else
 			{

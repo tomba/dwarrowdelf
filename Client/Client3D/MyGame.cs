@@ -29,7 +29,7 @@ namespace Client3D
 		readonly ChunkOutlineRenderer m_outlineRenderer;
 
 		public GraphicsDeviceManager GraphicsDeviceManager { get { return m_graphicsDeviceManager; } }
-
+		public TerrainRenderer TerrainRenderer { get { return m_terrainRenderer; } }
 		public RasterizerState RasterizerState { get; set; }
 
 		public MyGame()
@@ -38,6 +38,7 @@ namespace Client3D
 
 			this.IsMouseVisible = true;
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
+
 			//this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
 			m_cameraProvider = new CameraProvider(this);
 			m_keyboardHandler = new KeyboardHandler(this);
@@ -72,19 +73,21 @@ namespace Client3D
 		{
 			base.OnWindowCreated();
 
-			if (Program.Mode == ThreeDMode.WinForms)
-			{
-				var form = (System.Windows.Forms.Form)this.Window.NativeWindow;
-				form.Width = 1024;
-				form.Height = 800;
-				form.Location = new System.Drawing.Point(300, 0);
-				form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			}
+			FixSharpDXWindowSizeBug();
+		}
 
-			var debugForm = new DebugForm(this, m_terrainRenderer);
-			if (Program.Mode == ThreeDMode.WinForms)
-				debugForm.Owner = (System.Windows.Forms.Form)this.Window.NativeWindow;
-			debugForm.Show();
+		void FixSharpDXWindowSizeBug()
+		{
+			// sharpdx backbuffer is initialized with wrong size for some reason, so we need to resize then window
+			// to get the proper size
+
+			var ctrl = this.Window.NativeWindow as System.Windows.Forms.Control;
+			if (ctrl == null)
+				return;
+
+			var form = (System.Windows.Forms.Form)ctrl.TopLevelControl;
+			form.Height -= 1;
+			form.Height += 1;
 		}
 
 		protected override void Initialize()

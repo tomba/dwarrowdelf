@@ -17,10 +17,10 @@ namespace Client3D
 		TerrainRenderer m_scene;
 		Timer m_timer;
 
-		public DebugForm(MyGame game, TerrainRenderer terrainRenderer)
+		public DebugForm(MyGame game)
 		{
 			m_game = game;
-			m_scene = terrainRenderer;
+			m_scene = game.TerrainRenderer;
 
 			InitializeComponent();
 
