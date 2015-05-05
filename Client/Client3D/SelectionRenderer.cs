@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client
 			m_mouseManager = mouseManager;
 
 			this.Visible = true;
-			this.Enabled = true;
+			//this.Enabled = true;
 
 			game.GameSystems.Add(this);
 			game.Services.AddService(typeof(SelectionRenderer), this);

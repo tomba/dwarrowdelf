@@ -38,6 +38,7 @@ namespace Dwarrowdelf.Client
 		public CameraProvider(Game game)
 		{
 			SetLens(MathUtil.PiOverFour, 1.0f, 1.0f, 200.0f);
+			LookAt(new Vector3(), new Vector3(1, 0, 0), Vector3.UnitZ);
 
 			game.Services.AddService(typeof(CameraProvider), this);
 		}

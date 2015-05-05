@@ -46,7 +46,9 @@ namespace Dwarrowdelf.Client
 			get
 			{
 				return string.Format("{0}/{1}/{2}/{3}",
-					m_drawList.Count, m_nearList.Count, m_chunks.Where(c => c != null).Count(), m_chunks.Length);
+					m_drawList.Count, m_nearList.Count, 
+					m_chunks != null ? m_chunks.Where(c => c != null).Count() : 0,
+					m_chunks != null ? m_chunks.Length : 0);
 			}
 		}
 
@@ -69,16 +71,42 @@ namespace Dwarrowdelf.Client
 		{
 			m_scene = scene;
 
-			var map = GameData.Data.Map;
-			this.Size = map.Size / Chunk.CHUNK_SIZE;
-			m_chunks = new Chunk[this.Size.Volume];
+			GameData.Data.MapChanged += Data_MapChanged;
 
 			var viewGridProvider = m_scene.Services.GetService<ViewGridProvider>();
 			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
 		}
 
+		void Data_MapChanged()
+		{
+			var map = GameData.Data.Map;
+
+			if (map == null)
+			{
+				if (m_chunks != null)
+				{
+					foreach (var chunk in m_chunks)
+						if (chunk != null)
+							chunk.Free();
+				}
+
+				this.Size = new IntSize3();
+				m_chunks = null;
+				map.TileChanged -= OnTileChanged;
+			}
+			else
+			{
+				this.Size = map.Size / Chunk.CHUNK_SIZE;
+				m_chunks = new Chunk[this.Size.Volume];
+				map.TileChanged += OnTileChanged;
+			}
+		}
+
 		void OnViewGridCornerChanged(IntVector3 oldValue, IntVector3 newValue)
 		{
+			if (m_chunks == null)
+				return;
+
 			var diff = newValue - oldValue;
 
 			if (diff.X == 0 && diff.Y == 0)
@@ -94,9 +122,12 @@ namespace Dwarrowdelf.Client
 		{
 			base.Dispose(disposeManagedResources);
 
-			foreach (var chunk in m_chunks)
-				if (chunk != null)
-					chunk.Free();
+			if (m_chunks != null)
+			{
+				foreach (var chunk in m_chunks)
+					if (chunk != null)
+						chunk.Free();
+			}
 		}
 
 		public void Initialize()
@@ -109,8 +140,6 @@ namespace Dwarrowdelf.Client
 
 			m_forceNearListUpdate = true;
 			m_forceDrawListUpdate = true;
-
-			GameData.Data.Map.TileChanged += OnTileChanged;
 		}
 
 		void SetChunk(IntVector3 cp, Chunk chunk)

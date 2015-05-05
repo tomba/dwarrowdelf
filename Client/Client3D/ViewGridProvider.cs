@@ -12,12 +12,17 @@ namespace Dwarrowdelf.Client
 	{
 		public ViewGridProvider(Game game)
 		{
+			GameData.Data.MapChanged += Data_MapChanged;
+
+			game.Services.AddService(typeof(ViewGridProvider), this);
+		}
+
+		void Data_MapChanged()
+		{
 			var map = GameData.Data.Map;
 
 			this.ViewCorner1 = new IntVector3(0, 0, 0);
 			this.ViewCorner2 = new IntVector3(map.Width - 1, map.Height - 1, map.Depth - 1);
-
-			game.Services.AddService(typeof(ViewGridProvider), this);
 		}
 
 		IntVector3 m_viewCorner1;

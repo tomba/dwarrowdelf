@@ -34,8 +34,6 @@ namespace Dwarrowdelf.Client
 
 		public MyGame()
 		{
-			GameData.Data.Map = new Map();
-
 			this.IsMouseVisible = true;
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
 
@@ -45,6 +43,7 @@ namespace Dwarrowdelf.Client
 			m_mouseManager = new MouseManager(this);
 
 			m_viewGridProvider = new ViewGridProvider(this);
+
 			m_terrainRenderer = new TerrainRenderer(this);
 			//m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
 			m_selectionRenderer = new SelectionRenderer(this, m_mouseManager);
@@ -57,7 +56,19 @@ namespace Dwarrowdelf.Client
 
 			Content.RootDirectory = "Content";
 
-			var pos = GameData.Data.Map.Size.ToIntVector3().ToVector3();
+			GameData.Data.MapChanged += Data_MapChanged;
+
+			GameData.Data.Map = new Map();
+		}
+
+		void Data_MapChanged()
+		{
+			var map = GameData.Data.Map;
+
+			if (map == null)
+				return;
+
+			var pos = map.Size.ToIntVector3().ToVector3();
 			pos.X /= 2;
 			pos.Y /= 2;
 			pos.Z += 10;

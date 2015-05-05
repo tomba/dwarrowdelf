@@ -94,6 +94,8 @@ namespace Dwarrowdelf.Client
 		{
 			var viewGrid = this.Services.GetService<ViewGridProvider>();
 
+			var map = GameData.Data.Map;
+
 			switch (e.KeyChar)
 			{
 				case '>':
@@ -114,6 +116,9 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case 'r':
+					if (map == null)
+						break;
+
 					{
 						var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
 						var p = ctrl.PointToClient(System.Windows.Forms.Control.MousePosition);
@@ -127,10 +132,10 @@ namespace Dwarrowdelf.Client
 							{
 								var l = new IntVector3(x, y, z);
 
-								if (GameData.Data.Map.Size.Contains(l) == false)
+								if (map.Size.Contains(l) == false)
 									return true;
 
-								GameData.Data.Map.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
+								map.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
 
 								return false;
 							});
@@ -138,37 +143,43 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case 'z':
+					if (map == null)
+						break;
+
 					{
 						var sel = this.Services.GetService<SelectionRenderer>();
 
 						if (sel.SelectionVisible)
 						{
 							foreach (var p in sel.SelectionGrid.Range())
-								GameData.Data.Map.SetTileData(p, TileData.EmptyTileData);
+								map.SetTileData(p, TileData.EmptyTileData);
 						}
 						else if (sel.CursorVisible)
 						{
 							var p = sel.Position;
-							GameData.Data.Map.SetTileData(p, TileData.EmptyTileData);
+							map.SetTileData(p, TileData.EmptyTileData);
 						}
 					}
 					break;
 
 				case 'x':
+					if (map == null)
+						break;
+
 					{
 						var sel = this.Services.GetService<SelectionRenderer>();
 
 						if (sel.SelectionVisible)
 						{
 							foreach (var p in sel.SelectionGrid.Range())
-								GameData.Data.Map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
+								map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
 						}
 						else if (sel.CursorVisible)
 						{
 							var p = sel.Position;
 							var d = sel.Direction;
-							if (GameData.Data.Map.Size.Contains(p + d))
-								GameData.Data.Map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
+							if (map.Size.Contains(p + d))
+								map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
 						}
 					}
 					break;
