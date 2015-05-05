@@ -63,28 +63,53 @@ namespace Dwarrowdelf.Client
 
 			Content.RootDirectory = "Content";
 
-			GameData.Data.MapChanged += Data_MapChanged;
+			GameData.Data.UserConnected += Data_UserConnected;
+			GameData.Data.UserDisconnected += Data_UserDisconnected;
 
-			GameData.Data.Map = new Map();
+			GameData.Data.MapChanged += Data_MapChanged;
 		}
 
-		void Data_MapChanged()
+		void Data_UserDisconnected()
+		{
+			GameData.Data.Map = null;
+		}
+
+		void Data_UserConnected()
+		{
+			var data = GameData.Data;
+
+			if (data.GameMode == GameMode.Adventure)
+				GoTo(data.FocusedObject);
+			else
+				GoTo(data.World.Controllables.First());
+		}
+
+		void GoTo(LivingObject ob)
+		{
+			var env = ob.Environment;
+			GameData.Data.Map = env;
+		}
+
+		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)
 		{
 			var map = GameData.Data.Map;
 
-			if (map == null)
-				return;
+			if (map != null)
+			{
+				var pos = map.Size.ToIntVector3().ToVector3();
+				pos.X /= 2;
+				pos.Y /= 2;
+				pos.Z += 10;
 
-			var pos = map.Size.ToIntVector3().ToVector3();
-			pos.X /= 2;
-			pos.Y /= 2;
-			pos.Z += 10;
+				var target = new Vector3(0, 0, 0);
 
-			var target = new Vector3(0, 0, 0);
+				//pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
 
-			//pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
+				m_cameraProvider.LookAt(pos, target, Vector3.UnitZ);
+			}
 
-			m_cameraProvider.LookAt(pos, target, Vector3.UnitZ);
+			m_terrainRenderer.Enabled = map != null;
+			m_selectionRenderer.Enabled = map != null;
 		}
 
 		protected override void OnWindowCreated()

@@ -56,6 +56,10 @@ namespace Dwarrowdelf.Client
 
 		public VisibilityMode VisibilityMode { get; private set; }
 
+		public int Width { get { return this.Size.Width; } }
+		public int Height { get { return this.Size.Height; } }
+		public int Depth { get { return this.Size.Depth; } }
+
 		public IntSize3 Size { get { return m_tileGrid.Size; } }
 
 		ObservableCollection<IAreaElement> m_areaElements;

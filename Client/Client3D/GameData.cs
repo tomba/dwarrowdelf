@@ -23,13 +23,13 @@ namespace Dwarrowdelf.Client
 		public ControlMode ControlMode = ControlMode.Fps;
 		public bool AlignViewGridToCamera = true;
 
-		Map m_map;
-		public Map Map
+		EnvironmentObject m_map;
+		public EnvironmentObject Map
 		{
 			get { return m_map; }
-			set { m_map = value; if (this.MapChanged != null) this.MapChanged(); }
+			set { var old = m_map; m_map = value; if (this.MapChanged != null) this.MapChanged(old, m_map); }
 		}
 
-		public event Action MapChanged;
+		public event Action<EnvironmentObject, EnvironmentObject> MapChanged;
 	}
 }

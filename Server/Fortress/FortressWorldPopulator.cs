@@ -39,7 +39,10 @@ namespace Dwarrowdelf.Server.Fortress
 			var td = env.GetTileData(p);
 
 			if (td.HasFloor == false)
-				throw new Exception();
+			{
+				env.SetTileData(p.Down, TileData.GetNaturalWall(MaterialID.Granite));
+				td = env.GetTileData(p);
+			}
 
 			if (td.IsGreen)
 			{

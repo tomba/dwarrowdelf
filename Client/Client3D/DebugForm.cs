@@ -38,8 +38,6 @@ namespace Dwarrowdelf.Client
 			if (m_scene == null)
 				return;
 
-			GameData.Data.MapChanged += Data_MapChanged;
-
 			m_timer = new Timer();
 			m_timer.Tick += timer_Tick;
 			m_timer.Interval = 1000;
@@ -91,30 +89,19 @@ namespace Dwarrowdelf.Client
 			this.checkBox7.CheckedChanged += (s, e) => m_scene.Effect.DisableTexture = checkBox7.Checked;
 		}
 
-		void Data_MapChanged()
+		void OnViewGridCornerChanged(Dwarrowdelf.IntVector3 arg1, Dwarrowdelf.IntVector3 arg2)
 		{
 			var map = GameData.Data.Map;
 
-			if (map == null)
-				return;
+			if (map != null)
+			{
+				this.zCutTrackBar.Maximum = map.Depth - 1;
+				this.xnCutTrackBar.Maximum = map.Width - 1;
+				this.xpCutTrackBar.Maximum = map.Width - 1;
+				this.ynCutTrackBar.Maximum = map.Width - 1;
+				this.ypCutTrackBar.Maximum = map.Height - 1;
+			}
 
-			this.zCutTrackBar.Maximum = map.Depth - 1;
-			this.xnCutTrackBar.Maximum = map.Width - 1;
-			this.xpCutTrackBar.Maximum = map.Width - 1;
-			this.ynCutTrackBar.Maximum = map.Width - 1;
-			this.ypCutTrackBar.Maximum = map.Height - 1;
-
-			var viewGridProvider = m_game.Services.GetService<ViewGridProvider>();
-
-			this.ynCutTrackBar.Value = viewGridProvider.ViewCorner1.Y;
-			this.zCutTrackBar.Value = viewGridProvider.ViewCorner2.Z;
-			this.xnCutTrackBar.Value = viewGridProvider.ViewCorner1.X;
-			this.xpCutTrackBar.Value = viewGridProvider.ViewCorner2.X;
-			this.ypCutTrackBar.Value = viewGridProvider.ViewCorner2.Y;
-		}
-
-		void OnViewGridCornerChanged(Dwarrowdelf.IntVector3 arg1, Dwarrowdelf.IntVector3 arg2)
-		{
 			var viewGridProvider = m_game.Services.GetService<ViewGridProvider>();
 
 			this.zCutTrackBar.Value = viewGridProvider.ViewCorner2.Z;

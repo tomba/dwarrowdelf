@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client
 
 		public static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
-		Map m_map;
+		EnvironmentObject m_map;
 		VoxelMap m_voxelMap;
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Client
 
 		public BoundingBox BBox;
 
-		public Chunk(Map map, IntVector3 chunkPosition)
+		public Chunk(EnvironmentObject map, IntVector3 chunkPosition)
 		{
 			this.ChunkPosition = chunkPosition;
 			this.ChunkOffset = chunkPosition * CHUNK_SIZE;
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Client
 
 				Voxel v = new Voxel();
 
-				v.VisibleFaces = m_map.GetVisibleFaces(mp);
+				v.VisibleFaces = GetVisibleFaces(mp);
 
 				m_voxelMap.SetVoxel(mp - this.ChunkOffset, v);
 			}
@@ -128,9 +128,31 @@ namespace Dwarrowdelf.Client
 
 			// we don't use VisibleFaces for Empty, and Undefined is always hidden
 			if (!td.IsEmptyNoWater && !td.IsUndefined)
-				v.VisibleFaces = m_map.GetVisibleFaces(mp);
+				v.VisibleFaces = GetVisibleFaces(mp);
 
 			m_voxelMap.SetVoxel(mp - this.ChunkOffset, v);
+		}
+
+		Direction GetVisibleFaces(IntVector3 p)
+		{
+			Direction visibleFaces = 0;
+
+			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
+			{
+				var n = p + dir;
+
+				if (m_map.Size.Contains(n) == false)
+					continue;
+
+				var td = m_map.GetTileData(n);
+
+				if (td.IsUndefined || td.IsSeeThrough == false)
+					continue;
+
+				visibleFaces |= dir;
+			}
+
+			return visibleFaces;
 		}
 
 		public void Free()

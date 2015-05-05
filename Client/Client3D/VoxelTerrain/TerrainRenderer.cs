@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Client
 			: base(game)
 		{
 			this.Visible = true;
-			this.Enabled = true;
+			this.Enabled = false;
 
 			m_directionalLight = new DirectionalLight()
 			{

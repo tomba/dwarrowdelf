@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Client
 			get
 			{
 				return string.Format("{0}/{1}/{2}/{3}",
-					m_drawList.Count, m_nearList.Count, 
+					m_drawList.Count, m_nearList.Count,
 					m_chunks != null ? m_chunks.Where(c => c != null).Count() : 0,
 					m_chunks != null ? m_chunks.Length : 0);
 			}
@@ -77,9 +77,15 @@ namespace Dwarrowdelf.Client
 			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
 		}
 
-		void Data_MapChanged()
+		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)
 		{
 			var map = GameData.Data.Map;
+
+			if (oldMap != null)
+				oldMap.MapTileTerrainChanged -= OnTileChanged;
+
+			if (newMap != null)
+				map.MapTileTerrainChanged += OnTileChanged;
 
 			if (map == null)
 			{
@@ -92,13 +98,11 @@ namespace Dwarrowdelf.Client
 
 				this.Size = new IntSize3();
 				m_chunks = null;
-				map.TileChanged -= OnTileChanged;
 			}
 			else
 			{
 				this.Size = map.Size / Chunk.CHUNK_SIZE;
 				m_chunks = new Chunk[this.Size.Volume];
-				map.TileChanged += OnTileChanged;
 			}
 		}
 
@@ -166,6 +170,25 @@ namespace Dwarrowdelf.Client
 		}
 
 		void OnTileChanged(IntVector3 p)
+		{
+			UpdateTile(p);
+
+			// XXX send TileChanged for neighbors, so that their VisibleFaces can be updated.
+			// This could be done inside Chunk, but to update the edges of a chunk we need to touch multiple Chunks.
+			// But as we don't change the content of the neighbors, and only the face towards the changed tile
+			// needs to be changed, there's room for optimization.
+			foreach (var v in IntVector3.CardinalUpDownDirections)
+			{
+				var n = p + v;
+
+				if (!this.Size.Contains(n))
+					continue;
+
+				UpdateTile(n);
+			}
+		}
+
+		void UpdateTile(IntVector3 p)
 		{
 			var cp = p / Chunk.CHUNK_SIZE;
 

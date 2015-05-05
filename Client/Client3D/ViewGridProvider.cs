@@ -17,12 +17,20 @@ namespace Dwarrowdelf.Client
 			game.Services.AddService(typeof(ViewGridProvider), this);
 		}
 
-		void Data_MapChanged()
+		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)
 		{
 			var map = GameData.Data.Map;
 
-			this.ViewCorner1 = new IntVector3(0, 0, 0);
-			this.ViewCorner2 = new IntVector3(map.Width - 1, map.Height - 1, map.Depth - 1);
+			if (map == null)
+			{
+				this.ViewCorner1 = new IntVector3();
+				this.ViewCorner2 = new IntVector3();
+			}
+			else
+			{
+				this.ViewCorner1 = new IntVector3(0, 0, 0);
+				this.ViewCorner2 = new IntVector3(map.Width - 1, map.Height - 1, map.Depth - 1);
+			}
 		}
 
 		IntVector3 m_viewCorner1;
@@ -35,7 +43,7 @@ namespace Dwarrowdelf.Client
 				if (value == m_viewCorner1)
 					return;
 
-				if (GameData.Data.Map.Size.Contains(value) == false)
+				if (!value.IsNull && GameData.Data.Map.Size.Contains(value) == false)
 					return;
 
 				if (value.X > m_viewCorner2.X || value.Y > m_viewCorner2.Y || value.Z > m_viewCorner2.Z)
@@ -71,7 +79,7 @@ namespace Dwarrowdelf.Client
 				if (value == m_viewCorner2)
 					return;
 
-				if (GameData.Data.Map.Size.Contains(value) == false)
+				if (!value.IsNull && GameData.Data.Map.Size.Contains(value) == false)
 					return;
 
 				if (value.X < m_viewCorner1.X || value.Y < m_viewCorner1.Y || value.Z < m_viewCorner1.Z)
