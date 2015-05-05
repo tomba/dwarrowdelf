@@ -50,7 +50,14 @@ namespace Dwarrowdelf.Client
 			m_debugAxesRenderer = new DebugAxesRenderer(this);
 			//m_outlineRenderer = new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager);
 
-			m_fpsCounter = new FPSCounterSystem(this, s => this.Window.Title = s);
+			m_fpsCounter = new FPSCounterSystem(this, s =>
+			{
+				var ctrl = this.Window.NativeWindow as System.Windows.Forms.Control;
+				if (ctrl != null)
+					((System.Windows.Forms.Form)ctrl.TopLevelControl).Text = s;
+				else
+					this.Window.Title = s;
+			});
 
 			//m_testCubeRenderer = new TestCubeRenderer(this);
 
