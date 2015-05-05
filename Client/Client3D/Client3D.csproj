@@ -175,9 +175,21 @@
       <Project>{37d55ac1-bdae-4c0c-8856-8867fe772b2b}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Server\Server\Server.csproj">
+      <Project>{fe74fe0d-25fb-4de3-bccf-7028c28c49a2}</Project>
+      <Name>Server</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Base\Client.Base.csproj">
       <Project>{1794f5b1-762e-40d2-a314-040487deefe2}</Project>
       <Name>Client.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Client.Engine.csproj">
+      <Project>{a7884edf-fd74-45d6-9953-e1d76dc0a45a}</Project>
+      <Name>Client.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\World\Client.World.csproj">
+      <Project>{1f2d0cae-43a7-49cd-8a03-69a67c1a68fd}</Project>
+      <Name>Client.World</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
