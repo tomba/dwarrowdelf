@@ -251,7 +251,7 @@ namespace Dwarrowdelf.Client
 					this.GameSpeedChanged(value);
 
 				// XXX this should probably be somewhere else
-				if (GameData.Data.User != null)
+				if (this.User != null)
 				{
 					int ms;
 
@@ -276,7 +276,7 @@ namespace Dwarrowdelf.Client
 							throw new Exception();
 					}
 
-					GameData.Data.User.Send(new Dwarrowdelf.Messages.SetWorldConfigMessage()
+					this.User.Send(new Dwarrowdelf.Messages.SetWorldConfigMessage()
 					{
 						MinTickTime = TimeSpan.FromMilliseconds(ms),
 					});
