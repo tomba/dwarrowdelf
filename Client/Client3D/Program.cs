@@ -36,6 +36,9 @@ namespace Dwarrowdelf.Client
 					var wnd = new MainForm();
 					wnd.Show();
 
+					// this will force instantiating GameData.Data in the main thread
+					GameData.Create();
+
 					var debugForm = new DebugForm(game);
 					debugForm.Show(wnd);
 

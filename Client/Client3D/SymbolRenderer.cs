@@ -12,11 +12,7 @@ namespace Dwarrowdelf.Client
 {
 	class MovableManager
 	{
-		public List<MovableObject3D> Movables;
-	}
-
-	class MovableObject3D
-	{
+		public List<MovableObject> Movables;
 	}
 
 	class SymbolRenderer : GameSystem
@@ -44,7 +40,7 @@ namespace Dwarrowdelf.Client
 			game.GameSystems.Add(this);
 		}
 
-		void MovableObject_MovableMoved(MovableObject3D obj)
+		void MovableObject_MovableMoved(MovableObject obj)
 		{
 			m_invalid = true;
 		}
