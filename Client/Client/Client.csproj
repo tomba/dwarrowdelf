@@ -60,10 +60,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -93,7 +89,6 @@
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>
-    <None Include="packages.config" />
     <None Include="TileSet\DefaultTileSet.xaml">
       <SubType>Designer</SubType>
     </None>
@@ -262,7 +257,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="ClientConfig.cs" />
     <Compile Include="DebugScriptMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="TileGraphics.cs" />

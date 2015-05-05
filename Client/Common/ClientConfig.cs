@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	static class ClientConfig
+	public static class ClientConfig
 	{
 		public static string GetSaveGamePath()
 		{
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Client
 		public static readonly string SaveGamePath = GetSaveGamePath();
 	}
 
-	class ClientSavedConfig
+	public class ClientSavedConfig
 	{
 		static string ClientSaveFile { get { return System.IO.Path.Combine(ClientConfig.SaveGamePath, "client-config.json"); } }
 
