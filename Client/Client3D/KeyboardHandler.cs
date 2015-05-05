@@ -179,9 +179,6 @@ namespace Dwarrowdelf.Client
 		{
 			var keyboardState = m_keyboardManager.GetState();
 
-			if (keyboardState.IsKeyDown(Keys.F4) && keyboardState.IsKeyDown(Keys.LeftAlt))
-				this.Game.Exit();
-
 			switch (GlobalData.ControlMode)
 			{
 				case ControlMode.Fps:
