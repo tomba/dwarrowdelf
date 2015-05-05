@@ -6,16 +6,8 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	enum ControlMode
-	{
-		Fps,
-		Rts,
-	}
-
 	static class GlobalData
 	{
 		public static Map Map;
-		public static ControlMode ControlMode = ControlMode.Fps;
-		public static bool AlignViewGridToCamera = true;
 	}
 }

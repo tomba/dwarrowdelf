@@ -2,6 +2,12 @@
 
 namespace Dwarrowdelf.Client
 {
+	enum ControlMode
+	{
+		Fps,
+		Rts,
+	}
+
 	sealed class GameData : GameDataBase
 	{
 		public static GameData Data;
@@ -13,5 +19,8 @@ namespace Dwarrowdelf.Client
 
 			GameData.Data = new GameData();
 		}
+
+		public ControlMode ControlMode = ControlMode.Fps;
+		public bool AlignViewGridToCamera = true;
 	}
 }

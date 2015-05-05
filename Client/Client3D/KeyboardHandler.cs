@@ -179,7 +179,7 @@ namespace Dwarrowdelf.Client
 		{
 			var keyboardState = m_keyboardManager.GetState();
 
-			switch (GlobalData.ControlMode)
+			switch (GameData.Data.ControlMode)
 			{
 				case ControlMode.Fps:
 					HandleFpsKeyboard(gameTime, keyboardState);
@@ -261,7 +261,7 @@ namespace Dwarrowdelf.Client
 			{
 				m_cameraProvider.Move(v);
 
-				if (GlobalData.AlignViewGridToCamera && v.Z != 0)
+				if (GameData.Data.AlignViewGridToCamera && v.Z != 0)
 				{
 					var viewGrid = this.Services.GetService<ViewGridProvider>();
 
