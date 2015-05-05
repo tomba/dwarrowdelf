@@ -121,7 +121,7 @@ namespace Dwarrowdelf.Client
 				return;
 
 			var dlg = new ItemSelectorDialog();
-			dlg.Owner = GameData.Data.MainWindow;
+			dlg.Owner = App.Current.MainWindow;
 			dlg.DataContext = obs;
 			dlg.Title = "Get Item";
 
@@ -142,7 +142,7 @@ namespace Dwarrowdelf.Client
 			var living = GameData.Data.FocusedObject;
 
 			var dlg = new ItemSelectorDialog();
-			dlg.Owner = GameData.Data.MainWindow;
+			dlg.Owner = App.Current.MainWindow;
 			dlg.DataContext = living.Inventory;
 			dlg.Title = "Drop Item";
 
@@ -169,7 +169,7 @@ namespace Dwarrowdelf.Client
 				return;
 
 			var dlg = new ItemSelectorDialog();
-			dlg.Owner = GameData.Data.MainWindow;
+			dlg.Owner = App.Current.MainWindow;
 			dlg.DataContext = obs;
 			dlg.Title = "Wear/Wield Item";
 
@@ -199,7 +199,7 @@ namespace Dwarrowdelf.Client
 				return;
 
 			var dlg = new ItemSelectorDialog();
-			dlg.Owner = GameData.Data.MainWindow;
+			dlg.Owner = App.Current.MainWindow;
 			dlg.DataContext = obs;
 			dlg.Title = "Remove Item";
 
@@ -229,7 +229,7 @@ namespace Dwarrowdelf.Client
 				return;
 
 			var dlg = new ItemSelectorDialog();
-			dlg.Owner = GameData.Data.MainWindow;
+			dlg.Owner = App.Current.MainWindow;
 			dlg.DataContext = obs;
 			dlg.Title = "Inventory";
 
@@ -256,7 +256,7 @@ namespace Dwarrowdelf.Client
 
 			{
 				var dlg = new ItemSelectorDialog();
-				dlg.Owner = GameData.Data.MainWindow;
+				dlg.Owner = App.Current.MainWindow;
 				dlg.DataContext = wbInfo.BuildableItems;
 				dlg.Title = "Buildable Items";
 				bool? res = dlg.ShowDialog();
@@ -285,7 +285,7 @@ namespace Dwarrowdelf.Client
 				var obs = living.Inventory.Where(item => component.Match(item));
 
 				var dlg = new ItemSelectorDialog();
-				dlg.Owner = GameData.Data.MainWindow;
+				dlg.Owner = App.Current.MainWindow;
 				dlg.DataContext = obs;
 				dlg.Title = "Select component";
 				bool? res = dlg.ShowDialog();

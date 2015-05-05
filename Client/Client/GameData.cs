@@ -29,8 +29,9 @@ namespace Dwarrowdelf.Client
 			m_timer.Tick += delegate
 			{
 				if (_Blink != null) _Blink();
-				if (MainWindow != null && MainWindow.MapControl != null)
-					MainWindow.MapControl.Blink();
+				var main = App.GameWindow;
+				if (main != null && main.MapControl != null)
+					main.MapControl.Blink();
 			};
 
 			this.ConnectManager = new ConnectManager();
@@ -71,8 +72,6 @@ namespace Dwarrowdelf.Client
 					m_timer.IsEnabled = false;
 			}
 		}
-
-		public UI.MainWindow MainWindow { get { return (UI.MainWindow)Application.Current.MainWindow; } }
 
 		public event Action TileSetChanged;
 
