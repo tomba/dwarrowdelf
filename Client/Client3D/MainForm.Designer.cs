@@ -1,4 +1,4 @@
-﻿namespace Client3D
+﻿namespace Dwarrowdelf.Client
 {
 	partial class MainForm
 	{
@@ -31,7 +31,7 @@
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.gameSurfaceControl = new Client3D.GameSurfaceControl();
+			this.gameSurfaceControl = new Dwarrowdelf.Client.GameSurfaceControl();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -56,7 +56,7 @@
 			// quitToolStripMenuItem
 			// 
 			this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-			this.quitToolStripMenuItem.Size = new System.Drawing.Size(97, 22);
+			this.quitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.quitToolStripMenuItem.Text = "&Quit";
 			// 
 			// gameSurfaceControl

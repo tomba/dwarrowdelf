@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	class ChunkManager : Component
 	{

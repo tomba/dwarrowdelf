@@ -7,8 +7,8 @@
     <ProjectGuid>{C378655B-8A24-461D-A9C6-23E06102FC19}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Client3D</RootNamespace>
-    <AssemblyName>Client3D</AssemblyName>
+    <RootNamespace>Dwarrowdelf.Client</RootNamespace>
+    <AssemblyName>Dwarrowdelf.Client3D</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -40,7 +40,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Client3D.Program</StartupObject>
+    <StartupObject>Dwarrowdelf.Client.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -145,6 +145,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <ToolkitTexture Include="Content\TileTextureArray.dds" />
     <ToolkitTexture Include="Content\TileSetTextureArray.dds" />

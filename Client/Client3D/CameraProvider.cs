@@ -2,7 +2,7 @@
 using SharpDX;
 using SharpDX.Toolkit;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	/// <summary>
 	/// Component responsible for camera updates

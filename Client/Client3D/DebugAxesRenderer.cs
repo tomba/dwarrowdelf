@@ -2,7 +2,7 @@
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	sealed class DebugAxesRenderer : GameSystem
 	{

@@ -10,7 +10,7 @@ using SharpDX.Toolkit.Graphics;
 using Dwarrowdelf;
 using Dwarrowdelf.Client;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	sealed class MyGame : Game
 	{

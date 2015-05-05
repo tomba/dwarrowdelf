@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Dwarrowdelf;
 using Dwarrowdelf.Client;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	class DirectionalLight
 	{

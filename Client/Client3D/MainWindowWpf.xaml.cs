@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	public partial class MainWindowWpf : Window
 	{

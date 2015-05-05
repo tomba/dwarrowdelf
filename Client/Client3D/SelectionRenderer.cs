@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using SharpDX.Toolkit.Input;
 using System.Diagnostics;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	sealed class SelectionRenderer : GameSystem
 	{

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Forms = System.Windows.Forms;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	class KeyboardHandler : GameSystem
 	{

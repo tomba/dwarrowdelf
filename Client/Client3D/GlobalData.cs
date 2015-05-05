@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	enum ControlMode
 	{
@@ -15,7 +15,7 @@ namespace Client3D
 	static class GlobalData
 	{
 		public static Map Map;
-		public static ControlMode ControlMode = Client3D.ControlMode.Fps;
+		public static ControlMode ControlMode = ControlMode.Fps;
 		public static bool AlignViewGridToCamera = true;
 	}
 }

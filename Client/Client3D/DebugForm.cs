@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	internal partial class DebugForm : Form
 	{

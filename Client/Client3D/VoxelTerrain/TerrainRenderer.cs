@@ -8,7 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	class TerrainRenderer : GameSystem
 	{

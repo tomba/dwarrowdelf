@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Client3D
+namespace Dwarrowdelf.Client
 {
 	public partial class App : Application
 	{
