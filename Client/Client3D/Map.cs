@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 		private void CreateTerrain(IntSize3 size)
 		{
 			var path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
-			string file = Path.Combine(path, "terrain-cache-hack.dat");
+			string file = Path.Combine(path, "terrain-cache-hack-3d.dat");
 
 			string mapName = "fortress";
 
