@@ -12,10 +12,10 @@ namespace Dwarrowdelf.Client
 {
 	class MovableManager
 	{
-		public List<MovableObject> Movables;
+		public List<MovableObject3D> Movables;
 	}
 
-	class MovableObject
+	class MovableObject3D
 	{
 	}
 
@@ -39,12 +39,12 @@ namespace Dwarrowdelf.Client
 			m_invalid = true;
 
 			m_manager = manager;
-			//MovableObject.MovableMoved += MovableObject_MovableMoved;
+			//MovableObject3D.MovableMoved += MovableObject_MovableMoved;
 
 			game.GameSystems.Add(this);
 		}
 
-		void MovableObject_MovableMoved(MovableObject obj)
+		void MovableObject_MovableMoved(MovableObject3D obj)
 		{
 			m_invalid = true;
 		}
