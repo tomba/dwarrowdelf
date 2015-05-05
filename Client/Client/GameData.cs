@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using System.Collections.ObjectModel;
-using System.Windows;
 using System.Diagnostics;
-using System.IO;
+using System.Linq;
+using System.Windows;
 using System.Windows.Threading;
-using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
@@ -140,26 +135,6 @@ namespace Dwarrowdelf.Client
 
 				Notify("IsAutoAdvanceTurn");
 			}
-		}
-
-		public async Task StartServerAndConnectAsync()
-		{
-			var dlg = this.MainWindow.OpenLogOnDialog();
-
-			try
-			{
-				var prog = new Progress<string>(str => dlg.AppendText(str));
-
-				var options = ClientConfig.EmbeddedServerOptions;
-
-				await this.ConnectManager.StartServerAndConnectAsync(options, ClientConfig.ConnectionType, prog);
-			}
-			catch (Exception exc)
-			{
-				MessageBox.Show(this.MainWindow, exc.ToString(), "Failed to autoconnect");
-			}
-
-			dlg.Close();
 		}
 
 		public void SendProceedTurn()

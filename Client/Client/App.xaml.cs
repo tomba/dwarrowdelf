@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Dwarrowdelf.Client.UI;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
@@ -43,8 +44,28 @@ namespace Dwarrowdelf.Client
 
 			if (ClientConfig.AutoConnect)
 			{
-				await GameData.Data.StartServerAndConnectAsync();
+				await StartServerAndConnectAsync();
 			}
+		}
+
+		async Task StartServerAndConnectAsync()
+		{
+			var dlg = App.GameWindow.OpenLogOnDialog();
+
+			try
+			{
+				var prog = new Progress<string>(str => dlg.AppendText(str));
+
+				var options = ClientConfig.EmbeddedServerOptions;
+
+				await GameData.Data.ConnectManager.StartServerAndConnectAsync(options, ClientConfig.ConnectionType, prog);
+			}
+			catch (Exception exc)
+			{
+				MessageBox.Show(this.MainWindow, exc.ToString(), "Failed to autoconnect");
+			}
+
+			dlg.Close();
 		}
 
 		void App_Exit(object sender, ExitEventArgs e)
