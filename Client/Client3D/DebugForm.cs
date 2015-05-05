@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 			this.viewCorner1TextBox.Text = viewGridProvider.ViewCorner1.ToString();
 			this.viewCorner2TextBox.Text = viewGridProvider.ViewCorner2.ToString();
 
-			var map = GlobalData.Map;
+			var map = GameData.Data.Map;
 
 			this.zCutTrackBar.Maximum = map.Depth - 1;
 			this.zCutTrackBar.Value = viewGridProvider.ViewCorner2.Z;

@@ -137,7 +137,7 @@ namespace Dwarrowdelf.Client
 					if (viewGrid.Contains(p) == false)
 						return false;
 
-					var td = GlobalData.Map.GetTileData(p);
+					var td = GameData.Data.Map.GetTileData(p);
 
 					if (td.IsEmpty)
 						return false;
@@ -174,7 +174,7 @@ namespace Dwarrowdelf.Client
 				{
 					if (mouseState.LeftButton.Pressed)
 					{
-						var td = GlobalData.Map.GetTileData(p);
+						var td = GameData.Data.Map.GetTileData(p);
 
 						System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, td);
 					}

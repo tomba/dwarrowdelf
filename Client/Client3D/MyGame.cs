@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client
 
 		public MyGame()
 		{
-			GlobalData.Map = new Map();
+			GameData.Data.Map = new Map();
 
 			this.IsMouseVisible = true;
 			m_graphicsDeviceManager = new GraphicsDeviceManager(this);
@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Client
 
 			Content.RootDirectory = "Content";
 
-			var pos = GlobalData.Map.Size.ToIntVector3().ToVector3();
+			var pos = GameData.Data.Map.Size.ToIntVector3().ToVector3();
 			pos.X /= 2;
 			pos.Y /= 2;
 			pos.Z += 10;

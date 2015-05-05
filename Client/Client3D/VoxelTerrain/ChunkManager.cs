@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Client
 		{
 			m_scene = scene;
 
-			var map = GlobalData.Map;
+			var map = GameData.Data.Map;
 			this.Size = map.Size / Chunk.CHUNK_SIZE;
 			m_chunks = new Chunk[this.Size.Volume];
 
@@ -110,7 +110,7 @@ namespace Dwarrowdelf.Client
 			m_forceNearListUpdate = true;
 			m_forceDrawListUpdate = true;
 
-			GlobalData.Map.TileChanged += OnTileChanged;
+			GameData.Data.Map.TileChanged += OnTileChanged;
 		}
 
 		void SetChunk(IntVector3 cp, Chunk chunk)
@@ -131,7 +131,7 @@ namespace Dwarrowdelf.Client
 
 		Chunk CreateChunk(IntVector3 cp)
 		{
-			var chunk = new Chunk(GlobalData.Map, cp);
+			var chunk = new Chunk(GameData.Data.Map, cp);
 			SetChunk(chunk.ChunkPosition, chunk);
 			return chunk;
 		}
