@@ -8,31 +8,34 @@ namespace Dwarrowdelf.Client
 {
 	static class ClientConfig
 	{
-		static ClientConfig()
+		public static string GetSaveGamePath()
 		{
 			//SaveGamePath = Path.Combine(Win32.SavedGamesFolder.GetSavedGamesPath(), "Dwarrowdelf", "save");
-			SaveGamePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
+			return Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "save");
 		}
 
-		public static EmbeddedServerMode EmbeddedServerMode = EmbeddedServerMode.SameAppDomain;
+		public static EmbeddedServerOptions EmbeddedServerOptions = new EmbeddedServerOptions()
+		{
+			ServerMode = EmbeddedServerMode.SameAppDomain,
+			// Game mode if new game is created
+			NewGameOptions = new GameOptions()
+			{
+				Mode = GameMode.Fortress,
+				Map = GameMap.Fortress,
+				TickMethod = WorldTickMethod.Simultaneous,
+			},
+			SaveGamePath = GetSaveGamePath(),
+			// Delete all saves before starting
+			CleanSaveDir = true,
+		};
+
 		public static ConnectionType ConnectionType = ConnectionType.Tcp;
 		public static bool AutoConnect = true;
 
 		public static bool ShowMouseDebug = true;
 		public static bool ShowMapDebug = true;
 
-		// Game mode if new game is created
-		public static GameOptions NewGameOptions = new GameOptions()
-		{
-			Mode = GameMode.Fortress,
-			Map = GameMap.Fortress,
-			TickMethod = WorldTickMethod.Simultaneous,
-		};
-
-		// Delete all saves before starting
-		public static bool CleanSaveDir = true;
-
-		public static readonly string SaveGamePath;
+		public static readonly string SaveGamePath = GetSaveGamePath();
 	}
 
 	class ClientSavedConfig

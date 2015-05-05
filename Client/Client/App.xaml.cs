@@ -29,9 +29,9 @@ namespace Dwarrowdelf.Client
 		async void App_Startup(object sender, StartupEventArgs e)
 		{
 			if (e.Args.Contains("adventure"))
-				ClientConfig.NewGameOptions.Mode = GameMode.Adventure;
+				ClientConfig.EmbeddedServerOptions.NewGameOptions.Mode = GameMode.Adventure;
 			else if (e.Args.Contains("fortress"))
-				ClientConfig.NewGameOptions.Mode = GameMode.Fortress;
+				ClientConfig.EmbeddedServerOptions.NewGameOptions.Mode = GameMode.Fortress;
 
 			// this will force instantiating GameData.Data in the main thread
 			if (GameData.Data == null)

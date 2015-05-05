@@ -150,13 +150,7 @@ namespace Dwarrowdelf.Client
 			{
 				var prog = new Progress<string>(str => dlg.AppendText(str));
 
-				var options = new EmbeddedServerOptions()
-				{
-					ServerMode = ClientConfig.EmbeddedServerMode,
-					NewGameOptions = ClientConfig.NewGameOptions,
-					SaveGamePath = ClientConfig.SaveGamePath,
-					CleanSaveDir = ClientConfig.CleanSaveDir,
-				};
+				var options = ClientConfig.EmbeddedServerOptions;
 
 				await this.ConnectManager.StartServerAndConnectAsync(options, ClientConfig.ConnectionType, prog);
 			}
