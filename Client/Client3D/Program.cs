@@ -20,7 +20,8 @@ namespace Dwarrowdelf.Client
 		{
 			//SharpDX.Configuration.EnableObjectTracking = true;
 
-			System.Threading.Thread.CurrentThread.Name = "Main";
+			System.Threading.Thread.CurrentThread.Name = "CMain";
+			MyTraceContext.ThreadTraceContext = new MyTraceContext("Client");
 
 			Trace.TraceInformation("Start");
 
