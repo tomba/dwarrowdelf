@@ -142,6 +142,9 @@ namespace Dwarrowdelf.Client
 				m_turnHandler.SendProceedTurn();
 		}
 
+		public event Action UserConnected;
+		public event Action UserDisconnected;
+
 		void ConnectManager_UserConnected(ClientUser user)
 		{
 			if (this.User != null)
@@ -156,21 +159,14 @@ namespace Dwarrowdelf.Client
 
 			m_turnHandler = new TurnHandler(this.World, this.User);
 
-			var controllable = this.World.Controllables.FirstOrDefault();
-			if (controllable != null && controllable.Environment != null)
+			if (this.GameMode == GameMode.Adventure)
 			{
-				App.GameWindow.MapControl.GoTo(controllable);
-
-				if (this.GameMode == GameMode.Adventure)
-					this.FocusedObject = controllable;
+				var controllable = this.World.Controllables.First();
+				this.FocusedObject = controllable;
 			}
 
-			if (Program.StartupStopwatch != null)
-			{
-				Program.StartupStopwatch.Stop();
-				Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
-				Program.StartupStopwatch = null;
-			}
+			if (this.UserConnected != null)
+				this.UserConnected();
 		}
 
 		void user_DisconnectEvent()
@@ -178,7 +174,10 @@ namespace Dwarrowdelf.Client
 			this.User.DisconnectEvent -= user_DisconnectEvent;
 
 			this.FocusedObject = null;
-			App.GameWindow.MapControl.GoTo(null);
+
+			if (this.UserDisconnected != null)
+				this.UserDisconnected();
+
 			this.User = null;
 			this.World = null;
 			m_turnHandler = null;

@@ -37,7 +37,10 @@ namespace Dwarrowdelf.Client
 			// this will force instantiating GameData.Data in the main thread
 			if (GameData.Data == null)
 				throw new Exception();
-			
+
+			GameData.Data.UserConnected += Data_UserConnected;
+			GameData.Data.UserDisconnected += Data_UserDisconnected;
+
 			var mainWindow = new UI.MainWindow();
 			this.MainWindow = mainWindow;
 			mainWindow.Show();
@@ -45,6 +48,28 @@ namespace Dwarrowdelf.Client
 			if (ClientConfig.AutoConnect)
 			{
 				await StartServerAndConnectAsync();
+			}
+		}
+
+		void Data_UserDisconnected()
+		{
+			App.GameWindow.MapControl.GoTo(null);
+		}
+
+		void Data_UserConnected()
+		{
+			var data = GameData.Data;
+
+			if (data.GameMode == GameMode.Adventure)
+				App.GameWindow.MapControl.GoTo(data.FocusedObject);
+			else
+				App.GameWindow.MapControl.GoTo(data.World.Controllables.First());
+
+			if (Program.StartupStopwatch != null)
+			{
+				Program.StartupStopwatch.Stop();
+				Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
+				Program.StartupStopwatch = null;
 			}
 		}
 
