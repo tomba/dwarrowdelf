@@ -35,8 +35,7 @@ namespace Dwarrowdelf.Client
 				ClientConfig.EmbeddedServerOptions.NewGameOptions.Mode = GameMode.Fortress;
 
 			// this will force instantiating GameData.Data in the main thread
-			if (GameData.Data == null)
-				throw new Exception();
+			GameData.Create();
 
 			GameData.Data.UserConnected += Data_UserConnected;
 			GameData.Data.UserDisconnected += Data_UserDisconnected;
