@@ -42,7 +42,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TilePrerenderer", "Client\T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Engine", "Client\Engine\Client.Engine.csproj", "{A7884EDF-FD74-45D6-9953-E1D76DC0A45A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.BaseWPF", "Client\BaseWPF\Client.BaseWPF.csproj", "{3A421FE6-7DEE-4782-9D89-B6D2EB2F24FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Common", "Client\Common\Client.Common.csproj", "{3A421FE6-7DEE-4782-9D89-B6D2EB2F24FB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E6E85EBC-02B3-43FE-9485-81DCB2E6EBAF}"
 	ProjectSection(SolutionItems) = preProject

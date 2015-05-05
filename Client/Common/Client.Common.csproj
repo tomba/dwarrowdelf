@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dwarrowdelf.Client</RootNamespace>
-    <AssemblyName>Dwarrowdelf.Client.BaseWPF</AssemblyName>
+    <AssemblyName>Dwarrowdelf.Client.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

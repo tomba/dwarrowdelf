@@ -4,7 +4,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:local="clr-namespace:Dwarrowdelf.Client"
 		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-		xmlns:wpfbase="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.BaseWPF"
+		xmlns:clientCommon="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.Common"
 		FocusManager.FocusedElement="{Binding ElementName=inputTextBox}"
 		Title="ConsoleDialog" Height="400" Width="640"
 		DataContext="{x:Static local:GameData.Data}">
@@ -24,7 +24,7 @@
 			<RadioButton Margin="6,2" Name="clientButton" Content="Client" GroupName="Destination" Grid.Column="1" Grid.Row="1" Focusable="False" IsChecked="True" />
 		</Grid>
 
-		<ListBox x:Name="textListBox" SelectionMode="Single" wpfbase:ListBoxExtenders.AutoScrollToEnd="True"
+		<ListBox x:Name="textListBox" SelectionMode="Single" clientCommon:ListBoxExtenders.AutoScrollToEnd="True"
 								 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" FontFamily="Lucida Console">
 			<ListBox.ItemTemplate>
 				<DataTemplate>

@@ -462,9 +462,9 @@
       <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
       <Name>Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BaseWPF\Client.BaseWPF.csproj">
+    <ProjectReference Include="..\Common\Client.Common.csproj">
       <Project>{3a421fe6-7dee-4782-9d89-b6d2eb2f24fb}</Project>
-      <Name>Client.BaseWPF</Name>
+      <Name>Client.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Engine\Client.Engine.csproj">
       <Project>{a7884edf-fd74-45d6-9953-e1d76dc0a45a}</Project>
