@@ -52,11 +52,21 @@ namespace Dwarrowdelf.Client
 
 			m_fpsCounter = new FPSCounterSystem(this, s =>
 			{
-				var ctrl = this.Window.NativeWindow as SharpDX.Windows.RenderControl;
-				if (ctrl != null)
-					((System.Windows.Forms.Form)ctrl.TopLevelControl).Text = s;
+				if (Program.Mode == ThreeDMode.WinForms)
+				{
+					var ctrl = this.Window.NativeWindow as SharpDX.Windows.RenderControl;
+					if (ctrl != null)
+						((System.Windows.Forms.Form)ctrl.TopLevelControl).Text = s;
+				}
+				else if (Program.Mode == ThreeDMode.WpfHwndHost)
+				{
+					App.Current.Dispatcher.Invoke(() => App.Current.MainWindow.Title = s);
+					return;
+				}
 				else
+				{
 					this.Window.Title = s;
+				}
 			});
 
 			//m_testCubeRenderer = new TestCubeRenderer(this);
