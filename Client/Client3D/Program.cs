@@ -51,7 +51,7 @@ namespace Dwarrowdelf.Client
 			else
 			{
 				var app = new App();
-				app.InitializeComponent();
+				//app.InitializeComponent(); // XXX enable if app contains resources
 				app.Run();
 			}
 

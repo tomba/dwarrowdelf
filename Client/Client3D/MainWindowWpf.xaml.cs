@@ -2,6 +2,7 @@
 using SharpDX.Windows;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -26,12 +27,19 @@ namespace Dwarrowdelf.Client
 		public MainWindowWpf()
 		{
 			InitializeComponent();
+
+			this.Closing += MainWindow_Closing;
 		}
 
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
 
+			InitSharpDXSurface();
+		}
+
+		void InitSharpDXSurface()
+		{
 			object gameSurface;
 
 			if (Program.Mode == ThreeDMode.WpfSharpDXElement)
@@ -87,6 +95,49 @@ namespace Dwarrowdelf.Client
 			{
 				nwnd.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			}));
+		}
+
+		enum CloseStatus
+		{
+			None,
+			ShuttingDown,
+			Ready,
+		}
+
+		CloseStatus m_closeStatus;
+
+		async void MainWindow_Closing(object sender, CancelEventArgs e)
+		{
+			switch (m_closeStatus)
+			{
+				case CloseStatus.None:
+					m_closeStatus = CloseStatus.ShuttingDown;
+
+					e.Cancel = true;
+
+					try
+					{
+						var prog = new Progress<string>(str => Trace.TraceInformation(str));
+						await GameData.Data.ConnectManager.DisconnectAsync(prog);
+						await GameData.Data.ConnectManager.StopServerAsync(prog);
+					}
+					catch (Exception exc)
+					{
+						MessageBox.Show(exc.ToString(), "Error closing down");
+					}
+
+					m_closeStatus = CloseStatus.Ready;
+					await this.Dispatcher.InvokeAsync(Close);
+
+					break;
+
+				case CloseStatus.ShuttingDown:
+					e.Cancel = true;
+					break;
+
+				case CloseStatus.Ready:
+					break;
+			}
 		}
 	}
 }

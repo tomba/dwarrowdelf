@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Client
 
 			m_fpsCounter = new FPSCounterSystem(this, s =>
 			{
-				var ctrl = this.Window.NativeWindow as System.Windows.Forms.Control;
+				var ctrl = this.Window.NativeWindow as SharpDX.Windows.RenderControl;
 				if (ctrl != null)
 					((System.Windows.Forms.Form)ctrl.TopLevelControl).Text = s;
 				else
