@@ -1,68 +1,56 @@
 ﻿using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
+using System;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class DebugAxesRenderer : GameSystem
+	sealed class DebugAxesRenderer : GameComponent
 	{
-		CameraProvider m_cameraService;
-
 		BasicEffect m_basicEffect;
 
 		PrimitiveBatch<VertexPositionColor> m_batch;
 		GeometricPrimitive m_plane;
 
-		public DebugAxesRenderer(Game game)
-			: base(game)
+		public DebugAxesRenderer(GraphicsDevice device)
+			: base(device)
 		{
-			this.Visible = true;
-			this.Enabled = true;
-			game.GameSystems.Add(this);
+			LoadContent();
 		}
 
-		public override void Initialize()
+		void LoadContent()
 		{
-			base.Initialize();
-
-			m_cameraService = this.Services.GetService<CameraProvider>();
-		}
-
-		protected override void LoadContent()
-		{
-			base.LoadContent();
-
-			m_basicEffect = ToDisposeContent(new BasicEffect(GraphicsDevice));
+			m_basicEffect = ToDispose(new BasicEffect(this.GraphicsDevice));
 
 			m_basicEffect.VertexColorEnabled = true;
 			m_basicEffect.LightingEnabled = false;
 
 			m_batch = new PrimitiveBatch<VertexPositionColor>(this.GraphicsDevice);
-			m_plane = ToDisposeContent(GeometricPrimitive.Plane.New(this.GraphicsDevice, 2, 2, 1, true));
+			m_plane = ToDispose(GeometricPrimitive.Plane.New(this.GraphicsDevice, 2, 2, 1, true));
 		}
 
-		public override void Update(GameTime gameTime)
+		public override void Update(TimeSpan time)
 		{
 		}
 
-		public override void Draw(GameTime gameTime)
+		public override void Draw(Camera camera)
 		{
-			DrawPlane();
-			DrawAxes();
+			DrawPlane(camera);
+			DrawAxes(camera);
 		}
 
-		void DrawAxes()
+		void DrawAxes(Camera camera)
 		{
 			var device = this.GraphicsDevice;
 
-			var campos = m_cameraService.Position;
-			var look = m_cameraService.Look;
+			var campos = camera.Position;
+			var look = camera.Look;
 
 			var pos = campos + look * 15;
 
 			m_basicEffect.World = Matrix.Identity * Matrix.Translation(pos);
-			m_basicEffect.View = m_cameraService.View;
-			m_basicEffect.Projection = m_cameraService.Projection * Matrix.Translation(0.9f, 0.9f, 0);
+			m_basicEffect.View = camera.View;
+			m_basicEffect.Projection = camera.Projection * Matrix.Translation(0.9f, 0.9f, 0);
 
 			m_basicEffect.TextureEnabled = false;
 			m_basicEffect.VertexColorEnabled = true;
@@ -89,18 +77,18 @@ namespace Dwarrowdelf.Client
 			device.SetDepthStencilState(device.DepthStencilStates.Default);
 		}
 
-		void DrawPlane()
+		void DrawPlane(Camera camera)
 		{
 			var device = this.GraphicsDevice;
 
-			var campos = m_cameraService.Position;
-			var look = m_cameraService.Look;
+			var campos = camera.Position;
+			var look = camera.Look;
 
 			var pos = campos + look * 10;
 
 			m_basicEffect.World = Matrix.Identity;
 			m_basicEffect.View = Matrix.Identity * Matrix.Translation(0, 0, 15);
-			m_basicEffect.Projection = m_cameraService.Projection * Matrix.Translation(0.9f, 0.9f, 0);
+			m_basicEffect.Projection = camera.Projection * Matrix.Translation(0.9f, 0.9f, 0);
 
 			m_basicEffect.TextureEnabled = false;
 			m_basicEffect.VertexColorEnabled = false;

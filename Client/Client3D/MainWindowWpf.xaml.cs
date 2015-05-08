@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client
 {
 	public partial class MainWindowWpf : Window
 	{
-		MyGame game;
+		MyGame m_game;
 
 		public MainWindowWpf()
 		{
@@ -31,32 +31,12 @@ namespace Dwarrowdelf.Client
 			this.Closing += MainWindow_Closing;
 		}
 
-		protected override void OnInitialized(EventArgs e)
+		protected override void OnSourceInitialized(EventArgs e)
 		{
-			base.OnInitialized(e);
+			base.OnSourceInitialized(e);
 
-			InitSharpDXSurface();
-		}
-
-		void InitSharpDXSurface()
-		{
-			/*
-				* SendResizeToGame: true - sends resize event to the game when the element is resized with the 'SendResizeDelay' delay
-				* ReceiveResizeFromGame: true - the size of the element will be controller by the game
-				* SendResizeDelay: 0.5 seconds - wait this time after last resize event before sending resize to the game
-				* LowPriorityRendering: false - when set to true - executes the game loop with the DispatcherPriority.Input, which allows normal processing of input events, may skip some frames
-				*/
-			var elem = new SharpDXElement()
-			{
-				LowPriorityRendering = true,
-				SendResizeToGame = true,
-				SendResizeDelay = TimeSpan.FromSeconds(0.5),
-			};
-
-			gameGrid.Children.Add(elem);
-
-			game = new MyGame();
-			game.Run(elem);
+			m_game = new MyGame(sdxhost);
+			m_game.Start();
 		}
 
 		enum CloseStatus
@@ -74,6 +54,9 @@ namespace Dwarrowdelf.Client
 			{
 				case CloseStatus.None:
 					m_closeStatus = CloseStatus.ShuttingDown;
+
+					m_game.Stop();
+					m_game.Dispose();
 
 					e.Cancel = true;
 

@@ -1,13 +1,12 @@
 ﻿using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
+using System;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class ChunkOutlineRenderer : GameSystem
+	sealed class ChunkOutlineRenderer : GameComponent
 	{
-		CameraProvider m_cameraService;
-
 		GeometricPrimitive m_cube;
 		Texture2D m_cubeTexture;
 
@@ -17,30 +16,19 @@ namespace Dwarrowdelf.Client
 
 		RasterizerState m_rasterizerState;
 
-		public ChunkOutlineRenderer(Game game, ChunkManager chunkManager)
-			: base(game)
+		public ChunkOutlineRenderer(GraphicsDevice device, ChunkManager chunkManager)
+			: base(device)
 		{
 			m_chunkManager = chunkManager;
 
-			this.Visible = true;
-			this.Enabled = true;
-			game.GameSystems.Add(this);
+			LoadContent();
 		}
 
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			m_cameraService = this.Services.GetService<CameraProvider>();
-		}
-
-		protected override void LoadContent()
+		void LoadContent()
 		{
 			var device = this.GraphicsDevice;
 
-			base.LoadContent();
-
-			m_basicEffect = ToDisposeContent(new BasicEffect(GraphicsDevice));
+			m_basicEffect = ToDispose(new BasicEffect(GraphicsDevice));
 
 			m_basicEffect.TextureEnabled = true;
 			m_basicEffect.Sampler = device.SamplerStates.PointClamp;
@@ -52,16 +40,15 @@ namespace Dwarrowdelf.Client
 			m_rasterizerState = RasterizerState.New(device, rdesc);
 		}
 
-		public override void Update(GameTime gameTime)
+		public override void Update(TimeSpan gameTime)
 		{
-			var time = (float)gameTime.TotalGameTime.TotalSeconds;
-
-			m_basicEffect.View = m_cameraService.View;
-			m_basicEffect.Projection = m_cameraService.Projection;
 		}
 
-		public override void Draw(GameTime gameTime)
+		public override void Draw(Camera camera)
 		{
+			m_basicEffect.View = camera.View;
+			m_basicEffect.Projection = camera.Projection;
+
 			var chunks = m_chunkManager.DebugChunks;
 
 			m_basicEffect.Texture = m_cubeTexture;
@@ -94,9 +81,9 @@ namespace Dwarrowdelf.Client
 
 		private void LoadCube()
 		{
-			m_cube = ToDisposeContent(GeometricPrimitive.Cube.New(GraphicsDevice, Chunk.CHUNK_SIZE, toLeftHanded: true));
+			m_cube = ToDispose(GeometricPrimitive.Cube.New(GraphicsDevice, Chunk.CHUNK_SIZE, toLeftHanded: true));
 
-			m_cubeTexture = Content.Load<Texture2D>("RectangleOutline");
+			m_cubeTexture = ToDispose(Texture2D.Load(this.GraphicsDevice, "Content/RectangleOutline.tkb"));
 		}
 	}
 }

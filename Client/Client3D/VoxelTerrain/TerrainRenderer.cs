@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	class TerrainRenderer : GameSystem
+	class TerrainRenderer : GameComponent
 	{
 		public TerrainEffect Effect { get { return m_effect; } }
 		TerrainEffect m_effect;
@@ -28,12 +28,9 @@ namespace Dwarrowdelf.Client
 
 		DirectionalLight m_directionalLight;
 
-		public TerrainRenderer(Game game)
-			: base(game)
+		public TerrainRenderer(GraphicsDevice device, Camera camera, ViewGridProvider viewGridProvider)
+			: base(device)
 		{
-			this.Visible = true;
-			this.Enabled = false;
-
 			m_directionalLight = new DirectionalLight()
 			{
 				AmbientColor = new Vector3(0.4f),
@@ -42,34 +39,26 @@ namespace Dwarrowdelf.Client
 				LightDirection = Vector3.Normalize(new Vector3(1, 2, -4)),
 			};
 
-			m_chunkManager = ToDispose(new ChunkManager(this));
+			m_chunkManager = ToDispose(new ChunkManager(this, camera, viewGridProvider));
 
-			game.GameSystems.Add(this);
+			LoadContent();
 		}
 
-		public override void Initialize()
+		void LoadContent()
 		{
-			base.Initialize();
+			var effectData = EffectData.Load("Content/TerrainEffect.tkb");
+			m_effect = ToDispose(new TerrainEffect(this.GraphicsDevice, effectData));
 
-			m_chunkManager.Initialize();
+			m_effect.TileTextures = Texture2D.Load(this.GraphicsDevice, "Content/TileSetTextureArray.tkb");
+
+			m_symbolEffect = ToDispose(new SymbolEffect(this.GraphicsDevice, EffectData.Load("Content/SymbolEffect.tkb")));
+
+			m_symbolEffect.SymbolTextures = Texture2D.Load(this.GraphicsDevice, "Content/TileSetTextureArray.tkb");
 		}
 
-		protected override void LoadContent()
+		public override void Update(TimeSpan gameTime)
 		{
-			base.LoadContent();
-
-			m_effect = this.Content.Load<TerrainEffect>("TerrainEffect");
-
-			m_effect.TileTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
-
-			m_symbolEffect = this.Content.Load<SymbolEffect>("SymbolEffect");
-
-			m_symbolEffect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
-		}
-
-		public override void Update(GameTime gameTime)
-		{
-			var tTime = (float)gameTime.TotalGameTime.TotalSeconds;
+			var tTime = (float)gameTime.TotalSeconds;
 
 			if (IsRotationEnabled)
 			{
@@ -81,15 +70,14 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public override void Draw(GameTime gameTime)
+		public override void Draw(Camera camera)
 		{
-			m_chunkManager.PrepareDraw(gameTime);
-
-			var camera = this.Services.GetService<CameraProvider>();
+			m_chunkManager.PrepareDraw();
 
 			var device = this.GraphicsDevice;
 
-			device.SetRasterizerState(((MyGame)this.Game).RasterizerState);
+#warning todo
+			//	device.SetRasterizerState(((MyGame)this.Game).RasterizerState);
 
 			// voxels
 			{
@@ -101,7 +89,7 @@ namespace Dwarrowdelf.Client
 				var renderPass = m_effect.CurrentTechnique.Passes[0];
 				renderPass.Apply();
 
-				m_chunkManager.Draw(gameTime);
+				m_chunkManager.Draw(camera);
 			}
 
 			device.SetRasterizerState(device.RasterizerStates.Default);

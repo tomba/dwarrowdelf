@@ -1,40 +1,29 @@
 ﻿using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
+using System;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class TestCubeRenderer : GameSystem
+	sealed class TestCubeRenderer : GameComponent
 	{
-		CameraProvider m_cameraService;
-
 		GeometricPrimitive m_cube;
 		Texture2D m_cubeTexture;
 		Matrix m_cubeTransform;
 
 		BasicEffect m_basicEffect;
 
-		public TestCubeRenderer(Game game)
-			: base(game)
+		Camera m_camera;
+		public TestCubeRenderer(GraphicsDevice device, Camera camera)
+			: base(device)
 		{
-			this.Visible = true;
-			this.Enabled = true;
-
-			game.GameSystems.Add(this);
+			m_camera = camera;
+			LoadContent();
 		}
 
-		public override void Initialize()
+		void LoadContent()
 		{
-			base.Initialize();
-
-			m_cameraService = this.Services.GetService<CameraProvider>();
-		}
-
-		protected override void LoadContent()
-		{
-			base.LoadContent();
-
-			m_basicEffect = ToDisposeContent(new BasicEffect(GraphicsDevice));
+			m_basicEffect = ToDispose(new BasicEffect(this.GraphicsDevice));
 
 			m_basicEffect.EnableDefaultLighting(); // enable default lightning, useful for quick prototyping
 			m_basicEffect.TextureEnabled = true;   // enable texture drawing
@@ -42,19 +31,19 @@ namespace Dwarrowdelf.Client
 			LoadCube();
 		}
 
-		public override void Update(GameTime gameTime)
+		public override void Update(TimeSpan gameTime)
 		{
-			var time = (float)gameTime.TotalGameTime.TotalSeconds;
+			var time = (float)gameTime.TotalSeconds;
 
 			m_cubeTransform = Matrix.RotationX(time) * Matrix.RotationY(time * 2f) * Matrix.RotationZ(time * .7f) *
-				Matrix.Translation(m_cameraService.Position + m_cameraService.Look * 10);
-
-			m_basicEffect.View = m_cameraService.View;
-			m_basicEffect.Projection = m_cameraService.Projection;
+				Matrix.Translation(m_camera.Position + m_camera.Look * 10);
 		}
 
-		public override void Draw(GameTime gameTime)
+		public override void Draw(Camera camera)
 		{
+			m_basicEffect.View = camera.View;
+			m_basicEffect.Projection = camera.Projection;
+
 			m_basicEffect.Texture = m_cubeTexture;
 			m_basicEffect.World = m_cubeTransform;
 			m_cube.Draw(m_basicEffect);
@@ -62,9 +51,9 @@ namespace Dwarrowdelf.Client
 
 		void LoadCube()
 		{
-			m_cube = ToDisposeContent(GeometricPrimitive.Cube.New(GraphicsDevice, 1, toLeftHanded: true));
+			m_cube = ToDispose(GeometricPrimitive.Cube.New(this.GraphicsDevice, 1, toLeftHanded: true));
 
-			m_cubeTexture = Content.Load<Texture2D>("logo_large");
+			m_cubeTexture = ToDispose(Texture2D.Load(this.GraphicsDevice, "Content/logo_large.tkb"));
 
 			m_cubeTransform = Matrix.Identity;
 		}

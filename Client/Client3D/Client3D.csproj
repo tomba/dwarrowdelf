@@ -92,6 +92,12 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="CameraProvider.cs" />
+    <Compile Include="GameCore\Camera.cs" />
+    <Compile Include="GameCore\GameComponent.cs" />
+    <Compile Include="GameCore\GameCore.cs" />
+    <Compile Include="GameCore\GameSurface.cs" />
+    <Compile Include="GameCore\GameSurfaceView.cs" />
+    <Compile Include="GameCore\SharpDXHost.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="VoxelTerrain\Chunk.cs" />
     <Compile Include="VoxelTerrain\ChunkManager.cs" />

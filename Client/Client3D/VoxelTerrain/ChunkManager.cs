@@ -62,19 +62,28 @@ namespace Dwarrowdelf.Client
 		/// </summary>
 		public IntSize3 Size { get; private set; }
 
-		CameraProvider m_camera;
+		Camera m_camera;
+		ViewGridProvider m_viewGridProvider;
 
 		bool m_forceNearListUpdate;
 		bool m_forceDrawListUpdate;
 
-		public ChunkManager(TerrainRenderer scene)
+		public ChunkManager(TerrainRenderer scene, Camera camera, ViewGridProvider viewGridProvider)
 		{
 			m_scene = scene;
+			m_camera = camera;
+			m_viewGridProvider = viewGridProvider;
 
 			GameData.Data.MapChanged += Data_MapChanged;
 
-			var viewGridProvider = m_scene.Services.GetService<ViewGridProvider>();
 			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
+
+			m_cameraPos = m_camera.Position;
+			m_cameraLook = m_camera.Look;
+			m_cameraChunkPos = (m_cameraPos / Chunk.CHUNK_SIZE).ToFloorIntVector3();
+
+			m_forceNearListUpdate = true;
+			m_forceDrawListUpdate = true;
 		}
 
 		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)
@@ -132,18 +141,6 @@ namespace Dwarrowdelf.Client
 					if (chunk != null)
 						chunk.Free();
 			}
-		}
-
-		public void Initialize()
-		{
-			m_camera = m_scene.Services.GetService<CameraProvider>();
-
-			m_cameraPos = m_camera.Position;
-			m_cameraLook = m_camera.Look;
-			m_cameraChunkPos = (m_cameraPos / Chunk.CHUNK_SIZE).ToFloorIntVector3();
-
-			m_forceNearListUpdate = true;
-			m_forceDrawListUpdate = true;
 		}
 
 		void SetChunk(IntVector3 cp, Chunk chunk)
@@ -337,7 +334,7 @@ namespace Dwarrowdelf.Client
 
 			float chunkRadius = (float)Math.Sqrt(3) * Chunk.CHUNK_SIZE / 2;
 
-			var viewGrid = m_scene.Services.GetService<ViewGridProvider>().ViewGrid;
+			var viewGrid = m_viewGridProvider.ViewGrid;
 
 			// XXX grid can be reduced to be inside camradius, but we need to somehow free the chunks that go outside near list
 			//var grid = new IntGrid3(viewGrid.Corner1 / Chunk.CHUNK_SIZE, (viewGrid.Corner2 + Chunk.CHUNK_SIZE - 1) / Chunk.CHUNK_SIZE);
@@ -410,8 +407,7 @@ namespace Dwarrowdelf.Client
 
 			var task = Task.Run(() =>
 			{
-				var viewGridProvider = m_scene.Services.GetService<ViewGridProvider>();
-				IntGrid3 viewGrid = viewGridProvider.ViewGrid;
+				IntGrid3 viewGrid = m_viewGridProvider.ViewGrid;
 
 				Parallel.ForEach(m_rebuildList, chunk =>
 				{
@@ -444,8 +440,8 @@ namespace Dwarrowdelf.Client
 
 				var chunk = cacheItem.Chunk;
 
-				chunk.UpdateVertexBuffer(m_scene.Game.GraphicsDevice, cacheItem.TerrainVertexList);
-				chunk.UpdateSceneryVertexBuffer(m_scene.Game.GraphicsDevice, cacheItem.SceneryVertexList);
+				chunk.UpdateVertexBuffer(m_scene.GraphicsDevice, cacheItem.TerrainVertexList);
+				chunk.UpdateSceneryVertexBuffer(m_scene.GraphicsDevice, cacheItem.SceneryVertexList);
 
 				chunk.IsValid = true;
 
@@ -464,7 +460,7 @@ namespace Dwarrowdelf.Client
 			m_rebuildList.Clear();
 		}
 
-		public void PrepareDraw(GameTime gameTime)
+		public void PrepareDraw()
 		{
 			var cameraPos = m_camera.Position;
 			var cameraLook = m_camera.Look;
@@ -488,9 +484,9 @@ namespace Dwarrowdelf.Client
 			m_forceNearListUpdate = m_forceDrawListUpdate = false;
 		}
 
-		public void Draw(GameTime gameTime)
+		public void Draw(Camera camera)
 		{
-			var device = m_scene.Game.GraphicsDevice;
+			var device = m_scene.GraphicsDevice;
 
 			int numVertices = 0;
 
@@ -511,7 +507,7 @@ namespace Dwarrowdelf.Client
 
 		public void DrawTrees()
 		{
-			var device = m_scene.Game.GraphicsDevice;
+			var device = m_scene.GraphicsDevice;
 
 			foreach (var chunk in m_drawList)
 			{

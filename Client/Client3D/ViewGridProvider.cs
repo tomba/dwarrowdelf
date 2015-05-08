@@ -10,11 +10,9 @@ namespace Dwarrowdelf.Client
 {
 	class ViewGridProvider
 	{
-		public ViewGridProvider(Game game)
+		public ViewGridProvider()
 		{
 			GameData.Data.MapChanged += Data_MapChanged;
-
-			game.Services.AddService(typeof(ViewGridProvider), this);
 		}
 
 		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)

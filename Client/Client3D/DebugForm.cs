@@ -41,9 +41,9 @@ namespace Dwarrowdelf.Client
 			m_timer = new Timer();
 			m_timer.Tick += timer_Tick;
 			m_timer.Interval = 1000;
-			m_timer.Start();
+			//m_timer.Start();
 
-			var viewGridProvider = game.Services.GetService<ViewGridProvider>();
+			var viewGridProvider = game.ViewGrid;
 			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
 
 			this.viewCorner1TextBox.Text = viewGridProvider.ViewCorner1.ToString();
@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Client
 				this.ypCutTrackBar.Maximum = map.Height - 1;
 			}
 
-			var viewGridProvider = m_game.Services.GetService<ViewGridProvider>();
+			var viewGridProvider = m_game.ViewGrid;
 
 			this.zCutTrackBar.Value = viewGridProvider.ViewCorner2.Z;
 			this.xnCutTrackBar.Value = viewGridProvider.ViewCorner1.X;
@@ -146,7 +146,7 @@ namespace Dwarrowdelf.Client
 
 		void timer_Tick(object sender, EventArgs e)
 		{
-			var cam = m_scene.Services.GetService<CameraProvider>();
+			Camera cam = null; // m_scene.Services.GetService<CameraProvider>();
 
 			var campos = cam.Position;
 			var chunkpos = (campos / Chunk.CHUNK_SIZE).ToFloorIntVector3();

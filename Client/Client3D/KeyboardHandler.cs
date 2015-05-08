@@ -1,46 +1,112 @@
 ﻿using Dwarrowdelf;
 using SharpDX;
-using SharpDX.Toolkit;
-using SharpDX.Toolkit.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Forms = System.Windows.Forms;
+using System.Windows.Input;
 
 namespace Dwarrowdelf.Client
 {
-	class KeyboardHandler : GameSystem
+	class KeyboardHandler : IGameUpdatable
 	{
-		readonly KeyboardManager m_keyboardManager;
+		ViewGridProvider m_viewGridProvider;
 
-		CameraProvider m_cameraProvider;
+		Camera m_cameraProvider;
 
-		public KeyboardHandler(Game game)
-			: base(game)
+		public KeyboardHandler(SharpDXHost control, Camera camera, ViewGridProvider viewGridProvider)
 		{
-			this.Enabled = true;
+			m_cameraProvider = camera;
+			m_viewGridProvider = viewGridProvider;
 
-			m_keyboardManager = new KeyboardManager(game);
-
-			m_cameraProvider = this.Services.GetService<CameraProvider>();
-
-			game.GameSystems.Add(this);
+			control.KeyDown += OnKeyDown;
+			control.KeyUp += OnKeyUp;
+			control.LostKeyboardFocus += control_LostKeyboardFocus;
 		}
 
-		public override void Initialize()
+		void control_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
 		{
-			base.Initialize();
-
-			var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
-			ctrl.KeyPress += OnKeyPress;
-			ctrl.KeyDown += OnKeyDown;
+			m_keys.Clear();
 		}
 
-		void OnKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		HashSet<Key> m_keys = new HashSet<Key>();
+
+		void OnKeyDown(object sender, KeyEventArgs e)
 		{
-			var viewGrid = this.Services.GetService<ViewGridProvider>();
+			if (e.Key == Key.System || e.Key == Key.Tab)
+				return;
+
+			e.Handled = true;
+
+			m_keys.Add(e.Key);
+		}
+
+		void OnKeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.System || e.Key == Key.Tab)
+				return;
+
+			e.Handled = true;
+
+			m_keys.Remove(e.Key);
+		}
+
+		public void Update(TimeSpan time)
+		{
+			HandleFpsKeyboard();
+		}
+
+		bool IsKeyDown(Key key)
+		{
+			return m_keys.Contains(key);
+		}
+
+		void HandleFpsKeyboard()
+		{
+			const float walkSpeek = 40f;
+			const float rotSpeed = MathUtil.PiOverTwo * 1.5f;
+			float dTime = 0.0166f; // (float)gameTime.ElapsedGameTime.TotalSeconds;
+			float mul = 1f;
+
+			if (IsKeyDown(Key.LeftShift) || IsKeyDown(Key.RightShift))
+				mul = 0.2f;
+
+			if (IsKeyDown(Key.W))
+				m_cameraProvider.Walk(walkSpeek * dTime * mul);
+			else if (IsKeyDown(Key.S))
+				m_cameraProvider.Walk(-walkSpeek * dTime * mul);
+
+			if (IsKeyDown(Key.D))
+				m_cameraProvider.Strafe(walkSpeek * dTime * mul);
+			else if (IsKeyDown(Key.A))
+				m_cameraProvider.Strafe(-walkSpeek * dTime * mul);
+
+			if (IsKeyDown(Key.E))
+				m_cameraProvider.Climb(walkSpeek * dTime * mul);
+			else if (IsKeyDown(Key.Q))
+				m_cameraProvider.Climb(-walkSpeek * dTime * mul);
+
+			if (IsKeyDown(Key.Up))
+				m_cameraProvider.Pitch(-rotSpeed * dTime * mul);
+			else if (IsKeyDown(Key.Down))
+				m_cameraProvider.Pitch(rotSpeed * dTime * mul);
+
+			if (IsKeyDown(Key.Left))
+				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
+			else if (IsKeyDown(Key.Right))
+				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
+		}
+#if asd
+
+
+
+
+
+		void OnKeyDownForms(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+			var viewGrid = m_viewGridProvider;
 
 			bool handled = true;
 
@@ -87,9 +153,9 @@ namespace Dwarrowdelf.Client
 			e.SuppressKeyPress = handled;
 		}
 
-		void OnKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+		void OnKeyPressForms(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-			var viewGrid = this.Services.GetService<ViewGridProvider>();
+			var viewGrid = m_viewGridProvider;
 
 			var map = GameData.Data.Map;
 
@@ -116,10 +182,11 @@ namespace Dwarrowdelf.Client
 					if (map == null)
 						break;
 					{
+#if asd
 						var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
 						var p = ctrl.PointToClient(System.Windows.Forms.Control.MousePosition);
 
-						var camera = this.Services.GetService<CameraProvider>();
+						var camera = m_camera;
 
 						var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
 
@@ -135,6 +202,7 @@ namespace Dwarrowdelf.Client
 
 								return false;
 							});
+#endif
 					}
 					break;
 
@@ -142,6 +210,7 @@ namespace Dwarrowdelf.Client
 					if (map == null)
 						break;
 					{
+#if asd
 						var sel = this.Services.GetService<SelectionRenderer>();
 
 						if (sel.SelectionVisible)
@@ -154,6 +223,7 @@ namespace Dwarrowdelf.Client
 							var p = sel.Position;
 							map.SetTileData(p, TileData.EmptyTileData);
 						}
+#endif
 					}
 					break;
 
@@ -161,6 +231,7 @@ namespace Dwarrowdelf.Client
 					if (map == null)
 						break;
 					{
+#if asd
 						var sel = this.Services.GetService<SelectionRenderer>();
 
 						if (sel.SelectionVisible)
@@ -175,14 +246,15 @@ namespace Dwarrowdelf.Client
 							if (map.Size.Contains(p + d))
 								map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
 						}
+#endif
 					}
 					break;
 			}
 		}
 
-		public override void Update(GameTime gameTime)
+		public void Update(GameTime gameTime)
 		{
-			var keyboardState = m_keyboardManager.GetState();
+			KeyboardState keyboardState = new KeyboardState();// m_keyboardManager.GetState();
 
 			switch (GameData.Data.ControlMode)
 			{
@@ -268,7 +340,7 @@ namespace Dwarrowdelf.Client
 
 				if (GameData.Data.AlignViewGridToCamera && v.Z != 0)
 				{
-					var viewGrid = this.Services.GetService<ViewGridProvider>();
+					var viewGrid = m_viewGridProvider;
 
 					var c = viewGrid.ViewCorner2;
 					c.Z = (int)m_cameraProvider.Position.Z - 32;
@@ -286,5 +358,6 @@ namespace Dwarrowdelf.Client
 			else if (keyboardState.IsKeyDown(Keys.Right))
 				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
 		}
+#endif
 	}
 }
