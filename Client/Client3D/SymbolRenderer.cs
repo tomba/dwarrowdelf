@@ -2,6 +2,7 @@
 using SharpDX;
 using SharpDX.Toolkit;
 using SharpDX.Toolkit.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15,7 +16,7 @@ namespace Dwarrowdelf.Client
 		public List<MovableObject> Movables;
 	}
 
-	class SymbolRenderer : GameSystem
+	class SymbolRenderer : GameComponent
 	{
 		SymbolEffect m_effect;
 
@@ -26,18 +27,21 @@ namespace Dwarrowdelf.Client
 
 		bool m_invalid;
 
-		public SymbolRenderer(Game game, MovableManager manager)
-			: base(game)
-		{
-			this.Visible = true;
-			this.Enabled = true;
+		ViewGridProvider m_viewGridProvider;
 
+		public SymbolRenderer(GraphicsDevice device, MovableManager manager, ViewGridProvider viewGridProvider)
+			: base(device)
+		{
 			m_invalid = true;
 
 			m_manager = manager;
+			m_viewGridProvider = viewGridProvider;
 			//MovableObject3D.MovableMoved += MovableObject_MovableMoved;
 
-			game.GameSystems.Add(this);
+			viewGridProvider.ViewGridCornerChanged +=
+				(oldValue, newValue) => m_invalid = true;
+
+			LoadContent();
 		}
 
 		void MovableObject_MovableMoved(MovableObject obj)
@@ -45,21 +49,16 @@ namespace Dwarrowdelf.Client
 			m_invalid = true;
 		}
 
-		public override void Initialize()
+		void LoadContent()
 		{
-			base.Initialize();
+			var effectData = EffectData.Load("Content/SymbolEffect.tkb");
+			m_effect = ToDispose(new SymbolEffect(this.GraphicsDevice, effectData));
 
-			this.Services.GetService<ViewGridProvider>().ViewGridCornerChanged +=
-				(oldValue, newValue) => m_invalid = true;
+			m_effect.SymbolTextures = ToDispose(Texture2D.Load(this.GraphicsDevice, "Content/TileSetTextureArray.tkb"));
 		}
 
-		protected override void LoadContent()
+		public override void Update(TimeSpan time)
 		{
-			base.LoadContent();
-
-			m_effect = this.Content.Load<SymbolEffect>("SymbolEffect");
-
-			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 		}
 
 		Color ToColor(GameColor color)
@@ -70,7 +69,7 @@ namespace Dwarrowdelf.Client
 
 		void UpdateVertexBuffer()
 		{
-			IntGrid3 viewGrid = this.Services.GetService<ViewGridProvider>().ViewGrid;
+			IntGrid3 viewGrid = m_viewGridProvider.ViewGrid;
 
 			var vertices = new VertexList<SceneryVertex>(m_manager.Movables.Count);
 
@@ -87,7 +86,7 @@ namespace Dwarrowdelf.Client
 				if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < vertices.Count)
 				{
 					RemoveAndDispose(ref m_vertexBuffer);
-					m_vertexBuffer = ToDispose(Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, vertices.Count));
+					m_vertexBuffer = ToDispose(SharpDX.Toolkit.Graphics.Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, vertices.Count));
 				}
 
 				m_vertexBuffer.SetData(vertices.Data, 0, vertices.Count);
@@ -96,7 +95,7 @@ namespace Dwarrowdelf.Client
 			m_vertexCount = vertices.Count;
 		}
 
-		public override void Draw(GameTime gameTime)
+		public override void Draw(Camera camera)
 		{
 			if (m_invalid)
 			{
@@ -108,8 +107,6 @@ namespace Dwarrowdelf.Client
 				return;
 
 			var device = this.GraphicsDevice;
-
-			var camera = this.Services.GetService<CameraProvider>();
 
 			m_effect.EyePos = camera.Position;
 			m_effect.ViewProjection = camera.View * camera.Projection;

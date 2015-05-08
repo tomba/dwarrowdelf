@@ -57,14 +57,8 @@
     <Reference Include="SharpDX.Toolkit">
       <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Toolkit.Game">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.Game.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX.Toolkit.Graphics">
       <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.Graphics.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Toolkit.Input">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.Input.dll</HintPath>
     </Reference>
     <Reference Include="SharpNoise, Version=0.10.0.33666, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpNoise.0.10.0.0\lib\net45\SharpNoise.dll</HintPath>
@@ -91,7 +85,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CameraProvider.cs" />
     <Compile Include="GameCore\Camera.cs" />
     <Compile Include="GameCore\GameComponent.cs" />
     <Compile Include="GameCore\GameCore.cs" />

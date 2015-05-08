@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using SharpDX;
 using SharpDX.Toolkit;
-using SharpDX.Toolkit.Input;
 using System.Diagnostics;
 using SharpDX.Toolkit.Graphics;
 using Dwarrowdelf;
@@ -17,7 +16,6 @@ namespace Dwarrowdelf.Client
 		readonly Camera m_camera;
 
 		readonly KeyboardHandler m_keyboardHandler;
-		readonly MouseManager m_mouseManager;
 		readonly ViewGridProvider m_viewGridProvider;
 		readonly TerrainRenderer m_terrainRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
