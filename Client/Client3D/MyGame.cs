@@ -39,34 +39,20 @@ namespace Dwarrowdelf.Client
 
 			//this.GameSystems.Add(new EffectCompilerSystem(this));		// allows changing shaders runtime
 			m_cameraProvider = new CameraProvider(this);
-			m_keyboardHandler = new KeyboardHandler(this);
-			m_mouseManager = new MouseManager(this);
+			//m_keyboardHandler = new KeyboardHandler(this);
+			//m_mouseManager = new MouseManager(this);
 
 			m_viewGridProvider = new ViewGridProvider(this);
 
 			m_terrainRenderer = new TerrainRenderer(this);
 			//m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
-			m_selectionRenderer = new SelectionRenderer(this, m_mouseManager);
+			//m_selectionRenderer = new SelectionRenderer(this, m_mouseManager);
 			m_debugAxesRenderer = new DebugAxesRenderer(this);
 			//m_outlineRenderer = new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager);
 
 			m_fpsCounter = new FPSCounterSystem(this, s =>
 			{
-				if (Program.Mode == ThreeDMode.WinForms)
-				{
-					var ctrl = this.Window.NativeWindow as SharpDX.Windows.RenderControl;
-					if (ctrl != null)
-						((System.Windows.Forms.Form)ctrl.TopLevelControl).Text = s;
-				}
-				else if (Program.Mode == ThreeDMode.WpfHwndHost)
-				{
-					App.Current.Dispatcher.Invoke(() => App.Current.MainWindow.Title = s);
-					return;
-				}
-				else
-				{
-					this.Window.Title = s;
-				}
+				this.Window.Title = s;
 			});
 
 			//m_testCubeRenderer = new TestCubeRenderer(this);
@@ -119,7 +105,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			m_terrainRenderer.Enabled = map != null;
-			m_selectionRenderer.Enabled = map != null;
+			//m_selectionRenderer.Enabled = map != null;
 		}
 
 		protected override void OnWindowCreated()

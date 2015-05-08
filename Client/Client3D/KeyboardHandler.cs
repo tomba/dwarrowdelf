@@ -33,12 +33,9 @@ namespace Dwarrowdelf.Client
 		{
 			base.Initialize();
 
-			if (Program.Mode == ThreeDMode.WinForms)
-			{
-				var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
-				ctrl.KeyPress += OnKeyPress;
-				ctrl.KeyDown += OnKeyDown;
-			}
+			var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
+			ctrl.KeyPress += OnKeyPress;
+			ctrl.KeyDown += OnKeyDown;
 		}
 
 		void OnKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -118,7 +115,6 @@ namespace Dwarrowdelf.Client
 				case 'r':
 					if (map == null)
 						break;
-
 					{
 						var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
 						var p = ctrl.PointToClient(System.Windows.Forms.Control.MousePosition);
@@ -145,7 +141,6 @@ namespace Dwarrowdelf.Client
 				case 'z':
 					if (map == null)
 						break;
-
 					{
 						var sel = this.Services.GetService<SelectionRenderer>();
 
@@ -165,7 +160,6 @@ namespace Dwarrowdelf.Client
 				case 'x':
 					if (map == null)
 						break;
-
 					{
 						var sel = this.Services.GetService<SelectionRenderer>();
 
