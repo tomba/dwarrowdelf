@@ -14,11 +14,14 @@ namespace Dwarrowdelf.Client
 	{
 		ViewGridProvider m_viewGridProvider;
 
-		Camera m_cameraProvider;
+		Camera m_camera;
+
+		SharpDXHost m_control;
 
 		public KeyboardHandler(SharpDXHost control, Camera camera, ViewGridProvider viewGridProvider)
 		{
-			m_cameraProvider = camera;
+			m_control = control;
+			m_camera = camera;
 			m_viewGridProvider = viewGridProvider;
 
 			control.KeyDown += OnKeyDown;
@@ -28,10 +31,11 @@ namespace Dwarrowdelf.Client
 
 		void control_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
 		{
-			m_keys.Clear();
+			m_keysDown.Clear();
 		}
 
-		HashSet<Key> m_keys = new HashSet<Key>();
+		HashSet<Key> m_keysDown = new HashSet<Key>();
+		HashSet<Key> m_keysPressed = new HashSet<Key>();
 
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
@@ -40,7 +44,8 @@ namespace Dwarrowdelf.Client
 
 			e.Handled = true;
 
-			m_keys.Add(e.Key);
+			m_keysDown.Add(e.Key);
+			m_keysPressed.Add(e.Key);
 		}
 
 		void OnKeyUp(object sender, KeyEventArgs e)
@@ -50,17 +55,20 @@ namespace Dwarrowdelf.Client
 
 			e.Handled = true;
 
-			m_keys.Remove(e.Key);
+			m_keysDown.Remove(e.Key);
 		}
 
 		public void Update(TimeSpan time)
 		{
 			HandleFpsKeyboard();
+			HandleKeyPresses();
+
+			m_keysPressed.Clear();
 		}
 
 		bool IsKeyDown(Key key)
 		{
-			return m_keys.Contains(key);
+			return m_keysDown.Contains(key);
 		}
 
 		void HandleFpsKeyboard()
@@ -74,29 +82,134 @@ namespace Dwarrowdelf.Client
 				mul = 0.2f;
 
 			if (IsKeyDown(Key.W))
-				m_cameraProvider.Walk(walkSpeek * dTime * mul);
+				m_camera.Walk(walkSpeek * dTime * mul);
 			else if (IsKeyDown(Key.S))
-				m_cameraProvider.Walk(-walkSpeek * dTime * mul);
+				m_camera.Walk(-walkSpeek * dTime * mul);
 
 			if (IsKeyDown(Key.D))
-				m_cameraProvider.Strafe(walkSpeek * dTime * mul);
+				m_camera.Strafe(walkSpeek * dTime * mul);
 			else if (IsKeyDown(Key.A))
-				m_cameraProvider.Strafe(-walkSpeek * dTime * mul);
+				m_camera.Strafe(-walkSpeek * dTime * mul);
 
 			if (IsKeyDown(Key.E))
-				m_cameraProvider.Climb(walkSpeek * dTime * mul);
+				m_camera.Climb(walkSpeek * dTime * mul);
 			else if (IsKeyDown(Key.Q))
-				m_cameraProvider.Climb(-walkSpeek * dTime * mul);
+				m_camera.Climb(-walkSpeek * dTime * mul);
 
 			if (IsKeyDown(Key.Up))
-				m_cameraProvider.Pitch(-rotSpeed * dTime * mul);
+				m_camera.Pitch(-rotSpeed * dTime * mul);
 			else if (IsKeyDown(Key.Down))
-				m_cameraProvider.Pitch(rotSpeed * dTime * mul);
+				m_camera.Pitch(rotSpeed * dTime * mul);
 
 			if (IsKeyDown(Key.Left))
-				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
+				m_camera.RotateZ(-rotSpeed * dTime * mul);
 			else if (IsKeyDown(Key.Right))
-				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
+				m_camera.RotateZ(rotSpeed * dTime * mul);
+		}
+
+		void HandleKeyPresses()
+		{
+			foreach (var key in m_keysPressed)
+				HandleKeyPress(key);
+		}
+
+		void HandleKeyPress(Key key)
+		{
+			var viewGrid = m_viewGridProvider;
+
+			var map = GameData.Data.Map;
+
+			switch (key)
+			{
+#if asd
+				case '>':
+					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Down;
+					break;
+				case '<':
+					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
+					break;
+#endif
+				case Key.D1:
+					m_camera.LookAt(m_camera.Position,
+						m_camera.Position + new Vector3(0, -1, -10),
+						Vector3.UnitZ);
+					break;
+				case Key.D2:
+					m_camera.LookAt(m_camera.Position,
+						m_camera.Position + new Vector3(1, 1, -1),
+						Vector3.UnitZ);
+					break;
+
+				case Key.R:
+					if (map == null)
+						break;
+					{
+						var p = Mouse.GetPosition(m_control);
+						int px = MyMath.Round(p.X);
+						int py = MyMath.Round(p.Y);
+
+						// XXX not correct, should come from the surface
+						var viewport = new ViewportF(0, 0, m_control.HostedWindowWidth, m_control.HostedWindowHeight);
+
+						var ray = Ray.GetPickRay(px, py, viewport, m_camera.View * m_camera.Projection);
+
+						VoxelRayCast.RunRayCast(ray.Position, ray.Direction, m_camera.FarZ,
+							(x, y, z, dir) =>
+							{
+								var l = new IntVector3(x, y, z);
+
+								if (map.Size.Contains(l) == false)
+									return true;
+
+								map.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
+
+								return false;
+							});
+					}
+					break;
+
+#if asd
+				case 'z':
+					if (map == null)
+						break;
+					{
+						var sel = this.Services.GetService<SelectionRenderer>();
+
+						if (sel.SelectionVisible)
+						{
+							foreach (var p in sel.SelectionGrid.Range())
+								map.SetTileData(p, TileData.EmptyTileData);
+						}
+						else if (sel.CursorVisible)
+						{
+							var p = sel.Position;
+							map.SetTileData(p, TileData.EmptyTileData);
+						}
+					}
+					break;
+
+				case 'x':
+					if (map == null)
+						break;
+					{
+						var sel = this.Services.GetService<SelectionRenderer>();
+
+						if (sel.SelectionVisible)
+						{
+							foreach (var p in sel.SelectionGrid.Range())
+								map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
+						}
+						else if (sel.CursorVisible)
+						{
+							var p = sel.Position;
+							var d = sel.Direction;
+							if (map.Size.Contains(p + d))
+								map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
+						}
+					}
+					break;
+#endif
+			}
 		}
 #if asd
 

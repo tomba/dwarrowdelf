@@ -5,15 +5,17 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using Dwarrowdelf;
 using System.Collections.Generic;
-using SharpDX.Toolkit.Input;
 using System.Diagnostics;
+using System.Windows.Input;
+using System;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class SelectionRenderer : GameSystem
+	sealed class SelectionRenderer : GameComponent
 	{
-		MouseManager m_mouseManager;
-		CameraProvider m_cameraService;
+		Camera m_cameraService;
+		ViewGridProvider m_viewGridProvider;
+		SharpDXHost m_control;
 
 		Effect m_effect;
 
@@ -30,32 +32,46 @@ namespace Dwarrowdelf.Client
 		public IntVector3 Position { get; private set; }
 		public Direction Direction { get; private set; }
 
-		public SelectionRenderer(Game game, MouseManager mouseManager)
-			: base(game)
+		public bool IsEnabled { get; set; }
+
+		bool m_isDown;
+		bool m_isClick;
+
+		public SelectionRenderer(GraphicsDevice device, Camera camera, ViewGridProvider viewGridProvider, SharpDXHost control)
+			: base(device)
 		{
-			m_mouseManager = mouseManager;
+			m_cameraService = camera;
+			m_viewGridProvider = viewGridProvider;
+			m_control = control;
 
-			this.Visible = true;
-			this.Enabled = false;
+			LoadContent();
 
-			game.GameSystems.Add(this);
-			game.Services.AddService(typeof(SelectionRenderer), this);
+			this.IsEnabled = false;
+
+			control.MouseLeftButtonDown += control_MouseLeftButtonDown;
+			control.MouseLeftButtonUp += control_MouseLeftButtonUp;
 		}
 
-		public override void Initialize()
+		void control_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
-			base.Initialize();
+			if (m_isDown == false)
+				return;
 
-			m_cameraService = this.Services.GetService<CameraProvider>();
+			m_isDown = false;
+			m_isClick = true;
 		}
 
-		protected override void LoadContent()
+		void control_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			base.LoadContent();
+			m_isDown = true;
+		}
 
-			m_effect = ToDispose(this.Content.Load<Effect>("SelectionEffect"));
+		void LoadContent()
+		{
+			var device = this.GraphicsDevice;
 
-			var device = this.Game.GraphicsDevice;
+			var effectData = EffectData.Load("Content/SelectionEffect.tkb");
+			m_effect = ToDispose(new Effect(device, effectData));
 
 			var tex = new[] {
 				new Vector2(1, 0),
@@ -86,7 +102,7 @@ namespace Dwarrowdelf.Client
 
 			m_layout = VertexInputLayout.New<VertexPositionColorTexture>(0);
 
-			m_vertexBuffer = ToDispose(Buffer.Vertex.New<VertexPositionColorTexture>(device, vertices.ToArray()));
+			m_vertexBuffer = ToDispose(SharpDX.Toolkit.Graphics.Buffer.Vertex.New<VertexPositionColorTexture>(device, vertices.ToArray()));
 		}
 
 		static readonly Quaternion[] s_rotationQuaternions;
@@ -120,14 +136,16 @@ namespace Dwarrowdelf.Client
 
 		bool MousePickVoxel(IntVector2 mousePos, out IntVector3 pos, out Direction face)
 		{
-			var camera = this.Services.GetService<CameraProvider>();
+			var camera = m_cameraService;
+
+			// XXX viewport wrong
 
 			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
 
 			IntVector3 outpos = new IntVector3();
 			Direction outdir = Direction.None;
 
-			var viewGrid = this.Services.GetService<ViewGridProvider>().ViewGrid;
+			var viewGrid = m_viewGridProvider.ViewGrid;
 
 			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
 				(x, y, z, dir) =>
@@ -153,72 +171,80 @@ namespace Dwarrowdelf.Client
 			return face != Direction.None;
 		}
 
-		public override void Update(GameTime gameTime)
+		public override void Update(TimeSpan gameTime)
 		{
-			var viewPort = this.GraphicsDevice.Viewport;
+			if (!this.IsEnabled)
+				return;
 
-			if (viewPort.Bounds.IsEmpty == false)
+			HandleMouse();
+
+			m_isClick = false;
+		}
+
+		void HandleMouse()
+		{
+			var pos = Mouse.GetPosition(m_control);
+
+			var mousePos = new IntVector2(MyMath.Round(pos.X), MyMath.Round(pos.Y));
+
+			IntVector3 p;
+			Direction d;
+
+			bool hit = MousePickVoxel(mousePos, out p, out d);
+
+			// cursor
+
+			if (hit)
 			{
-				var mouseState = m_mouseManager.GetState();
-
-				var mousePos = new IntVector2(MyMath.Round(mouseState.X * viewPort.Width), MyMath.Round(mouseState.Y * viewPort.Height));
-
-				IntVector3 p;
-				Direction d;
-
-				bool hit = MousePickVoxel(mousePos, out p, out d);
-
-				// cursor
-
-				if (hit)
+				if (m_isClick)
 				{
-					if (mouseState.LeftButton.Pressed)
-					{
-						var td = GameData.Data.Map.GetTileData(p);
+					var td = GameData.Data.Map.GetTileData(p);
 
-						System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, td);
-					}
-
-					this.Position = p;
-					this.Direction = d;
-					this.CursorVisible = true;
-				}
-				else
-				{
-					this.CursorVisible = false;
+					System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, td);
 				}
 
-				// selection
-				if (hit)
+				this.Position = p;
+				this.Direction = d;
+				this.CursorVisible = true;
+			}
+			else
+			{
+				this.CursorVisible = false;
+			}
+
+			// selection
+			if (hit)
+			{
+				if (m_isDown)
 				{
-					if (mouseState.LeftButton.Pressed)
+					if (this.SelectionVisible == false)
 					{
 						this.SelectionVisible = true;
 						this.SelectionStart = p;
 						this.SelectionDirection = d;
 					}
 
-					if (this.SelectionVisible)
-					{
-						this.SelectionEnd = p;
-					}
+					this.SelectionEnd = p;
 				}
+			}
 
-				if (mouseState.LeftButton.Released && this.SelectionVisible)
-				{
-					this.SelectionVisible = false;
+			if (this.SelectionVisible && m_isDown == false)
+			{
+				this.SelectionVisible = false;
 
-					Trace.TraceError("Select {0}, {1}", this.SelectionStart, this.SelectionEnd);
-				}
+				Trace.TraceError("Select {0}, {1}", this.SelectionStart, this.SelectionEnd);
 			}
 		}
 
-		public override void Draw(GameTime gameTime)
+		public override void Draw(Camera camera)
 		{
+			if (!this.IsEnabled)
+				return;
+
 			if (this.CursorVisible == false && this.SelectionVisible == false)
 				return;
 
-			var device = this.Game.GraphicsDevice;
+			var device = this.GraphicsDevice;
 
 			var viewProjMatrix = Matrix.Transpose(m_cameraService.View * m_cameraService.Projection);
 			viewProjMatrix.Transpose();

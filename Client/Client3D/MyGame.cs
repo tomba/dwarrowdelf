@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Client
 
 			m_terrainRenderer = new TerrainRenderer(this.GraphicsDevice, m_camera, m_viewGridProvider);
 			//m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
-			//m_selectionRenderer = new SelectionRenderer(this, m_mouseManager);
+			m_selectionRenderer = new SelectionRenderer(this.GraphicsDevice, m_camera, m_viewGridProvider, mainHost);
 			m_debugAxesRenderer = new DebugAxesRenderer(this.GraphicsDevice);
 
 			//m_outlineRenderer = new ChunkOutlineRenderer(this.GraphicsDevice, m_terrainRenderer.ChunkManager);
@@ -56,6 +56,7 @@ namespace Dwarrowdelf.Client
 			base.Updatables.Add(m_keyboardHandler);
 			base.Updatables.Add(m_terrainRenderer);
 			base.Updatables.Add(m_debugAxesRenderer);
+			base.Updatables.Add(m_selectionRenderer);
 
 			
 			m_fpsCounter = new FPSCounter(s =>
@@ -88,6 +89,7 @@ namespace Dwarrowdelf.Client
 			mainView.Drawables.Add(m_debugAxesRenderer);
 			//mainView.Drawables.Add(m_testCubeRenderer);
 			//mainView.Drawables.Add(m_outlineRenderer);
+			mainView.Drawables.Add(m_selectionRenderer);
 			
 			// surface
 
@@ -146,7 +148,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			//m_terrainRenderer.Enabled = map != null;
-			//m_selectionRenderer.Enabled = map != null;
+			m_selectionRenderer.IsEnabled = map != null;
 		}
 	}
 }
