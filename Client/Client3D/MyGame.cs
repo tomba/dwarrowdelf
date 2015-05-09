@@ -30,6 +30,7 @@ namespace Dwarrowdelf.Client
 		public RasterizerState RasterizerState { get; set; }
 
 		public ViewGridProvider ViewGrid { get { return m_viewGridProvider; } }
+		public Camera Camera { get { return m_camera; } }
 
 		public MyGame(SharpDXHost mainHost)
 		{

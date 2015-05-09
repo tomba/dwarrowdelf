@@ -37,6 +37,11 @@ namespace Dwarrowdelf.Client
 
 			m_game = new MyGame(sdxhost);
 			m_game.Start();
+
+			var dbg = new DebugWindow();
+			dbg.Owner = this;
+			dbg.SetGame(m_game);
+			dbg.Show();
 		}
 
 		enum CloseStatus

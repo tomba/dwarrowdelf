@@ -86,6 +86,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DebugWindow.xaml.cs">
+      <DependentUpon>DebugWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GameCore\Camera.cs" />
     <Compile Include="GameCore\ContentPool.cs" />
     <Compile Include="GameCore\GameComponent.cs" />
@@ -208,6 +211,10 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="DebugWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindowWpf.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
