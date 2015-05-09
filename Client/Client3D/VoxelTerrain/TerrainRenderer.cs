@@ -55,9 +55,9 @@ namespace Dwarrowdelf.Client
 			m_symbolEffect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 		}
 
-		public override void Update(TimeSpan gameTime)
+		public override void Update()
 		{
-			var tTime = (float)gameTime.TotalSeconds;
+			var tTime = (float)this.Game.Time.TotalTime.TotalSeconds;
 
 			if (IsRotationEnabled)
 			{
@@ -75,8 +75,7 @@ namespace Dwarrowdelf.Client
 
 			var device = this.GraphicsDevice;
 
-#warning todo
-			//	device.SetRasterizerState(((MyGame)this.Game).RasterizerState);
+			device.SetRasterizerState(((MyGame)this.Game).RasterizerState);
 
 			// voxels
 			{

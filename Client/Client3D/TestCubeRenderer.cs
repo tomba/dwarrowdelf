@@ -31,9 +31,9 @@ namespace Dwarrowdelf.Client
 			LoadCube();
 		}
 
-		public override void Update(TimeSpan gameTime)
+		public override void Update()
 		{
-			var time = (float)gameTime.TotalSeconds;
+			var time = (float)this.Game.Time.TotalTime.TotalSeconds;
 
 			m_cubeTransform = Matrix.RotationX(time) * Matrix.RotationY(time * 2f) * Matrix.RotationZ(time * .7f) *
 				Matrix.Translation(m_camera.Position + m_camera.Look * 10);

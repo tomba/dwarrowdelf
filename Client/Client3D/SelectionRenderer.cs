@@ -170,7 +170,7 @@ namespace Dwarrowdelf.Client
 			return face != Direction.None;
 		}
 
-		public override void Update(TimeSpan gameTime)
+		public override void Update()
 		{
 			if (!this.IsEnabled)
 				return;

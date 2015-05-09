@@ -6,7 +6,7 @@ namespace Dwarrowdelf.Client
 {
 	interface IGameUpdatable
 	{
-		void Update(TimeSpan time);
+		void Update();
 	}
 
 	interface IGameDrawable
@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 
 	abstract class GameComponent : Component, IGameUpdatable, IGameDrawable
 	{
-		public abstract void Update(TimeSpan time);
+		public abstract void Update();
 		public abstract void Draw(Camera camera);
 
 		public GameCore Game { get; private set; }

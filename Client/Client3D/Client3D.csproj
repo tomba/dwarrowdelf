@@ -91,6 +91,7 @@
     <Compile Include="GameCore\GameCore.cs" />
     <Compile Include="GameCore\GameSurface.cs" />
     <Compile Include="GameCore\GameSurfaceView.cs" />
+    <Compile Include="GameCore\GameTime.cs" />
     <Compile Include="GameCore\SharpDXHost.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="VoxelTerrain\Chunk.cs" />

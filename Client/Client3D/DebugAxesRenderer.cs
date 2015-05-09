@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Client
 			m_plane = ToDispose(GeometricPrimitive.Plane.New(this.GraphicsDevice, 2, 2, 1, true));
 		}
 
-		public override void Update(TimeSpan time)
+		public override void Update()
 		{
 		}
 

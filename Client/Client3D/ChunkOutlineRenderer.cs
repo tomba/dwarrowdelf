@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Client
 			m_rasterizerState = RasterizerState.New(device, rdesc);
 		}
 
-		public override void Update(TimeSpan gameTime)
+		public override void Update()
 		{
 		}
 

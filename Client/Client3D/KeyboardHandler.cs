@@ -18,8 +18,11 @@ namespace Dwarrowdelf.Client
 
 		SharpDXHost m_control;
 
-		public KeyboardHandler(SharpDXHost control, Camera camera, ViewGridProvider viewGridProvider)
+		MyGame m_game;
+
+		public KeyboardHandler(MyGame game, SharpDXHost control, Camera camera, ViewGridProvider viewGridProvider)
 		{
+			m_game = game;
 			m_control = control;
 			m_camera = camera;
 			m_viewGridProvider = viewGridProvider;
@@ -58,7 +61,7 @@ namespace Dwarrowdelf.Client
 			m_keysDown.Remove(e.Key);
 		}
 
-		public void Update(TimeSpan time)
+		public void Update()
 		{
 			HandleFpsKeyboard();
 			HandleKeyPresses();
@@ -75,7 +78,7 @@ namespace Dwarrowdelf.Client
 		{
 			const float walkSpeek = 40f;
 			const float rotSpeed = MathUtil.PiOverTwo * 1.5f;
-			float dTime = 0.0166f; // (float)gameTime.ElapsedGameTime.TotalSeconds;
+			float dTime = (float)m_game.Time.FrameTime.TotalSeconds;
 			float mul = 1f;
 
 			if (IsKeyDown(Key.LeftShift) || IsKeyDown(Key.RightShift))

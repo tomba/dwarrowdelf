@@ -18,11 +18,15 @@ namespace Dwarrowdelf.Client
 
 		public ContentPool Content { get; private set; }
 
+		public GameTime Time { get; private set; }
+
 		protected GameCore()
 		{
 			CreateDevice();
 
 			this.Content = ToDispose(new ContentPool(this.GraphicsDevice));
+
+			this.Time = new GameTime();
 		}
 
 		protected override void Dispose(bool disposeManagedResources)
@@ -71,12 +75,14 @@ namespace Dwarrowdelf.Client
 
 			m_timer.Tick();
 
+			this.Time.Update(m_timer.TotalTime, m_timer.ElapsedTime);
+
 			var time = m_timer.TotalTime;
 
 			// UPDATE 
 			foreach (var updatable in this.Updatables)
 			{
-				updatable.Update(time);
+				updatable.Update();
 			}
 
 			// DRAW

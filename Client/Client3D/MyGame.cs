@@ -38,8 +38,7 @@ namespace Dwarrowdelf.Client
 			m_camera = new Camera();
 			m_camera.LookAt(new Vector3(4, 0, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
 
-			m_keyboardHandler = new KeyboardHandler(mainHost, m_camera, m_viewGridProvider);
-			//m_mouseManager = new MouseManager(this);
+			m_keyboardHandler = new KeyboardHandler(this, mainHost, m_camera, m_viewGridProvider);
 
 			m_viewGridProvider = new ViewGridProvider();
 
@@ -57,9 +56,7 @@ namespace Dwarrowdelf.Client
 			base.Updatables.Add(m_selectionRenderer);
 
 			
-			m_fpsCounter = new FPSCounter(s =>
-			{
-			});
+			m_fpsCounter = new FPSCounter(this);
 			base.Updatables.Add(m_fpsCounter);
 			
 

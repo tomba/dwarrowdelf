@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Client
 			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 		}
 
-		public override void Update(TimeSpan time)
+		public override void Update()
 		{
 		}
 

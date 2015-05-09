@@ -9,19 +9,20 @@ namespace Dwarrowdelf.Client
 {
 	class FPSCounter : IGameUpdatable
 	{
-		Action<string> m_cb;
-
+		GameCore m_game;
 		int m_frameCount;
 		TimeSpan m_fpsPrev;
 
-		public FPSCounter(Action<string> cb)
+		public FPSCounter(GameCore game)
 		{
-			m_cb = cb;
+			m_game = game;
 		}
 
-		public void Update(TimeSpan time)
+		public void Update()
 		{
 			m_frameCount++;
+
+			var time = m_game.Time.TotalTime;
 
 			var diff = time - m_fpsPrev;
 
@@ -30,7 +31,6 @@ namespace Dwarrowdelf.Client
 				var fps = m_frameCount / diff.TotalSeconds;
 
 				App.Current.MainWindow.Title = string.Format("{0} frames in {1:F2} ms = {2:F2} fps", m_frameCount, diff.TotalMilliseconds, fps);
-				//m_cb(fpsText);
 
 				m_frameCount = 0;
 				m_fpsPrev = time;
