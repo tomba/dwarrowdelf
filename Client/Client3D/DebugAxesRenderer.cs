@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 			m_basicEffect.VertexColorEnabled = true;
 			m_basicEffect.LightingEnabled = false;
 
-			m_batch = new PrimitiveBatch<VertexPositionColor>(this.GraphicsDevice);
+			m_batch = ToDispose(new PrimitiveBatch<VertexPositionColor>(this.GraphicsDevice));
 			m_plane = ToDispose(GeometricPrimitive.Plane.New(this.GraphicsDevice, 2, 2, 1, true));
 		}
 
