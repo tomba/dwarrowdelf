@@ -19,11 +19,14 @@ namespace Dwarrowdelf.Client
 		public abstract void Update(TimeSpan time);
 		public abstract void Draw(Camera camera);
 
-		public GraphicsDevice GraphicsDevice { get; private set; }
+		public GameCore Game { get; private set; }
 
-		protected GameComponent(GraphicsDevice device)
+		public GraphicsDevice GraphicsDevice { get { return this.Game.GraphicsDevice; } }
+		public ContentPool Content { get { return this.Game.Content; } }
+
+		protected GameComponent(GameCore game)
 		{
-			this.GraphicsDevice = device;
+			this.Game = game;
 		}
 	}
 }

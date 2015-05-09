@@ -16,8 +16,8 @@ namespace Dwarrowdelf.Client
 
 		RasterizerState m_rasterizerState;
 
-		public ChunkOutlineRenderer(GraphicsDevice device, ChunkManager chunkManager)
-			: base(device)
+		public ChunkOutlineRenderer(MyGame game, ChunkManager chunkManager)
+			: base(game)
 		{
 			m_chunkManager = chunkManager;
 
@@ -83,7 +83,7 @@ namespace Dwarrowdelf.Client
 		{
 			m_cube = ToDispose(GeometricPrimitive.Cube.New(GraphicsDevice, Chunk.CHUNK_SIZE, toLeftHanded: true));
 
-			m_cubeTexture = ToDispose(Texture2D.Load(this.GraphicsDevice, "Content/RectangleOutline.tkb"));
+			m_cubeTexture = this.Content.Load<Texture2D>("RectangleOutline");
 		}
 	}
 }

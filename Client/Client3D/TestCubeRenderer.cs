@@ -14,8 +14,8 @@ namespace Dwarrowdelf.Client
 		BasicEffect m_basicEffect;
 
 		Camera m_camera;
-		public TestCubeRenderer(GraphicsDevice device, Camera camera)
-			: base(device)
+		public TestCubeRenderer(MyGame game, Camera camera)
+			: base(game)
 		{
 			m_camera = camera;
 			LoadContent();
@@ -53,7 +53,7 @@ namespace Dwarrowdelf.Client
 		{
 			m_cube = ToDispose(GeometricPrimitive.Cube.New(this.GraphicsDevice, 1, toLeftHanded: true));
 
-			m_cubeTexture = ToDispose(Texture2D.Load(this.GraphicsDevice, "Content/logo_large.tkb"));
+			m_cubeTexture = this.Content.Load<Texture2D>("logo_large");
 
 			m_cubeTransform = Matrix.Identity;
 		}

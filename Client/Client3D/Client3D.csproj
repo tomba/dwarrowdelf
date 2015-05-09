@@ -86,6 +86,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameCore\Camera.cs" />
+    <Compile Include="GameCore\ContentPool.cs" />
     <Compile Include="GameCore\GameComponent.cs" />
     <Compile Include="GameCore\GameCore.cs" />
     <Compile Include="GameCore\GameSurface.cs" />

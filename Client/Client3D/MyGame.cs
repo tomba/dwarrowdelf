@@ -43,12 +43,12 @@ namespace Dwarrowdelf.Client
 
 			m_viewGridProvider = new ViewGridProvider();
 
-			m_terrainRenderer = new TerrainRenderer(this.GraphicsDevice, m_camera, m_viewGridProvider);
+			m_terrainRenderer = new TerrainRenderer(this, m_camera, m_viewGridProvider);
 			//m_symbolRenderer = new SymbolRenderer(this, m_movableManager);
-			m_selectionRenderer = new SelectionRenderer(this.GraphicsDevice, m_camera, m_viewGridProvider, mainHost);
-			m_debugAxesRenderer = new DebugAxesRenderer(this.GraphicsDevice);
+			m_selectionRenderer = new SelectionRenderer(this, m_camera, m_viewGridProvider, mainHost);
+			m_debugAxesRenderer = new DebugAxesRenderer(this);
 
-			//m_outlineRenderer = new ChunkOutlineRenderer(this.GraphicsDevice, m_terrainRenderer.ChunkManager);
+			//m_outlineRenderer = new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager);
 			//base.Updatables.Add(m_outlineRenderer);
 
 			base.Updatables.Add(m_keyboardHandler);

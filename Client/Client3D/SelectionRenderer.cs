@@ -37,8 +37,8 @@ namespace Dwarrowdelf.Client
 		bool m_isDown;
 		bool m_isClick;
 
-		public SelectionRenderer(GraphicsDevice device, Camera camera, ViewGridProvider viewGridProvider, SharpDXHost control)
-			: base(device)
+		public SelectionRenderer(MyGame game, Camera camera, ViewGridProvider viewGridProvider, SharpDXHost control)
+			: base(game)
 		{
 			m_cameraService = camera;
 			m_viewGridProvider = viewGridProvider;
@@ -70,8 +70,7 @@ namespace Dwarrowdelf.Client
 		{
 			var device = this.GraphicsDevice;
 
-			var effectData = EffectData.Load("Content/SelectionEffect.tkb");
-			m_effect = ToDispose(new Effect(device, effectData));
+			m_effect = this.Content.Load<Effect>("SelectionEffect");
 
 			var tex = new[] {
 				new Vector2(1, 0),

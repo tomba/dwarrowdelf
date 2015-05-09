@@ -16,9 +16,13 @@ namespace Dwarrowdelf.Client
 		public readonly List<IGameUpdatable> Updatables = new List<IGameUpdatable>();
 		public readonly List<GameSurface> Surfaces = new List<GameSurface>();
 
+		public ContentPool Content { get; private set; }
+
 		protected GameCore()
 		{
 			CreateDevice();
+
+			this.Content = ToDispose(new ContentPool(this.GraphicsDevice));
 		}
 
 		protected override void Dispose(bool disposeManagedResources)

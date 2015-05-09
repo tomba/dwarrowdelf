@@ -28,8 +28,8 @@ namespace Dwarrowdelf.Client
 
 		DirectionalLight m_directionalLight;
 
-		public TerrainRenderer(GraphicsDevice device, Camera camera, ViewGridProvider viewGridProvider)
-			: base(device)
+		public TerrainRenderer(MyGame game, Camera camera, ViewGridProvider viewGridProvider)
+			: base(game)
 		{
 			m_directionalLight = new DirectionalLight()
 			{
@@ -46,14 +46,13 @@ namespace Dwarrowdelf.Client
 
 		void LoadContent()
 		{
-			var effectData = EffectData.Load("Content/TerrainEffect.tkb");
-			m_effect = ToDispose(new TerrainEffect(this.GraphicsDevice, effectData));
+			m_effect = this.Content.Load<TerrainEffect>("TerrainEffect");
 
-			m_effect.TileTextures = Texture2D.Load(this.GraphicsDevice, "Content/TileSetTextureArray.tkb");
+			m_effect.TileTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 
-			m_symbolEffect = ToDispose(new SymbolEffect(this.GraphicsDevice, EffectData.Load("Content/SymbolEffect.tkb")));
+			m_symbolEffect = this.Content.Load<SymbolEffect>("SymbolEffect");
 
-			m_symbolEffect.SymbolTextures = Texture2D.Load(this.GraphicsDevice, "Content/TileSetTextureArray.tkb");
+			m_symbolEffect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 		}
 
 		public override void Update(TimeSpan gameTime)

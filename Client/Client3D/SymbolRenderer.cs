@@ -29,8 +29,8 @@ namespace Dwarrowdelf.Client
 
 		ViewGridProvider m_viewGridProvider;
 
-		public SymbolRenderer(GraphicsDevice device, MovableManager manager, ViewGridProvider viewGridProvider)
-			: base(device)
+		public SymbolRenderer(MyGame game, MovableManager manager, ViewGridProvider viewGridProvider)
+			: base(game)
 		{
 			m_invalid = true;
 
@@ -51,10 +51,9 @@ namespace Dwarrowdelf.Client
 
 		void LoadContent()
 		{
-			var effectData = EffectData.Load("Content/SymbolEffect.tkb");
-			m_effect = ToDispose(new SymbolEffect(this.GraphicsDevice, effectData));
+			m_effect = this.Content.Load<SymbolEffect>("SymbolEffect");
 
-			m_effect.SymbolTextures = ToDispose(Texture2D.Load(this.GraphicsDevice, "Content/TileSetTextureArray.tkb"));
+			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
 		}
 
 		public override void Update(TimeSpan time)

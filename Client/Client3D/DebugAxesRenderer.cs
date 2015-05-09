@@ -12,8 +12,8 @@ namespace Dwarrowdelf.Client
 		PrimitiveBatch<VertexPositionColor> m_batch;
 		GeometricPrimitive m_plane;
 
-		public DebugAxesRenderer(GraphicsDevice device)
-			: base(device)
+		public DebugAxesRenderer(MyGame game)
+			: base(game)
 		{
 			LoadContent();
 		}
