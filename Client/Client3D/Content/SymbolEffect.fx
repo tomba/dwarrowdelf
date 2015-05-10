@@ -59,10 +59,10 @@ void AddRect(GSIn gin, inout TriangleStream< GSOut > output, in float3 up, in fl
 
 	const float2 gTexC[4] =
 	{
-		float2(0, 1),
-		float2(0, 0),
 		float2(1, 1),
 		float2(1, 0),
+		float2(0, 1),
+		float2(0, 0),
 	};
 
 	float4 v[4];
@@ -87,19 +87,19 @@ void AddRect(GSIn gin, inout TriangleStream< GSOut > output, in float3 up, in fl
 [maxvertexcount(4)]
 void GSMain(point GSIn gin[1], inout TriangleStream< GSOut > output)
 {
-	float3 up, right;
+	float3 up, right, look;
 
 	if (BILLBOARD_MODE == 1) {
 		/* sprite is always upright */
 		up = float3(0, 0, 1);
-		float3 look = gEyePosW - gin[0].PosW;
-			look.z = 0;
+		look = gin[0].PosW - gEyePosW;
+		look.z = 0;
 		look = normalize(look);
 		right = cross(up, look);
 	} else if (BILLBOARD_MODE == 2) {
 		/* sprite face follows camera */
-		float3 look = normalize(gEyePosW - gin[0].PosW);
-			right = normalize(cross(float3(0, 0, 1), look));
+		look = normalize(gin[0].PosW - gEyePosW);
+		right = normalize(cross(float3(0, 0, 1), look));
 		up = cross(look, right);
 	} else if (BILLBOARD_MODE == 3) {
 		/* sprite is flat on the ground */
