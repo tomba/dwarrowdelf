@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Client
 {
 	sealed class SelectionRenderer : GameComponent
 	{
-		Camera m_cameraService;
+		Camera m_camera;
 		ViewGridProvider m_viewGridProvider;
 		SharpDXHost m_control;
 		GameSurfaceView m_surfaceView;
@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Client
 			GameSurfaceView surfaceView)
 			: base(game)
 		{
-			m_cameraService = camera;
+			m_camera = camera;
 			m_viewGridProvider = viewGridProvider;
 			m_control = control;
 			m_surfaceView = surfaceView;
@@ -138,16 +138,14 @@ namespace Dwarrowdelf.Client
 
 		bool MousePickVoxel(IntVector2 mousePos, out IntVector3 pos, out Direction face)
 		{
-			var camera = m_cameraService;
-
-			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, m_surfaceView.ViewPort, camera.View * camera.Projection);
+			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, m_surfaceView.ViewPort, m_camera.View * m_camera.Projection);
 
 			IntVector3 outpos = new IntVector3();
 			Direction outdir = Direction.None;
 
 			var viewGrid = m_viewGridProvider.ViewGrid;
 
-			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
+			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, m_camera.FarZ,
 				(x, y, z, dir) =>
 				{
 					var p = new IntVector3(x, y, z);
@@ -246,7 +244,7 @@ namespace Dwarrowdelf.Client
 
 			var device = this.GraphicsDevice;
 
-			var viewProjMatrix = Matrix.Transpose(m_cameraService.View * m_cameraService.Projection);
+			var viewProjMatrix = Matrix.Transpose(m_camera.View * m_camera.Projection);
 			viewProjMatrix.Transpose();
 			m_effect.Parameters["viewProjMatrix"].SetValue(ref viewProjMatrix);
 
