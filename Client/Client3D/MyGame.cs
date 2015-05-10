@@ -39,60 +39,24 @@ namespace Dwarrowdelf.Client
 			m_camera = new Camera();
 			m_camera.LookAt(new Vector3(4, 0, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
 
-			m_keyboardHandler = new KeyboardHandler(this, mainHost, m_camera, m_viewGridProvider);
-
 			m_viewGridProvider = new ViewGridProvider();
 
-			m_terrainRenderer = ToDispose(new TerrainRenderer(this, m_camera, m_viewGridProvider));
-			//m_symbolRenderer = ToDispose(new SymbolRenderer(this, m_movableManager);
-			m_selectionRenderer = ToDispose(new SelectionRenderer(this, m_camera, m_viewGridProvider, mainHost));
-			m_debugAxesRenderer = ToDispose(new DebugAxesRenderer(this));
-
-			//m_outlineRenderer = ToDispose(new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager));
-			//base.Updatables.Add(m_outlineRenderer);
-
+			m_keyboardHandler = new KeyboardHandler(this, mainHost, m_camera, m_viewGridProvider);
 			base.Updatables.Add(m_keyboardHandler);
-			base.Updatables.Add(m_terrainRenderer);
-			base.Updatables.Add(m_debugAxesRenderer);
-			base.Updatables.Add(m_selectionRenderer);
 
-			
 			m_fpsCounter = new FPSCounter(this);
 			base.Updatables.Add(m_fpsCounter);
-			
-
-			//m_testCubeRenderer = new TestCubeRenderer(this.GraphicsDevice, m_camera);
-			//base.Updatables.Add(m_testCubeRenderer);
-
-
-
-			GameData.Data.UserConnected += Data_UserConnected;
-			GameData.Data.UserDisconnected += Data_UserDisconnected;
-
-			GameData.Data.MapChanged += Data_MapChanged;
-
-
-
-			this.RasterizerState = this.GraphicsDevice.RasterizerStates.CullBack;
-
 
 
 			var mainView = new GameSurfaceView(this.GraphicsDevice)
 			{
 				Camera = m_camera,
 			};
-			mainView.Drawables.Add(m_terrainRenderer);
-			//mainView.Drawables.Add(m_testCubeRenderer);
-			//mainView.Drawables.Add(m_outlineRenderer);
-			mainView.Drawables.Add(m_selectionRenderer);
 
 			var axesView = new GameSurfaceView(this.GraphicsDevice)
 			{
 				Camera = m_camera,
 			};
-			axesView.Drawables.Add(m_debugAxesRenderer);
-
-			// surface
 
 			var surface = ToDispose(new GameSurface(this.GraphicsDevice, mainHost));
 
@@ -110,6 +74,40 @@ namespace Dwarrowdelf.Client
 
 			base.Surfaces.Add(surface);
 
+
+
+			m_terrainRenderer = ToDispose(new TerrainRenderer(this, m_camera, m_viewGridProvider));
+			base.Updatables.Add(m_terrainRenderer);
+			mainView.Drawables.Add(m_terrainRenderer);
+
+			//m_symbolRenderer = ToDispose(new SymbolRenderer(this, m_movableManager);
+
+			m_selectionRenderer = ToDispose(new SelectionRenderer(this, m_camera, m_viewGridProvider, mainHost));
+			base.Updatables.Add(m_selectionRenderer);
+			mainView.Drawables.Add(m_selectionRenderer);
+
+#if asd
+			m_outlineRenderer = ToDispose(new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager));
+			base.Updatables.Add(m_outlineRenderer);
+			mainView.Drawables.Add(m_outlineRenderer);
+#endif
+
+			m_debugAxesRenderer = ToDispose(new DebugAxesRenderer(this));
+			base.Updatables.Add(m_debugAxesRenderer);
+			axesView.Drawables.Add(m_debugAxesRenderer);
+
+#if asd
+			m_testCubeRenderer = ToDispose(new TestCubeRenderer(this));
+			base.Updatables.Add(m_testCubeRenderer);
+			mainView.Drawables.Add(m_testCubeRenderer);
+#endif
+
+			GameData.Data.UserConnected += Data_UserConnected;
+			GameData.Data.UserDisconnected += Data_UserDisconnected;
+
+			GameData.Data.MapChanged += Data_MapChanged;
+
+			this.RasterizerState = this.GraphicsDevice.RasterizerStates.CullBack;
 		}
 
 		void Data_UserDisconnected()

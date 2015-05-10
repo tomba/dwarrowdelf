@@ -13,11 +13,9 @@ namespace Dwarrowdelf.Client
 
 		BasicEffect m_basicEffect;
 
-		Camera m_camera;
-		public TestCubeRenderer(MyGame game, Camera camera)
+		public TestCubeRenderer(MyGame game)
 			: base(game)
 		{
-			m_camera = camera;
 			LoadContent();
 		}
 
@@ -35,13 +33,12 @@ namespace Dwarrowdelf.Client
 		{
 			var time = (float)this.Game.Time.TotalTime.TotalSeconds;
 
-			m_cubeTransform = Matrix.RotationX(time) * Matrix.RotationY(time * 2f) * Matrix.RotationZ(time * .7f) *
-				Matrix.Translation(m_camera.Position + m_camera.Look * 10);
+			m_cubeTransform = Matrix.RotationX(time) * Matrix.RotationY(time * 2f) * Matrix.RotationZ(time * .7f);
 		}
 
 		public override void Draw(Camera camera)
 		{
-			m_basicEffect.View = camera.View;
+			m_basicEffect.View = Matrix.Translation(0, 0, 10);
 			m_basicEffect.Projection = camera.Projection;
 
 			m_basicEffect.Texture = m_cubeTexture;
