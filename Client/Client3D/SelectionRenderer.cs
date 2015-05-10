@@ -16,6 +16,7 @@ namespace Dwarrowdelf.Client
 		Camera m_cameraService;
 		ViewGridProvider m_viewGridProvider;
 		SharpDXHost m_control;
+		GameSurfaceView m_surfaceView;
 
 		Effect m_effect;
 
@@ -37,12 +38,14 @@ namespace Dwarrowdelf.Client
 		bool m_isDown;
 		bool m_isClick;
 
-		public SelectionRenderer(MyGame game, Camera camera, ViewGridProvider viewGridProvider, SharpDXHost control)
+		public SelectionRenderer(MyGame game, Camera camera, ViewGridProvider viewGridProvider, SharpDXHost control,
+			GameSurfaceView surfaceView)
 			: base(game)
 		{
 			m_cameraService = camera;
 			m_viewGridProvider = viewGridProvider;
 			m_control = control;
+			m_surfaceView = surfaceView;
 
 			LoadContent();
 
@@ -137,9 +140,7 @@ namespace Dwarrowdelf.Client
 		{
 			var camera = m_cameraService;
 
-			// XXX viewport wrong
-
-			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
+			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, m_surfaceView.ViewPort, camera.View * camera.Projection);
 
 			IntVector3 outpos = new IntVector3();
 			Direction outdir = Direction.None;
