@@ -43,14 +43,17 @@ namespace Dwarrowdelf.Client
 		{
 			var device = this.GraphicsDevice;
 
-			var campos = camera.Position;
-			var look = camera.Look;
+			var view = new Matrix()
+			{
+				Column1 = new Vector4(camera.Right, 0),
+				Column2 = new Vector4(camera.Up, 0),
+				Column3 = new Vector4(camera.Look, 2),
+				Column4 = new Vector4(0, 0, 0, 1),
+			};
 
-			var pos = campos + look * 15;
-
-			m_basicEffect.World = Matrix.Identity * Matrix.Translation(pos);
-			m_basicEffect.View = camera.View;
-			m_basicEffect.Projection = camera.Projection * Matrix.Translation(0.9f, 0.9f, 0);
+			m_basicEffect.World = view;
+			m_basicEffect.View = Matrix.Identity;
+			m_basicEffect.Projection = Matrix.OrthoLH(2, 2, 1, 3);
 
 			m_basicEffect.TextureEnabled = false;
 			m_basicEffect.VertexColorEnabled = true;
@@ -59,18 +62,16 @@ namespace Dwarrowdelf.Client
 
 			m_basicEffect.CurrentTechnique.Passes[0].Apply();
 
-			const int mul = 1;
-
 			device.SetDepthStencilState(device.DepthStencilStates.None);
 			device.SetRasterizerState(device.RasterizerStates.CullNone);
 
 			m_batch.Begin();
 			m_batch.DrawLine(new VertexPositionColor(new Vector3(0, 0, 0), Color.Red),
-				new VertexPositionColor(Vector3.UnitX * mul, Color.Red));
+				new VertexPositionColor(Vector3.UnitX, Color.Red));
 			m_batch.DrawLine(new VertexPositionColor(new Vector3(0, 0, 0), Color.Green),
-				new VertexPositionColor(Vector3.UnitY * mul, Color.Green));
+				new VertexPositionColor(Vector3.UnitY, Color.Green));
 			m_batch.DrawLine(new VertexPositionColor(new Vector3(0, 0, 0), Color.Blue),
-				new VertexPositionColor(Vector3.UnitZ * mul, Color.Blue));
+				new VertexPositionColor(Vector3.UnitZ, Color.Blue));
 			m_batch.End();
 
 			device.SetRasterizerState(device.RasterizerStates.Default);
@@ -81,14 +82,9 @@ namespace Dwarrowdelf.Client
 		{
 			var device = this.GraphicsDevice;
 
-			var campos = camera.Position;
-			var look = camera.Look;
-
-			var pos = campos + look * 10;
-
 			m_basicEffect.World = Matrix.Identity;
-			m_basicEffect.View = Matrix.Identity * Matrix.Translation(0, 0, 15);
-			m_basicEffect.Projection = camera.Projection * Matrix.Translation(0.9f, 0.9f, 0);
+			m_basicEffect.View = Matrix.Identity;
+			m_basicEffect.Projection = Matrix.Identity;
 
 			m_basicEffect.TextureEnabled = false;
 			m_basicEffect.VertexColorEnabled = false;

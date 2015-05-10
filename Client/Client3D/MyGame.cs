@@ -82,22 +82,30 @@ namespace Dwarrowdelf.Client
 				Camera = m_camera,
 			};
 			mainView.Drawables.Add(m_terrainRenderer);
-			mainView.Drawables.Add(m_debugAxesRenderer);
 			//mainView.Drawables.Add(m_testCubeRenderer);
 			//mainView.Drawables.Add(m_outlineRenderer);
 			mainView.Drawables.Add(m_selectionRenderer);
-			
+
+			var axesView = new GameSurfaceView(this.GraphicsDevice)
+			{
+				Camera = m_camera,
+			};
+			axesView.Drawables.Add(m_debugAxesRenderer);
+
 			// surface
 
 			var surface = ToDispose(new GameSurface(this.GraphicsDevice, mainHost));
 
 			surface.Views.Add(mainView);
+			surface.Views.Add(axesView);
 
 			surface.SizeChanged += (w, h) =>
 			{
 				var vp = new ViewportF(0, 0, w, h);
 				mainView.ViewPort = vp;
 				mainView.Camera.SetAspect(vp.AspectRatio);
+
+				axesView.ViewPort = new ViewportF(0, 0, 50, 50);
 			};
 
 			base.Surfaces.Add(surface);
