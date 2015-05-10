@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Client
 			// trees
 			{
 				device.SetRasterizerState(device.RasterizerStates.CullNone);
-				this.GraphicsDevice.SetBlendState(device.BlendStates.AlphaBlend);
+				device.SetBlendState(device.BlendStates.AlphaBlend);
 
 				m_symbolEffect.EyePos = camera.Position;
 				m_symbolEffect.ViewProjection = camera.View * camera.Projection;

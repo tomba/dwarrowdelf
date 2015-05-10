@@ -80,7 +80,9 @@ namespace Dwarrowdelf.Client
 			base.Updatables.Add(m_terrainRenderer);
 			mainView.Drawables.Add(m_terrainRenderer);
 
-			//m_symbolRenderer = ToDispose(new SymbolRenderer(this, m_movableManager);
+			m_symbolRenderer = ToDispose(new SymbolRenderer(this, m_viewGridProvider));
+			base.Updatables.Add(m_symbolRenderer);
+			mainView.Drawables.Add(m_symbolRenderer);
 
 			m_selectionRenderer = ToDispose(new SelectionRenderer(this, m_camera, m_viewGridProvider, mainHost));
 			base.Updatables.Add(m_selectionRenderer);

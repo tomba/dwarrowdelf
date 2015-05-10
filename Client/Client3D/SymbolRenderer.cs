@@ -11,11 +11,6 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	class MovableManager
-	{
-		public List<MovableObject> Movables;
-	}
-
 	class SymbolRenderer : GameComponent
 	{
 		SymbolEffect m_effect;
@@ -23,19 +18,17 @@ namespace Dwarrowdelf.Client
 		int m_vertexCount;
 		Buffer<SceneryVertex> m_vertexBuffer;
 
-		MovableManager m_manager;
-
 		bool m_invalid;
 
 		ViewGridProvider m_viewGridProvider;
 
-		public SymbolRenderer(MyGame game, MovableManager manager, ViewGridProvider viewGridProvider)
+		public SymbolRenderer(MyGame game, ViewGridProvider viewGridProvider)
 			: base(game)
 		{
+			m_viewGridProvider = viewGridProvider;
+
 			m_invalid = true;
 
-			m_manager = manager;
-			m_viewGridProvider = viewGridProvider;
 			//MovableObject3D.MovableMoved += MovableObject_MovableMoved;
 
 			viewGridProvider.ViewGridCornerChanged +=
@@ -44,16 +37,16 @@ namespace Dwarrowdelf.Client
 			LoadContent();
 		}
 
-		void MovableObject_MovableMoved(MovableObject obj)
-		{
-			m_invalid = true;
-		}
-
 		void LoadContent()
 		{
 			m_effect = this.Content.Load<SymbolEffect>("SymbolEffect");
 
 			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
+		}
+
+		void MovableObject_MovableMoved(MovableObject obj)
+		{
+			m_invalid = true;
 		}
 
 		public override void Update()
@@ -68,16 +61,25 @@ namespace Dwarrowdelf.Client
 
 		void UpdateVertexBuffer()
 		{
+			if (GameData.Data.World == null)
+				return;
+
 			IntGrid3 viewGrid = m_viewGridProvider.ViewGrid;
 
-			var vertices = new VertexList<SceneryVertex>(m_manager.Movables.Count);
+			var obs = GameData.Data.World.Objects.OfType<ConcreteObject>().ToArray();
 
-			foreach (var m in m_manager.Movables)
+			var vertices = new VertexList<SceneryVertex>(obs.Length);
+
+			foreach (var ob in obs)
 			{
-				//if (viewGrid.Contains(m.Position) == false)
-				//	continue;
+				if (viewGrid.Contains(ob.Location) == false)
+					continue;
 
-				//vertices.Add(new SceneryVertex(m.Position.ToVector3(), ToColor(m.Color), (uint)m.SymbolID));
+				var c = ob.Color;
+				if (c == GameColor.None)
+					c = ob.Material.Color;
+
+				vertices.Add(new SceneryVertex(ob.Location.ToVector3(), ToColor(c), (uint)ob.SymbolID));
 			}
 
 			if (vertices.Count > 0)
@@ -96,6 +98,7 @@ namespace Dwarrowdelf.Client
 
 		public override void Draw(Camera camera)
 		{
+			m_invalid = true;
 			if (m_invalid)
 			{
 				UpdateVertexBuffer();
@@ -122,12 +125,14 @@ namespace Dwarrowdelf.Client
 			var offset = new IntVector3();
 			m_effect.SetPerObjectConstBuf(offset);
 
+			device.SetRasterizerState(device.RasterizerStates.CullNone);
 			device.SetBlendState(device.BlendStates.AlphaBlend);
 			//device.SetDepthStencilState(device.DepthStencilStates.None);
 
 			device.SetVertexBuffer(m_vertexBuffer);
 			device.Draw(PrimitiveType.PointList, m_vertexCount);
 
+			device.SetRasterizerState(device.RasterizerStates.Default);
 			device.SetBlendState(device.BlendStates.Default);
 			//device.SetDepthStencilState(device.DepthStencilStates.Default);
 		}

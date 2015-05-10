@@ -30,6 +30,9 @@ namespace Dwarrowdelf.Client
 			{
 				await StartServerAndConnectAsync();
 			}
+
+			GameData.Data.GameSpeed = GameSpeed.Slow;
+			GameData.Data.IsAutoAdvanceTurn = true;
 		}
 
 		async Task StartServerAndConnectAsync()
