@@ -22,9 +22,12 @@ namespace Dwarrowdelf.Client
 
 		ViewGridProvider m_viewGridProvider;
 
+		MyGame m_game;
+
 		public SymbolRenderer(MyGame game, ViewGridProvider viewGridProvider)
 			: base(game)
 		{
+			m_game = game;
 			m_viewGridProvider = viewGridProvider;
 
 			m_invalid = true;
@@ -61,12 +64,13 @@ namespace Dwarrowdelf.Client
 
 		void UpdateVertexBuffer()
 		{
-			if (GameData.Data.World == null)
+			if (m_game.Environment == null)
 				return;
 
 			IntGrid3 viewGrid = m_viewGridProvider.ViewGrid;
 
-			var obs = GameData.Data.World.Objects.OfType<ConcreteObject>().ToArray();
+			// XXX
+			var obs = m_game.Environment.World.Objects.OfType<ConcreteObject>().ToArray();
 
 			var vertices = new VertexList<SceneryVertex>(obs.Length);
 
