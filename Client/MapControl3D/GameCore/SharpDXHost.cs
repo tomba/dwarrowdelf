@@ -7,7 +7,7 @@ using SWF = System.Windows.Forms;
 
 namespace Dwarrowdelf.Client
 {
-	class SharpDXHost : HwndHost
+	public class SharpDXHost : HwndHost
 	{
 		MyRenderControl m_control;
 

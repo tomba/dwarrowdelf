@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace Dwarrowdelf.Client
 {
-	class MapControl3D : SharpDXHost
+	public class MapControl3D : SharpDXHost
 	{
 		MyGame m_game;
 

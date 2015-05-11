@@ -21,8 +21,6 @@ namespace Dwarrowdelf.Client
 
 		public VoxelMap(IntSize3 size)
 		{
-			System.Diagnostics.Trace.Assert(Marshal.SizeOf<Voxel>() == 4);
-
 			this.Size = size;
 			this.Grid = new Voxel[size.Depth, size.Height, size.Width];
 		}
