@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 			{
 				var fps = m_frameCount / diff.TotalSeconds;
 
-				App.Current.MainWindow.Title = string.Format("{0} frames in {1:F2} ms = {2:F2} fps", m_frameCount, diff.TotalMilliseconds, fps);
+				System.Windows.Application.Current.MainWindow.Title = string.Format("{0} frames in {1:F2} ms = {2:F2} fps", m_frameCount, diff.TotalMilliseconds, fps);
 
 				m_frameCount = 0;
 				m_fpsPrev = time;

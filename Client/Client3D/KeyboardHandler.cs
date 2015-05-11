@@ -120,7 +120,7 @@ namespace Dwarrowdelf.Client
 		{
 			var viewGrid = m_viewGridProvider;
 
-			var map = GameData.Data.Map;
+			var map = m_game.Environment;
 
 			switch (key)
 			{
@@ -156,7 +156,7 @@ namespace Dwarrowdelf.Client
 
 						var ray = Ray.GetPickRay(px, py, viewport, m_camera.View * m_camera.Projection);
 
-						VoxelRayCast.RunRayCast(ray.Position, ray.Direction, m_camera.FarZ,
+						VoxelRayCast.RunRayCast(m_game.Environment.Size, ray.Position, ray.Direction, m_camera.FarZ,
 							(x, y, z, dir) =>
 							{
 								var l = new IntVector3(x, y, z);

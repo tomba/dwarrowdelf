@@ -35,7 +35,25 @@ namespace Dwarrowdelf.Client
 
 			mapControl.Start();
 
+			GameData.Data.UserConnected += Data_UserConnected;
+			GameData.Data.UserDisconnected += Data_UserDisconnected;
 		}
+
+		void Data_UserConnected()
+		{
+			var data = GameData.Data;
+
+			if (data.GameMode == GameMode.Adventure)
+				mapControl.GoTo(data.FocusedObject);
+			else
+				mapControl.GoTo(data.World.Controllables.First());
+		}
+
+		void Data_UserDisconnected()
+		{
+			mapControl.Environment = null;
+		}
+
 
 		enum CloseStatus
 		{

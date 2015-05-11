@@ -23,11 +23,11 @@ namespace Dwarrowdelf.Client
 
 		public delegate bool RayCastDelegate(int x, int y, int z, Direction dir);
 
-		public static void RunRayCast(Vector3 origin, Vector3 direction, float radius, RayCastDelegate callback)
+		public static void RunRayCast(IntSize3 worldSize, Vector3 origin, Vector3 direction, float radius, RayCastDelegate callback)
 		{
-			int wx = GameData.Data.Map.Width;
-			int wy = GameData.Data.Map.Height;
-			int wz = GameData.Data.Map.Depth;
+			int wx = worldSize.Width;
+			int wy = worldSize.Height;
+			int wz = worldSize.Depth;
 
 			// From "A Fast Voxel Traversal Algorithm for Ray Tracing"
 			// by John Amanatides and Andrew Woo, 1987

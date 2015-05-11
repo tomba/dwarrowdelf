@@ -91,7 +91,7 @@ namespace Dwarrowdelf.Client
 
 		void OnViewGridCornerChanged(Dwarrowdelf.IntVector3 arg1, Dwarrowdelf.IntVector3 arg2)
 		{
-			var map = GameData.Data.Map;
+			var map = m_game.Environment;
 
 			if (map != null)
 			{

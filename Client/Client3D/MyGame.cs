@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Client
 			m_camera = new Camera();
 			m_camera.LookAt(new Vector3(4, 0, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
 
-			m_viewGridProvider = new ViewGridProvider();
+			m_viewGridProvider = new ViewGridProvider(this);
 
 			m_keyboardHandler = new KeyboardHandler(this, mainHost, m_camera, m_viewGridProvider);
 			base.Updatables.Add(m_keyboardHandler);
@@ -104,55 +104,46 @@ namespace Dwarrowdelf.Client
 			mainView.Drawables.Add(m_testCubeRenderer);
 #endif
 
-			GameData.Data.UserConnected += Data_UserConnected;
-			GameData.Data.UserDisconnected += Data_UserDisconnected;
-
-			GameData.Data.MapChanged += Data_MapChanged;
-
 			this.RasterizerState = this.GraphicsDevice.RasterizerStates.CullBack;
 		}
 
-		void Data_UserDisconnected()
+		EnvironmentObject m_env;
+		public EnvironmentObject Environment
 		{
-			GameData.Data.Map = null;
-		}
-
-		void Data_UserConnected()
-		{
-			var data = GameData.Data;
-
-			if (data.GameMode == GameMode.Adventure)
-				GoTo(data.FocusedObject);
-			else
-				GoTo(data.World.Controllables.First());
-		}
-
-		void GoTo(LivingObject ob)
-		{
-			var env = ob.Environment;
-			GameData.Data.Map = env;
-		}
-
-		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)
-		{
-			var map = GameData.Data.Map;
-
-			if (map != null)
+			get { return m_env; }
+			set
 			{
-				var pos = map.Size.ToIntVector3().ToVector3();
-				pos.X /= 2;
-				pos.Y /= 2;
-				pos.Z += 10;
+				var old = m_env;
 
-				var target = new Vector3(0, 0, 0);
+				m_env = value;
 
-				//pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
+				if (value != null)
+				{
+					var pos = value.Size.ToIntVector3().ToVector3();
+					pos.X /= 2;
+					pos.Y /= 2;
+					pos.Z += 10;
 
-				m_camera.LookAt(pos, target, Vector3.UnitZ);
+					var target = new Vector3(0, 0, 0);
+
+					//pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
+
+					m_camera.LookAt(pos, target, Vector3.UnitZ);
+				}
+
+				//m_terrainRenderer.Enabled = map != null;
+				m_selectionRenderer.IsEnabled = value != null;
+
+				if (this.MapChanged != null)
+					this.MapChanged(old, m_env);
 			}
+		}
 
-			//m_terrainRenderer.Enabled = map != null;
-			m_selectionRenderer.IsEnabled = map != null;
+		public event Action<EnvironmentObject, EnvironmentObject> MapChanged;
+
+		public void GoTo(LivingObject ob)
+		{
+			// TODO
 		}
 	}
 }

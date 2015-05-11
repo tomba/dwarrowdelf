@@ -31,5 +31,25 @@ namespace Dwarrowdelf.Client
 			m_game.Stop();
 			m_game.Dispose();
 		}
+
+		EnvironmentObject m_env;
+		public EnvironmentObject Environment
+		{
+			get { return m_env; }
+			set
+			{
+				m_env = value;
+				m_game.Environment = value;
+			}
+		}
+
+		public void GoTo(LivingObject ob)
+		{
+			var env = ob.Environment;
+
+			this.Environment = env;
+
+			m_game.GoTo(ob);
+		}
 	}
 }

@@ -38,10 +38,13 @@ namespace Dwarrowdelf.Client
 		bool m_isDown;
 		bool m_isClick;
 
+		MyGame m_game;
+
 		public SelectionRenderer(MyGame game, Camera camera, ViewGridProvider viewGridProvider, SharpDXHost control,
 			GameSurfaceView surfaceView)
 			: base(game)
 		{
+			m_game = game;
 			m_camera = camera;
 			m_viewGridProvider = viewGridProvider;
 			m_control = control;
@@ -145,7 +148,7 @@ namespace Dwarrowdelf.Client
 
 			var viewGrid = m_viewGridProvider.ViewGrid;
 
-			VoxelRayCast.RunRayCast(ray.Position, ray.Direction, m_camera.FarZ,
+			VoxelRayCast.RunRayCast(m_game.Environment.Size, ray.Position, ray.Direction, m_camera.FarZ,
 				(x, y, z, dir) =>
 				{
 					var p = new IntVector3(x, y, z);
@@ -153,7 +156,7 @@ namespace Dwarrowdelf.Client
 					if (viewGrid.Contains(p) == false)
 						return false;
 
-					var td = GameData.Data.Map.GetTileData(p);
+					var td = m_game.Environment.GetTileData(p);
 
 					if (td.IsEmpty)
 						return false;
@@ -196,7 +199,7 @@ namespace Dwarrowdelf.Client
 			{
 				if (m_isClick)
 				{
-					var td = GameData.Data.Map.GetTileData(p);
+					var td = m_game.Environment.GetTileData(p);
 
 					System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, td);
 				}

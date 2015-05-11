@@ -68,13 +68,17 @@ namespace Dwarrowdelf.Client
 		bool m_forceNearListUpdate;
 		bool m_forceDrawListUpdate;
 
+		MyGame m_game;
+
 		public ChunkManager(TerrainRenderer scene, Camera camera, ViewGridProvider viewGridProvider)
 		{
 			m_scene = scene;
 			m_camera = camera;
 			m_viewGridProvider = viewGridProvider;
 
-			GameData.Data.MapChanged += Data_MapChanged;
+			// XXX
+			m_game = (MyGame)scene.Game;
+			m_game.MapChanged += Data_MapChanged;
 
 			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
 
@@ -88,15 +92,13 @@ namespace Dwarrowdelf.Client
 
 		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)
 		{
-			var map = GameData.Data.Map;
-
 			if (oldMap != null)
 				oldMap.MapTileTerrainChanged -= OnTileChanged;
 
 			if (newMap != null)
-				map.MapTileTerrainChanged += OnTileChanged;
+				newMap.MapTileTerrainChanged += OnTileChanged;
 
-			if (map == null)
+			if (newMap == null)
 			{
 				if (m_chunks != null)
 				{
@@ -110,7 +112,7 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				this.Size = map.Size / Chunk.CHUNK_SIZE;
+				this.Size = newMap.Size / Chunk.CHUNK_SIZE;
 				m_chunks = new Chunk[this.Size.Volume];
 			}
 		}
@@ -161,7 +163,7 @@ namespace Dwarrowdelf.Client
 
 		Chunk CreateChunk(IntVector3 cp)
 		{
-			var chunk = new Chunk(GameData.Data.Map, cp);
+			var chunk = new Chunk(m_game.Environment, cp);
 			SetChunk(chunk.ChunkPosition, chunk);
 			return chunk;
 		}

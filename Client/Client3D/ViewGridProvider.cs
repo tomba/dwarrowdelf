@@ -10,14 +10,18 @@ namespace Dwarrowdelf.Client
 {
 	class ViewGridProvider
 	{
-		public ViewGridProvider()
+		MyGame m_game;
+
+		public ViewGridProvider(MyGame game)
 		{
-			GameData.Data.MapChanged += Data_MapChanged;
+			m_game = game;
+
+			game.MapChanged += Data_MapChanged;
 		}
 
 		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)
 		{
-			var map = GameData.Data.Map;
+			var map = newMap;
 
 			if (map == null)
 			{
@@ -41,7 +45,7 @@ namespace Dwarrowdelf.Client
 				if (value == m_viewCorner1)
 					return;
 
-				if (!value.IsNull && GameData.Data.Map.Size.Contains(value) == false)
+				if (!value.IsNull && m_game.Environment.Size.Contains(value) == false)
 					return;
 
 				if (value.X > m_viewCorner2.X || value.Y > m_viewCorner2.Y || value.Z > m_viewCorner2.Z)
@@ -77,7 +81,7 @@ namespace Dwarrowdelf.Client
 				if (value == m_viewCorner2)
 					return;
 
-				if (!value.IsNull && GameData.Data.Map.Size.Contains(value) == false)
+				if (!value.IsNull && m_game.Environment.Size.Contains(value) == false)
 					return;
 
 				if (value.X < m_viewCorner1.X || value.Y < m_viewCorner1.Y || value.Z < m_viewCorner1.Z)
