@@ -5,6 +5,7 @@
 		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 		xmlns:world="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.World"
 		xmlns:clientCommon="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.Common"
+		xmlns:map3d="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.MapControl3D"
 		Title="Dwarrowdelf" Height="720" Width="1200"
 		x:ClassModifier="internal"
 		x:Name="mainWindow"
@@ -82,7 +83,7 @@
 			</GroupBox>
 
 			<!-- MAP -->
-			<ui:MainMapControl UseLayoutRounding="True" x:Name="map" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" />
+			<map3d:MapControl3D x:Name="map" UseLayoutRounding="True" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" />
 			<ui:MapToolBar x:Name="mainWindowTools" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 			<ui:FocusedObjectStats Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top"
 								   DataContext="{Binding Data.FocusedObject}"

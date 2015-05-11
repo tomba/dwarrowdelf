@@ -52,5 +52,26 @@
 			</TextBlock.Text>
 		</TextBlock>
 
+		<Separator />
+
+		<StatusBarItem HorizontalAlignment="Right">
+			<Rectangle Width="10" Height="10" Stroke="Blue" Fill="Black" RenderTransformOrigin="0.5, 0.5">
+				<Rectangle.RenderTransform>
+					<RotateTransform/>
+				</Rectangle.RenderTransform>
+				<Rectangle.Triggers>
+					<EventTrigger RoutedEvent="Loaded">
+						<BeginStoryboard>
+							<Storyboard>
+								<DoubleAnimation Storyboard.TargetProperty="(Rectangle.RenderTransform).(RotateTransform.Angle)" To="-360" Duration="0:0:1" RepeatBehavior="Forever"/>
+								<!--
+							<ColorAnimation Storyboard.TargetProperty="Fill.Color" From="Red" To="Blue" Duration="0:0:1" AutoReverse="True" RepeatBehavior="Forever"/>
+							-->
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+				</Rectangle.Triggers>
+			</Rectangle>
+		</StatusBarItem>
 	</StatusBar>
 </UserControl>

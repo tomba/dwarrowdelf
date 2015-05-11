@@ -463,6 +463,10 @@
       <Project>{a7884edf-fd74-45d6-9953-e1d76dc0a45a}</Project>
       <Name>Client.Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MapControl3D\MapControl3D.csproj">
+      <Project>{4124c0fb-3646-4bc2-938a-98ad05c1e6ba}</Project>
+      <Name>MapControl3D</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TileControlCore\TileControlCore.csproj">
       <Project>{2DC159B4-2248-49B1-8665-210CDC0B6B09}</Project>
       <Name>TileControlCore</Name>

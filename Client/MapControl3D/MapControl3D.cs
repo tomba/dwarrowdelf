@@ -47,8 +47,15 @@ namespace Dwarrowdelf.Client
 
 		public void GoTo(MovableObject ob)
 		{
-			var env = ob.Environment;
-			GoTo(env, ob.Location);
+			if (ob == null)
+			{
+				this.Environment = null;
+			}
+			else
+			{
+				var env = ob.Environment;
+				GoTo(env, ob.Location);
+			}
 		}
 
 		public void GoTo(EnvironmentObject env, IntVector3 p)
