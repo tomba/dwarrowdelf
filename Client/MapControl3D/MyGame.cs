@@ -17,6 +17,8 @@ namespace Dwarrowdelf.Client
 
 		readonly KeyboardHandler m_keyboardHandler;
 		readonly ViewGridProvider m_viewGridProvider;
+		public MousePositionService MousePositionService { get; private set; }
+
 		readonly TerrainRenderer m_terrainRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
 		readonly SelectionRenderer m_selectionRenderer;
@@ -74,7 +76,8 @@ namespace Dwarrowdelf.Client
 
 			base.Surfaces.Add(surface);
 
-
+			this.MousePositionService = new MousePositionService(this, mainHost, mainView);
+			base.Updatables.Add(this.MousePositionService);
 
 			m_terrainRenderer = ToDispose(new TerrainRenderer(this, m_camera, m_viewGridProvider));
 			base.Updatables.Add(m_terrainRenderer);
