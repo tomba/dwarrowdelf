@@ -55,6 +55,7 @@
     <Compile Include="KeyHelpers.cs" />
     <Compile Include="ListBoxExtenders.cs" />
     <Compile Include="ListBoxHelper.cs" />
+    <Compile Include="MapSelection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selectables.cs" />
   </ItemGroup>
