@@ -22,8 +22,6 @@ namespace Dwarrowdelf.Client
 {
 	public partial class MainWindowWpf : Window
 	{
-		MyGame m_game;
-
 		public MainWindowWpf()
 		{
 			InitializeComponent();
@@ -35,13 +33,8 @@ namespace Dwarrowdelf.Client
 		{
 			base.OnSourceInitialized(e);
 
-			m_game = new MyGame(sdxhost);
-			m_game.Start();
+			mapControl.Start();
 
-			var dbg = new DebugWindow();
-			dbg.Owner = this;
-			dbg.SetGame(m_game);
-			dbg.Show();
 		}
 
 		enum CloseStatus
@@ -60,8 +53,7 @@ namespace Dwarrowdelf.Client
 				case CloseStatus.None:
 					m_closeStatus = CloseStatus.ShuttingDown;
 
-					m_game.Stop();
-					m_game.Dispose();
+					mapControl.Stop();
 
 					e.Cancel = true;
 

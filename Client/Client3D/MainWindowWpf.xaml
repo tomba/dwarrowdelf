@@ -4,7 +4,7 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:local="clr-namespace:Dwarrowdelf.Client" x:Class="Dwarrowdelf.Client.MainWindowWpf"
         Title="MainWindow"
 		Left="300" Top="0" Height="800" Width="1024" WindowStartupLocation="Manual"
-		FocusManager.FocusedElement="{Binding ElementName=sdxhost}"
+		FocusManager.FocusedElement="{Binding ElementName=mapControl}"
 		>
 
 	<Grid>
@@ -25,7 +25,7 @@
 
 		<Button Grid.Column="1" Content="Test"/>
 
-		<local:SharpDXHost x:Name="sdxhost" Grid.ColumnSpan="2" Grid.Row="1" />
+		<local:MapControl3D x:Name="mapControl" Grid.ColumnSpan="2" Grid.Row="1" />
 
 		<Button Grid.Column="0" Content="Test" Grid.Row="2"/>
 

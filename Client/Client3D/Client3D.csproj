@@ -98,6 +98,7 @@
     <Compile Include="GameCore\GameTime.cs" />
     <Compile Include="GameCore\SharpDXHost.cs" />
     <Compile Include="GameData.cs" />
+    <Compile Include="MapControl3D.cs" />
     <Compile Include="VoxelTerrain\Chunk.cs" />
     <Compile Include="VoxelTerrain\ChunkManager.cs" />
     <Compile Include="DebugAxesRenderer.cs" />
