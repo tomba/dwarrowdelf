@@ -50,12 +50,10 @@ namespace Dwarrowdelf.Client.UI
 		public TileAreaView HoverTileView { get { return m_mapList.First().HoverTileView; } }
 		public TileAreaView SelectionTileAreaView { get { return m_mapList.First().SelectionTileAreaView; } }
 
-		public MasterMapControl DefaultMap { get { return m_mapList.First(); } }
-
 		public MainMapControl()
 		{
 			InitializeComponent();
-			this.Focusable = false;
+			this.Focusable = true;
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -74,6 +72,13 @@ namespace Dwarrowdelf.Client.UI
 
 			foreach (var map in m_mapList)
 				map.TileSizeChanged += map_TileSizeChanged;
+		}
+
+		protected override void OnGotFocus(RoutedEventArgs e)
+		{
+			base.OnGotFocus(e);
+
+			m_mapList.First().Focus();
 		}
 
 		bool m_syncingTileSize;

@@ -502,7 +502,7 @@ namespace Dwarrowdelf.Client.UI
 		protected override void OnPreviewKeyDown(KeyEventArgs e)
 		{
 			if (e.Key == Key.Escape)
-				map.DefaultMap.Focus();
+				map.Focus();
 
 			base.OnPreviewKeyDown(e);
 		}
