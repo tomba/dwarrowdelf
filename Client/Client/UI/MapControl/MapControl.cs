@@ -67,8 +67,8 @@ namespace Dwarrowdelf.Client.UI
 			m_scene = new TileMapScene(this.Orientation == TileControlOrientation.ZY ? true : false);
 			m_renderer.Scene = m_scene;
 
+			// XXX we should use the same D3D tileset atlas for all MapControl's with the same tileset
 			m_scene.SetTileSet(GameData.Data.TileSet);
-			GameData.Data.TileSetChanged += OnTileSetChanged;
 
 			GameData.Data.IsVisibilityCheckEnabledChanged += v =>
 			{
@@ -149,13 +149,6 @@ namespace Dwarrowdelf.Client.UI
 			m_renderer.SetRenderSize(renderSize);
 
 			return base.ArrangeOverride(arrangeBounds);
-		}
-
-		void OnTileSetChanged()
-		{
-			// XXX we should use the same D3D tileset atlas for all MapControl's with the same tileset
-			m_scene.SetTileSet(GameData.Data.TileSet);
-			InvalidateTileRender();
 		}
 
 		void OnGridSizeChanged(object ob, IntSize2 gridSize)

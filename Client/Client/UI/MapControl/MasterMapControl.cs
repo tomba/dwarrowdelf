@@ -623,43 +623,6 @@ namespace Dwarrowdelf.Client.UI
 			this.MapCenterPos = (cp + v).ToDoubleVector3();
 		}
 
-		string m_tileSet = "Char";
-		public string TileSet
-		{
-			get { return m_tileSet; }
-
-			set
-			{
-				throw new NotImplementedException();
-				/*
-				string xaml;
-
-				switch (value)
-				{
-					case "Char":
-						xaml = "DefaultTileSet";
-						break;
-
-					case "Gfx":
-						xaml = "DefaultTileSet";
-						break;
-
-					default:
-						throw new Exception();
-				}
-
-				var tileSet = new Dwarrowdelf.Client.Symbols.TileSet(xaml);
-				tileSet.Load();
-
-				GameData.Data.TileSet = tileSet;
-
-				m_tileSet = value;
-
-				Notify("TileSet");
-				 */
-			}
-		}
-
 		abstract class AnimBase<T>
 		{
 			public TimeSpan StartTime { get; private set; }

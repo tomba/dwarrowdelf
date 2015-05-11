@@ -17,13 +17,6 @@ namespace Dwarrowdelf.Client
 			this.TileSet = new TileSet(new Uri("/Dwarrowdelf.Client;component/TileSet/TileSet.png", UriKind.Relative));
 		}
 
-		public event Action TileSetChanged;
-
-		TileSet m_tileSet;
-		public TileSet TileSet
-		{
-			get { return m_tileSet; }
-			set { m_tileSet = value; if (this.TileSetChanged != null) this.TileSetChanged(); }
-		}
+		public TileSet TileSet { get; private set; }
 	}
 }
