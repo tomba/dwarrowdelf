@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dwarrowdelf.Client.UI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Windows.Controls;
 
 namespace Dwarrowdelf.Client
 {
-	public class MapControl3D : SharpDXHost
+	public class MapControl3D : SharpDXHost, IMapControl
 	{
 		MyGame m_game;
 
@@ -73,5 +74,45 @@ namespace Dwarrowdelf.Client
 			// XXX
 		}
 
+
+		public event Action<MapSelection> GotSelection;
+
+		MapSelectionMode m_selectionMode;
+		public MapSelectionMode SelectionMode
+		{
+			get
+			{
+				return m_selectionMode;
+			}
+			set
+			{
+				m_selectionMode = value;
+			}
+		}
+
+		MapSelection m_selection;
+		public MapSelection Selection
+		{
+			get
+			{
+				return m_selection;
+			}
+			set
+			{
+				m_selection = value;
+			}
+		}
+
+		TileAreaView m_hoverTileView = new TileAreaView();
+		public TileAreaView HoverTileView
+		{
+			get { return m_hoverTileView; }
+		}
+
+		TileAreaView m_selectionTileView = new TileAreaView();
+		public TileAreaView SelectionTileAreaView
+		{
+			get { return m_selectionTileView; }
+		}
 	}
 }

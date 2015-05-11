@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace Dwarrowdelf.Client.UI
 {
-	interface IMapControl : IDisposable
+	public interface IMapControl : IDisposable
 	{
 		event Action<MapSelection> GotSelection;
 		MapSelectionMode SelectionMode { get; set; }
