@@ -141,7 +141,7 @@ namespace Dwarrowdelf.Client
 
 		public event Action<EnvironmentObject, EnvironmentObject> MapChanged;
 
-		public void GoTo(LivingObject ob)
+		public void GoTo(IntVector3 p)
 		{
 			// TODO
 		}

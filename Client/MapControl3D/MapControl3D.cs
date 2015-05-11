@@ -44,13 +44,34 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void GoTo(LivingObject ob)
+		public void GoTo(MovableObject ob)
 		{
 			var env = ob.Environment;
-
-			this.Environment = env;
-
-			m_game.GoTo(ob);
+			GoTo(env, ob.Location);
 		}
+
+		public void GoTo(EnvironmentObject env, IntVector3 p)
+		{
+			this.Environment = env;
+			m_game.GoTo(p);
+		}
+
+		public void ScrollTo(MovableObject ob)
+		{
+			var env = ob.Environment;
+			GoTo(env, ob.Location);
+		}
+
+		public void ScrollTo(EnvironmentObject env, IntVector3 p)
+		{
+			this.Environment = env;
+			m_game.GoTo(p);
+		}
+
+		public void ShowObjectsPopup(IntVector3 p)
+		{
+			// XXX
+		}
+
 	}
 }
