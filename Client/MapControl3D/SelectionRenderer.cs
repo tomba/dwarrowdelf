@@ -184,6 +184,9 @@ namespace Dwarrowdelf.Client
 
 		void HandleMouse()
 		{
+			if (m_surfaceView.ViewPort.Width == 0 || m_surfaceView.ViewPort.Height == 0)
+				return;
+
 			var pos = Mouse.GetPosition(m_control);
 
 			var mousePos = new IntVector2(MyMath.Round(pos.X), MyMath.Round(pos.Y));

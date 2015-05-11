@@ -27,14 +27,6 @@ namespace Dwarrowdelf.Client
 			InitializeComponent();
 
 			this.Closing += MainWindow_Closing;
-		}
-
-		protected override void OnSourceInitialized(EventArgs e)
-		{
-			base.OnSourceInitialized(e);
-
-			mapControl.Start();
-
 			GameData.Data.UserConnected += Data_UserConnected;
 			GameData.Data.UserDisconnected += Data_UserDisconnected;
 		}
@@ -71,7 +63,7 @@ namespace Dwarrowdelf.Client
 				case CloseStatus.None:
 					m_closeStatus = CloseStatus.ShuttingDown;
 
-					mapControl.Stop();
+					mapControl.Environment = null;
 
 					e.Cancel = true;
 

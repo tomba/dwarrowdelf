@@ -15,23 +15,6 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		public void Start()
-		{
-			m_game = new MyGame(this);
-			m_game.Start();
-
-			var dbg = new DebugWindow();
-			dbg.Owner = System.Windows.Window.GetWindow(this);
-			dbg.SetGame(m_game);
-			dbg.Show();
-		}
-
-		public void Stop()
-		{
-			m_game.Stop();
-			m_game.Dispose();
-		}
-
 		EnvironmentObject m_env;
 		public EnvironmentObject Environment
 		{
@@ -39,7 +22,25 @@ namespace Dwarrowdelf.Client
 			set
 			{
 				m_env = value;
-				m_game.Environment = value;
+
+				if (m_game != null)
+				{
+					m_game.Stop();
+					m_game.Dispose();
+					m_game = null;
+				}
+
+				if (value != null)
+				{
+					m_game = new MyGame(this);
+					m_game.Environment = value;
+					m_game.Start();
+
+					var dbg = new DebugWindow();
+					dbg.Owner = System.Windows.Window.GetWindow(this);
+					dbg.SetGame(m_game);
+					dbg.Show();
+				}
 			}
 		}
 
