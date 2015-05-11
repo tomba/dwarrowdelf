@@ -20,7 +20,9 @@ namespace Dwarrowdelf.Client
 			GameData.Data = new GameData();
 		}
 
+		// XXX not used at the moment
 		public ControlMode ControlMode = ControlMode.Fps;
+		// XXX not used at the moment
 		public bool AlignViewGridToCamera = true;
 	}
 }
