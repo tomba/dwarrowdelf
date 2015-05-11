@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ClientConfig.cs" />
     <Compile Include="GameDataBase.cs" />
+    <Compile Include="KeyHelpers.cs" />
     <Compile Include="ListBoxExtenders.cs" />
     <Compile Include="ListBoxHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

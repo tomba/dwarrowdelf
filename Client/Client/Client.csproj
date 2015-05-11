@@ -78,7 +78,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommanPromptHandler.cs" />
-    <Compile Include="UI\KeyHelpers.cs" />
     <Compile Include="UI\MainWindow\MainWindowMouseStatusBar.xaml.cs">
       <DependentUpon>MainWindowMouseStatusBar.xaml</DependentUpon>
     </Compile>

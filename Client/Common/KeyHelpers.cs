@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Dwarrowdelf.Client.UI
+namespace Dwarrowdelf.Client
 {
-	static class KeyHelpers
+	public static class KeyHelpers
 	{
 		public static bool KeyIsShift(Key key)
 		{
