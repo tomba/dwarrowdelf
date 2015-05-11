@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace Dwarrowdelf.Client.UI.Windows
+namespace Dwarrowdelf.Client.UI
 {
 	public partial class FocusDebugWindow : Window
 	{

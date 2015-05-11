@@ -70,7 +70,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OpenFocusDebugHandler(object sender, ExecutedRoutedEventArgs e)
 		{
-			var dialog = new Dwarrowdelf.Client.UI.Windows.FocusDebugWindow();
+			var dialog = new Dwarrowdelf.Client.UI.FocusDebugWindow();
 			dialog.Owner = m_mainWindow;
 			dialog.Show();
 		}
