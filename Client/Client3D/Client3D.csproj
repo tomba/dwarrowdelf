@@ -127,7 +127,6 @@
     <Compile Include="VertexList.cs" />
     <Compile Include="VoxelTerrain\Voxel.cs" />
     <Compile Include="VoxelTerrain\VoxelMap.cs" />
-    <Compile Include="VoxelTerrain\VoxelMapGen.cs" />
     <Compile Include="VoxelTerrain\VoxelRayCast.cs" />
     <Compile Include="ViewGridProvider.cs" />
     <EmbeddedResource Include="DebugForm.resx">
