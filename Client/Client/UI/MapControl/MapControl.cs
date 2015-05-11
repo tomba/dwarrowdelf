@@ -43,6 +43,9 @@ namespace Dwarrowdelf.Client.UI
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
 
+		DispatcherTimer m_blinkTimer;
+		bool m_symbolToggler;
+
 		public MapControl()
 		{
 		}
@@ -73,7 +76,10 @@ namespace Dwarrowdelf.Client.UI
 				InvalidateTileData();
 			};
 
-			GameData.Data.Blink += OnBlink;
+			m_blinkTimer = new DispatcherTimer(DispatcherPriority.Background);
+			m_blinkTimer.Interval = TimeSpan.FromMilliseconds(500);
+			m_blinkTimer.Tick += OnBlink;
+			m_blinkTimer.IsEnabled = true;
 
 			m_initialized = true;
 		}
@@ -114,9 +120,7 @@ namespace Dwarrowdelf.Client.UI
 			Notify("TileSize");
 		}
 
-		bool m_symbolToggler;
-
-		void OnBlink()
+		void OnBlink(object sender, EventArgs e)
 		{
 			// XXX we should invalidate only the needed tiles
 			InvalidateRenderViewTiles();
