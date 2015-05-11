@@ -11,7 +11,7 @@ using Dwarrowdelf.Client.TileControl;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.UI
 {
 	static class RenderResolver
 	{

@@ -320,7 +320,7 @@
     <Compile Include="UI\StockpileInfoControl.xaml.cs">
       <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RenderResolver.cs" />
+    <Compile Include="UI\MapControl\RenderResolver.cs" />
     <Compile Include="UI\MainWindow\MultiTileInfoControl.xaml.cs">
       <DependentUpon>MultiTileInfoControl.xaml</DependentUpon>
     </Compile>
