@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.UI
 {
-	sealed class TileAreaView : INotifyPropertyChanged
+	public sealed class TileAreaView : INotifyPropertyChanged
 	{
 		EnvironmentObject m_environment;
 		IntGrid3 m_box;
