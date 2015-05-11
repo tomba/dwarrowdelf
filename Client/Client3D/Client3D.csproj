@@ -113,7 +113,6 @@
     <Compile Include="MainWindowWpf.xaml.cs">
       <DependentUpon>MainWindowWpf.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Map.cs" />
     <Compile Include="MyExtensions.cs" />
     <Compile Include="MyGame.cs" />
     <Compile Include="Program.cs" />

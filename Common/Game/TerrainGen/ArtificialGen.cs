@@ -1,24 +1,12 @@
-﻿using Dwarrowdelf;
-using Dwarrowdelf.TerrainGen;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.TerrainGen
 {
-#warning TODO move creation to Artificial maps or such
-
-	class MapASD
+	public static class ArtificialGen
 	{
-		public MapASD()
-		{
-		}
-
-		static TerrainData CreateNoiseTerrain(IntSize3 size)
+#if NOISE_INCLUDED
+		public static TerrainData CreateNoiseTerrain(IntSize3 size)
 		{
 			var terrainData = new TerrainData(size);
 
@@ -30,7 +18,7 @@ namespace Dwarrowdelf.Client
 			return terrainData;
 		}
 
-		static void FillFromNoiseMap(TerrainData terrainData, SharpNoise.NoiseMap noiseMap)
+		public static void FillFromNoiseMap(TerrainData terrainData, SharpNoise.NoiseMap noiseMap)
 		{
 			var max = noiseMap.Data.Max();
 			var min = noiseMap.Data.Min();
@@ -110,7 +98,7 @@ namespace Dwarrowdelf.Client
 				}
 			});
 		}
-
+#endif
 		static TerrainData CreateBallMap(IntSize3 size, int innerSide = 0)
 		{
 			var map = new TerrainData(size);
