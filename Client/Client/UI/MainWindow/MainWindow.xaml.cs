@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public ClientTools ClientTools { get; private set; }
 
-		public MainMapControl MapControl { get { return map; } }
+		public IMapControl MapControl { get { return map; } }
 
 		public GameData Data { get { return GameData.Data; } }
 

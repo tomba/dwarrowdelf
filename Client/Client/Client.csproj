@@ -79,6 +79,7 @@
     </ApplicationDefinition>
     <Compile Include="CommanPromptHandler.cs" />
     <Compile Include="UI\Converters\CoordinateValueConverter.cs" />
+    <Compile Include="UI\MainWindow\IMapControl.cs" />
     <Compile Include="UI\MainWindow\MainWindowMouseStatusBar.xaml.cs">
       <DependentUpon>MainWindowMouseStatusBar.xaml</DependentUpon>
     </Compile>

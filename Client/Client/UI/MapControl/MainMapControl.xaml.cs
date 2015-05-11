@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	sealed partial class MainMapControl : UserControl, IDisposable
+	sealed partial class MainMapControl : UserControl, IMapControl
 	{
 		public MasterMapControl MainMap { get { return mapXY; } }
 
