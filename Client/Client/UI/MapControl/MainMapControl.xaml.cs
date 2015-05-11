@@ -117,12 +117,6 @@ namespace Dwarrowdelf.Client.UI
 		}
 
 
-		public void Blink()
-		{
-			foreach (var map in m_mapList)
-				map.InvalidateTileData();
-		}
-
 		public void GoTo(MovableObject ob)
 		{
 			if (ob == null)

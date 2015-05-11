@@ -21,10 +21,8 @@ namespace Dwarrowdelf.Client
 			m_timer.Interval = TimeSpan.FromMilliseconds(500);
 			m_timer.Tick += delegate
 			{
-				if (_Blink != null) _Blink();
-				var main = App.GameWindow;
-				if (main != null && main.MapControl != null)
-					main.MapControl.Blink();
+				if (_Blink != null)
+					_Blink();
 			};
 		}
 
