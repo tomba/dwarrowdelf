@@ -99,8 +99,12 @@ namespace Dwarrowdelf.Client.UI
 			m_dragService = new MapControlDragService(this);
 			m_dragService.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
 
-			m_keyHandler = new KeyHandler(this);
-			m_keyHandler.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
+			// XXX keyhandler uses GameData, which is not there in design mode
+			if (!DesignerProperties.GetIsInDesignMode(this))
+			{
+				m_keyHandler = new KeyHandler(this);
+				m_keyHandler.IsEnabled = m_selectionService.SelectionMode == MapSelectionMode.None;
+			}
 
 			if (ClientConfig.ShowMapDebug)
 			{
