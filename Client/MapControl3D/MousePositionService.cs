@@ -14,14 +14,33 @@ namespace Dwarrowdelf.Client
 		GameSurfaceView m_surfaceView;
 		SharpDXHost m_control;
 
-		public IntVector3? MouseLocation { get; private set; }
 		public Direction Face { get; private set; }
+
+		public event Action MouseLocationChanged;
 
 		public MousePositionService(MyGame game, SharpDXHost control, GameSurfaceView surfaceView)
 		{
 			m_game = game;
 			m_control = control;
 			m_surfaceView = surfaceView;
+		}
+
+		IntVector3? m_location;
+
+		public IntVector3? MouseLocation
+		{
+			get { return m_location; }
+
+			private set
+			{
+				if (value == m_location)
+					return;
+
+				m_location = value;
+
+				if (this.MouseLocationChanged != null)
+					this.MouseLocationChanged();
+			}
 		}
 
 		public void Update()

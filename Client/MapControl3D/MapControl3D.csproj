@@ -106,6 +106,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="SelectionRenderer.cs" />
+    <Compile Include="SelectionService.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SymbolEffect.cs" />
     <Compile Include="SymbolRenderer.cs" />
     <Compile Include="TestCubeRenderer.cs" />

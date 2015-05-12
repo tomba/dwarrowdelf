@@ -18,6 +18,7 @@ namespace Dwarrowdelf.Client
 		readonly KeyboardHandler m_keyboardHandler;
 		readonly ViewGridProvider m_viewGridProvider;
 		public MousePositionService MousePositionService { get; private set; }
+		public SelectionService SelectionService { get; private set; }
 
 		readonly TerrainRenderer m_terrainRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
@@ -30,6 +31,7 @@ namespace Dwarrowdelf.Client
 
 		public TerrainRenderer TerrainRenderer { get { return m_terrainRenderer; } }
 		public RasterizerState RasterizerState { get; set; }
+		public SelectionRenderer SelectionRenderer { get { return m_selectionRenderer; } }
 
 		public ViewGridProvider ViewGrid { get { return m_viewGridProvider; } }
 		public Camera Camera { get { return m_camera; } }
@@ -79,6 +81,9 @@ namespace Dwarrowdelf.Client
 			this.MousePositionService = new MousePositionService(this, mainHost, mainView);
 			base.Updatables.Add(this.MousePositionService);
 
+			this.SelectionService = new Client.SelectionService(this, mainHost, m_camera);
+			this.SelectionService.SelectionMode = MapSelectionMode.Box;
+
 			m_terrainRenderer = ToDispose(new TerrainRenderer(this, m_camera, m_viewGridProvider));
 			base.Updatables.Add(m_terrainRenderer);
 			mainView.Drawables.Add(m_terrainRenderer);
@@ -87,9 +92,10 @@ namespace Dwarrowdelf.Client
 			base.Updatables.Add(m_symbolRenderer);
 			mainView.Drawables.Add(m_symbolRenderer);
 
-			m_selectionRenderer = ToDispose(new SelectionRenderer(this, m_camera, m_viewGridProvider, mainHost, mainView));
+			m_selectionRenderer = ToDispose(new SelectionRenderer(this));
 			base.Updatables.Add(m_selectionRenderer);
 			mainView.Drawables.Add(m_selectionRenderer);
+
 
 #if asd
 			m_outlineRenderer = ToDispose(new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager));
@@ -135,7 +141,8 @@ namespace Dwarrowdelf.Client
 				}
 
 				//m_terrainRenderer.Enabled = map != null;
-				m_selectionRenderer.IsEnabled = value != null;
+				if (m_selectionRenderer != null)
+					m_selectionRenderer.IsEnabled = value != null;
 
 				if (this.MapChanged != null)
 					this.MapChanged(old, m_env);

@@ -14,6 +14,8 @@ namespace Dwarrowdelf.Client
 
 		public MapControl3D()
 		{
+			this.HoverTileView = new TileAreaView();
+			this.SelectionTileAreaView = new TileAreaView();
 		}
 
 		EnvironmentObject m_env;
@@ -26,6 +28,11 @@ namespace Dwarrowdelf.Client
 
 				if (m_game != null)
 				{
+					m_game.MousePositionService.MouseLocationChanged -= OnCursorMoved;
+
+					m_game.SelectionService.SelectionChanged -= OnSelectionChanged;
+					m_game.SelectionService.GotSelection -= OnGotSelection;
+
 					m_game.Stop();
 					m_game.Dispose();
 					m_game = null;
@@ -41,6 +48,11 @@ namespace Dwarrowdelf.Client
 					dbg.Owner = System.Windows.Window.GetWindow(this);
 					dbg.SetGame(m_game);
 					dbg.Show();
+
+					m_game.MousePositionService.MouseLocationChanged += OnCursorMoved;
+
+					m_game.SelectionService.SelectionChanged += OnSelectionChanged;
+					m_game.SelectionService.GotSelection += OnGotSelection;
 				}
 			}
 		}
@@ -110,16 +122,45 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		TileAreaView m_hoverTileView = new TileAreaView();
-		public TileAreaView HoverTileView
+		public TileAreaView HoverTileView { get; private set; }
+
+		void OnCursorMoved()
 		{
-			get { return m_hoverTileView; }
+			if (m_game.MousePositionService.MouseLocation.HasValue == false)
+			{
+				this.HoverTileView.ClearTarget();
+			}
+			else
+			{
+				var ml = m_game.MousePositionService.MouseLocation.Value;
+
+				if (this.Environment != null && this.Environment.Contains(ml))
+				{
+					this.HoverTileView.SetTarget(this.Environment, ml);
+				}
+				else
+				{
+					this.HoverTileView.ClearTarget();
+				}
+			}
 		}
 
-		TileAreaView m_selectionTileView = new TileAreaView();
-		public TileAreaView SelectionTileAreaView
+		public TileAreaView SelectionTileAreaView { get; private set; }
+
+		void OnSelectionChanged(MapSelection selection)
 		{
-			get { return m_selectionTileView; }
+			if (!selection.IsSelectionValid)
+			{
+				this.SelectionTileAreaView.ClearTarget();
+			}
+			else
+			{
+				this.SelectionTileAreaView.SetTarget(this.Environment, selection.SelectionBox);
+			}
+		}
+
+		void OnGotSelection(MapSelection selection)
+		{
 		}
 	}
 }

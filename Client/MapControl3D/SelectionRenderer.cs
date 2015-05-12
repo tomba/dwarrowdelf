@@ -13,63 +13,23 @@ namespace Dwarrowdelf.Client
 {
 	sealed class SelectionRenderer : GameComponent
 	{
-		Camera m_camera;
-		ViewGridProvider m_viewGridProvider;
-		SharpDXHost m_control;
-		GameSurfaceView m_surfaceView;
-
 		Effect m_effect;
 
 		VertexInputLayout m_layout;
 		Buffer<VertexPositionColorTexture> m_vertexBuffer;
 
-		public bool SelectionVisible { get; private set; }
-		public IntVector3 SelectionStart { get; private set; }
-		public IntVector3 SelectionEnd { get; private set; }
-		public IntGrid3 SelectionGrid { get { return new IntGrid3(this.SelectionStart, SelectionEnd); } }
-		public Direction SelectionDirection { get; private set; }
-
-		public bool CursorVisible { get; private set; }
-		public IntVector3 Position { get; private set; }
-		public Direction Direction { get; private set; }
-
 		public bool IsEnabled { get; set; }
-
-		bool m_isDown;
-		bool m_isClick;
 
 		MyGame m_game;
 
-		public SelectionRenderer(MyGame game, Camera camera, ViewGridProvider viewGridProvider, SharpDXHost control,
-			GameSurfaceView surfaceView)
+		public SelectionRenderer(MyGame game)
 			: base(game)
 		{
 			m_game = game;
-			m_camera = camera;
-			m_viewGridProvider = viewGridProvider;
-			m_control = control;
-			m_surfaceView = surfaceView;
 
 			LoadContent();
 
 			this.IsEnabled = false;
-
-			control.MouseLeftButtonDown += control_MouseLeftButtonDown;
-			control.MouseLeftButtonUp += control_MouseLeftButtonUp;
-		}
-
-		void control_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-		{
-			if (m_isDown == false)
-				return;
-
-			m_isDown = false;
-			m_isClick = true;
-		}
-
-		void control_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			m_isDown = true;
 		}
 
 		void LoadContent()
@@ -139,105 +99,8 @@ namespace Dwarrowdelf.Client
 			m_effect.Parameters["worldMatrix"].SetValue(ref worldMatrix);
 		}
 
-		bool MousePickVoxel(IntVector2 mousePos, out IntVector3 pos, out Direction face)
-		{
-			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, m_surfaceView.ViewPort, m_camera.View * m_camera.Projection);
-
-			IntVector3 outpos = new IntVector3();
-			Direction outdir = Direction.None;
-
-			var viewGrid = m_viewGridProvider.ViewGrid;
-
-			VoxelRayCast.RunRayCast(m_game.Environment.Size, ray.Position, ray.Direction, m_camera.FarZ,
-				(x, y, z, dir) =>
-				{
-					var p = new IntVector3(x, y, z);
-
-					if (viewGrid.Contains(p) == false)
-						return false;
-
-					var td = m_game.Environment.GetTileData(p);
-
-					if (td.IsEmpty)
-						return false;
-
-					outpos = p;
-					outdir = dir;
-
-					return true;
-				});
-
-			pos = outpos;
-			face = outdir;
-			return face != Direction.None;
-		}
-
 		public override void Update()
 		{
-			if (!this.IsEnabled)
-				return;
-
-			HandleMouse();
-
-			m_isClick = false;
-		}
-
-		void HandleMouse()
-		{
-			if (m_surfaceView.ViewPort.Width == 0 || m_surfaceView.ViewPort.Height == 0)
-				return;
-
-			var pos = Mouse.GetPosition(m_control);
-
-			var mousePos = new IntVector2(MyMath.Round(pos.X), MyMath.Round(pos.Y));
-
-			IntVector3 p;
-			Direction d;
-
-			bool hit = MousePickVoxel(mousePos, out p, out d);
-
-			// cursor
-
-			if (hit)
-			{
-				if (m_isClick)
-				{
-					var td = m_game.Environment.GetTileData(p);
-
-					System.Diagnostics.Trace.TraceInformation("pick: {0} face: {1}, voxel: ({2})", p, d, td);
-				}
-
-				this.Position = p;
-				this.Direction = d;
-				this.CursorVisible = true;
-			}
-			else
-			{
-				this.CursorVisible = false;
-			}
-
-			// selection
-			if (hit)
-			{
-				if (m_isDown)
-				{
-					if (this.SelectionVisible == false)
-					{
-						this.SelectionVisible = true;
-						this.SelectionStart = p;
-						this.SelectionDirection = d;
-					}
-
-					this.SelectionEnd = p;
-				}
-			}
-
-			if (this.SelectionVisible && m_isDown == false)
-			{
-				this.SelectionVisible = false;
-
-				Trace.TraceError("Select {0}, {1}", this.SelectionStart, this.SelectionEnd);
-			}
 		}
 
 		public override void Draw(Camera camera)
@@ -245,12 +108,18 @@ namespace Dwarrowdelf.Client
 			if (!this.IsEnabled)
 				return;
 
-			if (this.CursorVisible == false && this.SelectionVisible == false)
+			var mousePos = m_game.MousePositionService.MouseLocation;
+			var mousePosDir = m_game.MousePositionService.Face;
+
+			var selection = m_game.SelectionService.Selection;
+			var selDir = Direction.Up; // XXX
+
+			if (mousePos.HasValue == false && selection.IsSelectionValid == false)
 				return;
 
 			var device = this.GraphicsDevice;
 
-			var viewProjMatrix = Matrix.Transpose(m_camera.View * m_camera.Projection);
+			var viewProjMatrix = Matrix.Transpose(camera.View * camera.Projection);
 			viewProjMatrix.Transpose();
 			m_effect.Parameters["viewProjMatrix"].SetValue(ref viewProjMatrix);
 
@@ -263,19 +132,19 @@ namespace Dwarrowdelf.Client
 			device.SetVertexBuffer(m_vertexBuffer);
 			device.SetVertexInputLayout(m_layout);
 
-			if (this.CursorVisible)
+			if (mousePos.HasValue)
 			{
 				m_effect.Parameters["s_cubeColor"].SetValue(Color.Red.ToVector3());
-				SetWorlMatrix(this.Position, new IntSize3(1, 1, 1), this.Direction);
+				SetWorlMatrix(mousePos.Value, new IntSize3(1, 1, 1), mousePosDir);
 				m_effect.ConstantBuffers["PerObject"].Update();
 
 				device.Draw(PrimitiveType.TriangleList, 6 * 6);
 			}
 
-			if (this.SelectionVisible)
+			if (selection.IsSelectionValid)
 			{
-				var grid = this.SelectionGrid;
-				SetWorlMatrix(grid.Corner1, grid.Size, this.SelectionDirection);
+				var grid = selection.SelectionBox;
+				SetWorlMatrix(grid.Corner1, grid.Size, selDir);
 
 				m_effect.Parameters["s_cubeColor"].SetValue(Color.Blue.ToVector3());
 				m_effect.ConstantBuffers["PerObject"].Update();
