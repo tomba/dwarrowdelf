@@ -16,6 +16,30 @@ namespace Dwarrowdelf.Client
 		{
 			this.HoverTileView = new TileAreaView();
 			this.SelectionTileAreaView = new TileAreaView();
+
+			m_game = new MyGame(this);
+
+			m_game.MousePositionService.MouseLocationChanged += OnCursorMoved;
+			m_game.SelectionService.SelectionChanged += OnSelectionChanged;
+			m_game.SelectionService.GotSelection += OnGotSelection;
+
+			m_game.Start();
+
+			/*
+			var dbg = new DebugWindow();
+			dbg.Owner = System.Windows.Window.GetWindow(this);
+			dbg.SetGame(m_game);
+			dbg.Show();
+			 */
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			m_game.Stop();
+			m_game.Dispose();
+			m_game = null;
+
+			base.Dispose(disposing);
 		}
 
 		EnvironmentObject m_env;
@@ -26,34 +50,7 @@ namespace Dwarrowdelf.Client
 			{
 				m_env = value;
 
-				if (m_game != null)
-				{
-					m_game.MousePositionService.MouseLocationChanged -= OnCursorMoved;
-
-					m_game.SelectionService.SelectionChanged -= OnSelectionChanged;
-					m_game.SelectionService.GotSelection -= OnGotSelection;
-
-					m_game.Stop();
-					m_game.Dispose();
-					m_game = null;
-				}
-
-				if (value != null)
-				{
-					m_game = new MyGame(this);
-					m_game.Environment = value;
-					m_game.Start();
-
-					var dbg = new DebugWindow();
-					dbg.Owner = System.Windows.Window.GetWindow(this);
-					dbg.SetGame(m_game);
-					dbg.Show();
-
-					m_game.MousePositionService.MouseLocationChanged += OnCursorMoved;
-
-					m_game.SelectionService.SelectionChanged += OnSelectionChanged;
-					m_game.SelectionService.GotSelection += OnGotSelection;
-				}
+				m_game.Environment = value;
 			}
 		}
 
