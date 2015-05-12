@@ -51,7 +51,8 @@ namespace Dwarrowdelf.Client
 			var pos = Mouse.GetPosition(m_control);
 			var mousePos = new IntVector2(MyMath.Round(pos.X), MyMath.Round(pos.Y));
 
-			if (m_surfaceView.ViewPort.Bounds.Contains(mousePos.X, mousePos.Y) == false)
+			if (m_surfaceView.ViewPort.Width == 0 || m_surfaceView.ViewPort.Height == 0 ||
+				m_surfaceView.ViewPort.Bounds.Contains(mousePos.X, mousePos.Y) == false)
 			{
 				this.MouseLocation = null;
 				this.Face = Direction.None;
