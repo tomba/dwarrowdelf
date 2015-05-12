@@ -69,6 +69,8 @@ namespace Dwarrowdelf.Client
 
 			IntGrid3 viewGrid = m_viewGridProvider.ViewGrid;
 
+#warning TODO: implement sanely
+
 			// XXX
 			var obs = m_game.Environment.World.Objects.OfType<ConcreteObject>().ToArray();
 
