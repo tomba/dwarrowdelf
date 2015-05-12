@@ -10,17 +10,17 @@ namespace Dwarrowdelf.Client
 	{
 		public T[] Data { get; private set; }
 		public int Count { get; private set; }
-		int m_maxSize;
+		public int Capacity { get; private set; }
 
-		public VertexList(int size)
+		public VertexList(int capacity)
 		{
-			m_maxSize = size;
+			this.Capacity = capacity;
 		}
 
 		public void Add(T data)
 		{
 			if (this.Data == null)
-				this.Data = new T[m_maxSize];
+				this.Data = new T[this.Capacity];
 
 			this.Data[this.Count++] = data;
 		}

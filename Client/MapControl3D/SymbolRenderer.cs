@@ -62,21 +62,26 @@ namespace Dwarrowdelf.Client
 			return new Color(rgb.R, rgb.G, rgb.B);
 		}
 
+		VertexList<SceneryVertex> m_vertexList;
+
 		void UpdateVertexBuffer()
 		{
 			if (m_game.Environment == null)
 				return;
 
+			var envContents = m_game.Environment.Contents;
+
+			if (m_vertexList != null && envContents.Count > m_vertexList.Count)
+				m_vertexList = null;
+
+			if (m_vertexList == null)
+				m_vertexList = new VertexList<SceneryVertex>(envContents.Count * 2);
+
 			IntGrid3 viewGrid = m_viewGridProvider.ViewGrid;
 
-#warning TODO: implement sanely
+			m_vertexList.Clear();
 
-			// XXX
-			var obs = m_game.Environment.World.Objects.OfType<ConcreteObject>().ToArray();
-
-			var vertices = new VertexList<SceneryVertex>(obs.Length);
-
-			foreach (var ob in obs)
+			foreach (var ob in envContents.OfType<ConcreteObject>())
 			{
 				if (viewGrid.Contains(ob.Location) == false)
 					continue;
@@ -85,21 +90,21 @@ namespace Dwarrowdelf.Client
 				if (c == GameColor.None)
 					c = ob.Material.Color;
 
-				vertices.Add(new SceneryVertex(ob.Location.ToVector3(), ToColor(c), (uint)ob.SymbolID));
+				m_vertexList.Add(new SceneryVertex(ob.Location.ToVector3(), ToColor(c), (uint)ob.SymbolID));
 			}
 
-			if (vertices.Count > 0)
+			if (m_vertexList.Count > 0)
 			{
-				if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < vertices.Count)
+				if (m_vertexBuffer == null || m_vertexBuffer.ElementCount < m_vertexList.Count)
 				{
 					RemoveAndDispose(ref m_vertexBuffer);
-					m_vertexBuffer = ToDispose(SharpDX.Toolkit.Graphics.Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, vertices.Count));
+					m_vertexBuffer = ToDispose(SharpDX.Toolkit.Graphics.Buffer.Vertex.New<SceneryVertex>(this.GraphicsDevice, m_vertexList.Count));
 				}
 
-				m_vertexBuffer.SetData(vertices.Data, 0, vertices.Count);
+				m_vertexBuffer.SetData(m_vertexList.Data, 0, m_vertexList.Count);
 			}
 
-			m_vertexCount = vertices.Count;
+			m_vertexCount = m_vertexList.Count;
 		}
 
 		public override void Draw(Camera camera)
