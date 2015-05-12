@@ -89,6 +89,7 @@
     <Compile Include="GameCore\SharpDXHost.cs" />
     <Compile Include="KeyboardHandler.cs" />
     <Compile Include="MapControl3D.cs" />
+    <Compile Include="ToolTipService.cs" />
     <Compile Include="MousePositionService.cs" />
     <Compile Include="MyExtensions.cs" />
     <Compile Include="MyGame.cs" />
@@ -112,6 +113,9 @@
     <Compile Include="SymbolEffect.cs" />
     <Compile Include="SymbolRenderer.cs" />
     <Compile Include="TestCubeRenderer.cs" />
+    <Compile Include="TileToolTipControl.xaml.cs">
+      <DependentUpon>TileToolTipControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VertexList.cs" />
     <Compile Include="ViewGridProvider.cs" />
     <Compile Include="VoxelTerrain\Chunk.cs" />
@@ -139,6 +143,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="DebugWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TileToolTipControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
