@@ -79,13 +79,6 @@
     </ApplicationDefinition>
     <Compile Include="CommanPromptHandler.cs" />
     <Compile Include="UI\Converters\CoordinateValueConverter.cs" />
-    <Compile Include="UI\MainWindow\MainWindowMouseStatusBar.xaml.cs">
-      <DependentUpon>MainWindowMouseStatusBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MapControl\MainMapControl.xaml.cs">
-      <DependentUpon>MainMapControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MapControl\MapControlDebugData.cs" />
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>
@@ -123,23 +116,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainWindow\MainWindowMouseStatusBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\MainWindow\MapToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MapControl\MainMapControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\TestControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MapControl\TileToolTipControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -265,15 +246,11 @@
     <Compile Include="UI\MainWindow\FocusedObjectStats.xaml.cs">
       <DependentUpon>FocusedObjectStats.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainWindow\KeyHandler.cs" />
     <Compile Include="UI\MainWindow\MainWindowMenuBar.xaml.cs">
       <DependentUpon>MainWindowMenuBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainWindow\MapToolBar.xaml.cs">
       <DependentUpon>MapToolBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MapControl\TileToolTipControl.xaml.cs">
-      <DependentUpon>TileToolTipControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Converters\UIElementToDescConverter.cs" />
     <Compile Include="UI\BaseObjectPropertiesControl.xaml.cs">
@@ -320,18 +297,13 @@
     <Compile Include="UI\StockpileInfoControl.xaml.cs">
       <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MapControl\RenderResolver.cs" />
     <Compile Include="UI\MainWindow\MultiTileInfoControl.xaml.cs">
       <DependentUpon>MultiTileInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainWindow\MainWindowStatusBar.xaml.cs">
       <DependentUpon>MainWindowStatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MapControl\MapControDragService.cs" />
     <Compile Include="UI\MainWindow\MainWindowCommandHandler.cs" />
-    <Compile Include="UI\MapControl\MapControlElementsService.cs" />
-    <Compile Include="UI\MapControl\MapControlSelectionService.cs" />
-    <Compile Include="UI\MapControl\MapControlToolTipService.cs" />
     <Compile Include="UI\BuildingInfoControl.xaml.cs">
       <DependentUpon>BuildingInfoControl.xaml</DependentUpon>
     </Compile>
@@ -381,8 +353,6 @@
     <Compile Include="UI\Windows\LogOnDialog.xaml.cs">
       <DependentUpon>LogOnDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MapControl\MasterMapControl.cs" />
-    <Compile Include="UI\MapControl\MapControl.cs" />
     <Compile Include="UI\HistoryTextBox.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

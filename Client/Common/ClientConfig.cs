@@ -32,9 +32,6 @@ namespace Dwarrowdelf.Client
 		public static ConnectionType ConnectionType = ConnectionType.Tcp;
 		public static bool AutoConnect = true;
 
-		public static bool ShowMouseDebug = true;
-		public static bool ShowMapDebug = true;
-
 		public static readonly string SaveGamePath = GetSaveGamePath();
 	}
 

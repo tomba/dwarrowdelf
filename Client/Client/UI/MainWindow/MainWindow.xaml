@@ -22,9 +22,6 @@
 	<DockPanel>
 		<ui:MainWindowMenuBar DockPanel.Dock="Top" />
 		<ui:MainWindowToolBar DockPanel.Dock="Top" />
-
-		<ui:MainWindowMouseStatusBar DockPanel.Dock="Bottom"
-			Visibility="{Binding Source={x:Static clientCommon:ClientConfig.ShowMouseDebug}, Converter={StaticResource boolToVisConverter}}" />
 		<ui:MainWindowStatusBar DockPanel.Dock="Bottom" />
 
 		<Grid>
