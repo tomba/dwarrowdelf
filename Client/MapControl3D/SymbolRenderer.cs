@@ -15,29 +15,58 @@ namespace Dwarrowdelf.Client
 	{
 		SymbolEffect m_effect;
 
-		int m_vertexCount;
+		VertexList<SceneryVertex> m_vertexList;
 		Buffer<SceneryVertex> m_vertexBuffer;
 
 		bool m_invalid;
 
 		ViewGridProvider m_viewGridProvider;
 
-		MyGame m_game;
+		EnvironmentObject m_env;
 
 		public SymbolRenderer(MyGame game, ViewGridProvider viewGridProvider)
 			: base(game)
 		{
-			m_game = game;
 			m_viewGridProvider = viewGridProvider;
 
 			m_invalid = true;
 
-			//MovableObject3D.MovableMoved += MovableObject_MovableMoved;
-
 			viewGridProvider.ViewGridCornerChanged +=
 				(oldValue, newValue) => m_invalid = true;
 
+			game.MapChanged += OnEnvChanged;
+
 			LoadContent();
+		}
+
+		void OnEnvChanged(EnvironmentObject oldEnv, EnvironmentObject newEnv)
+		{
+			if (m_env != null)
+			{
+				m_env.ObjectAdded -= OnObjectAddedOrRemoved;
+				m_env.ObjectRemoved -= OnObjectAddedOrRemoved;
+				m_env.ObjectMoved -= OnObjectMoved;
+			}
+
+			m_env = newEnv;
+			m_invalid = true;
+
+			if (m_env != null)
+			{
+				m_env.ObjectAdded += OnObjectAddedOrRemoved;
+				m_env.ObjectRemoved += OnObjectAddedOrRemoved;
+				m_env.ObjectMoved += OnObjectMoved;
+			}
+		}
+
+		void OnObjectMoved(MovableObject ob, IntVector3 p)
+		{
+			m_invalid = true;
+		}
+
+		void OnObjectAddedOrRemoved(MovableObject ob)
+		{
+			m_invalid = true;
 		}
 
 		void LoadContent()
@@ -45,11 +74,6 @@ namespace Dwarrowdelf.Client
 			m_effect = this.Content.Load<SymbolEffect>("SymbolEffect");
 
 			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
-		}
-
-		void MovableObject_MovableMoved(MovableObject obj)
-		{
-			m_invalid = true;
 		}
 
 		public override void Update()
@@ -62,14 +86,16 @@ namespace Dwarrowdelf.Client
 			return new Color(rgb.R, rgb.G, rgb.B);
 		}
 
-		VertexList<SceneryVertex> m_vertexList;
-
 		void UpdateVertexBuffer()
 		{
-			if (m_game.Environment == null)
+			if (m_env == null)
+			{
+				RemoveAndDispose(ref m_vertexBuffer);
+				m_vertexList = null;
 				return;
+			}
 
-			var envContents = m_game.Environment.Contents;
+			var envContents = m_env.Contents;
 
 			if (m_vertexList != null && envContents.Count > m_vertexList.Count)
 				m_vertexList = null;
@@ -103,20 +129,17 @@ namespace Dwarrowdelf.Client
 
 				m_vertexBuffer.SetData(m_vertexList.Data, 0, m_vertexList.Count);
 			}
-
-			m_vertexCount = m_vertexList.Count;
 		}
 
 		public override void Draw(Camera camera)
 		{
-			m_invalid = true;
 			if (m_invalid)
 			{
 				UpdateVertexBuffer();
 				m_invalid = false;
 			}
 
-			if (m_vertexCount == 0)
+			if (m_vertexList == null || m_vertexList.Count == 0)
 				return;
 
 			var device = this.GraphicsDevice;
@@ -141,7 +164,7 @@ namespace Dwarrowdelf.Client
 			//device.SetDepthStencilState(device.DepthStencilStates.None);
 
 			device.SetVertexBuffer(m_vertexBuffer);
-			device.Draw(PrimitiveType.PointList, m_vertexCount);
+			device.Draw(PrimitiveType.PointList, m_vertexList.Count);
 
 			device.SetRasterizerState(device.RasterizerStates.Default);
 			device.SetBlendState(device.BlendStates.Default);
