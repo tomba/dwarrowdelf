@@ -155,7 +155,11 @@ namespace Dwarrowdelf.Client
 
 		public void GoTo(IntVector3 p)
 		{
-			// TODO
+			// TODO: adjust view grid?
+
+			var eye = p + new IntVector3(-1, 8, 30);
+
+			m_camera.LookAt(eye.ToVector3(), p.ToVector3(), Vector3.UnitZ);
 		}
 	}
 }

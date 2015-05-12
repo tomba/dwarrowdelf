@@ -75,14 +75,12 @@ namespace Dwarrowdelf.Client
 
 		public void ScrollTo(MovableObject ob)
 		{
-			var env = ob.Environment;
-			GoTo(env, ob.Location);
+			GoTo(ob);
 		}
 
 		public void ScrollTo(EnvironmentObject env, IntVector3 p)
 		{
-			this.Environment = env;
-			m_game.GoTo(p);
+			GoTo(Environment, p);
 		}
 
 		public void ShowObjectsPopup(IntVector3 p)
