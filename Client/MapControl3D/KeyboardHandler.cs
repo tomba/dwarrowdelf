@@ -208,15 +208,7 @@ namespace Dwarrowdelf.Client
 			m_keysDown.Add(key);
 
 			// mark the keys as handled which have side effects (moving focus etc)
-			switch (key)
-			{
-				case Key.Up:
-				case Key.Down:
-				case Key.Left:
-				case Key.Right:
-					e.Handled = true;
-					break;
-			}
+			HandleRtsFspKeyHandled(e);
 		}
 
 		void OnKeyUp(object sender, KeyEventArgs e)
@@ -229,13 +221,25 @@ namespace Dwarrowdelf.Client
 			m_keysDown.Remove(key);
 
 			// mark the keys as handled which have side effects (moving focus etc)
-			switch (key)
+			HandleRtsFspKeyHandled(e);
+		}
+
+		void HandleRtsFspKeyHandled(KeyEventArgs e)
+		{
+			switch (e.Key)
 			{
 				case Key.Up:
 				case Key.Down:
 				case Key.Left:
 				case Key.Right:
+				case Key.W:
+				case Key.A:
+				case Key.S:
+				case Key.D:
 					e.Handled = true;
+					break;
+				default:
+					e.Handled = false;
 					break;
 			}
 		}
