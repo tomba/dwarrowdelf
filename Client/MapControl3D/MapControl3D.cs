@@ -28,13 +28,6 @@ namespace Dwarrowdelf.Client
 			m_game.Start();
 
 			m_toolTipService = new ToolTipService(this);
-
-			/*
-			var dbg = new DebugWindow();
-			dbg.Owner = System.Windows.Window.GetWindow(this);
-			dbg.SetGame(m_game);
-			dbg.Show();
-			 */
 		}
 
 		protected override void Dispose(bool disposing)
@@ -55,6 +48,15 @@ namespace Dwarrowdelf.Client
 				m_env = value;
 
 				m_game.Environment = value;
+
+
+				if (m_env != null)
+				{
+					var dbg = new DebugWindow();
+					dbg.Owner = System.Windows.Window.GetWindow(this);
+					dbg.SetGame(m_game);
+					dbg.Show();
+				}
 			}
 		}
 
