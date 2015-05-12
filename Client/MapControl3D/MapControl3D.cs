@@ -96,29 +96,27 @@ namespace Dwarrowdelf.Client
 
 		public event Action<MapSelection> GotSelection;
 
-		MapSelectionMode m_selectionMode;
 		public MapSelectionMode SelectionMode
 		{
 			get
 			{
-				return m_selectionMode;
+				return m_game.SelectionService.SelectionMode;
 			}
 			set
 			{
-				m_selectionMode = value;
+				m_game.SelectionService.SelectionMode = value;
 			}
 		}
 
-		MapSelection m_selection;
 		public MapSelection Selection
 		{
 			get
 			{
-				return m_selection;
+				return m_game.SelectionService.Selection;
 			}
 			set
 			{
-				m_selection = value;
+				m_game.SelectionService.Selection = value;
 			}
 		}
 
@@ -161,6 +159,8 @@ namespace Dwarrowdelf.Client
 
 		void OnGotSelection(MapSelection selection)
 		{
+			if (this.GotSelection != null)
+				this.GotSelection(selection);
 		}
 	}
 }
