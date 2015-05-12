@@ -144,12 +144,12 @@ namespace Dwarrowdelf.Client
 				if (m_selectionRenderer != null)
 					m_selectionRenderer.IsEnabled = value != null;
 
-				if (this.MapChanged != null)
-					this.MapChanged(old, m_env);
+				if (this.EnvironmentChanged != null)
+					this.EnvironmentChanged(old, m_env);
 			}
 		}
 
-		public event Action<EnvironmentObject, EnvironmentObject> MapChanged;
+		public event Action<EnvironmentObject, EnvironmentObject> EnvironmentChanged;
 
 		public void GoTo(IntVector3 p)
 		{

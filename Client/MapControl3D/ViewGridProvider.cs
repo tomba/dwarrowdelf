@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 		{
 			m_game = game;
 
-			game.MapChanged += Data_MapChanged;
+			game.EnvironmentChanged += Data_MapChanged;
 		}
 
 		void Data_MapChanged(EnvironmentObject oldMap, EnvironmentObject newMap)

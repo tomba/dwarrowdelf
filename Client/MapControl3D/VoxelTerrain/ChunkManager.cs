@@ -97,7 +97,7 @@ namespace Dwarrowdelf.Client
 
 			// XXX
 			m_game = (MyGame)scene.Game;
-			m_game.MapChanged += Data_MapChanged;
+			m_game.EnvironmentChanged += Data_MapChanged;
 
 			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
 

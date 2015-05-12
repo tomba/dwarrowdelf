@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client
 			viewGridProvider.ViewGridCornerChanged +=
 				(oldValue, newValue) => m_invalid = true;
 
-			game.MapChanged += OnEnvChanged;
+			game.EnvironmentChanged += OnEnvChanged;
 
 			LoadContent();
 		}
