@@ -20,53 +20,246 @@ namespace Dwarrowdelf.Client
 
 		MyGame m_game;
 
+		enum ControlMode
+		{
+			Fps,
+			Rts,
+		}
+
+		ControlMode m_controlMode = ControlMode.Fps;
+		bool AlignViewGridToCamera { get; set; }
+
 		public KeyboardHandler(MyGame game, SharpDXHost control, Camera camera, ViewGridProvider viewGridProvider)
 		{
+			this.AlignViewGridToCamera = true;
+
 			m_game = game;
 			m_control = control;
 			m_camera = camera;
 			m_viewGridProvider = viewGridProvider;
 
+			control.TextInput += OnTextInput;
 			control.KeyDown += OnKeyDown;
 			control.KeyUp += OnKeyUp;
-			control.LostKeyboardFocus += control_LostKeyboardFocus;
+			control.LostKeyboardFocus += OnLostKeyboardFocus;
 		}
 
-		void control_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		void OnTextInput(object sender, TextCompositionEventArgs e)
 		{
-			m_keysDown.Clear();
-		}
-
-		HashSet<Key> m_keysDown = new HashSet<Key>();
-		HashSet<Key> m_keysPressed = new HashSet<Key>();
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.Key == Key.System || e.Key == Key.Tab)
+			if (e.Text.Length != 1)
 				return;
+
+			var viewGrid = m_viewGridProvider;
+			var map = m_game.Environment;
+
+			char key = e.Text[0];
 
 			e.Handled = true;
 
-			m_keysDown.Add(e.Key);
-			m_keysPressed.Add(e.Key);
+			switch (key)
+			{
+				case '>':
+					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Down;
+					break;
+
+				case '<':
+					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
+					break;
+
+				case '1':
+					m_camera.LookAt(m_camera.Position,
+						m_camera.Position + new Vector3(0, -1, -10),
+						Vector3.UnitZ);
+					break;
+
+				case '2':
+					m_camera.LookAt(m_camera.Position,
+						m_camera.Position + new Vector3(1, 1, -1),
+						Vector3.UnitZ);
+					break;
+
+				case 'r':
+					if (map == null)
+						break;
+					{
+						var p = Mouse.GetPosition(m_control);
+						int px = MyMath.Round(p.X);
+						int py = MyMath.Round(p.Y);
+
+						// XXX not correct, should come from the surface
+						var viewport = new ViewportF(0, 0, m_control.HostedWindowWidth, m_control.HostedWindowHeight);
+
+						var ray = Ray.GetPickRay(px, py, viewport, m_camera.View * m_camera.Projection);
+
+						VoxelRayCast.RunRayCast(m_game.Environment.Size, ray.Position, ray.Direction, m_camera.FarZ,
+							(x, y, z, dir) =>
+							{
+								var l = new IntVector3(x, y, z);
+
+								if (map.Size.Contains(l) == false)
+									return true;
+
+								map.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
+
+								return false;
+							});
+					}
+					break;
+
+				case 'z':
+					if (map == null)
+						break;
+					{
+						var sel = m_game.SelectionService.Selection;
+
+						if (sel.IsSelectionValid)
+						{
+							foreach (var p in sel.SelectionBox.Range())
+								map.SetTileData(p, TileData.EmptyTileData);
+						}
+						else if (m_game.MousePositionService.MouseLocation.HasValue)
+						{
+							var p = m_game.MousePositionService.MouseLocation.Value;
+							map.SetTileData(p, TileData.EmptyTileData);
+						}
+					}
+					break;
+
+				case 'x':
+					if (map == null)
+						break;
+					{
+						var sel = m_game.SelectionService.Selection;
+
+						if (sel.IsSelectionValid)
+						{
+							foreach (var p in sel.SelectionBox.Range())
+								map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
+						}
+						else if (m_game.MousePositionService.MouseLocation.HasValue)
+						{
+							var p = m_game.MousePositionService.MouseLocation.Value;
+							var d = m_game.MousePositionService.Face;
+							if (map.Size.Contains(p + d))
+								map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
+						}
+					}
+					break;
+
+				default:
+					e.Handled = false;
+					break;
+			}
+		}
+
+		HashSet<Key> m_keysDown = new HashSet<Key>();
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			Key key = e.Key;
+
+			if (key == Key.System || key == Key.Tab)
+				return;
+
+			var viewGrid = m_viewGridProvider;
+			bool ctrl = (e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0;
+
+			e.Handled = true;
+
+			switch (key)
+			{
+				case Key.NumPad4:
+					if (!ctrl)
+						viewGrid.ViewCorner1 += Direction.West;
+					else
+						viewGrid.ViewCorner2 += Direction.West;
+					return;
+
+				case Key.NumPad6:
+					if (!ctrl)
+						viewGrid.ViewCorner1 += Direction.East;
+					else
+						viewGrid.ViewCorner2 += Direction.East;
+					return;
+
+				case Key.NumPad8:
+					if (!ctrl)
+						viewGrid.ViewCorner1 += Direction.North;
+					else
+						viewGrid.ViewCorner2 += Direction.North;
+					return;
+
+				case Key.NumPad2:
+					if (!ctrl)
+						viewGrid.ViewCorner1 += Direction.South;
+					else
+						viewGrid.ViewCorner2 += Direction.South;
+					return;
+
+				case Key.NumPad5:
+					viewGrid.ResetGrid();
+					return;
+
+				default:
+					e.Handled = false;
+					break;
+			}
+
+			m_keysDown.Add(key);
+
+			// mark the keys as handled which have side effects (moving focus etc)
+			switch (key)
+			{
+				case Key.Up:
+				case Key.Down:
+				case Key.Left:
+				case Key.Right:
+					e.Handled = true;
+					break;
+			}
 		}
 
 		void OnKeyUp(object sender, KeyEventArgs e)
 		{
-			if (e.Key == Key.System || e.Key == Key.Tab)
+			Key key = e.Key;
+
+			if (key == Key.System || key == Key.Tab)
 				return;
 
-			e.Handled = true;
+			m_keysDown.Remove(key);
 
-			m_keysDown.Remove(e.Key);
+			// mark the keys as handled which have side effects (moving focus etc)
+			switch (key)
+			{
+				case Key.Up:
+				case Key.Down:
+				case Key.Left:
+				case Key.Right:
+					e.Handled = true;
+					break;
+			}
+		}
+
+		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			m_keysDown.Clear();
 		}
 
 		public void Update()
 		{
-			HandleFpsKeyboard();
-			HandleKeyPresses();
+			switch (m_controlMode)
+			{
+				case ControlMode.Fps:
+					HandleFpsKeyboard();
+					break;
 
-			m_keysPressed.Clear();
+				case ControlMode.Rts:
+					HandleRtsKeyboard();
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		bool IsKeyDown(Key key)
@@ -110,370 +303,56 @@ namespace Dwarrowdelf.Client
 				m_camera.RotateZ(rotSpeed * dTime * mul);
 		}
 
-		void HandleKeyPresses()
-		{
-			foreach (var key in m_keysPressed)
-				HandleKeyPress(key);
-		}
-
-		void HandleKeyPress(Key key)
-		{
-			var viewGrid = m_viewGridProvider;
-
-			var map = m_game.Environment;
-
-			switch (key)
-			{
-#if asd
-				case '>':
-					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Down;
-					break;
-				case '<':
-					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
-					break;
-#endif
-				case Key.D1:
-					m_camera.LookAt(m_camera.Position,
-						m_camera.Position + new Vector3(0, -1, -10),
-						Vector3.UnitZ);
-					break;
-				case Key.D2:
-					m_camera.LookAt(m_camera.Position,
-						m_camera.Position + new Vector3(1, 1, -1),
-						Vector3.UnitZ);
-					break;
-
-				case Key.R:
-					if (map == null)
-						break;
-					{
-						var p = Mouse.GetPosition(m_control);
-						int px = MyMath.Round(p.X);
-						int py = MyMath.Round(p.Y);
-
-						// XXX not correct, should come from the surface
-						var viewport = new ViewportF(0, 0, m_control.HostedWindowWidth, m_control.HostedWindowHeight);
-
-						var ray = Ray.GetPickRay(px, py, viewport, m_camera.View * m_camera.Projection);
-
-						VoxelRayCast.RunRayCast(m_game.Environment.Size, ray.Position, ray.Direction, m_camera.FarZ,
-							(x, y, z, dir) =>
-							{
-								var l = new IntVector3(x, y, z);
-
-								if (map.Size.Contains(l) == false)
-									return true;
-
-								map.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
-
-								return false;
-							});
-					}
-					break;
-
-#if asd
-				case 'z':
-					if (map == null)
-						break;
-					{
-						var sel = this.Services.GetService<SelectionRenderer>();
-
-						if (sel.SelectionVisible)
-						{
-							foreach (var p in sel.SelectionGrid.Range())
-								map.SetTileData(p, TileData.EmptyTileData);
-						}
-						else if (sel.CursorVisible)
-						{
-							var p = sel.Position;
-							map.SetTileData(p, TileData.EmptyTileData);
-						}
-					}
-					break;
-
-				case 'x':
-					if (map == null)
-						break;
-					{
-						var sel = this.Services.GetService<SelectionRenderer>();
-
-						if (sel.SelectionVisible)
-						{
-							foreach (var p in sel.SelectionGrid.Range())
-								map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
-						}
-						else if (sel.CursorVisible)
-						{
-							var p = sel.Position;
-							var d = sel.Direction;
-							if (map.Size.Contains(p + d))
-								map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
-						}
-					}
-					break;
-#endif
-			}
-		}
-#if asd
-
-
-
-
-
-		void OnKeyDownForms(object sender, System.Windows.Forms.KeyEventArgs e)
-		{
-			var viewGrid = m_viewGridProvider;
-
-			bool handled = true;
-
-			switch (e.KeyData)
-			{
-				case Forms.Keys.NumPad4:
-					viewGrid.ViewCorner1 += Direction.West;
-					break;
-
-				case Forms.Keys.NumPad6:
-					viewGrid.ViewCorner1 += Direction.East;
-					break;
-
-				case Forms.Keys.NumPad4 | Forms.Keys.Control:
-					viewGrid.ViewCorner2 += Direction.West;
-					break;
-
-				case Forms.Keys.NumPad6 | Forms.Keys.Control:
-					viewGrid.ViewCorner2 += Direction.East;
-					break;
-
-				case Forms.Keys.NumPad8:
-					viewGrid.ViewCorner1 += Direction.North;
-					break;
-
-				case Forms.Keys.NumPad2:
-					viewGrid.ViewCorner1 += Direction.South;
-					break;
-
-				case Forms.Keys.NumPad8 | Forms.Keys.Control:
-					viewGrid.ViewCorner2 += Direction.North;
-					break;
-
-				case Forms.Keys.NumPad2 | Forms.Keys.Control:
-					viewGrid.ViewCorner2 += Direction.South;
-					break;
-
-				default:
-					handled = false;
-					break;
-			}
-
-			e.Handled = handled;
-			e.SuppressKeyPress = handled;
-		}
-
-		void OnKeyPressForms(object sender, System.Windows.Forms.KeyPressEventArgs e)
-		{
-			var viewGrid = m_viewGridProvider;
-
-			var map = GameData.Data.Map;
-
-			switch (e.KeyChar)
-			{
-				case '>':
-					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Down;
-					break;
-				case '<':
-					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
-					break;
-				case '1':
-					m_cameraProvider.LookAt(m_cameraProvider.Position,
-						m_cameraProvider.Position + new Vector3(0, -1, -10),
-						Vector3.UnitZ);
-					break;
-				case '2':
-					m_cameraProvider.LookAt(m_cameraProvider.Position,
-						m_cameraProvider.Position + new Vector3(1, 1, -1),
-						Vector3.UnitZ);
-					break;
-
-				case 'r':
-					if (map == null)
-						break;
-					{
-#if asd
-						var ctrl = (System.Windows.Forms.Control)this.Game.Window.NativeWindow;
-						var p = ctrl.PointToClient(System.Windows.Forms.Control.MousePosition);
-
-						var camera = m_camera;
-
-						var ray = Ray.GetPickRay(p.X, p.Y, this.GraphicsDevice.Viewport, camera.View * camera.Projection);
-
-						VoxelRayCast.RunRayCast(ray.Position, ray.Direction, camera.FarZ,
-							(x, y, z, dir) =>
-							{
-								var l = new IntVector3(x, y, z);
-
-								if (map.Size.Contains(l) == false)
-									return true;
-
-								map.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
-
-								return false;
-							});
-#endif
-					}
-					break;
-
-				case 'z':
-					if (map == null)
-						break;
-					{
-#if asd
-						var sel = this.Services.GetService<SelectionRenderer>();
-
-						if (sel.SelectionVisible)
-						{
-							foreach (var p in sel.SelectionGrid.Range())
-								map.SetTileData(p, TileData.EmptyTileData);
-						}
-						else if (sel.CursorVisible)
-						{
-							var p = sel.Position;
-							map.SetTileData(p, TileData.EmptyTileData);
-						}
-#endif
-					}
-					break;
-
-				case 'x':
-					if (map == null)
-						break;
-					{
-#if asd
-						var sel = this.Services.GetService<SelectionRenderer>();
-
-						if (sel.SelectionVisible)
-						{
-							foreach (var p in sel.SelectionGrid.Range())
-								map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
-						}
-						else if (sel.CursorVisible)
-						{
-							var p = sel.Position;
-							var d = sel.Direction;
-							if (map.Size.Contains(p + d))
-								map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
-						}
-#endif
-					}
-					break;
-			}
-		}
-
-		public void Update(GameTime gameTime)
-		{
-			KeyboardState keyboardState = new KeyboardState();// m_keyboardManager.GetState();
-
-			switch (GameData.Data.ControlMode)
-			{
-				case ControlMode.Fps:
-					HandleFpsKeyboard(gameTime, keyboardState);
-					break;
-
-				case ControlMode.Rts:
-					HandleRtsKeyboard(gameTime, keyboardState);
-					break;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		void HandleFpsKeyboard(GameTime gameTime, KeyboardState keyboardState)
+		void HandleRtsKeyboard()
 		{
 			const float walkSpeek = 40f;
 			const float rotSpeed = MathUtil.PiOverTwo * 1.5f;
-			float dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+			float dTime = (float)m_game.Time.FrameTime.TotalSeconds;
 			float mul = 1f;
 
-			if (keyboardState.IsKeyDown(Keys.Shift))
-				mul = 0.2f;
-
-			if (keyboardState.IsKeyDown(Keys.W))
-				m_cameraProvider.Walk(walkSpeek * dTime * mul);
-			else if (keyboardState.IsKeyDown(Keys.S))
-				m_cameraProvider.Walk(-walkSpeek * dTime * mul);
-
-			if (keyboardState.IsKeyDown(Keys.D))
-				m_cameraProvider.Strafe(walkSpeek * dTime * mul);
-			else if (keyboardState.IsKeyDown(Keys.A))
-				m_cameraProvider.Strafe(-walkSpeek * dTime * mul);
-
-			if (keyboardState.IsKeyDown(Keys.E))
-				m_cameraProvider.Climb(walkSpeek * dTime * mul);
-			else if (keyboardState.IsKeyDown(Keys.Q))
-				m_cameraProvider.Climb(-walkSpeek * dTime * mul);
-
-			if (keyboardState.IsKeyDown(Keys.Up))
-				m_cameraProvider.Pitch(-rotSpeed * dTime * mul);
-			else if (keyboardState.IsKeyDown(Keys.Down))
-				m_cameraProvider.Pitch(rotSpeed * dTime * mul);
-
-			if (keyboardState.IsKeyDown(Keys.Left))
-				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
-			else if (keyboardState.IsKeyDown(Keys.Right))
-				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
-		}
-
-		void HandleRtsKeyboard(GameTime gameTime, KeyboardState keyboardState)
-		{
-			float dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-			float mul = 1f;
-			const float walkSpeek = 40f;
-			const float rotSpeed = MathUtil.PiOverTwo * 1.5f;
-
-			if (keyboardState.IsKeyDown(Keys.Shift))
+			if (IsKeyDown(Key.LeftShift) || IsKeyDown(Key.RightShift))
 				mul = 0.2f;
 
 			Vector3 v = new Vector3();
 
-			if (keyboardState.IsKeyDown(Keys.E))
+			if (IsKeyDown(Key.E))
 				v.Z = walkSpeek * dTime * mul;
-			else if (keyboardState.IsKeyDown(Keys.Q))
+			else if (IsKeyDown(Key.Q))
 				v.Z = -walkSpeek * dTime * mul;
 
-			if (keyboardState.IsKeyDown(Keys.W))
+			if (IsKeyDown(Key.W))
 				v.Y = walkSpeek * dTime * mul;
-			else if (keyboardState.IsKeyDown(Keys.S))
+			else if (IsKeyDown(Key.S))
 				v.Y = -walkSpeek * dTime * mul;
 
-			if (keyboardState.IsKeyDown(Keys.D))
+			if (IsKeyDown(Key.D))
 				v.X = walkSpeek * dTime * mul;
-			else if (keyboardState.IsKeyDown(Keys.A))
+			else if (IsKeyDown(Key.A))
 				v.X = -walkSpeek * dTime * mul;
 
 			if (!v.IsZero)
 			{
-				m_cameraProvider.Move(v);
+				m_camera.Move(v);
 
-				if (GameData.Data.AlignViewGridToCamera && v.Z != 0)
+				if (this.AlignViewGridToCamera && v.Z != 0)
 				{
 					var viewGrid = m_viewGridProvider;
 
 					var c = viewGrid.ViewCorner2;
-					c.Z = (int)m_cameraProvider.Position.Z - 32;
+					c.Z = (int)m_camera.Position.Z - 32;
 					viewGrid.ViewCorner2 = c;
 				}
 			}
 
-			if (keyboardState.IsKeyDown(Keys.Up))
-				m_cameraProvider.Pitch(-rotSpeed * dTime * mul);
-			else if (keyboardState.IsKeyDown(Keys.Down))
-				m_cameraProvider.Pitch(rotSpeed * dTime * mul);
+			if (IsKeyDown(Key.Up))
+				m_camera.Pitch(-rotSpeed * dTime * mul);
+			else if (IsKeyDown(Key.Down))
+				m_camera.Pitch(rotSpeed * dTime * mul);
 
-			if (keyboardState.IsKeyDown(Keys.Left))
-				m_cameraProvider.RotateZ(-rotSpeed * dTime * mul);
-			else if (keyboardState.IsKeyDown(Keys.Right))
-				m_cameraProvider.RotateZ(rotSpeed * dTime * mul);
+			if (IsKeyDown(Key.Left))
+				m_camera.RotateZ(-rotSpeed * dTime * mul);
+			else if (IsKeyDown(Key.Right))
+				m_camera.RotateZ(rotSpeed * dTime * mul);
 		}
-#endif
 	}
 }

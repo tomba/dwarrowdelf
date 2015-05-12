@@ -35,6 +35,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public void ResetGrid()
+		{
+			this.ViewCorner1 = new IntVector3(0, 0, 0);
+			this.ViewCorner2 = new IntVector3(m_game.Environment.Width - 1, m_game.Environment.Height - 1, m_game.Environment.Depth - 1);
+		}
+
 		IntVector3 m_viewCorner1;
 		public IntVector3 ViewCorner1
 		{
