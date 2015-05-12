@@ -230,7 +230,7 @@ namespace Dwarrowdelf.Client.UI
 			switch (this.ClientTools.ToolMode)
 			{
 				case ClientToolMode.View:
-					MapControl.ShowObjectsPopup(selection.SelectionPoint);
+					ShowObjectsPopup(selection.SelectionPoint);
 					break;
 
 				case ClientToolMode.DesignationRemove:
@@ -591,6 +591,58 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			CommandPromptHandler.Handle(str);
+		}
+
+		void ShowObjectsPopup(IntVector3 ml)
+		{
+			var env = this.Map;
+
+			if (env == null)
+				return;
+
+			var obs = new List<object>();
+
+			var elem = env.GetElementAt(ml);
+			if (elem != null)
+				obs.Add(elem);
+
+			obs.AddRange(env.GetContents(ml));
+
+			if (obs.Count == 0)
+				return;
+
+			if (obs.Count == 1)
+			{
+				object ob = obs[0];
+				ShowObjectInDialog(ob);
+			}
+			else
+			{
+				var ctxMenu = (ContextMenu)this.FindResource("objectSelectorContextMenu");
+
+				ctxMenu.ItemsSource = obs;
+				ctxMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
+				ctxMenu.PlacementTarget = map;
+				var rect = map.GetPlacementRect(ml);
+				ctxMenu.PlacementRectangle = rect;
+
+				ctxMenu.IsOpen = true;
+			}
+		}
+
+		void OnObjectSelectContextMenuClick(object sender, RoutedEventArgs e)
+		{
+			var item = (MenuItem)e.OriginalSource;
+			var ob = item.Header;
+			ShowObjectInDialog(ob);
+		}
+
+		void ShowObjectInDialog(object ob)
+		{
+			var dlg = new ObjectEditDialog();
+			dlg.DataContext = ob;
+			dlg.Owner = Window.GetWindow(this);
+			dlg.Show();
 		}
 	}
 }

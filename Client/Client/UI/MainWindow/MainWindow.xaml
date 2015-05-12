@@ -17,6 +17,32 @@
 	<Window.Resources>
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems" />
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings" />
+
+		<Image Width="24" Height="24" x:Key="menuItemIconImage" x:Shared="False">
+			<Image.Source>
+				<MultiBinding Converter="{StaticResource symbolAndColorDrawingConverter}" ConverterParameter="24">
+					<Binding Path="SymbolID" />
+					<Binding Path="EffectiveColor" />
+				</MultiBinding>
+			</Image.Source>
+		</Image>
+
+		<ContextMenu x:Key="objectSelectorContextMenu">
+			<ContextMenu.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Description, Converter={StaticResource capitalizeConverter}}" />
+					</StackPanel>
+				</DataTemplate>
+			</ContextMenu.ItemTemplate>
+
+			<ContextMenu.ItemContainerStyle>
+				<Style TargetType="MenuItem">
+					<Setter Property="Icon" Value="{StaticResource menuItemIconImage}" />
+					<EventSetter Event="Click" Handler="OnObjectSelectContextMenuClick" />
+				</Style>
+			</ContextMenu.ItemContainerStyle>
+		</ContextMenu>
 	</Window.Resources>
 
 	<DockPanel>

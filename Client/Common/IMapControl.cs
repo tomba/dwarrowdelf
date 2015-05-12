@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Dwarrowdelf.Client.UI
@@ -15,11 +16,11 @@ namespace Dwarrowdelf.Client.UI
 		void ScrollTo(MovableObject ob);
 		void ScrollTo(EnvironmentObject env, IntVector3 p);
 
-		void ShowObjectsPopup(IntVector3 p);
-
 		EnvironmentObject Environment { get; }
 
 		TileAreaView HoverTileView { get; }
 		TileAreaView SelectionTileAreaView { get; }
+
+		Rect GetPlacementRect(IntVector3 ml);
 	}
 }

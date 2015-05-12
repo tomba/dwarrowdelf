@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Dwarrowdelf.Client
@@ -83,11 +84,26 @@ namespace Dwarrowdelf.Client
 			GoTo(Environment, p);
 		}
 
-		public void ShowObjectsPopup(IntVector3 p)
+		public Rect GetPlacementRect(IntVector3 ml)
 		{
 			// XXX
-		}
+			var view = m_game.Surfaces[0].Views[0];
 
+			SharpDX.Matrix matrix = view.Camera.View * view.Camera.Projection;
+
+			var p1 = ml.ToVector3();
+			var p2 = p1 + new SharpDX.Vector3(1, 1, 0);
+			SharpDX.Vector3 out1, out2;
+
+			var vp = view.ViewPort;
+
+			vp.Project(ref p1, ref matrix, out out1);
+			vp.Project(ref p2, ref matrix, out out2);
+
+			Rect rect = new Rect(new System.Windows.Point(out1.X, out1.Y), new System.Windows.Point(out2.X, out2.Y));
+
+			return rect;
+		}
 
 		public event Action<MapSelection> GotSelection;
 
