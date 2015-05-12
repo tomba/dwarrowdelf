@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 {
 	sealed class ToolTipService
 	{
-		SharpDXHost m_control;
+		MapControl3D m_control;
 		TileAreaView m_hoverTileView;
 
 		bool m_isToolTipEnabled;
@@ -24,13 +24,10 @@ namespace Dwarrowdelf.Client
 		ToolTip m_popup;
 		TileToolTipControl m_content;
 
-		MyGame m_game;
-
-		public ToolTipService(MyGame game, SharpDXHost mapControl, TileAreaView tileView)
+		public ToolTipService(MapControl3D control)
 		{
-			m_game = game;
-			m_control = mapControl;
-			m_hoverTileView = tileView;
+			m_control = control;
+			m_hoverTileView = control.HoverTileView;
 
 			m_content = new TileToolTipControl();
 			m_content.DataContext = m_hoverTileView;
@@ -132,20 +129,7 @@ namespace Dwarrowdelf.Client
 
 			var ml = m_hoverTileView.Box.Corner1;
 
-			var view = m_game.Surfaces[0].Views[0];
-
-			Matrix matrix = view.Camera.View * view.Camera.Projection;
-
-			var p1 = ml.ToVector3();
-			var p2 = p1 + new Vector3(1, 1, 0);
-			Vector3 out1, out2;
-
-			var vp = view.ViewPort;
-
-			vp.Project(ref p1, ref matrix, out out1);
-			vp.Project(ref p2, ref matrix, out out2);
-
-			Rect rect = new Rect(new System.Windows.Point(out1.X, out1.Y), new System.Windows.Point(out2.X, out2.Y));
+			var rect = m_control.GetPlacementRect(ml);
 
 			m_popup.PlacementRectangle = rect;
 			m_popup.IsOpen = true;

@@ -19,7 +19,6 @@ namespace Dwarrowdelf.Client
 		readonly ViewGridProvider m_viewGridProvider;
 		public MousePositionService MousePositionService { get; private set; }
 		public SelectionService SelectionService { get; private set; }
-		ToolTipService ToolTipService { get; set; }
 
 		readonly TerrainRenderer m_terrainRenderer;
 		readonly SymbolRenderer m_symbolRenderer;
@@ -45,7 +44,6 @@ namespace Dwarrowdelf.Client
 			m_camera.LookAt(new Vector3(4, 0, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
 
 			m_viewGridProvider = new ViewGridProvider(this);
-			this.ToolTipService = new Client.ToolTipService(this, mainHost, ((MapControl3D)mainHost).HoverTileView);
 
 			m_keyboardHandler = new KeyboardHandler(this, mainHost, m_camera, m_viewGridProvider);
 			base.Updatables.Add(m_keyboardHandler);

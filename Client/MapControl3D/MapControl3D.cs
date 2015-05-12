@@ -12,6 +12,7 @@ namespace Dwarrowdelf.Client
 	public class MapControl3D : SharpDXHost, IMapControl
 	{
 		MyGame m_game;
+		ToolTipService m_toolTipService;
 
 		public MapControl3D()
 		{
@@ -25,6 +26,8 @@ namespace Dwarrowdelf.Client
 			m_game.SelectionService.GotSelection += OnGotSelection;
 
 			m_game.Start();
+
+			m_toolTipService = new ToolTipService(this);
 
 			/*
 			var dbg = new DebugWindow();
