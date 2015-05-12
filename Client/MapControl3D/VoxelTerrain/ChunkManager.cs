@@ -17,13 +17,32 @@ namespace Dwarrowdelf.Client
 		class VertexListCacheItem
 		{
 			public Chunk Chunk;
-			public VertexList<TerrainVertex> TerrainVertexList;
-			public VertexList<SceneryVertex> SceneryVertexList;
+
+			public VertexList<TerrainVertex> TerrainVertexList
+			{
+				get
+				{
+					if (m_terrainVertexList == null)
+						m_terrainVertexList = new VertexList<TerrainVertex>(Chunk.MAX_VERTICES_PER_CHUNK);
+					return m_terrainVertexList;
+				}
+			}
+
+			public VertexList<SceneryVertex> SceneryVertexList
+			{
+				get
+				{
+					if (m_sceneryVertexList == null)
+						m_sceneryVertexList = new VertexList<SceneryVertex>(Chunk.VOXELS_PER_CHUNK);
+					return m_sceneryVertexList;
+				}
+			}
+
+			VertexList<TerrainVertex> m_terrainVertexList;
+			VertexList<SceneryVertex> m_sceneryVertexList;
 
 			public VertexListCacheItem()
 			{
-				this.TerrainVertexList = new VertexList<TerrainVertex>(Chunk.MAX_VERTICES_PER_CHUNK);
-				this.SceneryVertexList = new VertexList<SceneryVertex>(Chunk.VOXELS_PER_CHUNK);
 			}
 		}
 

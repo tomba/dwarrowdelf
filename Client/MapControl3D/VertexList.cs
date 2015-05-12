@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
+	/// <summary>
+	/// A very simple List<T> which gives direct access to the underlying array
+	/// </summary>
 	class VertexList<T>
 	{
 		public T[] Data { get; private set; }
@@ -15,13 +14,11 @@ namespace Dwarrowdelf.Client
 		public VertexList(int capacity)
 		{
 			this.Capacity = capacity;
+			this.Data = new T[this.Capacity];
 		}
 
 		public void Add(T data)
 		{
-			if (this.Data == null)
-				this.Data = new T[this.Capacity];
-
 			this.Data[this.Count++] = data;
 		}
 
