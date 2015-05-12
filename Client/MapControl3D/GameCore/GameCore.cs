@@ -79,6 +79,12 @@ namespace Dwarrowdelf.Client
 
 			var time = m_timer.TotalTime;
 
+			// Setup surfaces
+			foreach (var surfaces in this.Surfaces)
+			{
+				surfaces.ResizePresenter();
+			}
+
 			// UPDATE 
 			foreach (var updatable in this.Updatables)
 			{

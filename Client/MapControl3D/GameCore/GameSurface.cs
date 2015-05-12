@@ -27,7 +27,8 @@ namespace Dwarrowdelf.Client
 
 		public void Draw()
 		{
-			SetupPresenter();
+			if (m_presenter == null)
+				return;
 
 			m_device.Presenter = m_presenter;
 			m_device.SetRenderTargets(m_presenter.DepthStencilBuffer, m_presenter.BackBuffer);
@@ -44,10 +45,16 @@ namespace Dwarrowdelf.Client
 			m_device.Presenter = null;
 		}
 
-		void SetupPresenter()
+		public void ResizePresenter()
 		{
 			int width = m_host.HostedWindowWidth;
 			int height = m_host.HostedWindowHeight;
+
+			if (width == 0 || height == 0)
+			{
+				RemoveAndDispose(ref m_presenter);
+				return;
+			}
 
 			bool sizeChanged;
 
