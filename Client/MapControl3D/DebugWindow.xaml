@@ -93,13 +93,13 @@
 
 		<GroupBox Header="Options">
 			<UniformGrid Columns="2">
-				<CheckBox Content="Wireframe" />
-				<CheckBox Content="Disable Culling" />
-				<CheckBox Content="Disable Borders" />
-				<CheckBox Content="Disable Light" />
-				<CheckBox Content="Disable Occlusion" />
-				<CheckBox Content="Disable Texture" />
-				<CheckBox Content="Disable VSync" />
+				<CheckBox x:Name="cbWireframe" Content="Wireframe" />
+				<CheckBox x:Name="cbCulling" Content="Disable Culling" />
+				<CheckBox x:Name="cbBorders" Content="Disable Borders" />
+				<CheckBox x:Name="cbLight" Content="Disable Light" />
+				<CheckBox x:Name="cbOcclusion" Content="Disable Occlusion" />
+				<CheckBox x:Name="cbTexture" Content="Disable Texture" />
+				<CheckBox x:Name="cbVsync" Content="Disable VSync" IsEnabled="False" />
 			</UniformGrid>
 		</GroupBox>
 
