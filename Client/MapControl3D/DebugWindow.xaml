@@ -27,7 +27,7 @@
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 				<Label Content="Camera Pos" Grid.Column="0"/>
-				<TextBox TextWrapping="Wrap" Text="{Binding CameraPos}" Grid.Column="1"/>
+				<TextBox TextWrapping="Wrap" Text="{Binding CameraPos, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
 			</Grid>
 		</GroupBox>
 
@@ -46,21 +46,21 @@
 					<RowDefinition Height="*"/>
 				</Grid.RowDefinitions>
 				<Label Content="Vertices" Grid.Row="1"/>
-				<TextBox TextWrapping="Wrap" Text="{Binding Vertices}" Grid.Row="1" Grid.Column="1"/>
+				<TextBox TextWrapping="Wrap" Text="{Binding Vertices, Mode=OneWay}" Grid.Row="1" Grid.Column="1" IsReadOnly="True"/>
 				<Label Content="Chunks" Grid.Row="2"/>
-				<TextBox TextWrapping="Wrap" Text="{Binding Chunks}" Grid.Row="2" Grid.Column="1"/>
+				<TextBox TextWrapping="Wrap" Text="{Binding Chunks, Mode=OneWay}" Grid.Row="2" Grid.Column="1" IsReadOnly="True"/>
 				<Label Content="Chunks Rec" Grid.Row="3" Grid.RowSpan="2"/>
-				<TextBox TextWrapping="Wrap" Text="{Binding ChunkRecalcs}" Grid.Row="3" Grid.Column="1"/>
+				<TextBox TextWrapping="Wrap" Text="{Binding ChunkRecalcs, Mode=OneWay}" Grid.Row="3" Grid.Column="1" IsReadOnly="True"/>
 				<Label Content="GC" Grid.Row="4"/>
-				<TextBox TextWrapping="Wrap" Text="{Binding GC}" Grid.Row="4" Grid.Column="1"/>
+				<TextBox TextWrapping="Wrap" Text="{Binding GC, Mode=OneWay}" Grid.Row="4" Grid.Column="1" IsReadOnly="True"/>
 			</Grid>
 		</GroupBox>
 
 		<GroupBox Header="Map View Area">
 			<StackPanel Orientation="Vertical">
 				<UniformGrid Columns="2">
-					<TextBox />
-					<TextBox />
+					<TextBox Text="{Binding ViewCorner1, Mode=OneWay}" IsReadOnly="True" />
+					<TextBox Text="{Binding ViewCorner2, Mode=OneWay}" IsReadOnly="True" />
 				</UniformGrid>
 				<Grid>
 					<Grid.ColumnDefinitions>
@@ -78,15 +78,15 @@
 					</Grid.RowDefinitions>
 
 					<Label Content="Z" Grid.Row="1" />
-					<Slider Grid.Column="2" Grid.Row="1" />
+					<Slider Grid.Column="2" Grid.Row="1" Minimum="0" Maximum="{Binding ViewMaxZ}" Value="{Binding ViewZ}" />
 					<Label Content="X-" Grid.Row="2"/>
-					<Slider Grid.Column="2" Grid.Row="2" />
+					<Slider Grid.Column="2" Grid.Row="2" Minimum="0" Maximum="{Binding ViewMaxX}" Value="{Binding ViewX1}" />
 					<Label Content="X+" Grid.Row="3"/>
-					<Slider Grid.Column="2" Grid.Row="3" />
+					<Slider Grid.Column="2" Grid.Row="3" Minimum="0" Maximum="{Binding ViewMaxX}" Value="{Binding ViewX2}" />
 					<Label Content="Y-" Grid.Row="4"/>
-					<Slider Grid.Column="2" Grid.Row="4" />
+					<Slider Grid.Column="2" Grid.Row="4" Minimum="0" Maximum="{Binding ViewMaxY}" Value="{Binding ViewY1}" />
 					<Label Content="Y+" Grid.Row="5"/>
-					<Slider Grid.Column="2" Grid.Row="5" />
+					<Slider Grid.Column="2" Grid.Row="5" Minimum="0" Maximum="{Binding ViewMaxY}" Value="{Binding ViewY2}" />
 				</Grid>
 			</StackPanel>
 		</GroupBox>

@@ -95,13 +95,74 @@ namespace Dwarrowdelf.Client
 		public DebugWindowData(MyGame game)
 		{
 			m_game = game;
+
+			m_game.ViewGrid.ViewGridCornerChanged += (o, n) => Notify("");
 		}
 
-		public string CameraPos { get; set; }
-		public string Vertices { get; set; }
-		public string Chunks { get; set; }
-		public string ChunkRecalcs { get; set; }
+		public string CameraPos
+		{
+			get
+			{
+				var campos = m_game.Camera.Position;
+				var chunkpos = (campos / Chunk.CHUNK_SIZE).ToFloorIntVector3();
+				return String.Format("{0:F2}/{1:F2}/{2:F2} (Chunk {3}/{4}/{5})",
+					campos.X, campos.Y, campos.Z,
+					chunkpos.X, chunkpos.Y, chunkpos.Z);
+			}
+		}
+
+		public int Vertices { get { return m_game.TerrainRenderer.VerticesRendered; } }
+		public string Chunks { get { return m_game.TerrainRenderer.ChunkManager.ChunkCountDebug; } }
+		public int ChunkRecalcs { get { return m_game.TerrainRenderer.ChunkRecalcs; } }
 		public string GC { get; set; }
+
+		public IntVector3 ViewCorner1 { get { return m_game.ViewGrid.ViewCorner1; } }
+		public IntVector3 ViewCorner2 { get { return m_game.ViewGrid.ViewCorner2; } }
+
+		public int ViewMaxX
+		{
+			get { return m_game.Environment != null ? m_game.Environment.Width : 0; }
+		}
+
+		public int ViewMaxY
+		{
+			get { return m_game.Environment != null ? m_game.Environment.Height : 0; }
+		}
+
+		public int ViewMaxZ
+		{
+			get { return m_game.Environment != null ? m_game.Environment.Depth : 0; }
+		}
+
+		public int ViewZ
+		{
+			get { return m_game.ViewGrid.ViewCorner2.Z; }
+			set { m_game.ViewGrid.ViewCorner2 = m_game.ViewGrid.ViewCorner2.SetZ(value); }
+		}
+
+		public int ViewX1
+		{
+			get { return m_game.ViewGrid.ViewCorner1.X; }
+			set { m_game.ViewGrid.ViewCorner1 = m_game.ViewGrid.ViewCorner1.SetX(value); }
+		}
+
+		public int ViewX2
+		{
+			get { return m_game.ViewGrid.ViewCorner2.X; }
+			set { m_game.ViewGrid.ViewCorner2 = m_game.ViewGrid.ViewCorner2.SetX(value); }
+		}
+
+		public int ViewY1
+		{
+			get { return m_game.ViewGrid.ViewCorner1.Y; }
+			set { m_game.ViewGrid.ViewCorner1 = m_game.ViewGrid.ViewCorner1.SetY(value); }
+		}
+
+		public int ViewY2
+		{
+			get { return m_game.ViewGrid.ViewCorner2.Y; }
+			set { m_game.ViewGrid.ViewCorner2 = m_game.ViewGrid.ViewCorner2.SetY(value); }
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -111,22 +172,6 @@ namespace Dwarrowdelf.Client
 
 		public void Update(object sender, EventArgs e)
 		{
-			var campos = m_game.Camera.Position;
-			var chunkpos = (campos / Chunk.CHUNK_SIZE).ToFloorIntVector3();
-
-			var terrainRenderer = m_game.TerrainRenderer;
-
-			this.CameraPos = String.Format("{0:F2}/{1:F2}/{2:F2} (Chunk {3}/{4}/{5})",
-				campos.X, campos.Y, campos.Z,
-				chunkpos.X, chunkpos.Y, chunkpos.Z);
-			this.Vertices = terrainRenderer.VerticesRendered.ToString();
-			this.Chunks = terrainRenderer.ChunkManager.ChunkCountDebug;
-			this.ChunkRecalcs = terrainRenderer.ChunkRecalcs.ToString();
-			terrainRenderer.ChunkRecalcs = 0;
-
-
-
-
 			var c0 = System.GC.CollectionCount(0);
 			var c1 = System.GC.CollectionCount(1);
 			var c2 = System.GC.CollectionCount(2);
@@ -142,9 +187,9 @@ namespace Dwarrowdelf.Client
 			m_c1 = c1;
 			m_c2 = c2;
 
-
-
 			Notify("");
+
+			m_game.TerrainRenderer.ChunkRecalcs = 0;
 		}
 
 		void Notify(string name)
