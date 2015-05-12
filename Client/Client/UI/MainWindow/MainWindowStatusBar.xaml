@@ -27,11 +27,6 @@
 
 		<Separator />
 
-		<TextBlock>Z</TextBlock>
-		<TextBlock Text="{Binding Path=MapControl.MainMap.MapCenterPos.Z, TargetNullValue=x, FallbackValue=-, StringFormat={}{0:F0}}" />
-
-		<Separator />
-
 		<TextBlock Width="150" DataContext="{Binding Data.NetStats}">
 			<TextBlock.Text>
 				<MultiBinding StringFormat="Sent: {0} / {1:N0}">
