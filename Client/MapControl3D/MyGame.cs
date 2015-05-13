@@ -23,6 +23,7 @@ namespace Dwarrowdelf.Client
 		public MousePositionService MousePositionService { get; private set; }
 		public SelectionService SelectionService { get; private set; }
 		public CursorService CursorService { get; private set; }
+		public CameraMoveService CameraMoveService { get; private set; }
 
 		public TerrainRenderer TerrainRenderer { get; private set; }
 		readonly SymbolRenderer m_symbolRenderer;
@@ -45,6 +46,9 @@ namespace Dwarrowdelf.Client
 
 			this.Camera = new Camera();
 			this.Camera.LookAt(new Vector3(4, 0, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
+
+			this.CameraMoveService = new CameraMoveService(this.Camera);
+			base.Updatables.Add(this.CameraMoveService);
 
 			this.ViewGridProvider = new ViewGridProvider(this);
 
@@ -161,9 +165,20 @@ namespace Dwarrowdelf.Client
 		{
 			// TODO: adjust view grid?
 
-			var eye = p + new IntVector3(-1, 8, 30);
+			var eye = (p + new IntVector3(-1, 8, 30)).ToVector3();
+			var target = p.ToVector3();
 
-			this.Camera.LookAt(eye.ToVector3(), p.ToVector3(), Vector3.UnitZ);
+			this.Camera.LookAt(eye, target, Vector3.UnitZ);
+		}
+
+		public void ScrollTo(IntVector3 p)
+		{
+			// TODO: adjust view grid?
+
+			var eye = (p + new IntVector3(-1, 8, 30)).ToVector3();
+			var target = p.ToVector3();
+
+			this.CameraMoveService.Move(eye, target);
 		}
 	}
 }

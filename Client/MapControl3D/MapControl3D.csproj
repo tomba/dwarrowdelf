@@ -79,6 +79,7 @@
     <Compile Include="DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CameraMoveService.cs" />
     <Compile Include="FPSCounterSystem.cs" />
     <Compile Include="GameCore\Camera.cs" />
     <Compile Include="GameCore\ContentPool.cs" />
