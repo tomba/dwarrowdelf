@@ -16,14 +16,15 @@ namespace Dwarrowdelf.Client
 {
 	sealed class MyGame : GameCore
 	{
-		readonly Camera m_camera;
+		public Camera Camera { get; private set; }
 
 		public KeyboardHandler KeyboardHandler { get; private set; }
-		readonly ViewGridProvider m_viewGridProvider;
+		public ViewGridProvider ViewGridProvider { get; private set; }
 		public MousePositionService MousePositionService { get; private set; }
 		public SelectionService SelectionService { get; private set; }
+		public CursorService CursorService { get; private set; }
 
-		readonly TerrainRenderer m_terrainRenderer;
+		public TerrainRenderer TerrainRenderer { get; private set; }
 		readonly SymbolRenderer m_symbolRenderer;
 		readonly SelectionRenderer m_selectionRenderer;
 		readonly FPSCounter m_fpsCounter;
@@ -36,25 +37,18 @@ namespace Dwarrowdelf.Client
 #if OUTLINERENDERER
 		readonly ChunkOutlineRenderer m_outlineRenderer;
 #endif
-		public TerrainRenderer TerrainRenderer { get { return m_terrainRenderer; } }
 		public RasterizerState RasterizerState { get; set; }
-		public SelectionRenderer SelectionRenderer { get { return m_selectionRenderer; } }
-
-		public ViewGridProvider ViewGrid { get { return m_viewGridProvider; } }
-		public Camera Camera { get { return m_camera; } }
-
-		public CursorService CursorService { get; private set; }
 
 		public MyGame(SharpDXHost mainHost)
 		{
 			//SharpDX.Configuration.EnableObjectTracking = true;
 
-			m_camera = new Camera();
-			m_camera.LookAt(new Vector3(4, 0, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
+			this.Camera = new Camera();
+			this.Camera.LookAt(new Vector3(4, 0, 0), new Vector3(0, 0, 0), Vector3.UnitZ);
 
-			m_viewGridProvider = new ViewGridProvider(this);
+			this.ViewGridProvider = new ViewGridProvider(this);
 
-			this.KeyboardHandler = new KeyboardHandler(this, mainHost, m_camera, m_viewGridProvider);
+			this.KeyboardHandler = new KeyboardHandler(this, mainHost, this.Camera, this.ViewGridProvider);
 			base.Updatables.Add(this.KeyboardHandler);
 
 			m_fpsCounter = new FPSCounter(this);
@@ -65,12 +59,12 @@ namespace Dwarrowdelf.Client
 
 			var mainView = new GameSurfaceView(this.GraphicsDevice)
 			{
-				Camera = m_camera,
+				Camera = this.Camera,
 			};
 
 			var axesView = new GameSurfaceView(this.GraphicsDevice)
 			{
-				Camera = m_camera,
+				Camera = this.Camera,
 			};
 
 			var surface = ToDispose(new GameSurface(this.GraphicsDevice, mainHost));
@@ -92,13 +86,13 @@ namespace Dwarrowdelf.Client
 			this.MousePositionService = new MousePositionService(this, mainHost, mainView);
 			base.Updatables.Add(this.MousePositionService);
 
-			this.SelectionService = new Client.SelectionService(this, mainHost, m_camera);
+			this.SelectionService = new Client.SelectionService(this, mainHost, this.Camera);
 
-			m_terrainRenderer = ToDispose(new TerrainRenderer(this, m_camera, m_viewGridProvider));
-			base.Updatables.Add(m_terrainRenderer);
-			mainView.Drawables.Add(m_terrainRenderer);
+			this.TerrainRenderer = ToDispose(new TerrainRenderer(this, this.Camera, this.ViewGridProvider));
+			base.Updatables.Add(this.TerrainRenderer);
+			mainView.Drawables.Add(this.TerrainRenderer);
 
-			m_symbolRenderer = ToDispose(new SymbolRenderer(this, m_viewGridProvider));
+			m_symbolRenderer = ToDispose(new SymbolRenderer(this, this.ViewGridProvider));
 			base.Updatables.Add(m_symbolRenderer);
 			mainView.Drawables.Add(m_symbolRenderer);
 
@@ -146,7 +140,7 @@ namespace Dwarrowdelf.Client
 
 					//pos = new Vector3(-5, -4, 32); target = new Vector3(40, 40, 0);
 
-					m_camera.LookAt(pos, target, Vector3.UnitZ);
+					this.Camera.LookAt(pos, target, Vector3.UnitZ);
 				}
 
 				//m_terrainRenderer.Enabled = map != null;
@@ -166,7 +160,7 @@ namespace Dwarrowdelf.Client
 
 			var eye = p + new IntVector3(-1, 8, 30);
 
-			m_camera.LookAt(eye.ToVector3(), p.ToVector3(), Vector3.UnitZ);
+			this.Camera.LookAt(eye.ToVector3(), p.ToVector3(), Vector3.UnitZ);
 		}
 	}
 }

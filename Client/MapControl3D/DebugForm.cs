@@ -43,7 +43,7 @@ namespace Dwarrowdelf.Client
 			m_timer.Interval = 1000;
 			//m_timer.Start();
 
-			var viewGridProvider = game.ViewGrid;
+			var viewGridProvider = game.ViewGridProvider;
 			viewGridProvider.ViewGridCornerChanged += OnViewGridCornerChanged;
 
 			this.viewCorner1TextBox.Text = viewGridProvider.ViewCorner1.ToString();
@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Client
 				this.ypCutTrackBar.Maximum = map.Height - 1;
 			}
 
-			var viewGridProvider = m_game.ViewGrid;
+			var viewGridProvider = m_game.ViewGridProvider;
 
 			this.zCutTrackBar.Value = viewGridProvider.ViewCorner2.Z;
 			this.xnCutTrackBar.Value = viewGridProvider.ViewCorner1.X;

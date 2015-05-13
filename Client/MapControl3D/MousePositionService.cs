@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Client
 
 			this.ScreenLocation = mousePos;
 
-			bool hit = PickVoxel(m_game.Environment, m_surfaceView, mousePos, m_game.ViewGrid.ViewGrid, out p, out d);
+			bool hit = PickVoxel(m_game.Environment, m_surfaceView, mousePos, m_game.ViewGridProvider.ViewGrid, out p, out d);
 
 			if (hit)
 			{
@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Client
 		public static bool PickVoxel(MyGame game, IntVector2 screenPos, out IntVector3 pos, out Direction face)
 		{
 			return MousePositionService.PickVoxel(game.Environment, game.Surfaces[0].Views[0], screenPos,
-				game.ViewGrid.ViewGrid, out pos, out face);
+				game.ViewGridProvider.ViewGrid, out pos, out face);
 		}
 
 		public static bool PickVoxel(EnvironmentObject env, GameSurfaceView view, IntVector2 screenPos, IntGrid3 cropGrid,

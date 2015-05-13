@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Client
 		{
 			m_game = game;
 
-			m_game.ViewGrid.ViewGridCornerChanged += (o, n) => Notify("");
+			m_game.ViewGridProvider.ViewGridCornerChanged += (o, n) => Notify("");
 		}
 
 		public string CameraPos
@@ -116,8 +116,8 @@ namespace Dwarrowdelf.Client
 		public int ChunkRecalcs { get { return m_game.TerrainRenderer.ChunkRecalcs; } }
 		public string GC { get; set; }
 
-		public IntVector3 ViewCorner1 { get { return m_game.ViewGrid.ViewCorner1; } }
-		public IntVector3 ViewCorner2 { get { return m_game.ViewGrid.ViewCorner2; } }
+		public IntVector3 ViewCorner1 { get { return m_game.ViewGridProvider.ViewCorner1; } }
+		public IntVector3 ViewCorner2 { get { return m_game.ViewGridProvider.ViewCorner2; } }
 
 		public int ViewMaxX
 		{
@@ -136,32 +136,32 @@ namespace Dwarrowdelf.Client
 
 		public int ViewZ
 		{
-			get { return m_game.ViewGrid.ViewCorner2.Z; }
-			set { m_game.ViewGrid.ViewCorner2 = m_game.ViewGrid.ViewCorner2.SetZ(value); }
+			get { return m_game.ViewGridProvider.ViewCorner2.Z; }
+			set { m_game.ViewGridProvider.ViewCorner2 = m_game.ViewGridProvider.ViewCorner2.SetZ(value); }
 		}
 
 		public int ViewX1
 		{
-			get { return m_game.ViewGrid.ViewCorner1.X; }
-			set { m_game.ViewGrid.ViewCorner1 = m_game.ViewGrid.ViewCorner1.SetX(value); }
+			get { return m_game.ViewGridProvider.ViewCorner1.X; }
+			set { m_game.ViewGridProvider.ViewCorner1 = m_game.ViewGridProvider.ViewCorner1.SetX(value); }
 		}
 
 		public int ViewX2
 		{
-			get { return m_game.ViewGrid.ViewCorner2.X; }
-			set { m_game.ViewGrid.ViewCorner2 = m_game.ViewGrid.ViewCorner2.SetX(value); }
+			get { return m_game.ViewGridProvider.ViewCorner2.X; }
+			set { m_game.ViewGridProvider.ViewCorner2 = m_game.ViewGridProvider.ViewCorner2.SetX(value); }
 		}
 
 		public int ViewY1
 		{
-			get { return m_game.ViewGrid.ViewCorner1.Y; }
-			set { m_game.ViewGrid.ViewCorner1 = m_game.ViewGrid.ViewCorner1.SetY(value); }
+			get { return m_game.ViewGridProvider.ViewCorner1.Y; }
+			set { m_game.ViewGridProvider.ViewCorner1 = m_game.ViewGridProvider.ViewCorner1.SetY(value); }
 		}
 
 		public int ViewY2
 		{
-			get { return m_game.ViewGrid.ViewCorner2.Y; }
-			set { m_game.ViewGrid.ViewCorner2 = m_game.ViewGrid.ViewCorner2.SetY(value); }
+			get { return m_game.ViewGridProvider.ViewCorner2.Y; }
+			set { m_game.ViewGridProvider.ViewCorner2 = m_game.ViewGridProvider.ViewCorner2.SetY(value); }
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
