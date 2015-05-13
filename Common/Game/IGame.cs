@@ -35,6 +35,7 @@ namespace Dwarrowdelf
 	{
 		public GameMode Mode;
 		public GameMap Map;
+		public IntSize3 MapSize;
 		public WorldTickMethod TickMethod;
 	}
 

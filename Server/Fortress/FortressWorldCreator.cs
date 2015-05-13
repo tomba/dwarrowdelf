@@ -18,14 +18,8 @@ namespace Dwarrowdelf.Server.Fortress
 {
 	public static class FortressWorldCreator
 	{
-		const int MAP_SIZE = 7;	// 2^AREA_SIZE
-		const int MAP_DEPTH = 32;
-
-		public static EnvironmentObject InitializeWorld(World world)
+		public static EnvironmentObject InitializeWorld(World world, IntSize3 size)
 		{
-			int side = MyMath.Pow2(MAP_SIZE);
-			var size = new IntSize3(side, side, MAP_DEPTH);
-
 #if CACHE_TERRAIN
 			var terrain = CreateOrLoadTerrain(size);
 #else

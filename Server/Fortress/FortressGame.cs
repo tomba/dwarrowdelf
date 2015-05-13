@@ -18,14 +18,14 @@ namespace Dwarrowdelf.Server.Fortress
 			switch (options.Map)
 			{
 				case GameMap.Fortress:
-					env = FortressWorldCreator.InitializeWorld(this.World);
+					env = FortressWorldCreator.InitializeWorld(this.World, options.MapSize);
 					break;
 
 				case GameMap.Ball:
 				case GameMap.Cube:
 					{
 						var creator = new ArtificialWorldCreator(this.World, options.Map);
-						creator.InitializeWorld();
+						creator.InitializeWorld(options.MapSize);
 						env = creator.MainEnv;
 					}
 					break;
@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Server.Fortress
 				case GameMap.NoiseTerrain:
 					{
 						var creator = new NoiseWorldCreator(this.World, options.Map);
-						creator.InitializeWorld();
+						creator.InitializeWorld(options.MapSize);
 						env = creator.MainEnv;
 					}
 					break;

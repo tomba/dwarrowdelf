@@ -22,6 +22,7 @@ namespace Dwarrowdelf.Client
 			{
 				Mode = GameMode.Fortress,
 				Map = GameMap.Fortress,
+				MapSize = new IntSize3(128, 128, 32),
 				TickMethod = WorldTickMethod.Simultaneous,
 			},
 			SaveGamePath = GetSaveGamePath(),

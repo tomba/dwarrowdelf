@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Server.Fortress
 			switch (options.Map)
 			{
 				case GameMap.Fortress:
-					env = FortressWorldCreator.InitializeWorld(this.World);
+					env = FortressWorldCreator.InitializeWorld(this.World, options.MapSize);
 					break;
 
 				case GameMap.Adventure:

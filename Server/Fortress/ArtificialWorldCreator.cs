@@ -8,8 +8,6 @@ namespace Dwarrowdelf.Server.Fortress
 {
 	public class ArtificialWorldCreator
 	{
-		const int MAP_SIZE = 5;	// 2^AREA_SIZE
-
 		World m_world;
 		EnvironmentObject m_env;
 		TerrainData m_terrainData;
@@ -23,9 +21,9 @@ namespace Dwarrowdelf.Server.Fortress
 			m_world = world;
 		}
 
-		public void InitializeWorld()
+		public void InitializeWorld(IntSize3 size)
 		{
-			CreateTerrain();
+			CreateTerrain(size);
 
 			var p = new IntVector2(m_terrainData.Width / 2, m_terrainData.Height / 2);
 			var start = m_terrainData.GetSurfaceLocation(p);
@@ -33,11 +31,8 @@ namespace Dwarrowdelf.Server.Fortress
 			m_env = EnvironmentObject.Create(m_world, m_terrainData, VisibilityMode.AllVisible, start);
 		}
 
-		void CreateTerrain()
+		void CreateTerrain(IntSize3 size)
 		{
-			int side = MyMath.Pow2(MAP_SIZE);
-			var size = new IntSize3(side, side, side);
-
 			TerrainData terrain;
 
 			switch (m_mapMode)
