@@ -347,7 +347,7 @@ namespace Dwarrowdelf.Client
 
 			if (!v.IsZero)
 			{
-				camera.Move(v);
+				camera.MovePlanar(v);
 
 				if (this.AlignViewGridToCamera && v.Z != 0)
 				{

@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Client
 
 			Vector3.SmoothStep(ref m_startPos, ref m_endPos, m_step, out pos);
 
-			m_camera.SetPos(pos);
+			m_camera.MoveTo(pos);
 			m_step += 0.01f;
 
 			if (m_step >= 1)
