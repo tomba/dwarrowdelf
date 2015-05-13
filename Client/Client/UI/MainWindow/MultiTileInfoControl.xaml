@@ -23,33 +23,47 @@
 	</UserControl.Resources>
 
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Top">
-			<TextBlock><InlineUIContainer>
-						<TextBlock Text="Area:" />
-					</InlineUIContainer><Run Text=" "/><InlineUIContainer>
-						<TextBlock>
-							<TextBlock.Text>
-								<MultiBinding StringFormat="{}{0}, {1}, {2}  {3} x {4} x {5}">
-									<Binding Path="Box.X" Mode="OneWay" />
-									<Binding Path="Box.Y" Mode="OneWay" />
-									<Binding Path="Box.Z" Mode="OneWay" />
-									<Binding Path="Box.Columns" Mode="OneWay" />
-									<Binding Path="Box.Rows" Mode="OneWay" />
-									<Binding Path="Box.Depth" Mode="OneWay" />
-								</MultiBinding>
-							</TextBlock.Text>
-						</TextBlock>
-					</InlineUIContainer></TextBlock>
 
-			<TextBlock><Run Text="Terrain: "/><InlineUIContainer>
-						<TextBlock Text="{Binding Tiles, Converter={StaticResource myTileConverter}}" />
-					</InlineUIContainer></TextBlock>
-			<TextBlock><Run Text="Water: "/><InlineUIContainer>
-						<TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
-					</InlineUIContainer></TextBlock>
-			<TextBlock><Run Text="Flags: "/><InlineUIContainer>
-						<TextBlock Text="{Binding Flags}" />
-					</InlineUIContainer></TextBlock>
+		<StackPanel DockPanel.Dock="Top">
+			<TextBlock>
+				<Run Text="Area: " BaselineAlignment="Top"/>
+				<InlineUIContainer>
+						<TextBlock>
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}{0}, {1}, {2}  {3} x {4} x {5}">
+								<Binding Path="Box.X" Mode="OneWay" />
+								<Binding Path="Box.Y" Mode="OneWay" />
+								<Binding Path="Box.Z" Mode="OneWay" />
+								<Binding Path="Box.Columns" Mode="OneWay" />
+								<Binding Path="Box.Rows" Mode="OneWay" />
+								<Binding Path="Box.Depth" Mode="OneWay" />
+							</MultiBinding>
+						</TextBlock.Text>
+						</TextBlock>
+					</InlineUIContainer>
+			</TextBlock>
+
+			<TextBlock TextWrapping="Wrap">
+				<Run Text="Terrain: " BaselineAlignment="Top"/>
+				<InlineUIContainer>
+					<TextBlock Text="{Binding Tiles, Converter={StaticResource myTileConverter}}"
+							   TextWrapping="Wrap" />
+				</InlineUIContainer>
+			</TextBlock>
+
+			<TextBlock>
+				<Run Text="Water: "/>
+				<InlineUIContainer>
+					<TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
+				</InlineUIContainer>
+			</TextBlock>
+
+			<TextBlock TextWrapping="Wrap">
+				<Run Text="Flags: " BaselineAlignment="Top" />
+				<InlineUIContainer>
+					<TextBlock Text="{Binding Flags}" TextWrapping="Wrap" />
+				</InlineUIContainer>
+			</TextBlock>
 		</StackPanel>
 
 		<ListBox DockPanel.Dock="Top" ItemsSource="{Binding AreaElements}"
