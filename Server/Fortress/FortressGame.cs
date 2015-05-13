@@ -23,9 +23,19 @@ namespace Dwarrowdelf.Server.Fortress
 
 				case GameMap.Ball:
 				case GameMap.Cube:
-					var creator = new ArtificialWorldCreator(this.World, options.Map);
-					creator.InitializeWorld();
-					env = creator.MainEnv;
+					{
+						var creator = new ArtificialWorldCreator(this.World, options.Map);
+						creator.InitializeWorld();
+						env = creator.MainEnv;
+					}
+					break;
+
+				case GameMap.NoiseTerrain:
+					{
+						var creator = new NoiseWorldCreator(this.World, options.Map);
+						creator.InitializeWorld();
+						env = creator.MainEnv;
+					}
 					break;
 
 				default:

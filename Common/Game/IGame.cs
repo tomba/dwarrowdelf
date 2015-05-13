@@ -21,6 +21,7 @@ namespace Dwarrowdelf
 		Arena,
 		Ball,
 		Cube,
+		NoiseTerrain,
 	}
 
 	public enum WorldTickMethod

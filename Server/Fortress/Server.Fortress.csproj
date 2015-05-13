@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NoiseWorldCreator.cs" />
     <Compile Include="DungeonPlayer.cs" />
     <Compile Include="DungeonGame.cs">
       <SubType>Code</SubType>
