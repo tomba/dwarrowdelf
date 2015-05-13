@@ -89,7 +89,6 @@ namespace Dwarrowdelf.Client
 			base.Updatables.Add(this.MousePositionService);
 
 			this.SelectionService = new Client.SelectionService(this, mainHost, m_camera);
-			this.SelectionService.SelectionMode = MapSelectionMode.Box;
 
 			m_terrainRenderer = ToDispose(new TerrainRenderer(this, m_camera, m_viewGridProvider));
 			base.Updatables.Add(m_terrainRenderer);

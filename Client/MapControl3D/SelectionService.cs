@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client
 {
@@ -109,9 +102,24 @@ namespace Dwarrowdelf.Client
 						break;
 				}
 
-				//XXX
-				//this.CursorPosition = m_control.MapCenterPos.ToIntVector3();
-				this.KeyCursorPosition = new IntVector3();
+				if (m_selectionMode != MapSelectionMode.None)
+				{
+					// set key cursor to the center of the screen
+
+					IntVector3 pos;
+					Direction face;
+
+					var view = m_game.Surfaces[0].Views[0];
+
+					var center = new IntVector2((int)view.ViewPort.Width / 2, (int)view.ViewPort.Height / 2);
+
+					bool hit = MousePositionService.PickVoxel(m_game, center, out pos, out face);
+
+					if (hit)
+						this.KeyCursorPosition = pos;
+					else
+						this.KeyCursorPosition = new IntVector3();
+				}
 			}
 		}
 
