@@ -19,6 +19,8 @@ namespace Dwarrowdelf
 		Fortress,
 		Adventure,
 		Arena,
+		Ball,
+		Cube,
 	}
 
 	public enum WorldTickMethod

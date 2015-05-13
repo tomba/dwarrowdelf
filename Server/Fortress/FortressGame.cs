@@ -13,7 +13,24 @@ namespace Dwarrowdelf.Server.Fortress
 		public FortressGame(string gameDir, GameOptions options)
 			: base(gameDir, options)
 		{
-			var env = FortressWorldCreator.InitializeWorld(this.World);
+			EnvironmentObject env;
+
+			switch (options.Map)
+			{
+				case GameMap.Fortress:
+					env = FortressWorldCreator.InitializeWorld(this.World);
+					break;
+
+				case GameMap.Ball:
+				case GameMap.Cube:
+					var creator = new ArtificialWorldCreator(this.World, options.Map);
+					creator.InitializeWorld();
+					env = creator.MainEnv;
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
 
 			int numPlayers = 1;
 

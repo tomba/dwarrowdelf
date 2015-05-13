@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.TerrainGen
 {
@@ -28,6 +29,23 @@ namespace Dwarrowdelf.TerrainGen
 		{
 			tileGrid = m_tileGrid;
 			levelMap = m_levelMap;
+		}
+
+		public void RescanLevelMap()
+		{
+			var levelMap = m_levelMap;
+
+			Parallel.ForEach(this.Size.Plane.Range(), p =>
+			{
+				for (int z = this.Size.Depth - 1; z >= 0; --z)
+				{
+					if (GetTileData(p.X, p.Y, z).IsWall)
+					{
+						levelMap[p.Y, p.X] = (byte)(z + 1);
+						break;
+					}
+				}
+			});
 		}
 
 		public bool Contains(IntVector3 p)

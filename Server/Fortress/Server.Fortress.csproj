@@ -47,6 +47,7 @@
     <Compile Include="DungeonGame.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ArtificialWorldCreator.cs" />
     <Compile Include="DungeonWorldCreator.cs" />
     <Compile Include="FortressGame.cs" />
     <Compile Include="DwarfAI.cs" />

@@ -99,7 +99,7 @@ namespace Dwarrowdelf.TerrainGen
 			});
 		}
 #endif
-		static TerrainData CreateBallMap(IntSize3 size, int innerSide = 0)
+		public static TerrainData CreateBallMap(IntSize3 size, int innerSide = 0)
 		{
 			var map = new TerrainData(size);
 
@@ -124,10 +124,12 @@ namespace Dwarrowdelf.TerrainGen
 					}
 			});
 
+			map.RescanLevelMap();
+
 			return map;
 		}
 
-		static TerrainData CreateCubeMap(IntSize3 size, int margin)
+		public static TerrainData CreateCubeMap(IntSize3 size, int margin)
 		{
 			var map = new TerrainData(size);
 
@@ -145,6 +147,8 @@ namespace Dwarrowdelf.TerrainGen
 							map.SetTileDataNoHeight(p, TileData.GetNaturalWall(MaterialID.Granite));
 					}
 			});
+
+			map.RescanLevelMap();
 
 			return map;
 		}
