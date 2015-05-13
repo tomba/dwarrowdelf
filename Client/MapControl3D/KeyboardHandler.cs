@@ -236,6 +236,8 @@ namespace Dwarrowdelf.Client
 				case Key.A:
 				case Key.S:
 				case Key.D:
+				case Key.Q:
+				case Key.E:
 					e.Handled = true;
 					break;
 				default:
