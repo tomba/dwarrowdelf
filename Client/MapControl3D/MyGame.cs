@@ -125,6 +125,9 @@ namespace Dwarrowdelf.Client
 			get { return m_env; }
 			set
 			{
+				if (m_env == value)
+					return;
+
 				var old = m_env;
 
 				m_env = value;

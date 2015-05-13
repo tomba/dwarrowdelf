@@ -39,25 +39,18 @@ namespace Dwarrowdelf.Client
 			base.Dispose(disposing);
 		}
 
-		EnvironmentObject m_env;
 		public EnvironmentObject Environment
 		{
-			get { return m_env; }
-			set
-			{
-				m_env = value;
+			get { return m_game.Environment; }
+			set { m_game.Environment = value; }
+		}
 
-				m_game.Environment = value;
-
-
-				if (m_env != null)
-				{
-					var dbg = new DebugWindow();
-					dbg.Owner = System.Windows.Window.GetWindow(this);
-					dbg.SetGame(m_game);
-					dbg.Show();
-				}
-			}
+		public void OpenDebugWindow()
+		{
+			var dbg = new DebugWindow();
+			dbg.Owner = System.Windows.Window.GetWindow(this);
+			dbg.SetGame(m_game);
+			dbg.Show();
 		}
 
 		public void GoTo(MovableObject ob)
