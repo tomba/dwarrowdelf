@@ -255,10 +255,10 @@ namespace Dwarrowdelf.Client
 
 		void OnMouseClicked(object sender, MouseButtonEventArgs e)
 		{
-			if (m_game.MousePositionService.MouseLocation.HasValue == false)
+			if (m_game.MousePositionService.MapLocation.HasValue == false)
 				return;
 
-			var ml = m_game.MousePositionService.MouseLocation.Value;
+			var ml = m_game.MousePositionService.MapLocation.Value;
 
 			StartSelection(ml, State.SelectingWithMouse);
 			EndSelection(ml);
@@ -269,10 +269,10 @@ namespace Dwarrowdelf.Client
 			if (m_state == State.SelectingWithKeyboard)
 				return;
 
-			if (m_game.MousePositionService.MouseLocation.HasValue == false)
+			if (m_game.MousePositionService.MapLocation.HasValue == false)
 				return;
 
-			var ml = m_game.MousePositionService.MouseLocation.Value;
+			var ml = m_game.MousePositionService.MapLocation.Value;
 
 			StartSelection(ml, State.SelectingWithMouse);
 		}
@@ -282,10 +282,10 @@ namespace Dwarrowdelf.Client
 			if (m_state != State.SelectingWithMouse)
 				return;
 
-			if (m_game.MousePositionService.MouseLocation.HasValue == false)
+			if (m_game.MousePositionService.MapLocation.HasValue == false)
 				return;
 
-			var ml = m_game.MousePositionService.MouseLocation.Value;
+			var ml = m_game.MousePositionService.MapLocation.Value;
 
 			EndSelection(ml);
 		}
@@ -317,10 +317,10 @@ namespace Dwarrowdelf.Client
 			m_control.ScrollToDirection(v.ToDirection(), 0.2);
 #endif
 
-			if (m_game.MousePositionService.MouseLocation.HasValue == false)
+			if (m_game.MousePositionService.MapLocation.HasValue == false)
 				return;
 
-			var ml = m_game.MousePositionService.MouseLocation.Value;
+			var ml = m_game.MousePositionService.MapLocation.Value;
 
 			UpdateSelection(ml);
 		}

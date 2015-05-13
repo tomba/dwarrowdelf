@@ -140,13 +140,13 @@ namespace Dwarrowdelf.Client
 
 		void OnCursorMoved()
 		{
-			if (m_game.MousePositionService.MouseLocation.HasValue == false)
+			if (m_game.MousePositionService.MapLocation.HasValue == false)
 			{
 				this.HoverTileView.ClearTarget();
 			}
 			else
 			{
-				var ml = m_game.MousePositionService.MouseLocation.Value;
+				var ml = m_game.MousePositionService.MapLocation.Value;
 
 				if (this.Environment != null && this.Environment.Contains(ml))
 				{

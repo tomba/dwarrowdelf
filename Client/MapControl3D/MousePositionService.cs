@@ -25,18 +25,33 @@ namespace Dwarrowdelf.Client
 			m_surfaceView = surfaceView;
 		}
 
-		IntVector3? m_location;
+		IntVector2? m_screenLocation;
 
-		public IntVector3? MouseLocation
+		public IntVector2? ScreenLocation
 		{
-			get { return m_location; }
+			get { return m_screenLocation; }
 
 			private set
 			{
-				if (value == m_location)
+				if (value == m_screenLocation)
 					return;
 
-				m_location = value;
+				m_screenLocation = value;
+			}
+		}
+
+		IntVector3? m_mapLocation;
+
+		public IntVector3? MapLocation
+		{
+			get { return m_mapLocation; }
+
+			private set
+			{
+				if (value == m_mapLocation)
+					return;
+
+				m_mapLocation = value;
 
 				if (this.MouseLocationChanged != null)
 					this.MouseLocationChanged();
@@ -54,21 +69,24 @@ namespace Dwarrowdelf.Client
 			if (m_surfaceView.ViewPort.Width == 0 || m_surfaceView.ViewPort.Height == 0 ||
 				m_surfaceView.ViewPort.Bounds.Contains(mousePos.X, mousePos.Y) == false)
 			{
-				this.MouseLocation = null;
+				this.ScreenLocation = null;
+				this.MapLocation = null;
 				this.Face = Direction.None;
 				return;
 			}
+
+			this.ScreenLocation = mousePos;
 
 			bool hit = PickVoxel(m_game.Environment, m_surfaceView, mousePos, m_game.ViewGrid.ViewGrid, out p, out d);
 
 			if (hit)
 			{
-				this.MouseLocation = p;
+				this.MapLocation = p;
 				this.Face = d;
 			}
 			else
 			{
-				this.MouseLocation = null;
+				this.MapLocation = null;
 				this.Face = Direction.None;
 			}
 		}

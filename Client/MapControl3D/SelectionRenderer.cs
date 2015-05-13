@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Client
 			if (!this.IsEnabled)
 				return;
 
-			var mousePos = m_game.MousePositionService.MouseLocation;
+			var mousePos = m_game.MousePositionService.MapLocation;
 			var mousePosDir = m_game.MousePositionService.Face;
 
 			var selection = m_game.SelectionService.Selection;

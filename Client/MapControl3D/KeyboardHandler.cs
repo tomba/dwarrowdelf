@@ -117,9 +117,9 @@ namespace Dwarrowdelf.Client
 							foreach (var p in sel.SelectionBox.Range())
 								map.SetTileData(p, TileData.EmptyTileData);
 						}
-						else if (m_game.MousePositionService.MouseLocation.HasValue)
+						else if (m_game.MousePositionService.MapLocation.HasValue)
 						{
-							var p = m_game.MousePositionService.MouseLocation.Value;
+							var p = m_game.MousePositionService.MapLocation.Value;
 							map.SetTileData(p, TileData.EmptyTileData);
 						}
 					}
@@ -136,9 +136,9 @@ namespace Dwarrowdelf.Client
 							foreach (var p in sel.SelectionBox.Range())
 								map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
 						}
-						else if (m_game.MousePositionService.MouseLocation.HasValue)
+						else if (m_game.MousePositionService.MapLocation.HasValue)
 						{
-							var p = m_game.MousePositionService.MouseLocation.Value;
+							var p = m_game.MousePositionService.MapLocation.Value;
 							var d = m_game.MousePositionService.Face;
 							if (map.Size.Contains(p + d))
 								map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
