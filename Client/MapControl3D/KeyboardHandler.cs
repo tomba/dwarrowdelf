@@ -29,6 +29,8 @@ namespace Dwarrowdelf.Client
 		ControlMode m_controlMode = ControlMode.Fps;
 		bool AlignViewGridToCamera { get; set; }
 
+		public Action<KeyEventArgs> KeyDown;
+
 		public KeyboardHandler(MyGame game, SharpDXHost control, Camera camera, ViewGridProvider viewGridProvider)
 		{
 			this.AlignViewGridToCamera = true;
@@ -156,6 +158,14 @@ namespace Dwarrowdelf.Client
 
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
+			if (this.KeyDown != null)
+			{
+				this.KeyDown(e);
+
+				if (e.Handled)
+					return;
+			}
+
 			Key key = e.Key;
 
 			if (key == Key.System || key == Key.Tab)

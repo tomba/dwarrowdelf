@@ -15,7 +15,6 @@ namespace Dwarrowdelf.Client
 
 		public event Action<MapSelection> SelectionChanged;
 		public event Action<MapSelection> GotSelection;
-		public event Action<IntVector3> KeyCursorPositionChanged;
 
 		enum State
 		{
@@ -30,24 +29,6 @@ namespace Dwarrowdelf.Client
 		{
 			m_game = game;
 			m_control = control;
-		}
-
-		IntVector3 m_keyCursorPosition;
-
-		public IntVector3 KeyCursorPosition
-		{
-			get { return m_keyCursorPosition; }
-
-			private set
-			{
-				if (value == m_keyCursorPosition)
-					return;
-
-				m_keyCursorPosition = value;
-
-				if (this.KeyCursorPositionChanged != null)
-					this.KeyCursorPositionChanged(value);
-			}
 		}
 
 		public MapSelectionMode SelectionMode
@@ -68,16 +49,19 @@ namespace Dwarrowdelf.Client
 						m_control.Dragging -= OnDragging;
 						m_control.DragAborted -= OnDragAborted;
 
-						m_control.KeyDown -= OnKeyDown;
+						m_game.KeyboardHandler.KeyDown -= OnKeyDown;
+						m_game.CursorService.LocationChanged -= OnCursorMoved;
 
 						break;
 
 					case MapSelectionMode.Point:
 						m_control.MouseClicked -= OnMouseClicked;
-						m_control.KeyDown -= OnKeyDown;
+						m_game.KeyboardHandler.KeyDown -= OnKeyDown;
+						m_game.CursorService.LocationChanged -= OnCursorMoved;
 						break;
 				}
 
+				m_state = State.None;
 				this.Selection = new MapSelection();
 				m_selectionMode = value;
 
@@ -91,106 +75,76 @@ namespace Dwarrowdelf.Client
 						m_control.Dragging += OnDragging;
 						m_control.DragAborted += OnDragAborted;
 
-						m_control.KeyDown += OnKeyDown;
+						m_game.KeyboardHandler.KeyDown += OnKeyDown;
+						m_game.CursorService.LocationChanged += OnCursorMoved;
 
 						break;
 
 					case MapSelectionMode.Point:
 						m_control.MouseClicked += OnMouseClicked;
-						m_control.KeyDown += OnKeyDown;
+						m_game.KeyboardHandler.KeyDown += OnKeyDown;
+						m_game.CursorService.LocationChanged += OnCursorMoved;
 
 						break;
 				}
 
-				if (m_selectionMode != MapSelectionMode.None)
-				{
-					// set key cursor to the center of the screen
-
-					IntVector3 pos;
-					Direction face;
-
-					var view = m_game.Surfaces[0].Views[0];
-
-					var center = new IntVector2((int)view.ViewPort.Width / 2, (int)view.ViewPort.Height / 2);
-
-					bool hit = MousePositionService.PickVoxel(m_game, center, out pos, out face);
-
-					if (hit)
-						this.KeyCursorPosition = pos;
-					else
-						this.KeyCursorPosition = new IntVector3();
-				}
+				m_game.CursorService.IsEnabled = m_selectionMode != MapSelectionMode.None;
 			}
 		}
 
-		void OnKeyDown(object sender, KeyEventArgs e)
+		void OnKeyDown(KeyEventArgs e)
 		{
 			if (m_state == State.SelectingWithMouse)
 				return;
 
 			var key = e.Key;
 
-			if (KeyHelpers.KeyIsDir(key))
+			if (key != Key.Enter)
+				return;
+
+			if (m_game.CursorService.Location.HasValue == false)
+				return;
+
+			var cursor = m_game.CursorService.Location.Value;
+
+			if (this.SelectionMode == MapSelectionMode.Point)
 			{
-				//m_control.ScrollStop();
-
-				var dir = KeyHelpers.KeyToDir(key);
-
-				if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+				StartSelection(cursor, State.SelectingWithKeyboard);
+				EndSelection(cursor);
+			}
+			else
+			{
+				if (m_state == State.None)
 				{
-					//m_control.ScreenCenterPos += dir;
+					StartSelection(cursor, State.SelectingWithKeyboard);
+				}
+				else if (m_state == State.SelectingWithKeyboard)
+				{
+					EndSelection(cursor);
 				}
 				else
 				{
-					int m = 1;
-
-					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
-						m = 5;
-
-					this.KeyCursorPosition += dir.ToIntVector3() * m;
-
-					//m_control.KeepOnScreen(this.CursorPosition);
-					//UpdateCursorRectangle();
-
-					if (m_state == State.SelectingWithKeyboard)
-						UpdateSelection(this.KeyCursorPosition);
+					throw new Exception();
 				}
-
-				e.Handled = true;
 			}
-			else if (e.Key == Key.Enter)
-			{
-				if (this.SelectionMode == MapSelectionMode.Point)
-				{
-					StartSelection(this.KeyCursorPosition, State.SelectingWithKeyboard);
-					EndSelection(this.KeyCursorPosition);
-				}
-				else
-				{
-					if (m_state == State.None)
-					{
-						StartSelection(this.KeyCursorPosition, State.SelectingWithKeyboard);
-					}
-					else if (m_state == State.SelectingWithKeyboard)
-					{
-						EndSelection(this.KeyCursorPosition);
-					}
-					else
-					{
-						throw new Exception();
-					}
-				}
 
-				e.Handled = true;
-			}
+			e.Handled = true;
+		}
+
+		void OnCursorMoved(IntVector3? loc)
+		{
+			if (loc.HasValue == false)
+				return;
+
+			if (m_state == State.None)
+				return;
+
+			UpdateSelection(loc.Value);
 		}
 
 		public MapSelection Selection
 		{
-			get
-			{
-				return m_selection;
-			}
+			get { return m_selection; }
 
 			set
 			{

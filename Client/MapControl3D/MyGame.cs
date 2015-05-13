@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client
 	{
 		readonly Camera m_camera;
 
-		readonly KeyboardHandler m_keyboardHandler;
+		public KeyboardHandler KeyboardHandler { get; private set; }
 		readonly ViewGridProvider m_viewGridProvider;
 		public MousePositionService MousePositionService { get; private set; }
 		public SelectionService SelectionService { get; private set; }
@@ -43,6 +43,8 @@ namespace Dwarrowdelf.Client
 		public ViewGridProvider ViewGrid { get { return m_viewGridProvider; } }
 		public Camera Camera { get { return m_camera; } }
 
+		public CursorService CursorService { get; private set; }
+
 		public MyGame(SharpDXHost mainHost)
 		{
 			//SharpDX.Configuration.EnableObjectTracking = true;
@@ -52,11 +54,13 @@ namespace Dwarrowdelf.Client
 
 			m_viewGridProvider = new ViewGridProvider(this);
 
-			m_keyboardHandler = new KeyboardHandler(this, mainHost, m_camera, m_viewGridProvider);
-			base.Updatables.Add(m_keyboardHandler);
+			this.KeyboardHandler = new KeyboardHandler(this, mainHost, m_camera, m_viewGridProvider);
+			base.Updatables.Add(this.KeyboardHandler);
 
 			m_fpsCounter = new FPSCounter(this);
 			base.Updatables.Add(m_fpsCounter);
+
+			this.CursorService = new CursorService(this, mainHost);
 
 
 			var mainView = new GameSurfaceView(this.GraphicsDevice)

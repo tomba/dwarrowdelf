@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client
 
 			m_game = new MyGame(this);
 
-			m_game.MousePositionService.MouseLocationChanged += OnCursorMoved;
+			m_game.CursorService.LocationChanged += OnCursorMoved;
 			m_game.SelectionService.SelectionChanged += OnSelectionChanged;
 			m_game.SelectionService.GotSelection += OnGotSelection;
 
@@ -138,15 +138,15 @@ namespace Dwarrowdelf.Client
 
 		public TileAreaView HoverTileView { get; private set; }
 
-		void OnCursorMoved()
+		void OnCursorMoved(IntVector3? pos)
 		{
-			if (m_game.MousePositionService.MapLocation.HasValue == false)
+			if (pos.HasValue == false)
 			{
 				this.HoverTileView.ClearTarget();
 			}
 			else
 			{
-				var ml = m_game.MousePositionService.MapLocation.Value;
+				var ml = pos.Value;
 
 				if (this.Environment != null && this.Environment.Contains(ml))
 				{

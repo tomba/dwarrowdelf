@@ -108,13 +108,15 @@ namespace Dwarrowdelf.Client
 			if (!this.IsEnabled)
 				return;
 
-			var mousePos = m_game.MousePositionService.MapLocation;
-			var mousePosDir = m_game.MousePositionService.Face;
+			IntVector3? cursorPos = null;
+
+			if (m_game.CursorService.IsEnabled)
+				cursorPos = m_game.CursorService.Location;
 
 			var selection = m_game.SelectionService.Selection;
 			var selDir = Direction.Up; // XXX
 
-			if (mousePos.HasValue == false && selection.IsSelectionValid == false)
+			if (cursorPos.HasValue == false && selection.IsSelectionValid == false)
 				return;
 
 			var device = this.GraphicsDevice;
@@ -132,10 +134,10 @@ namespace Dwarrowdelf.Client
 			device.SetVertexBuffer(m_vertexBuffer);
 			device.SetVertexInputLayout(m_layout);
 
-			if (mousePos.HasValue)
+			if (cursorPos.HasValue)
 			{
 				m_effect.Parameters["s_cubeColor"].SetValue(Color.Red.ToVector3());
-				SetWorlMatrix(mousePos.Value, new IntSize3(1, 1, 1), mousePosDir);
+				SetWorlMatrix(cursorPos.Value, new IntSize3(1, 1, 1), Direction.Up);
 				m_effect.ConstantBuffers["PerObject"].Update();
 
 				device.Draw(PrimitiveType.TriangleList, 6 * 6);

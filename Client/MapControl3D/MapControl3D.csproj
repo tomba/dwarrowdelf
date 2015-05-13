@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChunkOutlineRenderer.cs" />
+    <Compile Include="CursorService.cs" />
     <Compile Include="DebugAxesRenderer.cs" />
     <Compile Include="DebugForm.cs">
       <SubType>Form</SubType>
