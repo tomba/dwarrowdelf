@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			bool hit = MousePickVoxel(m_surfaceView, mousePos, m_game.ViewGrid.ViewGrid, out p, out d);
+			bool hit = PickVoxel(m_game.Environment, m_surfaceView, mousePos, m_game.ViewGrid.ViewGrid, out p, out d);
 
 			if (hit)
 			{
@@ -73,11 +73,18 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		bool MousePickVoxel(GameSurfaceView view, IntVector2 mousePos, IntGrid3 cropGrid, out IntVector3 pos, out Direction face)
+		public static bool PickVoxel(MyGame game, IntVector2 screenPos, out IntVector3 pos, out Direction face)
+		{
+			return MousePositionService.PickVoxel(game.Environment, game.Surfaces[0].Views[0], screenPos,
+				game.ViewGrid.ViewGrid, out pos, out face);
+		}
+
+		public static bool PickVoxel(EnvironmentObject env, GameSurfaceView view, IntVector2 screenPos, IntGrid3 cropGrid,
+			out IntVector3 pos, out Direction face)
 		{
 			var camera = view.Camera;
 
-			var ray = Ray.GetPickRay(mousePos.X, mousePos.Y, view.ViewPort, view.Camera.View * view.Camera.Projection);
+			var ray = Ray.GetPickRay(screenPos.X, screenPos.Y, view.ViewPort, view.Camera.View * view.Camera.Projection);
 
 			IntVector3 outpos = new IntVector3();
 			Direction outdir = Direction.None;
@@ -93,7 +100,7 @@ namespace Dwarrowdelf.Client
 					if (cropGrid.Contains(p) == false)
 						return false;
 
-					var td = m_game.Environment.GetTileData(p);
+					var td = env.GetTileData(p);
 
 					if (td.IsEmpty)
 						return false;
