@@ -12,10 +12,6 @@ namespace Dwarrowdelf.Client
 {
 	class KeyboardHandler : IGameUpdatable
 	{
-		ViewGridProvider m_viewGridProvider;
-
-		Camera m_camera;
-
 		SharpDXHost m_control;
 
 		MyGame m_game;
@@ -31,14 +27,12 @@ namespace Dwarrowdelf.Client
 
 		public Action<KeyEventArgs> KeyDown;
 
-		public KeyboardHandler(MyGame game, SharpDXHost control, Camera camera, ViewGridProvider viewGridProvider)
+		public KeyboardHandler(MyGame game, SharpDXHost control)
 		{
 			this.AlignViewGridToCamera = true;
 
 			m_game = game;
 			m_control = control;
-			m_camera = camera;
-			m_viewGridProvider = viewGridProvider;
 
 			control.TextInput += OnTextInput;
 			control.KeyDown += OnKeyDown;
@@ -51,8 +45,9 @@ namespace Dwarrowdelf.Client
 			if (e.Text.Length != 1)
 				return;
 
-			var viewGrid = m_viewGridProvider;
+			var viewGrid = m_game.ViewGridProvider;
 			var map = m_game.Environment;
+			var camera = m_game.Camera;
 
 			char key = e.Text[0];
 
@@ -69,14 +64,14 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case '1':
-					m_camera.LookAt(m_camera.Position,
-						m_camera.Position + new Vector3(0, -1, -10),
+					camera.LookAt(camera.Position,
+						camera.Position + new Vector3(0, -1, -10),
 						Vector3.UnitZ);
 					break;
 
 				case '2':
-					m_camera.LookAt(m_camera.Position,
-						m_camera.Position + new Vector3(1, 1, -1),
+					camera.LookAt(camera.Position,
+						camera.Position + new Vector3(1, 1, -1),
 						Vector3.UnitZ);
 					break;
 
@@ -91,9 +86,9 @@ namespace Dwarrowdelf.Client
 						// XXX not correct, should come from the surface
 						var viewport = new ViewportF(0, 0, m_control.HostedWindowWidth, m_control.HostedWindowHeight);
 
-						var ray = Ray.GetPickRay(px, py, viewport, m_camera.View * m_camera.Projection);
+						var ray = Ray.GetPickRay(px, py, viewport, camera.View * camera.Projection);
 
-						VoxelRayCast.RunRayCast(m_game.Environment.Size, ray.Position, ray.Direction, m_camera.FarZ,
+						VoxelRayCast.RunRayCast(m_game.Environment.Size, ray.Position, ray.Direction, camera.FarZ,
 							(x, y, z, dir) =>
 							{
 								var l = new IntVector3(x, y, z);
@@ -171,7 +166,7 @@ namespace Dwarrowdelf.Client
 			if (key == Key.System || key == Key.Tab)
 				return;
 
-			var viewGrid = m_viewGridProvider;
+			var viewGrid = m_game.ViewGridProvider;
 			bool ctrl = (e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0;
 
 			e.Handled = true;
@@ -290,33 +285,35 @@ namespace Dwarrowdelf.Client
 			float dTime = (float)m_game.Time.FrameTime.TotalSeconds;
 			float mul = 1f;
 
+			var camera = m_game.Camera;
+
 			if (IsKeyDown(Key.LeftShift) || IsKeyDown(Key.RightShift))
 				mul = 0.2f;
 
 			if (IsKeyDown(Key.W))
-				m_camera.Walk(walkSpeek * dTime * mul);
+				camera.Walk(walkSpeek * dTime * mul);
 			else if (IsKeyDown(Key.S))
-				m_camera.Walk(-walkSpeek * dTime * mul);
+				camera.Walk(-walkSpeek * dTime * mul);
 
 			if (IsKeyDown(Key.D))
-				m_camera.Strafe(walkSpeek * dTime * mul);
+				camera.Strafe(walkSpeek * dTime * mul);
 			else if (IsKeyDown(Key.A))
-				m_camera.Strafe(-walkSpeek * dTime * mul);
+				camera.Strafe(-walkSpeek * dTime * mul);
 
 			if (IsKeyDown(Key.E))
-				m_camera.Climb(walkSpeek * dTime * mul);
+				camera.Climb(walkSpeek * dTime * mul);
 			else if (IsKeyDown(Key.Q))
-				m_camera.Climb(-walkSpeek * dTime * mul);
+				camera.Climb(-walkSpeek * dTime * mul);
 
 			if (IsKeyDown(Key.Up))
-				m_camera.Pitch(-rotSpeed * dTime * mul);
+				camera.Pitch(-rotSpeed * dTime * mul);
 			else if (IsKeyDown(Key.Down))
-				m_camera.Pitch(rotSpeed * dTime * mul);
+				camera.Pitch(rotSpeed * dTime * mul);
 
 			if (IsKeyDown(Key.Left))
-				m_camera.RotateZ(-rotSpeed * dTime * mul);
+				camera.RotateZ(-rotSpeed * dTime * mul);
 			else if (IsKeyDown(Key.Right))
-				m_camera.RotateZ(rotSpeed * dTime * mul);
+				camera.RotateZ(rotSpeed * dTime * mul);
 		}
 
 		void HandleRtsKeyboard()
@@ -325,6 +322,8 @@ namespace Dwarrowdelf.Client
 			const float rotSpeed = MathUtil.PiOverTwo * 1.5f;
 			float dTime = (float)m_game.Time.FrameTime.TotalSeconds;
 			float mul = 1f;
+
+			var camera = m_game.Camera;
 
 			if (IsKeyDown(Key.LeftShift) || IsKeyDown(Key.RightShift))
 				mul = 0.2f;
@@ -348,27 +347,27 @@ namespace Dwarrowdelf.Client
 
 			if (!v.IsZero)
 			{
-				m_camera.Move(v);
+				camera.Move(v);
 
 				if (this.AlignViewGridToCamera && v.Z != 0)
 				{
-					var viewGrid = m_viewGridProvider;
+					var viewGrid = m_game.ViewGridProvider;
 
 					var c = viewGrid.ViewCorner2;
-					c.Z = (int)m_camera.Position.Z - 32;
+					c.Z = (int)camera.Position.Z - 32;
 					viewGrid.ViewCorner2 = c;
 				}
 			}
 
 			if (IsKeyDown(Key.Up))
-				m_camera.Pitch(-rotSpeed * dTime * mul);
+				camera.Pitch(-rotSpeed * dTime * mul);
 			else if (IsKeyDown(Key.Down))
-				m_camera.Pitch(rotSpeed * dTime * mul);
+				camera.Pitch(rotSpeed * dTime * mul);
 
 			if (IsKeyDown(Key.Left))
-				m_camera.RotateZ(-rotSpeed * dTime * mul);
+				camera.RotateZ(-rotSpeed * dTime * mul);
 			else if (IsKeyDown(Key.Right))
-				m_camera.RotateZ(rotSpeed * dTime * mul);
+				camera.RotateZ(rotSpeed * dTime * mul);
 		}
 	}
 }

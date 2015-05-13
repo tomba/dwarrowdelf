@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Client
 
 			this.ViewGridProvider = new ViewGridProvider(this);
 
-			this.KeyboardHandler = new KeyboardHandler(this, mainHost, this.Camera, this.ViewGridProvider);
+			this.KeyboardHandler = new KeyboardHandler(this, mainHost);
 			base.Updatables.Add(this.KeyboardHandler);
 
 			m_fpsCounter = new FPSCounter(this);
