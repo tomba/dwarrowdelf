@@ -130,13 +130,13 @@ namespace Dwarrowdelf.Client
 	{
 		//public SymbolID Symbol0;
 		public SymbolID Symbol1;
-		public SymbolID Symbol2;
+		//public SymbolID Symbol2;
 		// Background Color
 		public GameColor Color0;
 		// Symbol1 Color
 		public GameColor Color1;
 		// Symbol2 Color
-		public GameColor Color2;
+		//public GameColor Color2;
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -167,8 +167,8 @@ namespace Dwarrowdelf.Client
 			this.Position2 = new Byte4(p2.X, p2.Y, p2.Z, 0);
 			this.Position3 = new Byte4(p1.X, p1.Y, p1.Z, 0);
 			this.Occlusion = new Byte4(occ3, occ0, occ2, occ1);
-			this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, (byte)0);
-			this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, (byte)tex.Color2, (byte)0);
+			this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, /*(byte)tex.Symbol2*/ (byte)0, (byte)0);
+			this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, /*(byte)tex.Color2*/ (byte)0, (byte)0);
 		}
 	}
 }

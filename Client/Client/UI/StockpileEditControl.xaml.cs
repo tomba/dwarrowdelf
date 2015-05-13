@@ -180,12 +180,13 @@ namespace Dwarrowdelf.Client.UI
 			if (source.ItemCategoryMask != null)
 			{
 				throw new Exception();
+				/*
 				foreach (var cat in source.ItemCategoryMask.EnumValues)
 				{
 					var sic = this.ItemsList.Find(c => c.Value == cat);
 
 					sic.IsSelected = true;
-				}
+				}*/
 			}
 
 			/*

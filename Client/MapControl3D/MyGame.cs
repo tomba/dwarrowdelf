@@ -1,4 +1,7 @@
-﻿using System;
+﻿//#define TESTCUBERENDERER
+//#define OUTLINERENDERER
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,10 +28,14 @@ namespace Dwarrowdelf.Client
 		readonly SelectionRenderer m_selectionRenderer;
 		readonly FPSCounter m_fpsCounter;
 
-		readonly TestCubeRenderer m_testCubeRenderer;
 		readonly DebugAxesRenderer m_debugAxesRenderer;
-		readonly ChunkOutlineRenderer m_outlineRenderer;
+#if TESTCUBERENDERER
+		readonly TestCubeRenderer m_testCubeRenderer;
+#endif
 
+#if OUTLINERENDERER
+		readonly ChunkOutlineRenderer m_outlineRenderer;
+#endif
 		public TerrainRenderer TerrainRenderer { get { return m_terrainRenderer; } }
 		public RasterizerState RasterizerState { get; set; }
 		public SelectionRenderer SelectionRenderer { get { return m_selectionRenderer; } }
@@ -96,18 +103,17 @@ namespace Dwarrowdelf.Client
 			base.Updatables.Add(m_selectionRenderer);
 			mainView.Drawables.Add(m_selectionRenderer);
 
+			m_debugAxesRenderer = ToDispose(new DebugAxesRenderer(this));
+			base.Updatables.Add(m_debugAxesRenderer);
+			axesView.Drawables.Add(m_debugAxesRenderer);
 
-#if asd
+#if OUTLINERENDERER
 			m_outlineRenderer = ToDispose(new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager));
 			base.Updatables.Add(m_outlineRenderer);
 			mainView.Drawables.Add(m_outlineRenderer);
 #endif
 
-			m_debugAxesRenderer = ToDispose(new DebugAxesRenderer(this));
-			base.Updatables.Add(m_debugAxesRenderer);
-			axesView.Drawables.Add(m_debugAxesRenderer);
-
-#if asd
+#if TESTCUBERENDERER
 			m_testCubeRenderer = ToDispose(new TestCubeRenderer(this));
 			base.Updatables.Add(m_testCubeRenderer);
 			mainView.Drawables.Add(m_testCubeRenderer);
