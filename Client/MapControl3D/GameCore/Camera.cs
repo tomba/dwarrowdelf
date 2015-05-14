@@ -170,7 +170,6 @@ namespace Dwarrowdelf.Client
 				Column4 = new Vector4(0, 0, 0, 1),
 			};
 
-
 			m_viewDirty = false;
 		}
 
@@ -179,6 +178,20 @@ namespace Dwarrowdelf.Client
 			m_frustum = BoundingFrustum.FromCamera(m_position, m_look, m_up, m_fovY, m_nearZ, m_farZ, m_aspect);
 
 			m_frustumDirty = false;
+		}
+
+		/// <summary>
+		/// Adjust the IntVector2 so that negative Y ("north") is towards the top of the screen
+		/// </summary>
+		public IntVector2 PlanarAdjust(IntVector2 v2)
+		{
+			int rot;
+			if (Math.Abs(m_look.X) > Math.Abs(m_look.Y))
+				rot = m_look.X < 0 ? -1 : 1;
+			else
+				rot = m_look.Y < 0 ? 0 : 2;
+
+			return v2.Rotate90(rot);
 		}
 	}
 }

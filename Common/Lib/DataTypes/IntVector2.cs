@@ -282,6 +282,10 @@ namespace Dwarrowdelf
 			return new IntVector2(ix, iy);
 		}
 
+		/// <summary>
+		/// Rotate dir in 45 degree steps
+		/// </summary>
+		/// <param name="rotate">Rotation units, in 45 degree steps</param>
 		public static Direction RotateDir(Direction dir, int rotate)
 		{
 			int x, y;
@@ -291,6 +295,36 @@ namespace Dwarrowdelf
 			IntVector2 v = new IntVector2(x, y);
 			v = v.FastRotate(rotate);
 			return v.ToDirection();
+		}
+
+		/// <summary>
+		/// Rotate the vector in 90 degree steps (positive rotation is clockwise)
+		/// </summary>
+		public IntVector2 Rotate90(int rotate)
+		{
+			int x = this.X;
+			int y = this.Y;
+
+			if (rotate >= 0)
+			{
+				for (int i = 0; i < rotate; ++i)
+				{
+					int tmp = y;
+					y = x;
+					x = -tmp;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < -rotate; ++i)
+				{
+					int tmp = y;
+					y = -x;
+					x = tmp;
+				}
+			}
+
+			return new IntVector2(x, y);
 		}
 
 		public override string ToString()

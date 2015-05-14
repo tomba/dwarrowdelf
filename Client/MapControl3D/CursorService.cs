@@ -62,6 +62,8 @@ namespace Dwarrowdelf.Client
 
 			var dir = KeyHelpers.KeyToDir(key);
 
+			IntVector3 v;
+
 			if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0)
 			{
 				if (dir == Direction.North)
@@ -70,6 +72,13 @@ namespace Dwarrowdelf.Client
 					dir = Direction.Down;
 				else
 					return;
+
+				v = dir.ToIntVector3();
+			}
+			else
+			{
+				var v2 = m_game.Camera.PlanarAdjust(dir.ToIntVector2());
+				v = new IntVector3(v2, 0);
 			}
 
 			int m = 1;
@@ -77,7 +86,7 @@ namespace Dwarrowdelf.Client
 			if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) != 0)
 				m = 5;
 
-			this.Location += dir.ToIntVector3() * m;
+			this.Location += v * m;
 
 			//m_control.KeepOnScreen(this.CursorPosition);
 
