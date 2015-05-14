@@ -145,6 +145,7 @@ namespace Dwarrowdelf.Client
 			var device = this.GraphicsDevice;
 
 			m_effect.EyePos = camera.Position;
+			m_effect.ScreenUp = camera.ScreenUp;
 			m_effect.ViewProjection = camera.View * camera.Projection;
 
 			var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, camera.Look));

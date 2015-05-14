@@ -61,6 +61,12 @@ namespace Dwarrowdelf.Client
 		{
 			set { this.Parameters["gEyePosW"].SetValue(ref value); }
 		}
+
+		public Vector3 ScreenUp
+		{
+			set { this.Parameters["screenUp"].SetValue(ref value); }
+		}
+
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]

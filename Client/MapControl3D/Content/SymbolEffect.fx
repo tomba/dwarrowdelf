@@ -29,6 +29,8 @@ cbuffer cbPerFrame : register(b0)
 	float4x4 g_viewProjMatrix;
 	float3 gEyePosW;
 	float _pad00;
+	float3 screenUp;
+	float _pad01;
 };
 
 cbuffer PerObjectBuffer
@@ -102,9 +104,9 @@ void GSMain(point GSIn gin[1], inout TriangleStream< GSOut > output)
 		right = normalize(cross(float3(0, 0, 1), look));
 		up = cross(look, right);
 	} else if (BILLBOARD_MODE == 3) {
-		/* sprite is flat on the ground */
-		up = float3(0, -1, 0);
-		right = float3(1, 0, 0);
+		/* sprite is flat on the ground, orientation given by 'screenUp' */
+		up = screenUp;
+		right = float3(-up.y, up.x, 0);
 		gin[0].PosW += float3(0, 0, -0.49f);
 	}
 

@@ -98,6 +98,7 @@ namespace Dwarrowdelf.Client
 				device.SetBlendState(device.BlendStates.AlphaBlend);
 
 				m_symbolEffect.EyePos = camera.Position;
+				m_symbolEffect.ScreenUp = camera.ScreenUp;
 				m_symbolEffect.ViewProjection = camera.View * camera.Projection;
 
 				var angle = (float)System.Math.Acos(Vector3.Dot(-Vector3.UnitZ, camera.Look));

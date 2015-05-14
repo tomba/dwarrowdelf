@@ -10,11 +10,16 @@ namespace Dwarrowdelf.Client
 		public Vector3 Right { get { return m_right; } }
 		public Vector3 Up { get { return m_up; } }
 		public Vector3 Look { get { return m_look; } }
+		/// <summary>
+		/// xy-plane axis unit vector pointing to the top of the screen
+		/// </summary>
+		public Vector3 ScreenUp { get { return m_screenUp; } }
 
 		Vector3 m_position;
 		Vector3 m_right;
 		Vector3 m_up;
 		Vector3 m_look;
+		Vector3 m_screenUp;
 
 		public float FarZ { get { return m_farZ; } }
 
@@ -72,6 +77,7 @@ namespace Dwarrowdelf.Client
 			m_up = Vector3.Cross(m_look, m_right);
 			m_viewDirty = true;
 			m_frustumDirty = true;
+			UpdateScreenUp();
 		}
 
 		public void MoveTo(Vector3 pos)
@@ -127,6 +133,7 @@ namespace Dwarrowdelf.Client
 			m_look = Vector3.TransformNormal(m_look, rot);
 			m_viewDirty = true;
 			m_frustumDirty = true;
+			UpdateScreenUp();
 		}
 
 		public void RotateZ(float angle)
@@ -138,6 +145,7 @@ namespace Dwarrowdelf.Client
 			m_look = Vector3.TransformNormal(m_look, rot);
 			m_viewDirty = true;
 			m_frustumDirty = true;
+			UpdateScreenUp();
 		}
 
 		void UpdateProjection()
@@ -183,7 +191,7 @@ namespace Dwarrowdelf.Client
 		/// <summary>
 		/// Adjust the IntVector2 so that negative Y ("north") is towards the top of the screen
 		/// </summary>
-		public IntVector2 PlanarAdjust(IntVector2 v2)
+		public IntVector2 PlanarAdjust(IntVector2 v)
 		{
 			int rot;
 			if (Math.Abs(m_look.X) > Math.Abs(m_look.Y))
@@ -191,7 +199,26 @@ namespace Dwarrowdelf.Client
 			else
 				rot = m_look.Y < 0 ? 0 : 2;
 
-			return v2.Rotate90(rot);
+			v = v.Rotate90(rot);
+
+			if (m_up.Z < 0)
+				v = new IntVector2(-v.X, -v.Y);
+
+			return v;
+		}
+
+		void UpdateScreenUp()
+		{
+			Vector3 v;
+			if (Math.Abs(m_look.X) > Math.Abs(m_look.Y))
+				v = new Vector3(Math.Sign(m_look.X), 0, 0);
+			else
+				v = new Vector3(0, Math.Sign(m_look.Y), 0);
+
+			if (m_up.Z < 0)
+				v = Vector3.Negate(v);
+
+			m_screenUp = v;
 		}
 	}
 }
