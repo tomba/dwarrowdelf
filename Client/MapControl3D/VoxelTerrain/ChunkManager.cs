@@ -195,11 +195,12 @@ namespace Dwarrowdelf.Client
 			// This could be done inside Chunk, but to update the edges of a chunk we need to touch multiple Chunks.
 			// But as we don't change the content of the neighbors, and only the face towards the changed tile
 			// needs to be changed, there's room for optimization.
+			var env = m_game.Environment;
 			foreach (var v in IntVector3.CardinalUpDownDirections)
 			{
 				var n = p + v;
 
-				if (!this.Size.Contains(n))
+				if (!env.Contains(n))
 					continue;
 
 				UpdateTile(n);
