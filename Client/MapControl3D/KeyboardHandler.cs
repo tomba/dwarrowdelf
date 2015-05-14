@@ -104,41 +104,23 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case 'z':
-					if (map == null)
-						break;
-					{
-						var sel = m_game.SelectionService.Selection;
-
-						if (sel.IsSelectionValid)
-						{
-							foreach (var p in sel.SelectionBox.Range())
-								map.SetTileData(p, TileData.EmptyTileData);
-						}
-						else if (m_game.MousePositionService.MapLocation.HasValue)
-						{
-							var p = m_game.MousePositionService.MapLocation.Value;
-							map.SetTileData(p, TileData.EmptyTileData);
-						}
-					}
-					break;
-
 				case 'x':
 					if (map == null)
 						break;
 					{
 						var sel = m_game.SelectionService.Selection;
 
+						var td = key == 'z' ? TileData.EmptyTileData : TileData.GetNaturalWall(MaterialID.Granite);
+
 						if (sel.IsSelectionValid)
 						{
 							foreach (var p in sel.SelectionBox.Range())
-								map.SetTileData(p, TileData.GetNaturalWall(MaterialID.Granite));
+								map.SetTileData(p, td);
 						}
-						else if (m_game.MousePositionService.MapLocation.HasValue)
+						else if (m_game.CursorService.Location.HasValue)
 						{
-							var p = m_game.MousePositionService.MapLocation.Value;
-							var d = m_game.MousePositionService.Face;
-							if (map.Size.Contains(p + d))
-								map.SetTileData(p + d, TileData.GetNaturalWall(MaterialID.Granite));
+							var p = m_game.CursorService.Location.Value;
+							map.SetTileData(p, td);
 						}
 					}
 					break;
