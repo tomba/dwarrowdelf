@@ -91,6 +91,7 @@
     <Compile Include="GameCore\SharpDXHost.cs" />
     <Compile Include="KeyboardHandler.cs" />
     <Compile Include="MapControl3D.cs" />
+    <Compile Include="DesignationRenderer.cs" />
     <Compile Include="ToolTipService.cs" />
     <Compile Include="MousePositionService.cs" />
     <Compile Include="MyExtensions.cs" />

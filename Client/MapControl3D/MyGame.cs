@@ -29,6 +29,7 @@ namespace Dwarrowdelf.Client
 		readonly SymbolRenderer m_symbolRenderer;
 		readonly SelectionRenderer m_selectionRenderer;
 		readonly FPSCounter m_fpsCounter;
+		readonly DesignationRenderer m_designationRenderer;
 
 		readonly DebugAxesRenderer m_debugAxesRenderer;
 #if TESTCUBERENDERER
@@ -103,6 +104,10 @@ namespace Dwarrowdelf.Client
 			m_selectionRenderer = ToDispose(new SelectionRenderer(this));
 			base.Updatables.Add(m_selectionRenderer);
 			mainView.Drawables.Add(m_selectionRenderer);
+
+			m_designationRenderer = ToDispose(new DesignationRenderer(this));
+			base.Updatables.Add(m_designationRenderer);
+			mainView.Drawables.Add(m_designationRenderer);
 
 			m_debugAxesRenderer = ToDispose(new DebugAxesRenderer(this));
 			base.Updatables.Add(m_debugAxesRenderer);

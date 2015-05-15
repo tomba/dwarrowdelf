@@ -82,6 +82,11 @@ namespace Dwarrowdelf.Client
 			m_checkStatus = true;
 		}
 
+		public IEnumerable<KeyValuePair<IntVector3, DesignationType>> GetLocations()
+		{
+			return m_map.Select(kvp => new KeyValuePair<IntVector3, DesignationType>(kvp.Key, kvp.Value.Type));
+		}
+
 		public DesignationType ContainsPoint(IntVector3 p)
 		{
 			DesignationData data;
