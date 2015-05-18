@@ -81,7 +81,7 @@ namespace Dwarrowdelf
 
 			var taskBackward = new Task(delegate
 			{
-				resBackward = Find(env, dst, dstPositioning, src, DirectionSet.Exact, 200000, cts.Token);
+				resBackward = Find(env, dst, dstPositioning.Reverse(), src, DirectionSet.Exact, 200000, cts.Token);
 			});
 			taskBackward.Start();
 
@@ -174,7 +174,7 @@ namespace Dwarrowdelf
 
 			var taskBackward = new Task(delegate
 			{
-				rb = Find(env, dest, positioning, src, DirectionSet.Exact, 200000, cts.Token);
+				rb = Find(env, dest, positioning.Reverse(), src, DirectionSet.Exact, 200000, cts.Token);
 			});
 			taskBackward.Start();
 
