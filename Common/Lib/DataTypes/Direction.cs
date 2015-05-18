@@ -159,6 +159,16 @@ namespace Dwarrowdelf
 			return (dirset & ds) != 0;
 		}
 
+		public static DirectionSet Reverse(this DirectionSet ds)
+		{
+			DirectionSet ret = 0;
+
+			foreach (var d in ds.ToDirections())
+				ret |= d.Reverse().ToDirectionSet();
+
+			return ret;
+		}
+
 		public static void DirectionToComponents(this Direction dir, out int x, out int y, out int z)
 		{
 			int d = (int)dir;
