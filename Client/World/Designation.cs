@@ -318,7 +318,7 @@ namespace Dwarrowdelf.Client
 		bool GetTileReachableSimple(IntVector3 p, DesignationType type)
 		{
 			DirectionSet dirs = GetDesignationPositioning(p, type);
-
+			dirs = dirs.Reverse();
 			return dirs.ToSurroundingPoints(p).Any(this.Environment.CanEnter);
 		}
 

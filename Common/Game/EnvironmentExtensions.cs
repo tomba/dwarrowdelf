@@ -184,30 +184,33 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Get possible positioning to perform mining on given location
+		/// Get possible positioning to perform mining to given location
 		/// </summary>
 		public static DirectionSet GetPossibleMiningPositioning(this IEnvironmentObject env, IntVector3 p,
 			MineActionType mineActionType)
 		{
 			DirectionSet ds;
 
-			var down = p.Down;
-
 			switch (mineActionType)
 			{
 				case MineActionType.Mine:
 					ds = DirectionSet.Planar;
 
-					if (env.CanMoveFrom(down, Direction.Up))
-						ds |= DirectionSet.Down;
+					if (env.GetTileData(p.Up).IsClear)
+					{
+						ds |= DirectionSet.DownNorth |
+							DirectionSet.DownEast |
+							DirectionSet.DownSouth |
+							DirectionSet.DownWest;
+					}
 
 					break;
 
 				case MineActionType.Stairs:
-					ds = DirectionSet.Planar | DirectionSet.Up;
+					ds = DirectionSet.Planar | DirectionSet.Down;
 
-					if (env.CanMoveFrom(down, Direction.Up))
-						ds |= DirectionSet.Down;
+					if (env.CanMoveFrom(p.Down, Direction.Up))
+						ds |= DirectionSet.Up;
 
 					break;
 

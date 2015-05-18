@@ -34,16 +34,11 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
-						{
-							SendFailReport(report, "not planar or up direction");
-							return ActionState.Fail;
-						}
+						var ds = env.GetPossibleMiningPositioning(p, MineActionType.Mine);
 
-						// XXX is this necessary for planar dirs? we can always move in those dirs
-						if (!env.CanMoveFrom(this.Location, action.Direction))
+						if (ds.Contains(action.Direction) == false)
 						{
-							SendFailReport(report, "cannot reach");
+							SendFailReport(report, "cannot mine to that direction");
 							return ActionState.Fail;
 						}
 
