@@ -127,6 +127,9 @@ namespace Dwarrowdelf.Server
 				// fall down
 				Trace.TraceInformation("{0} falls down", this);
 				this.MoveTo(this.Location.Down);
+
+				if (this.HasAction)
+					this.CancelAction();
 			}
 		}
 
