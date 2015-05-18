@@ -11,7 +11,6 @@ namespace Dwarrowdelf.Client
 		Mine,
 		FellTree,
 		CreateStairs,
-		Channel,
 	}
 
 	[SaveGameObject]
@@ -190,22 +189,12 @@ namespace Dwarrowdelf.Client
 					continue;
 				}
 
-				if (dt.Type == DesignationType.Channel)
-				{
-					if (this.Environment.HasContents(p))
-					{
-						dt.NextReacahbleCheck = tick + 10;
-						continue;
-					}
-				}
-
 				IAssignment job;
 
 				switch (dt.Type)
 				{
 					case DesignationType.Mine:
 					case DesignationType.CreateStairs:
-					case DesignationType.Channel:
 						MineActionType mat = DesignationTypeToMineActionType(dt.Type);
 
 						job = new Jobs.AssignmentGroups.MoveMineAssignment(this, this.Environment, p, mat);
@@ -302,10 +291,6 @@ namespace Dwarrowdelf.Client
 				case DesignationType.CreateStairs:
 					return this.Environment.GetHidden(p) || (td.IsMinable && td.ID == TileID.NaturalWall);
 
-				case DesignationType.Channel:
-					return this.Environment.GetHidden(p) == false && td.IsClearFloor &&
-						(this.Environment.GetHidden(p.Down) || this.Environment.GetTileData(p.Down).IsMinable);
-
 				case DesignationType.FellTree:
 					return td.HasFellableTree;
 
@@ -322,8 +307,6 @@ namespace Dwarrowdelf.Client
 					return MineActionType.Mine;
 				case DesignationType.CreateStairs:
 					return MineActionType.Stairs;
-				case DesignationType.Channel:
-					return MineActionType.Channel;
 				default:
 					throw new Exception();
 			}
@@ -345,7 +328,6 @@ namespace Dwarrowdelf.Client
 			{
 				case DesignationType.Mine:
 				case DesignationType.CreateStairs:
-				case DesignationType.Channel:
 					return this.Environment.GetPossibleMiningPositioning(p, DesignationTypeToMineActionType(type));
 
 				case DesignationType.FellTree:

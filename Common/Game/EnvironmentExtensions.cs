@@ -211,10 +211,6 @@ namespace Dwarrowdelf
 
 					break;
 
-				case MineActionType.Channel:
-					ds = DirectionSet.Planar;
-					break;
-
 				default:
 					throw new Exception();
 			}

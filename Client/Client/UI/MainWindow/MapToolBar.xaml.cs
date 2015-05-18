@@ -54,7 +54,6 @@ namespace Dwarrowdelf.Client.UI
 				case ClientToolMode.DesignationRemove:
 				case ClientToolMode.DesignationMine:
 				case ClientToolMode.DesignationStairs:
-				case ClientToolMode.DesignationChannel:
 				case ClientToolMode.DesignationFellTree:
 					this.DesignationToolMode = mode;
 					this.designationButton.IsChecked = true;

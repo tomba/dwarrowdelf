@@ -216,11 +216,6 @@ namespace Dwarrowdelf
 		/// Stairs can be created for planar directions or down. To create stairs up, we need stairs already in the current tile.
 		/// </summary>
 		Stairs,
-		/// <summary>
-		/// Channel can be done in planar directions.
-		/// Channel removes the floor of the selected tile, and the interior of the tile below.
-		/// </summary>
-		Channel,
 	}
 
 	[Serializable]

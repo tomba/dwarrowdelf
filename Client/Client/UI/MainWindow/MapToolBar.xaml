@@ -66,7 +66,6 @@
 					<ContextMenu>
 						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationMine]}" Style="{StaticResource menuItemStyle}"  />
 						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationStairs]}" Style="{StaticResource menuItemStyle}"  />
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationChannel]}" Style="{StaticResource menuItemStyle}" />
 						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationFellTree]}" Style="{StaticResource menuItemStyle}" />
 						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationRemove]}" Style="{StaticResource menuItemStyle}" />
 					</ContextMenu>

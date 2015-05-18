@@ -123,45 +123,6 @@ namespace Dwarrowdelf.Server
 					}
 					break;
 
-				case MineActionType.Channel:
-					{
-						if (!action.Direction.IsPlanar())
-						{
-							SendFailReport(report, "not planar direction");
-							return ActionState.Fail;
-						}
-
-						// XXX is this necessary for planar dirs? we can always move in those dirs
-						if (!env.CanMoveFrom(this.Location, action.Direction))
-						{
-							SendFailReport(report, "cannot reach");
-							return ActionState.Fail;
-						}
-
-						if (td.IsClearFloor == false)
-						{
-							SendFailReport(report, "wrong type of tile");
-							return ActionState.Fail;
-						}
-
-						if (!env.Contains(p.Down))
-						{
-							SendFailReport(report, "tile not inside map");
-							return ActionState.Fail;
-						}
-
-						if (env.HasContents(p))
-						{
-							SendFailReport(report, "tile contains objects");
-							return ActionState.Abort;
-						}
-
-
-						td = TileData.EmptyTileData;
-						env.SetTileData(p, td);
-					}
-					break;
-
 				default:
 					throw new Exception();
 			}

@@ -25,7 +25,6 @@ namespace Dwarrowdelf.Client.UI
 
 			add(new ToolData(ClientToolMode.DesignationMine, "Mine", "Designate", Key.M));
 			add(new ToolData(ClientToolMode.DesignationStairs, "Mine stairs", "Designate", Key.S));
-			add(new ToolData(ClientToolMode.DesignationChannel, "Channel", "Designate", Key.C));
 			add(new ToolData(ClientToolMode.DesignationFellTree, "Fell tree", "Designate", Key.F));
 			add(new ToolData(ClientToolMode.DesignationRemove, "Remove", "Designate", Key.R));
 
@@ -70,7 +69,6 @@ namespace Dwarrowdelf.Client.UI
 		DesignationRemove,
 		DesignationMine,
 		DesignationStairs,
-		DesignationChannel,
 		DesignationFellTree,
 
 		CreateStockpile,

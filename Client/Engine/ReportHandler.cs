@@ -232,10 +232,6 @@ namespace Dwarrowdelf.Client
 					case MineActionType.Stairs:
 						Events.AddGameEvent(living, "{0} creates stairs {1} ({2})", living, report.Location, report.Direction);
 						break;
-
-					case MineActionType.Channel:
-						Events.AddGameEvent(living, "{0} channels {1} ({2})", living, report.Location, report.Direction);
-						break;
 				}
 			}
 			else

@@ -50,10 +50,6 @@
 		<DrawingGfx DrawingName="Pick" Rotate="0" />
 	</Symbol>
 
-	<Symbol ID="DesignationChannel">
-		<DrawingGfx DrawingName="Pick" Rotate="-90" />
-	</Symbol>
-
 	<Symbol ID="ValuableOre">
 		<CharGfx Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
 	</Symbol>
