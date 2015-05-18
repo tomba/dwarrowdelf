@@ -69,6 +69,7 @@ namespace Dwarrowdelf.Server
 			: base(ctx, ObjectType.Living)
 		{
 			this.World.TickEnding += OnTickEnding;
+			this.World.TickStarted += OnTickStarted;
 
 			var aai = m_ai as Dwarrowdelf.AI.AssignmentAI;
 			if (aai != null)
@@ -86,6 +87,7 @@ namespace Dwarrowdelf.Server
 			base.Initialize(world);
 			world.AddLiving(this);
 			world.TickEnding += OnTickEnding;
+			world.TickStarted += OnTickStarted;
 
 			this.Trace = new MyTraceSource("Server.LivingObject",
 				String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID));
@@ -103,9 +105,29 @@ namespace Dwarrowdelf.Server
 			this.ActionTotalTicks = 0;
 			this.ActionTicksUsed = 0;
 
+			this.World.TickStarted -= OnTickStarted;
 			this.World.TickEnding -= OnTickEnding;
 			this.World.RemoveLiving(this);
 			base.Destruct();
+		}
+
+		void OnTickStarted()
+		{
+			if (this.Environment == null)
+				return;
+
+			if (this.Environment.Contains(this.Location.Down) == false)
+			{
+				// XXX falls off the map
+				return;
+			}
+
+			if (this.Environment.GetTileData(this.Location).HasFloor == false)
+			{
+				// fall down
+				Trace.TraceInformation("{0} falls down", this);
+				this.MoveTo(this.Location.Down);
+			}
 		}
 
 		void OnTickEnding()
