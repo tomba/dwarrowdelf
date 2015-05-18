@@ -169,6 +169,7 @@ namespace Dwarrowdelf
 					case TileID.Empty:
 					case TileID.Grass:
 					case TileID.Sapling:
+					case TileID.Shrub:
 						return true;
 
 					default:
