@@ -400,9 +400,18 @@ namespace Dwarrowdelf.Server
 			// ZZZ notify up
 			if (Contains(p.Up))
 			{
-				// ZZZ we should clear the tile up if there's a tree or grass there
 				// ZZZ if this tile was the only support for the tile above, it should crash down
 				var pu = p.Up;
+
+				// if support is removed, clear greenery above
+				if (oldData.IsSupporting && data.IsSupporting == false)
+				{
+					if (m_tileGrid[pu.Z, pu.Y, pu.X].IsGreen)
+					{
+						m_tileGrid[pu.Z, pu.Y, pu.X].ID = TileID.Empty;
+						m_tileGrid[pu.Z, pu.Y, pu.X].MaterialID = MaterialID.Undefined;
+					}
+				}
 
 				if (data.IsSupporting)
 					m_tileGrid[pu.Z, pu.Y, pu.X].Flags |= TileFlags.HasSupport;
