@@ -199,6 +199,9 @@ namespace Dwarrowdelf
 			return new IntVector3(left.X * right.X, left.Y * right.Y, left.Z * right.Z);
 		}
 
+		/// <summary>
+		/// Is p adjacent in one of the given directions
+		/// </summary>
 		public bool IsAdjacentTo(IntVector3 p, DirectionSet positioning)
 		{
 			var v = p - this;
