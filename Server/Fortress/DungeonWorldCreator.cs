@@ -8,9 +8,6 @@ namespace Dwarrowdelf.Server.Fortress
 {
 	public class DungeonWorldCreator
 	{
-		const int MAP_SIZE = 7;	// 2^AREA_SIZE
-		const int MAP_DEPTH = 9;
-
 		World m_world;
 		EnvironmentObject m_env;
 		Dictionary<int, IntGrid2[]> m_rooms;
@@ -27,9 +24,9 @@ namespace Dwarrowdelf.Server.Fortress
 			m_livingInfos = Livings.GetLivingInfos(LivingCategory.Monster | LivingCategory.Herbivore | LivingCategory.Carnivore).ToArray();
 		}
 
-		public void InitializeWorld(World world)
+		public void InitializeWorld(World world, IntSize3 size)
 		{
-			CreateTerrain();
+			CreateTerrain(size);
 
 			IntVector3? stairs = null;
 
@@ -138,12 +135,9 @@ namespace Dwarrowdelf.Server.Fortress
 			return null;
 		}
 
-		void CreateTerrain()
+		void CreateTerrain(IntSize3 size)
 		{
 			var random = Helpers.Random;
-
-			int side = MyMath.Pow2(MAP_SIZE);
-			var size = new IntSize3(side, side, MAP_DEPTH);
 
 			var terrain = new TerrainData(size);
 

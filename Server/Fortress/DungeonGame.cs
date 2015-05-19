@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 				case GameMap.Adventure:
 					var dwc = new DungeonWorldCreator(this.World);
-					dwc.InitializeWorld(this.World);
+					dwc.InitializeWorld(this.World, options.MapSize);
 					env = dwc.MainEnv;
 					break;
 
