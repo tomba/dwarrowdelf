@@ -576,6 +576,12 @@ namespace Dwarrowdelf.Client
 					}
 					return;
 
+				case TileID.Stairs:
+					baseTexture.Symbol1 = SymbolID.StairsDown;
+					baseTexture.Color1 = GameColor.Red;
+					topTexture = baseTexture;
+					return;
+
 				default:
 					throw new Exception();
 			}
