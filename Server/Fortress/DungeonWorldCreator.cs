@@ -145,8 +145,8 @@ namespace Dwarrowdelf.Server.Fortress
 
 			tg.Generate(1);
 
-			//TerrainHelpers.CreateSoil(terrain, 9999);
-			//TerrainHelpers.CreateVegetation(terrain, random, 9999);
+			TerrainHelpers.CreateSoil(terrain, 9999);
+			TerrainHelpers.CreateVegetation(terrain, random, 9999);
 
 			m_rooms = tg.Rooms;
 			m_terrainData = terrain;
