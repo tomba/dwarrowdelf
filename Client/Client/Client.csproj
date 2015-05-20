@@ -79,6 +79,7 @@
     </ApplicationDefinition>
     <Compile Include="CommanPromptHandler.cs" />
     <Compile Include="UI\Converters\CoordinateValueConverter.cs" />
+    <Compile Include="UI\Converters\EnumToBooleanConverter.cs" />
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>
