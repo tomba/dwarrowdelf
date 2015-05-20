@@ -437,14 +437,6 @@
       <Project>{4124c0fb-3646-4bc2-938a-98ad05c1e6ba}</Project>
       <Name>MapControl3D</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TileControlCore\TileControlCore.csproj">
-      <Project>{2DC159B4-2248-49B1-8665-210CDC0B6B09}</Project>
-      <Name>TileControlCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TileControlSharpDX\TileControlSharpDX.csproj">
-      <Project>{8880cd2d-b30a-495e-9598-25a8dde1ce7a}</Project>
-      <Name>TileControlSharpDX</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Win32\Win32.csproj">
       <Project>{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}</Project>
       <Name>Win32</Name>
