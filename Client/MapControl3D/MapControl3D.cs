@@ -9,13 +9,29 @@ using System.Windows.Controls;
 
 namespace Dwarrowdelf.Client
 {
+	public class MapControlConfig
+	{
+		public MapControlPickMode PickMode { get; set; }
+	}
+
+	public enum MapControlPickMode
+	{
+		Underground,
+		AboveGroud,
+		Constant,
+	}
+
 	public class MapControl3D : SharpDXHost, IMapControl
 	{
 		MyGame m_game;
 		ToolTipService m_toolTipService;
 
+		public MapControlConfig Config { get; private set; }
+
 		public MapControl3D()
 		{
+			this.Config = new MapControlConfig();
+
 			this.HoverTileView = new TileAreaView();
 			this.SelectionTileAreaView = new TileAreaView();
 

@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Client
 
 				var center = new IntVector2((int)view.ViewPort.Width / 2, (int)view.ViewPort.Height / 2);
 
-				bool hit = MousePositionService.PickVoxel(m_game, center, out pos, out face);
+				bool hit = MousePositionService.PickVoxel(m_game, center, MapControlPickMode.Underground, out pos, out face);
 
 				if (hit)
 					loc = pos;

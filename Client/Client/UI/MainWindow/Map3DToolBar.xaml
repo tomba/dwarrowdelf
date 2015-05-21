@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.Map3DToolBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+			 xmlns:map="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.MapControl3D"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+	<ToolBarTray Orientation="Vertical">
+		<ToolBar ToolBarTray.IsLocked="True">
+			<UniformGrid Columns="3">
+				<UniformGrid.Resources>
+					<ui:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+				</UniformGrid.Resources>
+				<RadioButton Content="U" Style="{StaticResource {x:Type ToggleButton}}"
+							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.Underground}}" />
+
+				<RadioButton Content="A" Style="{StaticResource {x:Type ToggleButton}}"
+							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.AboveGroud}}" />
+
+				<RadioButton Content="C" Style="{StaticResource {x:Type ToggleButton}}"
+							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.Constant}}" />
+
+			</UniformGrid>
+			<ToggleButton Content="Snap" />
+		</ToolBar>
+	</ToolBarTray>
+</UserControl>

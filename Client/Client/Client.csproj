@@ -80,6 +80,9 @@
     <Compile Include="CommanPromptHandler.cs" />
     <Compile Include="UI\Converters\CoordinateValueConverter.cs" />
     <Compile Include="UI\Converters\EnumToBooleanConverter.cs" />
+    <Compile Include="UI\MainWindow\Map3DToolBar.xaml.cs">
+      <DependentUpon>Map3DToolBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>
@@ -114,6 +117,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\MainWindow\MainWindowMenuBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainWindow\Map3DToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

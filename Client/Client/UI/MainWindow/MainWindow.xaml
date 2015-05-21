@@ -107,7 +107,10 @@
 
 			<!-- MAP -->
 			<DockPanel Grid.Column="2" Grid.Row="0">
-				<ui:MapToolBar x:Name="mainWindowTools" DockPanel.Dock="Left" VerticalAlignment="Top" />
+				<StackPanel Orientation="Vertical" DockPanel.Dock="Left" >
+					<ui:MapToolBar x:Name="mainWindowTools" />
+					<ui:Map3DToolBar x:Name="map3DTools" DataContext="{Binding ElementName=map, Path=Config}" />
+				</StackPanel>
 
 				<ui:FocusedObjectStats DockPanel.Dock="Right" VerticalAlignment="Top" DataContext="{Binding Data.FocusedObject}"
 									   Visibility="{Binding Converter={StaticResource nullToVisConverter}}" />

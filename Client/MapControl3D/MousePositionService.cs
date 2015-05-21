@@ -77,7 +77,9 @@ namespace Dwarrowdelf.Client
 
 			this.ScreenLocation = mousePos;
 
-			bool hit = PickVoxel(m_game.Environment, m_surfaceView, mousePos, m_game.ViewGridProvider.ViewGrid, out p, out d);
+			var pickMode = ((MapControl3D)m_control).Config.PickMode;
+
+			bool hit = PickVoxel(m_game.Environment, m_surfaceView, mousePos, m_game.ViewGridProvider.ViewGrid, pickMode, out p, out d);
 
 			if (hit)
 			{
@@ -91,14 +93,14 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public static bool PickVoxel(MyGame game, IntVector2 screenPos, out IntVector3 pos, out Direction face)
+		public static bool PickVoxel(MyGame game, IntVector2 screenPos, MapControlPickMode pickMode, out IntVector3 pos, out Direction face)
 		{
 			return MousePositionService.PickVoxel(game.Environment, game.Surfaces[0].Views[0], screenPos,
-				game.ViewGridProvider.ViewGrid, out pos, out face);
+				game.ViewGridProvider.ViewGrid, pickMode, out pos, out face);
 		}
 
 		public static bool PickVoxel(EnvironmentObject env, GameSurfaceView view, IntVector2 screenPos, IntGrid3 cropGrid,
-			out IntVector3 pos, out Direction face)
+			MapControlPickMode pickMode, out IntVector3 pos, out Direction face)
 		{
 			var camera = view.Camera;
 
@@ -110,6 +112,9 @@ namespace Dwarrowdelf.Client
 			var corner = cropGrid.Corner2;
 			var size = new IntSize3(corner.X, corner.Y, corner.Z);
 
+			IntVector3 prevoutpos = new IntVector3();
+			Direction prevoutdir = Direction.None;
+
 			VoxelRayCast.RunRayCast(size, ray.Position, ray.Direction, view.Camera.FarZ,
 				(x, y, z, dir) =>
 				{
@@ -120,13 +125,39 @@ namespace Dwarrowdelf.Client
 
 					var td = env.GetTileData(p);
 
-					if (td.IsEmpty)
-						return false;
+					switch (pickMode)
+					{
+						case MapControlPickMode.Underground:
+							if (!td.IsUndefined && !td.IsWall)
+								return false;
 
-					outpos = p;
-					outdir = dir;
+							outpos = p;
+							outdir = dir;
+							return true;
 
-					return true;
+						case MapControlPickMode.AboveGroud:
+							if (!td.IsUndefined && !td.IsWall)
+							{
+								prevoutpos = p;
+								prevoutdir = dir;
+								return false;
+							}
+
+							outpos = prevoutpos;
+							outdir = prevoutdir;
+							return true;
+
+						case MapControlPickMode.Constant:
+							if (p.Z > cropGrid.Z2)
+								return false;
+
+							outpos = p;
+							outdir = dir;
+							return true;
+
+						default:
+							throw new NotImplementedException();
+					}
 				});
 
 			pos = outpos;
