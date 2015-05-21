@@ -110,7 +110,7 @@ namespace Dwarrowdelf.Client
 			Direction outdir = Direction.None;
 
 			var corner = cropGrid.Corner2;
-			var size = new IntSize3(corner.X, corner.Y, corner.Z);
+			var size = new IntSize3(corner.X + 1, corner.Y + 1, corner.Z + 1);
 
 			IntVector3 prevoutpos = new IntVector3();
 			Direction prevoutdir = Direction.None;
