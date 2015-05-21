@@ -134,7 +134,7 @@
 						<Button Content="Off" Tag="Off" Click="Button_Click_Server_Trace" />
 						<Button Content="Error" Tag="Error" Click="Button_Click_Server_Trace" />
 						<Button Content="Warning" Tag="Warning" Click="Button_Click_Server_Trace" />
-						<Button Content="Info" Tag="Information" Click="Button_Click_Server_Trace" />
+						<Button Content="Info" Tag="Info" Click="Button_Click_Server_Trace" />
 						<Button Content="Verbose" Tag="Verbose" Click="Button_Click_Server_Trace" />
 					</StackPanel>
 				</GroupBox>

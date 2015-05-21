@@ -122,7 +122,7 @@ for l in controllables:
 			GameData.Data.User.Send(msg);
 		}
 
-		public static void SendSetLivingTraceLevel(LivingObject living, System.Diagnostics.SourceLevels traceLevel)
+		public static void SendSetLivingTraceLevel(LivingObject living, System.Diagnostics.TraceLevel traceLevel)
 		{
 			var args = new Dictionary<string, object>()
 			{

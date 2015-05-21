@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Client.UI
 		private void Button_Click_Server_Trace(object sender, RoutedEventArgs e)
 		{
 			var b = (Button)sender;
-			var traceLevel = (System.Diagnostics.SourceLevels)Enum.Parse(typeof(System.Diagnostics.SourceLevels), (string)b.Tag);
+			var traceLevel = (System.Diagnostics.TraceLevel)Enum.Parse(typeof(System.Diagnostics.TraceLevel), (string)b.Tag);
 			var living = (LivingObject)this.DataContext;
 
 			DebugScriptMessages.SendSetLivingTraceLevel(living, traceLevel);
