@@ -45,6 +45,11 @@
 						<Button Grid.Column="0" Grid.Row="2" Content="SW" Tag="SouthWest" Click="MoveDir_Button_Click" />
 						<Button Grid.Column="1" Grid.Row="2" Content="S" Tag="South" Click="MoveDir_Button_Click" />
 						<Button Grid.Column="2" Grid.Row="2" Content="SE" Tag="SouthEast" Click="MoveDir_Button_Click" />
+
+						<UniformGrid Grid.Column="1" Grid.Row="1" Columns="1">
+							<Button Content="U" FontSize="8" Tag="Up" Click="MoveDir_Button_Click" />
+							<Button Content="D" FontSize="8" Tag="Down" Click="MoveDir_Button_Click" />
+						</UniformGrid>
 					</Grid>
 				</Viewbox>
 			</UniformGrid>
