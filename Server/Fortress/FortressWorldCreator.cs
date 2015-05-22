@@ -130,7 +130,7 @@ namespace Dwarrowdelf.Server.Fortress
 			{
 				// Add a water generator
 				var item = WaterGenerator.Create(env.World);
-				item.MoveTo(env, new IntVector3(pos.X + 1, pos.Y + 2, surface));
+				item.MoveToMustSucceed(env, new IntVector3(pos.X + 1, pos.Y + 2, surface));
 			}
 		}
 

@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Server
 						var ai = new Dwarrowdelf.AI.HerbivoreAI(living, world.PlayerID);
 						ai.Group = group;
 						living.SetAI(ai);
-						living.MoveTo(m_env, p);
+						living.MoveToMustSucceed(m_env, p);
 
 						break;
 					}

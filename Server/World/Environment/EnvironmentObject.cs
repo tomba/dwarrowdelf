@@ -507,9 +507,6 @@ namespace Dwarrowdelf.Server
 			if (!this.Contains(p))
 				return false;
 
-			if (!this.CanEnter(p))
-				return false;
-
 			return true;
 		}
 

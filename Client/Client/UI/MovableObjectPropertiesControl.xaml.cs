@@ -50,14 +50,15 @@ namespace Dwarrowdelf.Client.UI
 			var ob = (MovableObject)this.DataContext;
 
 			var dir = (Direction)Enum.Parse(typeof(Direction), tag);
+			var p = ob.Location + dir;
 
 			var args = new Dictionary<string, object>()
 			{
 				{ "obid", ob.ObjectID },
-				{ "dir", dir },
+				{ "p", p },
 			};
 
-			var script = "world.GetObject(obid).MoveDir(dir)";
+			var script = "world.GetObject(obid).MoveToMustSucceed(p)";
 
 			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
 

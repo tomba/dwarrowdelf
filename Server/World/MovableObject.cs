@@ -77,6 +77,32 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
+		/// <summary>
+		/// Move object to given direction, checking that it is possible to move
+		/// </summary>
+		public bool MoveDir(Direction dir)
+		{
+			Debug.Assert(this.World.IsWritable);
+
+			if (this.Environment == null)
+				throw new Exception();
+
+			if (this.CanMoveTo(dir) == false)
+				return false;
+
+			var location = this.Location + dir;
+
+			return MoveTo(location);
+		}
+
+		public void MoveToMustSucceed(ContainerObject container)
+		{
+			bool ok = MoveTo(container);
+
+			if (!ok)
+				throw new Exception();
+		}
+
 		public bool MoveTo(ContainerObject container)
 		{
 			if (this.Container == container)
@@ -85,7 +111,15 @@ namespace Dwarrowdelf.Server
 			return MoveTo(container, new IntVector3());
 		}
 
-		public bool MoveTo(ContainerObject dst, IntVector3 dstLoc)
+		public void MoveToMustSucceed(ContainerObject dst, IntVector3 dstLoc = new IntVector3())
+		{
+			bool ok = MoveTo(dst, dstLoc);
+
+			if (!ok)
+				throw new Exception();
+		}
+
+		public bool MoveTo(ContainerObject dst, IntVector3 dstLoc = new IntVector3())
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -106,10 +140,12 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		public bool MoveTo(int x, int y, int z)
+		public void MoveToMustSucceed(IntVector3 location)
 		{
-			var p = new IntVector3(x, y, z);
-			return MoveTo(p);
+			bool ok = MoveTo(location);
+
+			if (!ok)
+				throw new Exception();
 		}
 
 		/// <summary>
@@ -136,24 +172,7 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		/// <summary>
-		/// Move object to given direction, checking that it is possible to move
-		/// </summary>
-		public bool MoveDir(Direction dir)
-		{
-			Debug.Assert(this.World.IsWritable);
-
-			if (this.Environment == null)
-				throw new Exception();
-
-			if (this.CanMoveTo(dir) == false)
-				return false;
-
-			var location = this.Location + dir;
-
-			return MoveTo(location);
-		}
-
+		// Move to a location in a new container
 		void MoveToLow(ContainerObject dst, IntVector3 dstLoc)
 		{
 			Debug.Assert(this.IsInitialized);
@@ -179,6 +198,7 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
 		}
 
+		// Move to a location in the current container
 		void MoveToLow(IntVector3 location)
 		{
 			Debug.Assert(this.IsInitialized);

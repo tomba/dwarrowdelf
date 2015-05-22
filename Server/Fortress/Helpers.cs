@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Server.Fortress
 			var itemBuilder = new ItemObjectBuilder(ItemID.Gem, material);
 			var item = itemBuilder.Create(world);
 
-			item.MoveTo(living);
+			item.MoveToMustSucceed(living);
 		}
 
 		public static void AddBattleGear(LivingObject living)
@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Server.Fortress
 			var itemBuilder = new ItemObjectBuilder(itemID, material);
 			var item = itemBuilder.Create(world);
 
-			item.MoveTo(living);
+			item.MoveToMustSucceed(living);
 
 			living.EquipItem(item);
 		}

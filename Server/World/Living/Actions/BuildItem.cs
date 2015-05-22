@@ -112,8 +112,7 @@ namespace Dwarrowdelf.Server
 			foreach (var ob in obs)
 				ob.Destruct();
 
-			if (item.MoveTo(builder.Environment, builder.Location) == false)
-				throw new Exception();
+			item.MoveToMustSucceed(builder.Environment, builder.Location);
 
 			return item;
 		}

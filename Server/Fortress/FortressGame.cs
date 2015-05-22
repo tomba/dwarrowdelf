@@ -114,8 +114,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 				l.SetAI(new DwarfAI(l, player.EnvObserver, this.World.PlayerID));
 
-				if (!l.MoveTo(env, p))
-					throw new Exception();
+				l.MoveToMustSucceed(env, p);
 
 				list.Add(l);
 			}

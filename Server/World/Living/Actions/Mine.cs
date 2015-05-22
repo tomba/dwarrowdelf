@@ -75,10 +75,7 @@ namespace Dwarrowdelf.Server
 								{
 									var builder = new ItemObjectBuilder(itemID, material.ID);
 									var item = builder.Create(this.World);
-									var ok = item.MoveTo(this.Environment, p);
-									if (!ok)
-										throw new Exception();
-
+									item.MoveToMustSucceed(this.Environment, p);
 								}
 							}
 						}

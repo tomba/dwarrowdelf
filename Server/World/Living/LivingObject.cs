@@ -126,7 +126,7 @@ namespace Dwarrowdelf.Server
 			{
 				// fall down
 				Trace.TraceInformation("{0} falls down", this);
-				this.MoveTo(this.Location.Down);
+				this.MoveToMustSucceed(this.Location.Down);
 
 				if (this.HasAction)
 					this.CancelAction();
@@ -317,9 +317,7 @@ namespace Dwarrowdelf.Server
 				if (item.IsEquipped)
 					UnequipItem(item);
 
-				ok = item.MoveTo(this.Environment, this.Location);
-				if (!ok)
-					throw new Exception();
+				item.MoveToMustSucceed(this.Environment, this.Location);
 			}
 
 			this.Destruct();

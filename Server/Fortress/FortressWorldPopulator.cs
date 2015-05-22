@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			{
 				var gen = FoodGenerator.Create(env.World);
-				gen.MoveTo(env, env.GetSurfaceLocation(env.Width / 2 - 2, env.Height / 2 - 2));
+				gen.MoveToMustSucceed(env, env.GetSurfaceLocation(env.Width / 2 - 2, env.Height / 2 - 2));
 			}
 
 			AddMonsters(env);
@@ -175,10 +175,7 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			var builder = new ItemObjectBuilder(itemID, materialID);
 			var item = builder.Create(env.World);
-			var ok = item.MoveTo(env, p);
-			if (!ok)
-				throw new Exception();
-
+			item.MoveToMustSucceed(env, p);
 			return item;
 		}
 
@@ -199,7 +196,7 @@ namespace Dwarrowdelf.Server.Fortress
 				Helpers.AddGem(living);
 				Helpers.AddBattleGear(living);
 
-				living.MoveTo(env, env.GetRandomEnterableSurfaceLocation());
+				living.MoveToMustSucceed(env, env.GetRandomEnterableSurfaceLocation());
 			}
 		}
 

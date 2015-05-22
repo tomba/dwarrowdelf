@@ -47,8 +47,7 @@ namespace Dwarrowdelf.Server
 					Color = GameColor.SaddleBrown,
 				};
 				var log = builder.Create(this.World);
-				var ok = log.MoveTo(this.Environment, p);
-				Debug.Assert(ok);
+				log.MoveToMustSucceed(this.Environment, p);
 			}
 
 			SendReport(report);

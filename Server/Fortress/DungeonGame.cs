@@ -73,8 +73,7 @@ namespace Dwarrowdelf.Server.Fortress
 				var l = CreateDwarf(i);
 				l.Strength = 100;
 
-				if (!l.MoveTo(env, p))
-					throw new Exception();
+				l.MoveToMustSucceed(env, p);
 
 				list.Add(l);
 			}

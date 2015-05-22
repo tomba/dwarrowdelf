@@ -58,7 +58,7 @@ namespace Dwarrowdelf.Server.Fortress
 			if (pn.HasValue)
 			{
 				var living = CreateRandomLiving(1);
-				living.MoveTo(m_env, pn.Value);
+				living.MoveToMustSucceed(m_env, pn.Value);
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Server.Fortress
 					var p = pn.Value;
 
 					var living = CreateRandomLiving(z);
-					living.MoveTo(m_env, p);
+					living.MoveToMustSucceed(m_env, p);
 				}
 			}
 		}
