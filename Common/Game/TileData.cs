@@ -231,8 +231,6 @@ namespace Dwarrowdelf
 				{
 					case TileID.NaturalWall:
 					case TileID.BuiltWall:
-					case TileID.Tree:
-					case TileID.DeadTree:
 						return true;
 
 					default:
