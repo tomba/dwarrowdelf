@@ -28,6 +28,8 @@ namespace Dwarrowdelf.Client
 
 		public MapControlConfig Config { get; private set; }
 
+		DebugWindow m_debugWindow;
+
 		public MapControl3D()
 		{
 			this.Config = new MapControlConfig();
@@ -48,6 +50,9 @@ namespace Dwarrowdelf.Client
 
 		protected override void Dispose(bool disposing)
 		{
+			if (m_debugWindow != null)
+				m_debugWindow.Close();
+
 			m_game.Stop();
 			m_game.Dispose();
 			m_game = null;
@@ -63,10 +68,15 @@ namespace Dwarrowdelf.Client
 
 		public void OpenDebugWindow()
 		{
+			if (m_debugWindow != null || m_game == null)
+				return;
+
 			var dbg = new DebugWindow();
 			dbg.Owner = System.Windows.Window.GetWindow(this);
 			dbg.SetGame(m_game);
+			dbg.Closed += (s, e) => m_debugWindow = null;
 			dbg.Show();
+			m_debugWindow = dbg;
 		}
 
 		public void GoTo(MovableObject ob)
