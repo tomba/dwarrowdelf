@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client
 {
-	class MousePositionService : IGameUpdatable
+	class MousePositionService
 	{
 		MyGame m_game;
 		GameSurfaceView m_surfaceView;
@@ -23,6 +23,19 @@ namespace Dwarrowdelf.Client
 			m_game = game;
 			m_control = control;
 			m_surfaceView = surfaceView;
+
+			m_control.MouseMove += OnMouseMove;
+			m_control.MouseLeave += OnMouseLeave;
+		}
+
+		void OnMouseMove(object sender, MouseEventArgs e)
+		{
+			UpdateMousePos();
+		}
+
+		void OnMouseLeave(object sender, MouseEventArgs e)
+		{
+			UpdateMousePos();
 		}
 
 		IntVector2? m_screenLocation;
@@ -58,7 +71,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void Update()
+		void UpdateMousePos()
 		{
 			IntVector3 p;
 			Direction d;
