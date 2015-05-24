@@ -119,10 +119,7 @@ namespace Dwarrowdelf.Client
 			if (m_dragState == DragState.Captured)
 			{
 				if ((pos - m_dragStartPos).Length < 2)
-				{
-					e.Handled = true;
 					return;
-				}
 
 				m_dragState = DragState.Dragging;
 
@@ -132,8 +129,6 @@ namespace Dwarrowdelf.Client
 
 			if (this.Dragging != null)
 				this.Dragging(pos);
-
-			e.Handled = true;
 		}
 
 		void OnLostMouseCapture(object sender, MouseEventArgs e)
