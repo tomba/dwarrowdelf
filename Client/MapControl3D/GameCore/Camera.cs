@@ -93,6 +93,9 @@ namespace Dwarrowdelf.Client
 			vy.Z = 0;
 			vy.Normalize();
 
+			if (m_up.Z < 0)
+				vy = Vector3.Negate(vy);
+
 			var vx = m_right;
 			vx.Z = 0;
 			vx.Normalize();
