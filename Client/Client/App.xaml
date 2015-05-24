@@ -14,5 +14,8 @@
 
 		<ui:SymbolAndColorToDrawingConverter x:Key="symbolAndColorDrawingConverter"/>
 		<ui:ItemIDAndMaterialIDToDrawingConverter x:Key="itemAndMaterialDrawingConverter"/>
+
+		<ui:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+
 	</Application.Resources>
 </Application>

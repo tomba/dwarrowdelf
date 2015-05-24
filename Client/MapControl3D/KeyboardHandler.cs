@@ -10,19 +10,20 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client
 {
+
+	public enum MapControlMode
+	{
+		Fps,
+		Rts,
+	}
+
+
 	class KeyboardHandler : IGameUpdatable
 	{
 		SharpDXHost m_control;
 
 		MyGame m_game;
 
-		enum ControlMode
-		{
-			Fps,
-			Rts,
-		}
-
-		ControlMode m_controlMode = ControlMode.Fps;
 		bool AlignViewGridToCamera { get; set; }
 
 		public Action<KeyEventArgs> KeyDown;
@@ -240,13 +241,15 @@ namespace Dwarrowdelf.Client
 
 		public void Update()
 		{
-			switch (m_controlMode)
+			var controlMode = ((MapControl3D)m_control).Config.ControlMode;
+
+			switch (controlMode)
 			{
-				case ControlMode.Fps:
+				case MapControlMode.Fps:
 					HandleFpsKeyboard();
 					break;
 
-				case ControlMode.Rts:
+				case MapControlMode.Rts:
 					HandleRtsKeyboard();
 					break;
 
