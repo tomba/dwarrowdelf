@@ -511,13 +511,30 @@ namespace Dwarrowdelf.Client
 					throw new Exception();
 
 				case TileID.NaturalWall:
-				case TileID.BuiltWall:
 					var matInfo = Materials.GetMaterial(td.MaterialID);
 					var color = matInfo.Color;
 
 					baseTexture.Color0 = GameColor.None;
 					baseTexture.Symbol1 = SymbolID.Wall;
 					baseTexture.Color1 = color;
+
+					var secondaryMatInfo = Materials.GetMaterial(td.SecondaryMaterialID);
+
+					switch (secondaryMatInfo.Category)
+					{
+						case MaterialCategory.Gem:
+							baseTexture.Symbol2 = SymbolID.GemOre;
+							baseTexture.Color2 = secondaryMatInfo.Color;
+							break;
+
+						case MaterialCategory.Mineral:
+							baseTexture.Symbol2 = SymbolID.ValuableOre;
+							baseTexture.Color2 = secondaryMatInfo.Color;
+							break;
+
+						default:
+							break;
+					}
 
 					// If the top face of the tile is visible, we have a "floor"
 					if ((vox.VisibleFaces & Direction.PositiveZ) != 0)
