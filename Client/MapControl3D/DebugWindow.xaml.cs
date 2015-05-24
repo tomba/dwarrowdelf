@@ -121,17 +121,17 @@ namespace Dwarrowdelf.Client
 
 		public int ViewMaxX
 		{
-			get { return m_game.Environment != null ? m_game.Environment.Width : 0; }
+			get { return m_game.Environment != null ? m_game.Environment.Width - 1 : 0; }
 		}
 
 		public int ViewMaxY
 		{
-			get { return m_game.Environment != null ? m_game.Environment.Height : 0; }
+			get { return m_game.Environment != null ? m_game.Environment.Height - 1 : 0; }
 		}
 
 		public int ViewMaxZ
 		{
-			get { return m_game.Environment != null ? m_game.Environment.Depth : 0; }
+			get { return m_game.Environment != null ? m_game.Environment.Depth - 1 : 0; }
 		}
 
 		public int ViewZ
