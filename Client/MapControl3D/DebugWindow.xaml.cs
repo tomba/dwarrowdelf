@@ -166,27 +166,8 @@ namespace Dwarrowdelf.Client
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		int m_c0;
-		int m_c1;
-		int m_c2;
-
 		public void Update(object sender, EventArgs e)
 		{
-			var c0 = System.GC.CollectionCount(0);
-			var c1 = System.GC.CollectionCount(1);
-			var c2 = System.GC.CollectionCount(2);
-
-			var d0 = c0 - m_c0;
-			var d1 = c1 - m_c1;
-			var d2 = c2 - m_c2;
-
-			this.GC = String.Format("GC0 {0}/s, GC1 {1}/s, GC2 {2}/s",
-				d0, d1, d2);
-
-			m_c0 = c0;
-			m_c1 = c1;
-			m_c2 = c2;
-
 			Notify("");
 
 			m_game.TerrainRenderer.ChunkRecalcs = 0;
