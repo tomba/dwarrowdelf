@@ -86,7 +86,40 @@ namespace Dwarrowdelf.Client
 			if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) != 0)
 				m = 5;
 
-			this.Location += v * m;
+			var pickMode = ((MapControl3D)m_control).Config.PickMode;
+
+			var loc = this.Location.Value + v * m;
+
+			switch (pickMode)
+			{
+				case MapControlPickMode.Underground:
+				case MapControlPickMode.AboveGroud:
+					for (int z = m_game.ViewGridProvider.ViewGrid.Z2 - 1; z >= 0; --z)
+					{
+						var p = new IntVector3(loc.X, loc.Y, z);
+
+						var td = m_game.Environment.GetTileData(p);
+
+						if (!td.IsUndefined && !td.IsWall)
+							continue;
+
+						loc = p;
+						break;
+					}
+
+					if (pickMode == MapControlPickMode.AboveGroud)
+						loc = loc.Up;
+
+					break;
+
+				case MapControlPickMode.Constant:
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			this.Location = loc;
 
 			//m_control.KeepOnScreen(this.CursorPosition);
 
@@ -107,8 +140,9 @@ namespace Dwarrowdelf.Client
 				var view = m_game.Surfaces[0].Views[0];
 
 				var center = new IntVector2((int)view.ViewPort.Width / 2, (int)view.ViewPort.Height / 2);
+				var pickMode = ((MapControl3D)m_control).Config.PickMode;
 
-				bool hit = MousePositionService.PickVoxel(m_game, center, MapControlPickMode.Underground, out pos, out face);
+				bool hit = MousePositionService.PickVoxel(m_game, center, pickMode, out pos, out face);
 
 				if (hit)
 					loc = pos;
