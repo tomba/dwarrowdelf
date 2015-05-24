@@ -14,7 +14,7 @@
 							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.Underground}}" />
 
 				<RadioButton Content="A" Style="{StaticResource {x:Type ToggleButton}}"
-							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.AboveGroud}}" />
+							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.AboveGround}}" />
 
 				<RadioButton Content="C" Style="{StaticResource {x:Type ToggleButton}}"
 							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.Constant}}" />

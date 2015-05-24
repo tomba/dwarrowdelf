@@ -303,7 +303,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleRtsKeyboard()
 		{
-			const float walkSpeek = 40f;
+			const float walkSpeed = 40f;
 			const float rotSpeed = MathUtil.PiOverTwo * 1.5f;
 			float dTime = (float)m_game.Time.FrameTime.TotalSeconds;
 			float mul = 1f;
@@ -316,19 +316,19 @@ namespace Dwarrowdelf.Client
 			Vector3 v = new Vector3();
 
 			if (IsKeyDown(Key.E))
-				v.Z = walkSpeek * dTime * mul;
+				v.Z = walkSpeed * dTime * mul;
 			else if (IsKeyDown(Key.Q))
-				v.Z = -walkSpeek * dTime * mul;
+				v.Z = -walkSpeed * dTime * mul;
 
 			if (IsKeyDown(Key.W))
-				v.Y = walkSpeek * dTime * mul;
+				v.Y = walkSpeed * dTime * mul;
 			else if (IsKeyDown(Key.S))
-				v.Y = -walkSpeek * dTime * mul;
+				v.Y = -walkSpeed * dTime * mul;
 
 			if (IsKeyDown(Key.D))
-				v.X = walkSpeek * dTime * mul;
+				v.X = walkSpeed * dTime * mul;
 			else if (IsKeyDown(Key.A))
-				v.X = -walkSpeek * dTime * mul;
+				v.X = -walkSpeed * dTime * mul;
 
 			if (!v.IsZero)
 			{

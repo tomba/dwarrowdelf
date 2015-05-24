@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client
 	public enum MapControlPickMode
 	{
 		Underground,
-		AboveGroud,
+		AboveGround,
 		Constant,
 	}
 

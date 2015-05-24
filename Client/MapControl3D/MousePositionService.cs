@@ -148,7 +148,7 @@ namespace Dwarrowdelf.Client
 							outdir = dir;
 							return true;
 
-						case MapControlPickMode.AboveGroud:
+						case MapControlPickMode.AboveGround:
 							if (!td.IsUndefined && !td.IsWall)
 							{
 								prevoutpos = p;
