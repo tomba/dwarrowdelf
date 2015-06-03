@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Client
 			{
 				case MapControlPickMode.Underground:
 				case MapControlPickMode.AboveGround:
-					for (int z = m_game.ViewGridProvider.ViewGrid.Z2 - 1; z >= 0; --z)
+					for (int z = m_game.ViewGridProvider.ViewGrid.Z2; z >= 0; --z)
 					{
 						var p = new IntVector3(loc.X, loc.Y, z);
 
@@ -108,7 +108,10 @@ namespace Dwarrowdelf.Client
 					}
 
 					if (pickMode == MapControlPickMode.AboveGround)
-						loc = loc.Up;
+					{
+						if (loc.Z < m_game.ViewGridProvider.ViewGrid.Z2)
+							loc = loc.Up;
+					}
 
 					break;
 
