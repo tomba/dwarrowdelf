@@ -64,68 +64,6 @@ namespace Dwarrowdelf.Client
 					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
 					break;
 
-				case '1':
-					camera.LookAt(camera.Position,
-						camera.Position + new Vector3(0, -1, -10),
-						Vector3.UnitZ);
-					break;
-
-				case '2':
-					camera.LookAt(camera.Position,
-						camera.Position + new Vector3(1, 1, -1),
-						Vector3.UnitZ);
-					break;
-
-				case 'r':
-					if (map == null)
-						break;
-					{
-						var p = Mouse.GetPosition(m_control);
-						int px = MyMath.Round(p.X);
-						int py = MyMath.Round(p.Y);
-
-						// XXX not correct, should come from the surface
-						var viewport = new ViewportF(0, 0, m_control.HostedWindowWidth, m_control.HostedWindowHeight);
-
-						var ray = Ray.GetPickRay(px, py, viewport, camera.View * camera.Projection);
-
-						VoxelRayCast.RunRayCast(m_game.Environment.Size, ray.Position, ray.Direction, camera.FarZ,
-							(x, y, z, dir) =>
-							{
-								var l = new IntVector3(x, y, z);
-
-								if (map.Size.Contains(l) == false)
-									return true;
-
-								map.SetTileData(l, TileData.GetNaturalWall(MaterialID.Granite));
-
-								return false;
-							});
-					}
-					break;
-
-				case 'z':
-				case 'x':
-					if (map == null)
-						break;
-					{
-						var sel = m_game.SelectionService.Selection;
-
-						var td = key == 'z' ? TileData.EmptyTileData : TileData.GetNaturalWall(MaterialID.Granite);
-
-						if (sel.IsSelectionValid)
-						{
-							foreach (var p in sel.SelectionBox.Range())
-								map.SetTileData(p, td);
-						}
-						else if (m_game.CursorService.Location.HasValue)
-						{
-							var p = m_game.CursorService.Location.Value;
-							map.SetTileData(p, td);
-						}
-					}
-					break;
-
 				default:
 					e.Handled = false;
 					break;
