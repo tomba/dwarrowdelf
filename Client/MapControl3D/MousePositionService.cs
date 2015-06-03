@@ -156,8 +156,16 @@ namespace Dwarrowdelf.Client
 								return false;
 							}
 
-							outpos = prevoutpos;
-							outdir = prevoutdir;
+							if (prevoutpos.IsNull)
+							{
+								outpos = p;
+								outdir = dir;
+							}
+							else
+							{
+								outpos = prevoutpos;
+								outdir = prevoutdir;
+							}
 							return true;
 
 						case MapControlPickMode.Constant:
