@@ -24,14 +24,10 @@ namespace Dwarrowdelf.Client
 
 		MyGame m_game;
 
-		bool AlignViewGridToCamera { get; set; }
-
 		public Action<KeyEventArgs> KeyDown;
 
 		public KeyboardHandler(MyGame game, SharpDXHost control)
 		{
-			this.AlignViewGridToCamera = true;
-
 			m_game = game;
 			m_control = control;
 
@@ -269,18 +265,7 @@ namespace Dwarrowdelf.Client
 				v.X = -walkSpeed * dTime * mul;
 
 			if (!v.IsZero)
-			{
 				camera.MovePlanar(v);
-
-				if (this.AlignViewGridToCamera && v.Z != 0)
-				{
-					var viewGrid = m_game.ViewGridProvider;
-
-					var c = viewGrid.ViewCorner2;
-					c.Z = (int)camera.Position.Z - 32;
-					viewGrid.ViewCorner2 = c;
-				}
-			}
 
 			if (IsKeyDown(Key.Up))
 				camera.Pitch(-rotSpeed * dTime * mul);

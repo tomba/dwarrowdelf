@@ -24,6 +24,7 @@ namespace Dwarrowdelf.Client
 		public SelectionService SelectionService { get; private set; }
 		public CursorService CursorService { get; private set; }
 		public CameraMoveService CameraMoveService { get; private set; }
+		public ViewGridAdjusterService ViewGridAdjusterService { get; private set; }
 
 		public TerrainRenderer TerrainRenderer { get; private set; }
 		readonly SymbolRenderer m_symbolRenderer;
@@ -50,6 +51,9 @@ namespace Dwarrowdelf.Client
 
 			this.CameraMoveService = new CameraMoveService(this.Camera);
 			base.Updatables.Add(this.CameraMoveService);
+
+			this.ViewGridAdjusterService = new ViewGridAdjusterService(this, mainHost);
+			base.Updatables.Add(this.ViewGridAdjusterService);
 
 			this.ViewGridProvider = new ViewGridProvider(this);
 

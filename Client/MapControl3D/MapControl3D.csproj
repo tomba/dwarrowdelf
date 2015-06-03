@@ -114,6 +114,7 @@
       <DependentUpon>TileToolTipControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="VertexList.cs" />
+    <Compile Include="ViewGridAdjusterService.cs" />
     <Compile Include="ViewGridProvider.cs" />
     <Compile Include="VoxelTerrain\Chunk.cs" />
     <Compile Include="VoxelTerrain\ChunkManager.cs" />
