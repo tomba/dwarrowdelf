@@ -12,10 +12,19 @@ namespace Dwarrowdelf
 	{
 		// X, Y: 16 bits, from -32768 to 32767
 		// X: bits 0-15, Y: bits 16-31
-		readonly int m_value;
+		int m_value;
 
-		public int X { get { return (((int)m_value) << 16) >> 16; } }
-		public int Y { get { return ((int)m_value) >> 16; } }
+		public int X
+		{
+			get { return (((int)m_value) << 16) >> 16; }
+			set { m_value = (m_value & ~0xffff) | (value & 0xffff); }
+		}
+
+		public int Y
+		{
+			get { return ((int)m_value) >> 16; }
+			set { m_value = (m_value & ~(0xffff << 16)) | (value & 0xffff) << 16; }
+		}
 
 		public IntVector2(int x, int y)
 		{
