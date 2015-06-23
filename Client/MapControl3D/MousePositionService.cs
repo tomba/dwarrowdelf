@@ -76,7 +76,8 @@ namespace Dwarrowdelf.Client
 			IntVector3 p;
 			Direction d;
 
-			var pos = Mouse.GetPosition(m_control);
+			var pos = m_control.MousePositionDeviceUnits;
+
 			var mousePos = new IntVector2(MyMath.Round(pos.X), MyMath.Round(pos.Y));
 
 			if (m_surfaceView.ViewPort.Width == 0 || m_surfaceView.ViewPort.Height == 0 ||

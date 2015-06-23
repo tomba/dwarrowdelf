@@ -118,6 +118,20 @@ namespace Dwarrowdelf.Client
 			m_game.ScrollTo(p);
 		}
 
+		public Point PointToDevice(Point p)
+		{
+			var source = PresentationSource.FromVisual(this);
+			var matrix = source.CompositionTarget.TransformToDevice;
+			return matrix.Transform(p);
+		}
+
+		public Point DeviceToPoint(Point p)
+		{
+			var source = PresentationSource.FromVisual(this);
+			var matrix = source.CompositionTarget.TransformFromDevice;
+			return matrix.Transform(p);
+		}
+
 		public Rect GetPlacementRect(IntVector3 ml)
 		{
 			// XXX
@@ -134,7 +148,9 @@ namespace Dwarrowdelf.Client
 			vp.Project(ref p1, ref matrix, out out1);
 			vp.Project(ref p2, ref matrix, out out2);
 
-			Rect rect = new Rect(new System.Windows.Point(out1.X, out1.Y), new System.Windows.Point(out2.X, out2.Y));
+			Rect rect = new Rect(
+				DeviceToPoint(new System.Windows.Point(out1.X, out1.Y)),
+				DeviceToPoint(new System.Windows.Point(out2.X, out2.Y)));
 
 			return rect;
 		}

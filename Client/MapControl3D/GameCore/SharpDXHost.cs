@@ -37,8 +37,28 @@ namespace Dwarrowdelf.Client
 			m_control = new MyRenderControl();
 		}
 
+		/// <summary>
+		/// Width in Device Dependent Units
+		/// </summary>
 		public int HostedWindowWidth { get { return m_control.ClientSize.Width; } }
+
+		/// <summary>
+		/// Height in Device Dependent Units
+		/// </summary>
 		public int HostedWindowHeight { get { return m_control.ClientSize.Height; } }
+
+		/// <summary>
+		/// Mouse position in Device Dependent Units
+		/// </summary>
+		public Point MousePositionDeviceUnits
+		{
+			get
+			{
+				var p = SWF.Control.MousePosition;
+				p = m_control.PointToClient(p);
+				return new Point(p.X, p.Y);
+			}
+		}
 
 		public static readonly RoutedEvent MouseClickedEvent =
 			EventManager.RegisterRoutedEvent("MouseClicked", RoutingStrategy.Bubble, typeof(MouseButtonEventHandler), typeof(SharpDXHost));
