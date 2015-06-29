@@ -38,6 +38,15 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var random = new Random(1);
 
+
+			double xk = (random.NextDouble() * 2 - 1) * 0.01;
+			double yk = (random.NextDouble() * 2 - 1) * 0.01;
+			TerrainHelpers.CreateBaseMinerals(terrain, random, xk, yk);
+
+			TerrainHelpers.CreateOreVeins(terrain, random, xk, yk);
+
+			TerrainHelpers.CreateOreClusters(terrain, random);
+
 			RiverGen.Generate(terrain, random);
 
 			int soilLimit = size.Depth * 4 / 5;
