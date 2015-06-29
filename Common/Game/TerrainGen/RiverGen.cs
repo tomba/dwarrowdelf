@@ -10,6 +10,19 @@ namespace Dwarrowdelf.TerrainGen
 {
 	public class RiverGen
 	{
+		public static void Generate(TerrainData terrain, Random random)
+		{
+			var riverGen = new RiverGen(terrain, random);
+			if (riverGen.CreateRiverPath())
+			{
+				riverGen.AdjustRiver();
+			}
+			else
+			{
+				Trace.TraceError("Failed to create river");
+			}
+		}
+
 		TerrainData m_terrain;
 		Random m_random;
 

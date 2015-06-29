@@ -36,11 +36,14 @@ namespace Dwarrowdelf.Server.Fortress
 			var terrain = NoiseTerrainGen.CreateNoiseTerrain(size);
 			terrain.RescanLevelMap();
 
+			var random = new Random(1);
+
+			RiverGen.Generate(terrain, random);
+
 			int soilLimit = size.Depth * 4 / 5;
 			TerrainHelpers.CreateSoil(terrain, soilLimit);
 
 			int grassLimit = terrain.Depth * 4 / 5;
-			var random = new Random(1);
 			TerrainHelpers.CreateVegetation(terrain, random, grassLimit);
 
 			m_terrainData = terrain;
