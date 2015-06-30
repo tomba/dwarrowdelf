@@ -130,6 +130,25 @@ void GSMain(point GS_IN inputs[1], inout TriangleStream<PS_IN> OutputStream)
 	OutputStream.Append(output);
 }
 
+float distanceFromNearestCorner(float2 tex)
+{
+	float2 tex2 = 0.5f - abs(tex - 0.5f);
+	return length(tex2);
+}
+
+float distanceFromNearestEdge(float2 tex)
+{
+	float2 tex2 = 0.5f - abs(tex - 0.5f);
+	return min(tex2.x, tex2.y);
+}
+
+int getQuadrant(float2 tex)
+{
+	int xq = (int)round(tex.x);
+	int yq = (int)round(tex.y) * 2;
+	return xq + yq;
+}
+
 float4 PSMain(PS_IN input) : SV_Target
 {
 	float3 litColor = float3(1, 1, 1);
