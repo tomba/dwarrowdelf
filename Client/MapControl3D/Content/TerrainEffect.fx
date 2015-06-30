@@ -43,6 +43,7 @@ bool g_disableLight;
 bool g_disableBorders;
 bool g_disableOcclusion;
 bool g_disableTexture;
+bool g_showOcclusionCorner;
 
 cbuffer PerFrame
 {
@@ -249,6 +250,19 @@ float4 PSMain(PS_IN input) : SV_Target
 	}
 
 	color = color * litColor * occlusion * border;
+
+	if (g_showOcclusionCorner)
+	{
+		uint4 occ = input.occlusion;
+
+		int quadrant = getQuadrant(input.tex);
+
+		float o = 1.0f - occ[quadrant] / 4.0f;
+
+		float cornerDist = distanceFromNearestCorner(input.tex);
+		if (cornerDist < 0.2f)
+			color = float3(o, o, o);
+	}
 
 	return float4(color, 1);
 }
