@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Client
 {
 	public sealed class GrowingTileGrid
 	{
-		TileData[, ,] m_grid;
+		TileData[,,] m_grid;
 		public IntSize3 Size { get; private set; }
 
 		public GrowingTileGrid()
@@ -111,6 +111,11 @@ namespace Dwarrowdelf.Client
 		public MaterialID GetMaterialID(IntVector3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].MaterialID;
+		}
+
+		public MaterialID GetSecondaryMaterialID(IntVector3 p)
+		{
+			return m_grid[p.Z, p.Y, p.X].SecondaryMaterialID;
 		}
 
 		public byte GetWaterLevel(IntVector3 p)

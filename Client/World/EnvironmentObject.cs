@@ -204,6 +204,11 @@ namespace Dwarrowdelf.Client
 			return Materials.GetMaterial(m_tileGrid.GetMaterialID(l));
 		}
 
+		public MaterialInfo GetSecondaryMaterial(IntVector3 l)
+		{
+			return Materials.GetMaterial(m_tileGrid.GetSecondaryMaterialID(l));
+		}
+
 		public byte GetWaterLevel(IntVector3 l)
 		{
 			return m_tileGrid.GetWaterLevel(l);

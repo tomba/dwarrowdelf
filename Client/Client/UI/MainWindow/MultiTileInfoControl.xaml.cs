@@ -47,9 +47,9 @@ namespace Dwarrowdelf.Client.UI
 		}
 	}
 
-	sealed class MyTileConverter : ListConverter<Tuple<TileID, MaterialInfo>>
+	sealed class MyTileConverter : ListConverter<Tuple<TileID, MaterialInfo, MaterialInfo>>
 	{
-		public MyTileConverter() : base(item => item.Item1 + " (" + item.Item2.Name + ")") { }
+		public MyTileConverter() : base(item => item.Item1 + " (" + item.Item2.Name + ") (" + item.Item3.Name + ")") { }
 	}
 
 	sealed class MyWatersConverter : ListConverter<byte>

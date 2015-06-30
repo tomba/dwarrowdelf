@@ -154,7 +154,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public ReadOnlyMovableObjectCollection Objects { get; private set; }
 
-		public IEnumerable<Tuple<TileID, MaterialInfo>> Tiles
+		public IEnumerable<Tuple<TileID, MaterialInfo, MaterialInfo>> Tiles
 		{
 			get
 			{
@@ -162,7 +162,7 @@ namespace Dwarrowdelf.Client.UI
 					return null;
 
 				return m_adjustedBox.Range().
-					Select(p => Tuple.Create(m_environment.GetTileID(p), m_environment.GetMaterial(p))).
+					Select(p => Tuple.Create(m_environment.GetTileID(p), m_environment.GetMaterial(p), m_environment.GetSecondaryMaterial(p))).
 					Distinct();
 			}
 		}
