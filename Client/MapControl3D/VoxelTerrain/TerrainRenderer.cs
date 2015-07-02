@@ -48,11 +48,11 @@ namespace Dwarrowdelf.Client
 		{
 			m_effect = this.Content.Load<TerrainEffect>("TerrainEffect");
 
-			m_effect.TileTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
+			m_effect.TileTextures = this.Content.Load<Texture2D>("TileSet");
 
 			m_symbolEffect = this.Content.Load<SymbolEffect>("SymbolEffect");
 
-			m_symbolEffect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
+			m_symbolEffect.SymbolTextures = this.Content.Load<Texture2D>("TileSet");
 		}
 
 		public override void Update()

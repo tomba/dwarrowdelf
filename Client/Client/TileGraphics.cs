@@ -17,13 +17,11 @@ namespace Dwarrowdelf.Client
 		Dictionary<int, int> m_tileSizeMap;
 		LRUCache<TileKey, BitmapSource> m_cache = new LRUCache<TileKey, BitmapSource>(128);
 
-		public TileSet(Uri uri)
+		public TileSet(string path)
 		{
-			var resStream = Application.GetResourceStream(uri);
-
 			string tileSizesStr;
 
-			using (var stream = resStream.Stream)
+			using (var stream = File.OpenRead(path))
 			{
 				var decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.None, BitmapCacheOption.None);
 				var frame = decoder.Frames[0];

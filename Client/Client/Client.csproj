@@ -86,13 +86,18 @@
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>
-    <None Include="TileSet\DefaultTileSet.xaml">
-      <SubType>Designer</SubType>
+		<None Include="Content\TileSet.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Include="Content\TileSet.dds">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="TileSet\DefaultTileSetVectors.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <Page Include="UI\BaseObjectPropertiesControl.xaml">
+    <None Include="TileSet\TileSet.xaml" />
+    <None Include="TileSet\Vectors.xaml" />
+		<None Include="TileSet\Vectors.design" />
+		<None Include="TileSet\Bitmaps.png" />
+		<None Include="TileSet\Bitmaps.pdn" />
+		<Page Include="UI\BaseObjectPropertiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -400,10 +405,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Resource Include="TileSet\TileSet.png" />
-    <None Include="TileSet\DefaultTileSetVectors.design" />
-    <None Include="TileSet\DefaultTileSetBitmaps.png" />
-    <None Include="TileSet\DefaultTileSetBitmaps.pdn" />
     <Resource Include="Images\splash.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -489,6 +490,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
@@ -501,14 +503,16 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
-  <Target AfterTargets="BeforeBuild" Name="TileSetRender" Inputs="TileSet/DefaultTileSet.xaml;TileSet/DefaultTileSetBitmaps.png;TileSet/DefaultTileSetVectors.xaml" Outputs="TileSet/TileSet.png">
-    <PropertyGroup>
-      <ToolPath>$(SolutionDir)/bin</ToolPath>
-    </PropertyGroup>
-    <Exec Command="&quot;$(ToolPath)/TilePrerenderer.exe&quot; TileSet/DefaultTileSet.xaml TileSet/TileSet.png" />
+  <Target AfterTargets="BeforeBuild" Name="TileSetGen"
+					Inputs="TileSet/TileSet.xaml;TileSet/Bitmaps.png;TileSet/Vectors.xaml"
+					Outputs="Content/TileSet.png;Content/TileSet.dds">
+		<PropertyGroup>
+			<ToolPath>$(SolutionDir)/Client/TileSetGen/bin/$(Configuration)</ToolPath>
+		</PropertyGroup>
+		<Exec Command="&quot;$(ToolPath)/TileSetGen.exe&quot; TileSet/ Content/" />
   </Target>
   <Target AfterTargets="Clean" Name="CleanTileSet">
-    <Delete Files="TileSet/TileSet.png" />
+    <Delete Files="Content/TileSet.png;Content/TileSet.dds" />
   </Target>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

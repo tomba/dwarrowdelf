@@ -19,20 +19,18 @@ namespace Dwarrowdelf.Client
 		int[] m_bitmapSizes;
 
 		string m_path;
-		string m_name;
 
-		public TileSetLoader(string path, string symbolInfoName)
+		public TileSetLoader(string path)
 		{
 			m_path = path;
-			m_name = symbolInfoName;
-			m_symbolSet = LoadSymbolSet(m_name + ".xaml");
+			m_symbolSet = LoadSymbolSet("TileSet.xaml");
 		}
 
 		public void Load()
 		{
-			m_drawingResources = LoadDrawingResource(m_name + "Vectors.xaml");
+			m_drawingResources = LoadDrawingResource("Vectors.xaml");
 
-			m_bitmap = LoadBitmapResource(m_name + "Bitmaps.png");
+			m_bitmap = LoadBitmapResource("Bitmaps.png");
 
 			m_bitmapSizes = m_symbolSet.BitmapSizes.Split(',').Select(s => int.Parse(s)).ToArray();
 		}

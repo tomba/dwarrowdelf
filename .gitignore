@@ -4,5 +4,6 @@ obj
 *.csproj.user
 save
 Client/Client/publish
-Client/Client/TileSet/TileSet.png
+Client/Client/Content/TileSet.png
+Client/Client/Content/TileSet.dds
 packages

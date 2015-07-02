@@ -73,7 +73,7 @@ namespace Dwarrowdelf.Client
 		{
 			m_effect = this.Content.Load<SymbolEffect>("SymbolEffect");
 
-			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSetTextureArray");
+			m_effect.SymbolTextures = this.Content.Load<Texture2D>("TileSet");
 		}
 
 		public override void Update()

@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client
 
 		public GameData()
 		{
-			this.TileSet = new TileSet(new Uri("/Dwarrowdelf.Client;component/TileSet/TileSet.png", UriKind.Relative));
+			this.TileSet = new TileSet("Content/TileSet.png");
 		}
 
 		public TileSet TileSet { get; private set; }
