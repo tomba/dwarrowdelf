@@ -27,7 +27,15 @@ namespace Dwarrowdelf.Client
 
 		string GetContentPath(string name)
 		{
-			return Path.Combine(baseDir, name + ".tkb");
+			string path = Path.Combine(baseDir, name);
+
+			if (File.Exists(path + ".tkb"))
+				return path + ".tkb";
+
+			if (File.Exists(path + ".dds"))
+				return path + ".dds";
+
+			throw new Exception(String.Format("Could not find content {0}", name));
 		}
 
 		string GetContentKey(Type type, string name)
