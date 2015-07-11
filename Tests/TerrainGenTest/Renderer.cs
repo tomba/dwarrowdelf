@@ -50,7 +50,7 @@ namespace TerrainGenTest
 			int w = m_size.Width;
 			int h = m_size.Height;
 
-			TileData[, ,] tileGrid;
+			TileData[,,] tileGrid;
 			byte[,] levelMap;
 			terrain.GetData(out tileGrid, out levelMap);
 
@@ -76,6 +76,12 @@ namespace TerrainGenTest
 						{
 							var p = new IntVector3(x, y, z);
 							td = terrain.GetTileData(p);
+
+							if (td.IsEmptyNoWater)
+							{
+								z--;
+								continue;
+							}
 
 							if (this.ShowWaterEnabled && td.WaterLevel > 0)
 							{
@@ -250,76 +256,30 @@ namespace TerrainGenTest
 				return new IntVector3(r, g, b);
 			}
 
-			switch (td.TerrainID)
+			switch (td.ID)
 			{
-				case TerrainID.Undefined:
+				case TileID.Undefined:
 					r = g = b = 0;
 					break;
 
-				case TerrainID.Empty:
-				case TerrainID.Slope:
+				case TileID.Empty:
 					r = 0;
 					g = 0;
 					b = 0;
 					break;
 
-				case TerrainID.NaturalFloor:
-					switch (td.InteriorID)
+				default:
 					{
-						case InteriorID.Empty:
-							{
-								var mat = td.TerrainMaterialID;
+						var mat = td.MaterialID;
 
-								var matInfo = Materials.GetMaterial(mat);
-								var rgb = matInfo.Color.ToGameColorRGB();
+						var matInfo = Materials.GetMaterial(mat);
+						var rgb = matInfo.Color.ToGameColorRGB();
 
-								r = rgb.R;
-								g = rgb.G;
-								b = rgb.B;
-							}
-							break;
-
-						case InteriorID.NaturalWall:
-							{
-								var mat = td.InteriorMaterialID;
-
-								var matInfo = Materials.GetMaterial(mat);
-								var rgb = matInfo.Color.ToGameColorRGB();
-
-								r = (byte)(rgb.R / 2);
-								g = (byte)(rgb.G / 2);
-								b = (byte)(rgb.B / 2);
-							}
-							break;
-
-						case InteriorID.Stairs:
-							r = 255;
-							g = b = 0;
-							break;
-
-						case InteriorID.Grass:
-							r = 50;
-							b = 0;
-							g = 255;
-							break;
-
-						case InteriorID.Tree:
-							r = b = 0;
-							g = 200;
-							break;
-
-						default:
-							throw new Exception();
+						r = (byte)(rgb.R / 2);
+						g = (byte)(rgb.G / 2);
+						b = (byte)(rgb.B / 2);
 					}
 					break;
-
-				case TerrainID.StairsDown:
-					r = 255;
-					g = b = 0;
-					break;
-
-				default:
-					throw new Exception();
 			}
 
 			return new IntVector3(r, g, b);

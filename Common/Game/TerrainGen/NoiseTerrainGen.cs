@@ -8,16 +8,34 @@ namespace Dwarrowdelf.TerrainGen
 {
 	public static class NoiseTerrainGen
 	{
-		public static TerrainData CreateNoiseTerrain(IntSize3 size)
+		public static TerrainData CreateNoiseTerrain(IntSize3 size, Random random)
 		{
-			var terrainData = new TerrainData(size);
+			var terrain = new TerrainData(size);
 
 			var noise = CreateTerrainNoise();
 			var noisemap = CreateTerrainNoiseMap(noise, new IntSize2(size.Width, size.Height));
 
-			FillFromNoiseMap(terrainData, noisemap);
+			FillFromNoiseMap(terrain, noisemap);
 
-			return terrainData;
+			terrain.RescanLevelMap();
+
+			double xk = (random.NextDouble() * 2 - 1) * 0.01;
+			double yk = (random.NextDouble() * 2 - 1) * 0.01;
+			TerrainHelpers.CreateBaseMinerals(terrain, random, xk, yk);
+
+			TerrainHelpers.CreateOreVeins(terrain, random, xk, yk);
+
+			TerrainHelpers.CreateOreClusters(terrain, random);
+
+			RiverGen.Generate(terrain, random);
+
+			int soilLimit = size.Depth * 4 / 5;
+			TerrainHelpers.CreateSoil(terrain, soilLimit);
+
+			int grassLimit = terrain.Depth * 4 / 5;
+			TerrainHelpers.CreateVegetation(terrain, random, grassLimit);
+
+			return terrain;
 		}
 
 		static void FillFromNoiseMap(TerrainData terrainData, SharpNoise.NoiseMap noiseMap)
@@ -27,10 +45,10 @@ namespace Dwarrowdelf.TerrainGen
 
 			Parallel.For(0, noiseMap.Data.Length, i =>
 			{
-				var v = noiseMap.Data[i];	// [-1 .. 1]
+				var v = noiseMap.Data[i];   // [-1 .. 1]
 
 				v -= min;
-				v /= (max - min);		// [0 .. 1]
+				v /= (max - min);       // [0 .. 1]
 
 				v *= terrainData.Depth * 8 / 10;
 				v += terrainData.Depth * 2 / 10;
@@ -88,7 +106,7 @@ namespace Dwarrowdelf.TerrainGen
 			double x = 1;
 			double y = 1;
 			double w = size.Width / 256.0;
-			double h = size.Height/ 256.0;
+			double h = size.Height / 256.0;
 
 			build.SetDestSize(size.Width, size.Height);
 			build.SetBounds(x, x + w, y, y + h);

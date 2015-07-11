@@ -33,29 +33,8 @@ namespace Dwarrowdelf.Server.Fortress
 
 		void CreateTerrain(IntSize3 size)
 		{
-			var terrain = NoiseTerrainGen.CreateNoiseTerrain(size);
-			terrain.RescanLevelMap();
-
 			var random = new Random(1);
-
-
-			double xk = (random.NextDouble() * 2 - 1) * 0.01;
-			double yk = (random.NextDouble() * 2 - 1) * 0.01;
-			TerrainHelpers.CreateBaseMinerals(terrain, random, xk, yk);
-
-			TerrainHelpers.CreateOreVeins(terrain, random, xk, yk);
-
-			TerrainHelpers.CreateOreClusters(terrain, random);
-
-			RiverGen.Generate(terrain, random);
-
-			int soilLimit = size.Depth * 4 / 5;
-			TerrainHelpers.CreateSoil(terrain, soilLimit);
-
-			int grassLimit = terrain.Depth * 4 / 5;
-			TerrainHelpers.CreateVegetation(terrain, random, grassLimit);
-
-			m_terrainData = terrain;
+			m_terrainData = NoiseTerrainGen.CreateNoiseTerrain(size, random);
 		}
 	}
 }

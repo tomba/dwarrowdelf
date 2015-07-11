@@ -79,7 +79,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Gen.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Win32.cs" />
     <Page Include="MainWindow.xaml">

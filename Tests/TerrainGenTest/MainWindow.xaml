@@ -46,6 +46,7 @@
 					<sys:Int32>5</sys:Int32>
 					<sys:Int32>10</sys:Int32>
 					<sys:Int32>20</sys:Int32>
+					<sys:Int32>32</sys:Int32>
 					<sys:Int32>40</sys:Int32>
 					<sys:Int32>80</sys:Int32>
 				</ComboBox>

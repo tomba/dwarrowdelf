@@ -150,7 +150,7 @@ namespace TerrainGenTest
 				this.Y = side / 2;
 				this.Z = depth;
 
-				m_terrain = new TerrainData(m_size);
+				//m_terrain = new TerrainData(m_size);
 				this.Renderer = new Renderer(m_size);
 				Notify("Renderer");
 
@@ -169,7 +169,9 @@ namespace TerrainGenTest
 			{
 				Stopwatch sw = Stopwatch.StartNew();
 
-				Gen.Generate(m_terrain);
+				var random = new Random(1);
+
+				m_terrain = NoiseTerrainGen.CreateNoiseTerrain(m_size, random);
 
 				sw.Stop();
 
@@ -211,7 +213,7 @@ namespace TerrainGenTest
 		}
 
 		public static readonly DependencyProperty DepthProperty =
-			DependencyProperty.Register("Depth", typeof(int), typeof(MainWindow), new PropertyMetadata(40, ReCreateTerrain));
+			DependencyProperty.Register("Depth", typeof(int), typeof(MainWindow), new PropertyMetadata(32, ReCreateTerrain));
 
 
 
@@ -399,11 +401,11 @@ namespace TerrainGenTest
 			else
 				return;
 
-			terrainTextBlock.Text = m_terrain.GetTerrainID(mp).ToString();
-			terrainMatTextBlock.Text = m_terrain.GetTerrainMaterialID(mp).ToString();
+			terrainTextBlock.Text = m_terrain.GetTileID(mp).ToString();
+			terrainMatTextBlock.Text = m_terrain.GetMaterialID(mp).ToString();
 
-			interiorTextBlock.Text = m_terrain.GetInteriorID(mp).ToString();
-			interiorMatTextBlock.Text = m_terrain.GetInteriorMaterialID(mp).ToString();
+			//interiorTextBlock.Text = m_terrain.GetInteriorID(mp).ToString();
+			//interiorMatTextBlock.Text = m_terrain.GetInteriorMaterialID(mp).ToString();
 		}
 
 		private void imageXY_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
