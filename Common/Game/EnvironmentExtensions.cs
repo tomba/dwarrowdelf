@@ -64,7 +64,7 @@ namespace Dwarrowdelf
 				return true;
 			}
 
-			if (dir.ContainsUp())
+			if (dir.ContainsUp() && env.Size.Depth > srcLoc.Z + 1)
 			{
 				if (env.GetTileData(srcLoc.Up).IsEmpty == false)
 					return false;
@@ -107,7 +107,7 @@ namespace Dwarrowdelf
 				return true;
 			}
 
-			if (dir.ContainsDown())
+			if (dir.ContainsDown() && env.Size.Depth > dstLoc.Z + 1)
 			{
 				if (env.GetTileData(dstLoc.Up).IsEmpty == false)
 					return false;
