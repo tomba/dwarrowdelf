@@ -60,6 +60,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -77,6 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClientConfig.cs" />
     <Compile Include="CommanPromptHandler.cs" />
     <Compile Include="UI\Converters\CoordinateValueConverter.cs" />
     <Compile Include="UI\Converters\EnumToBooleanConverter.cs" />
@@ -86,18 +91,19 @@
     <Compile Include="UI\Windows\StatWindow.xaml.cs">
       <DependentUpon>StatWindow.xaml</DependentUpon>
     </Compile>
-		<None Include="Content\TileSet.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Include="Content\TileSet.dds">
+    <None Include="Content\TileSet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\TileSet.dds">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
     <None Include="TileSet\TileSet.xaml" />
     <None Include="TileSet\Vectors.xaml" />
-		<None Include="TileSet\Vectors.design" />
-		<None Include="TileSet\Bitmaps.png" />
-		<None Include="TileSet\Bitmaps.pdn" />
-		<Page Include="UI\BaseObjectPropertiesControl.xaml">
+    <None Include="TileSet\Vectors.design" />
+    <None Include="TileSet\Bitmaps.png" />
+    <None Include="TileSet\Bitmaps.pdn" />
+    <Page Include="UI\BaseObjectPropertiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -503,13 +509,11 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
-  <Target AfterTargets="BeforeBuild" Name="TileSetGen"
-					Inputs="TileSet/TileSet.xaml;TileSet/Bitmaps.png;TileSet/Vectors.xaml"
-					Outputs="Content/TileSet.png;Content/TileSet.dds">
-		<PropertyGroup>
-			<ToolPath>$(SolutionDir)/Client/TileSetGen/bin/$(Configuration)</ToolPath>
-		</PropertyGroup>
-		<Exec Command="&quot;$(ToolPath)/TileSetGen.exe&quot; TileSet/ Content/" />
+  <Target AfterTargets="BeforeBuild" Name="TileSetGen" Inputs="TileSet/TileSet.xaml;TileSet/Bitmaps.png;TileSet/Vectors.xaml" Outputs="Content/TileSet.png;Content/TileSet.dds">
+    <PropertyGroup>
+      <ToolPath>$(SolutionDir)/Client/TileSetGen/bin/$(Configuration)</ToolPath>
+    </PropertyGroup>
+    <Exec Command="&quot;$(ToolPath)/TileSetGen.exe&quot; TileSet/ Content/" />
   </Target>
   <Target AfterTargets="Clean" Name="CleanTileSet">
     <Delete Files="Content/TileSet.png;Content/TileSet.dds" />
