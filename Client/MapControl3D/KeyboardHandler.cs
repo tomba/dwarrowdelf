@@ -13,8 +13,8 @@ namespace Dwarrowdelf.Client
 
 	public enum MapControlMode
 	{
-		Fps,
 		Rts,
+		Fps,
 	}
 
 

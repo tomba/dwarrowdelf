@@ -20,15 +20,12 @@
 							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.Constant}}" />
 
 			</UniformGrid>
-			<ToggleButton Content="Snap" />
 
 			<UniformGrid Columns="1">
-				<RadioButton Content="FPS" Style="{StaticResource {x:Type ToggleButton}}"
-							 IsChecked="{Binding Path=ControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlMode.Fps}}" />
-
 				<RadioButton Content="RTS" Style="{StaticResource {x:Type ToggleButton}}"
 							 IsChecked="{Binding Path=ControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlMode.Rts}}" />
-
+				<RadioButton Content="FPS" Style="{StaticResource {x:Type ToggleButton}}"
+							 IsChecked="{Binding Path=ControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlMode.Fps}}" />
 			</UniformGrid>
 		</ToolBar>
 	</ToolBarTray>
