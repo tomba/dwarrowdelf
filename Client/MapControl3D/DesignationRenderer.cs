@@ -108,7 +108,6 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-
 		public override void Draw(Camera camera)
 		{
 			if (m_game.Environment == null)
@@ -140,7 +139,9 @@ namespace Dwarrowdelf.Client
 
 			m_effect.Parameters["s_cubeColor"].SetValue(color.ToVector3());
 
-			foreach (var kvp in des.GetLocations())
+			var designations = des.GetLocations().Where(kvp => m_game.ViewGridProvider.ViewGrid.Contains(kvp.Key));
+
+			foreach (var kvp in designations)
 			{
 				SetWorlMatrix(kvp.Key, new IntSize3(1, 1, 1), Direction.Up);
 				m_effect.ConstantBuffers["PerObject"].Update();
