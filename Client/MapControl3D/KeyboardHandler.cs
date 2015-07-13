@@ -42,6 +42,25 @@ namespace Dwarrowdelf.Client
 			if (e.Text.Length != 1)
 				return;
 
+			var controlMode = ((MapControl3D)m_control).Config.ControlMode;
+
+			switch (controlMode)
+			{
+				case MapControlMode.Fps:
+					OnTextInputFps(e);
+					break;
+
+				case MapControlMode.Rts:
+					OnTextInputRts(e);
+					break;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		void OnTextInputFps(TextCompositionEventArgs e)
+		{
 			var viewGrid = m_game.ViewGridProvider;
 			var map = m_game.Environment;
 			var camera = m_game.Camera;
@@ -58,6 +77,32 @@ namespace Dwarrowdelf.Client
 
 				case '<':
 					viewGrid.ViewCorner2 = viewGrid.ViewCorner2 + Direction.Up;
+					break;
+
+				default:
+					e.Handled = false;
+					break;
+			}
+		}
+
+		void OnTextInputRts(TextCompositionEventArgs e)
+		{
+			var viewGrid = m_game.ViewGridProvider;
+			var map = m_game.Environment;
+			var camera = m_game.Camera;
+
+			char key = e.Text[0];
+
+			e.Handled = true;
+
+			switch (key)
+			{
+				case '>':
+					camera.MovePlanar(-Vector3.UnitZ);
+					break;
+
+				case '<':
+					camera.MovePlanar(Vector3.UnitZ);
 					break;
 
 				default:
@@ -244,38 +289,41 @@ namespace Dwarrowdelf.Client
 
 			var camera = m_game.Camera;
 
-			if (IsKeyDown(Key.LeftShift) || IsKeyDown(Key.RightShift))
+			bool shift = IsKeyDown(Key.LeftShift) || IsKeyDown(Key.RightShift);
+			bool ctrl = IsKeyDown(Key.LeftCtrl) || IsKeyDown(Key.RightCtrl);
+
+			if (shift)
 				mul = 0.2f;
 
-			Vector3 v = new Vector3();
+			if (ctrl)
+			{
+				if (IsKeyDown(Key.Up))
+					camera.Pitch(-rotSpeed * dTime * mul);
+				else if (IsKeyDown(Key.Down))
+					camera.Pitch(rotSpeed * dTime * mul);
 
-			if (IsKeyDown(Key.E))
-				v.Z = walkSpeed * dTime * mul;
-			else if (IsKeyDown(Key.Q))
-				v.Z = -walkSpeed * dTime * mul;
+				if (IsKeyDown(Key.Left))
+					camera.RotateZ(-rotSpeed * dTime * mul);
+				else if (IsKeyDown(Key.Right))
+					camera.RotateZ(rotSpeed * dTime * mul);
+			}
+			else
+			{
+				Vector3 v = new Vector3();
 
-			if (IsKeyDown(Key.W))
-				v.Y = walkSpeed * dTime * mul;
-			else if (IsKeyDown(Key.S))
-				v.Y = -walkSpeed * dTime * mul;
+				if (IsKeyDown(Key.Up))
+					v.Y = walkSpeed * dTime * mul;
+				else if (IsKeyDown(Key.Down))
+					v.Y = -walkSpeed * dTime * mul;
 
-			if (IsKeyDown(Key.D))
-				v.X = walkSpeed * dTime * mul;
-			else if (IsKeyDown(Key.A))
-				v.X = -walkSpeed * dTime * mul;
+				if (IsKeyDown(Key.Right))
+					v.X = walkSpeed * dTime * mul;
+				else if (IsKeyDown(Key.Left))
+					v.X = -walkSpeed * dTime * mul;
 
-			if (!v.IsZero)
-				camera.MovePlanar(v);
-
-			if (IsKeyDown(Key.Up))
-				camera.Pitch(-rotSpeed * dTime * mul);
-			else if (IsKeyDown(Key.Down))
-				camera.Pitch(rotSpeed * dTime * mul);
-
-			if (IsKeyDown(Key.Left))
-				camera.RotateZ(-rotSpeed * dTime * mul);
-			else if (IsKeyDown(Key.Right))
-				camera.RotateZ(rotSpeed * dTime * mul);
+				if (!v.IsZero)
+					camera.MovePlanar(v);
+			}
 		}
 	}
 }
