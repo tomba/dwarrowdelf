@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Client
 		MyGame m_game;
 		SharpDXHost m_control;
 
-		int m_currentZ = -1;
+		public int Height = 32;
 
 		public ViewGridAdjusterService(MyGame game, SharpDXHost control)
 		{
@@ -29,15 +29,11 @@ namespace Dwarrowdelf.Client
 				return;
 
 			int camZ = (int)m_game.Camera.Position.Z;
-			if (camZ == m_currentZ)
-				return;
-
-			m_currentZ = camZ;
 
 			var viewGrid = m_game.ViewGridProvider;
 
 			var c = viewGrid.ViewCorner2;
-			c.Z = camZ - 32;
+			c.Z = camZ - this.Height;
 			viewGrid.ViewCorner2 = c;
 		}
 	}
