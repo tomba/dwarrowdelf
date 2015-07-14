@@ -89,12 +89,9 @@ namespace Dwarrowdelf.Client
 
 		public void MovePlanar(Vector3 v)
 		{
-			var vy = m_look;
+			var vy = m_up;
 			vy.Z = 0;
 			vy.Normalize();
-
-			if (m_up.Z < 0)
-				vy = Vector3.Negate(vy);
 
 			var vx = m_right;
 			vx.Z = 0;
