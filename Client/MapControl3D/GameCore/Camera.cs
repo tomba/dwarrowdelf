@@ -210,13 +210,10 @@ namespace Dwarrowdelf.Client
 		void UpdateScreenUp()
 		{
 			Vector3 v;
-			if (Math.Abs(m_look.X) > Math.Abs(m_look.Y))
-				v = new Vector3(Math.Sign(m_look.X), 0, 0);
+			if (Math.Abs(m_up.X) > Math.Abs(m_up.Y))
+				v = new Vector3(Math.Sign(m_up.X), 0, 0);
 			else
-				v = new Vector3(0, Math.Sign(m_look.Y), 0);
-
-			if (m_up.Z < 0)
-				v = Vector3.Negate(v);
+				v = new Vector3(0, Math.Sign(m_up.Y), 0);
 
 			m_screenUp = v;
 		}
