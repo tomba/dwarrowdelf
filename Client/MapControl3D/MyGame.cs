@@ -169,11 +169,15 @@ namespace Dwarrowdelf.Client
 
 		public event Action<EnvironmentObject, EnvironmentObject> EnvironmentChanged;
 
+
+		Vector3 GetEyeFromLookTarget(IntVector3 p)
+		{
+			return p.ToVector3() + new Vector3(-1, 8, this.ViewGridAdjusterService.Height + 0.5f);
+		}
+
 		public void GoTo(IntVector3 p)
 		{
-			// TODO: adjust view grid?
-
-			var eye = (p + new IntVector3(-1, 8, 30)).ToVector3();
+			var eye = GetEyeFromLookTarget(p);
 			var target = p.ToVector3();
 
 			this.Camera.LookAt(eye, target, Vector3.UnitZ);
@@ -181,9 +185,7 @@ namespace Dwarrowdelf.Client
 
 		public void ScrollTo(IntVector3 p)
 		{
-			// TODO: adjust view grid?
-
-			var eye = (p + new IntVector3(-1, 8, 30)).ToVector3();
+			var eye = GetEyeFromLookTarget(p);
 			var target = p.ToVector3();
 
 			this.CameraMoveService.Move(eye, target);
