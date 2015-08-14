@@ -106,12 +106,12 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case '+':
-					camera.MovePlanar(-Vector3.UnitZ);
+					camera.Move(-camera.Look / camera.Look.Z);
 					m_game.ViewGridAdjusterService.Height--;
 					break;
 
 				case '-':
-					camera.MovePlanar(Vector3.UnitZ);
+					camera.Move(camera.Look / camera.Look.Z);
 					m_game.ViewGridAdjusterService.Height++;
 					break;
 

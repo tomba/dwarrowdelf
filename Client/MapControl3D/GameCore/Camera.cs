@@ -87,6 +87,13 @@ namespace Dwarrowdelf.Client
 			m_frustumDirty = true;
 		}
 
+		public void Move(Vector3 v)
+		{
+			m_position += v;
+			m_viewDirty = true;
+			m_frustumDirty = true;
+		}
+
 		public void MovePlanar(Vector3 v)
 		{
 			var vy = m_up;
