@@ -89,9 +89,7 @@ namespace Dwarrowdelf.Client
 
 		public void Move(Vector3 v)
 		{
-			m_position += v;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			MoveTo(m_position + v);
 		}
 
 		public void MovePlanar(Vector3 v)
@@ -106,30 +104,22 @@ namespace Dwarrowdelf.Client
 
 			var vz = new Vector3(0, 0, 1);
 
-			m_position += v.X * vx + v.Y * vy + v.Z * vz;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			Move(v.X * vx + v.Y * vy + v.Z * vz);
 		}
 
 		public void Strafe(float d)
 		{
-			m_position += m_right * d;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			Move(m_right * d);
 		}
 
 		public void Walk(float d)
 		{
-			m_position += m_look * d;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			Move(m_look * d);
 		}
 
 		public void Climb(float d)
 		{
-			m_position += m_up * d;
-			m_viewDirty = true;
-			m_frustumDirty = true;
+			Move(m_up * d);
 		}
 
 		public void Pitch(float angle)
