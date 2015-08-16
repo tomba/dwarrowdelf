@@ -177,6 +177,12 @@ namespace Dwarrowdelf.Client
 					viewGrid.ResetGrid();
 					return;
 
+				case Key.Home:
+					var ob = m_game.Environment.World.Controllables.FirstOrDefault();
+					if (ob != null)
+						m_game.GoTo(ob.Location);
+					return;
+
 				default:
 					e.Handled = false;
 					break;

@@ -172,7 +172,9 @@ namespace Dwarrowdelf.Client
 
 		Vector3 GetEyeFromLookTarget(IntVector3 p)
 		{
-			return p.ToVector3() + new Vector3(-1, 8, this.ViewGridAdjusterService.Height + 0.5f);
+			var v = new Vector3(-1, 8, 32.5f) / 32.5f;
+
+			return p.ToVector3() + v * (this.ViewGridAdjusterService.Height + 0.5f);
 		}
 
 		public void GoTo(IntVector3 p)
