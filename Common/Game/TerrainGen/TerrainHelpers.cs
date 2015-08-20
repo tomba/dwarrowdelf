@@ -166,7 +166,7 @@ namespace Dwarrowdelf.TerrainGen
 			if (Materials.GetMaterial(td.MaterialID).Category != MaterialCategory.Rock)
 				return false;
 
-			td.SecondaryMaterialID = oreMaterialID; // ZZZ
+			td.SecondaryMaterialID = oreMaterialID;
 			terrain.SetTileDataNoHeight(p, td);
 
 			return true;

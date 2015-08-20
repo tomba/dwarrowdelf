@@ -19,7 +19,8 @@ namespace Dwarrowdelf
 		Subterranean = 1 << 1,
 		WaterStatic = 1 << 2,	// Water in the tile is static
 		HasSupport = 1 << 3,	// Tile below supports, so this one can be stood upon
-		HasWallBelow = 1 << 4,	// Tile below is a Wall, so this one can be stood and built upon, and has a "floor"
+		HasWallBelow = 1 << 4,  // Tile below is a Wall, so this one can be stood and built upon, and has a "floor"
+#warning Remove Error flag when terrain seems to work
 		Error = 1 << 7,			// ZZZ: flags are undefined (in terrain gen), remove
 	}
 
