@@ -24,9 +24,49 @@ namespace Dwarrowdelf.TerrainGen
 			m_random = random;
 		}
 
+		void FillMap()
+		{
+			var terrainData = m_data;
+
+			Parallel.For(0, terrainData.Height, y =>
+			{
+				for (int x = 0; x < terrainData.Width; ++x)
+				{
+					int iv = m_data.GetSurfaceLevel(x, y);
+
+					for (int z = terrainData.Depth - 1; z >= 0; --z)
+					{
+						var p = new IntVector3(x, y, z);
+
+						/* above ground */
+						if (z > iv)
+						{
+							terrainData.SetTileDataNoHeight(p, TileData.EmptyTileData);
+						}
+						/* surface */
+						else if (z == iv)
+						{
+							terrainData.SetTileDataNoHeight(p, TileData.EmptyTileData);
+						}
+						/* underground */
+						else if (z < iv)
+						{
+							terrainData.SetTileDataNoHeight(p, TileData.GetNaturalWall(MaterialID.Granite));
+						}
+						else
+						{
+							throw new Exception();
+						}
+					}
+				}
+			});
+		}
+
 		public void Generate(DiamondSquare.CornerData corners, double range, double h, double amplify)
 		{
 			GenerateHeightMap(corners, range, h, amplify);
+
+			FillMap();
 
 			var random = m_random;
 			var terrain = m_data;
