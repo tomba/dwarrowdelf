@@ -38,6 +38,10 @@
     <Reference Include="Dwarrowdelf.Common.ILSupport">
       <HintPath>ILSupport\Dwarrowdelf.Common.ILSupport.dll</HintPath>
     </Reference>
+    <Reference Include="NetSerializer, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetSerializer.3.1.0.0\lib\net40\NetSerializer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -212,10 +216,6 @@
     <ProjectReference Include="..\MemoryMappedLog\MMLog\MMLog.csproj">
       <Project>{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}</Project>
       <Name>MMLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NetSerializer\NetSerializer\NetSerializer.csproj">
-      <Project>{85A11D07-8D18-42D5-ACCF-EF9744EFE825}</Project>
-      <Name>NetSerializer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
