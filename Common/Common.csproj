@@ -37,6 +37,22 @@
     <Reference Include="Dwarrowdelf.Common.ILSupport">
       <HintPath>ILSupport\Dwarrowdelf.Common.ILSupport.dll</HintPath>
     </Reference>
+    <Reference Include="NetSerializer, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetSerializer.3.1.0.0\lib\net40\NetSerializer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpNoise, Version=0.10.0.33666, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpNoise.0.10.0.0\lib\net45\SharpNoise.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpNoise.Utilities, Version=0.10.0.33666, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpNoise.0.10.0.0\lib\net45\SharpNoise.Utilities.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -220,6 +236,9 @@
     <EmbeddedResource Include="Game\Livings.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
