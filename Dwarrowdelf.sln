@@ -36,13 +36,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Engine", "Client\Eng
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Common", "Client\Common\Client.Common.csproj", "{3A421FE6-7DEE-4782-9D89-B6D2EB2F24FB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E6E85EBC-02B3-43FE-9485-81DCB2E6EBAF}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapControl3D", "Client\MapControl3D\MapControl3D.csproj", "{4124C0FB-3646-4BC2-938A-98AD05C1E6BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileSetGen", "Client\TileSetGen\TileSetGen.csproj", "{69A5B0C2-4D2D-40EC-882A-2ED71EA4FC48}"
