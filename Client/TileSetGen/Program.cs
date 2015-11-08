@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using SharpDX;
-using SharpDX.Direct3D11;
-using SharpDX.Direct3D;
-using System.IO;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using System.Windows;
+using SharpDX.Toolkit.Graphics;
+using D3D11 = SharpDX.Direct3D11;
 
 namespace Dwarrowdelf.Client
 {
@@ -44,12 +41,8 @@ namespace Dwarrowdelf.Client
 
 			CreatePng(loader, dstPath);
 
-			using (var factory = new SharpDX.DXGI.Factory())
-			using (var adapter = factory.GetAdapter(0))
-			using (var device = new Device(adapter, DeviceCreationFlags.None, FeatureLevel.Level_10_0))
-			{
+			using (var device = GraphicsDevice.New())
 				CreateDds(device, loader, dstPath);
-			}
 
 			return 0;
 		}
@@ -110,7 +103,7 @@ namespace Dwarrowdelf.Client
 			Console.WriteLine("Generated TileSet to {0}", path);
 		}
 
-		static void CreateDds(Device device, TileSetLoader loader, string dstPath)
+		static void CreateDds(GraphicsDevice device, TileSetLoader loader, string dstPath)
 		{
 			int numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
@@ -118,20 +111,9 @@ namespace Dwarrowdelf.Client
 			int maxTileSize = 64;
 			int mipLevels = 6; // 64, 32, 16, 8, 4, 2
 
-			var atlasTexture = new Texture2D(device, new Texture2DDescription()
-			{
-				Usage = ResourceUsage.Default,
-				BindFlags = BindFlags.ShaderResource,
-				CpuAccessFlags = CpuAccessFlags.None,
-
-				Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
-				Width = maxTileSize,
-				Height = maxTileSize,
-				SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0),
-
-				ArraySize = numDistinctBitmaps,
-				MipLevels = mipLevels,
-			});
+			var atlasTexture = Texture2D.New(device, maxTileSize, maxTileSize, mipLevels,
+				SharpDX.Toolkit.Graphics.PixelFormat.B8G8R8A8.UNorm, TextureFlags.None, numDistinctBitmaps,
+				D3D11.ResourceUsage.Default);
 
 			//int autoGenMipLevel = 0;
 
@@ -158,8 +140,8 @@ namespace Dwarrowdelf.Client
 
 					bmp.CopyPixels(arr, pitch, 0);
 
-					device.ImmediateContext.UpdateSubresource(arr, atlasTexture,
-						Texture2D.CalculateSubResourceIndex(mipLevel, i, mipLevels), pitch);
+					using (var txt = Texture2D.New(device, tileSize, tileSize, SharpDX.Toolkit.Graphics.PixelFormat.B8G8R8A8.UNorm, arr))
+						device.Copy(txt, 0, atlasTexture, atlasTexture.GetSubResourceIndex(i, mipLevel));
 				}
 			}
 
@@ -167,7 +149,9 @@ namespace Dwarrowdelf.Client
 			//atlasTexture.FilterTexture(device.ImmediateContext, autoGenMipLevel, FilterFlags.Triangle);
 
 			string path = Path.Combine(dstPath, "TileSet.dds");
-			Texture2D.ToFile(device.ImmediateContext, atlasTexture, ImageFileFormat.Dds, path);
+
+			atlasTexture.Save(path, ImageFileType.Dds);
+
 			Console.WriteLine("Generated TileSet to {0}", path);
 		}
 	}
