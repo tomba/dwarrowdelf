@@ -41,9 +41,8 @@ namespace Dwarrowdelf.Client
 		{
 			var deviceFlags = DeviceCreationFlags.None;
 			deviceFlags |= DeviceCreationFlags.SingleThreaded;
-#if DEBUG
-			deviceFlags |= DeviceCreationFlags.Debug;
-#endif
+			//deviceFlags |= DeviceCreationFlags.Debug;
+
 			this.GraphicsDevice = ToDispose(GraphicsDevice.New(DriverType.Hardware, deviceFlags));
 		}
 
