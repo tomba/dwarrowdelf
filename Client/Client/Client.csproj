@@ -84,6 +84,7 @@
     <Compile Include="CommanPromptHandler.cs" />
     <Compile Include="UI\Converters\CoordinateValueConverter.cs" />
     <Compile Include="UI\Converters\EnumToBooleanConverter.cs" />
+    <Compile Include="UI\FpsGraphControl.cs" />
     <Compile Include="UI\MainWindow\Map3DToolBar.xaml.cs">
       <DependentUpon>Map3DToolBar.xaml</DependentUpon>
     </Compile>

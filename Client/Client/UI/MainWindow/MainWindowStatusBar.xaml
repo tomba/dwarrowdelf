@@ -4,7 +4,8 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:local="clr-namespace:Dwarrowdelf.Client">
+			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
+			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
 
 	<StatusBar>
 		<TextBlock>Tick</TextBlock>
@@ -46,6 +47,10 @@
 				</MultiBinding>
 			</TextBlock.Text>
 		</TextBlock>
+
+		<Separator />
+
+		<ui:FpsGraphControl Width="60" Height="24" />
 
 		<Separator />
 
