@@ -125,6 +125,7 @@ namespace Dwarrowdelf.Server.Fortress
 				.OfType<IItemObject>()
 				.Where(o => o.IsReserved == false && o.NutritionalValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
+				.Where(o => AStar.CanReach(env, worker.Location, o.Location, DirectionSet.Exact))
 				.FirstOrDefault();
 
 			if (ob != null)
@@ -152,6 +153,7 @@ namespace Dwarrowdelf.Server.Fortress
 				.OfType<IItemObject>()
 				.Where(o => o.IsReserved == false && o.RefreshmentValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
+				.Where(o => AStar.CanReach(env, worker.Location, o.Location, DirectionSet.Exact))
 				.FirstOrDefault();
 
 			if (ob != null)
@@ -180,6 +182,7 @@ namespace Dwarrowdelf.Server.Fortress
 				.Where(o => o.ItemID == ItemID.Bed)
 				.Where(o => o.IsReserved == false && o.IsInstalled)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
+				.Where(o => AStar.CanReach(env, worker.Location, o.Location, DirectionSet.Exact))
 				.FirstOrDefault();
 
 			if (ob != null)
