@@ -82,6 +82,7 @@
     </ApplicationDefinition>
     <Compile Include="ClientConfig.cs" />
     <Compile Include="CommanPromptHandler.cs" />
+    <Compile Include="KeyboardHandler.cs" />
     <Compile Include="UI\Converters\CoordinateValueConverter.cs" />
     <Compile Include="UI\Converters\EnumToBooleanConverter.cs" />
     <Compile Include="UI\FpsGraphControl.cs" />

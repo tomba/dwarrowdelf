@@ -46,6 +46,7 @@ namespace Dwarrowdelf.Client.UI
 		public GameData Data { get { return GameData.Data; } }
 
 		public TileAreaView FocusedTileView { get; private set; }
+		public KeyboardHandler KeyboardHandler { get; private set; }
 
 		public MainWindow()
 		{
@@ -79,6 +80,12 @@ namespace Dwarrowdelf.Client.UI
 
 			// add default commands
 			m_cmdHandler.AddCommandBindings(GameMode.Undefined);
+
+			this.KeyboardHandler = new KeyboardHandler();
+			var map3D = (MapControl3D)this.MapControl;
+			map3D.PreviewKeyDown += this.KeyboardHandler.PreviewKeyDown;
+			map3D.PreviewKeyUp += this.KeyboardHandler.PreviewKeyUp;
+			map3D.PreviewTextInput += this.KeyboardHandler.PreviewTextInput;
 		}
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e)
