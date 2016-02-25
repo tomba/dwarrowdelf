@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public ClientTools ClientTools { get; private set; }
 
-		public IMapControl MapControl { get { return map; } }
+		public MapControl3D MapControl { get { return map; } }
 
 		public GameData Data { get { return GameData.Data; } }
 
@@ -82,10 +82,9 @@ namespace Dwarrowdelf.Client.UI
 			m_cmdHandler.AddCommandBindings(GameMode.Undefined);
 
 			this.KeyboardHandler = new KeyboardHandler();
-			var map3D = (MapControl3D)this.MapControl;
-			map3D.PreviewKeyDown += this.KeyboardHandler.PreviewKeyDown;
-			map3D.PreviewKeyUp += this.KeyboardHandler.PreviewKeyUp;
-			map3D.PreviewTextInput += this.KeyboardHandler.PreviewTextInput;
+			this.MapControl.PreviewKeyDown += this.KeyboardHandler.PreviewKeyDown;
+			this.MapControl.PreviewKeyUp += this.KeyboardHandler.PreviewKeyUp;
+			this.MapControl.PreviewTextInput += this.KeyboardHandler.PreviewTextInput;
 		}
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e)

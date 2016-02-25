@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client
 		Constant,
 	}
 
-	public class MapControl3D : SharpDXHost, IMapControl
+	public class MapControl3D : SharpDXHost
 	{
 		MyGame m_game;
 		ToolTipService m_toolTipService;

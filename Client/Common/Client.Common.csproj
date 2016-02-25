@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameDataBase.cs" />
-    <Compile Include="IMapControl.cs" />
     <Compile Include="KeyHelpers.cs" />
     <Compile Include="ListBoxExtenders.cs" />
     <Compile Include="ListBoxHelper.cs" />
