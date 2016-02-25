@@ -9,24 +9,29 @@
              d:DesignHeight="300" d:DesignWidth="300">
 	<ToolBarTray Orientation="Vertical">
 		<ToolBar ToolBarTray.IsLocked="True">
-			<UniformGrid Columns="3">
-				<RadioButton Content="U" Style="{StaticResource {x:Type ToggleButton}}"
+
+			<GroupBox Header="Selection">
+				<UniformGrid Columns="3">
+					<RadioButton Content="U" Style="{StaticResource {x:Type ToggleButton}}"
 							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.Underground}}" />
 
-				<RadioButton Content="A" Style="{StaticResource {x:Type ToggleButton}}"
+					<RadioButton Content="A" Style="{StaticResource {x:Type ToggleButton}}"
 							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.AboveGround}}" />
 
-				<RadioButton Content="C" Style="{StaticResource {x:Type ToggleButton}}"
+					<RadioButton Content="C" Style="{StaticResource {x:Type ToggleButton}}"
 							 IsChecked="{Binding Path=PickMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlPickMode.Constant}}" />
+				</UniformGrid>
+			</GroupBox>
 
-			</UniformGrid>
-
-			<UniformGrid Columns="1">
-				<RadioButton Content="RTS" Style="{StaticResource {x:Type ToggleButton}}"
+			<GroupBox Header="Camera">
+				<UniformGrid Columns="1">
+					<RadioButton Content="RTS" Style="{StaticResource {x:Type ToggleButton}}"
 							 IsChecked="{Binding Path=ControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlMode.Rts}}" />
-				<RadioButton Content="FPS" Style="{StaticResource {x:Type ToggleButton}}"
+					<RadioButton Content="FPS" Style="{StaticResource {x:Type ToggleButton}}"
 							 IsChecked="{Binding Path=ControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlMode.Fps}}" />
-			</UniformGrid>
+				</UniformGrid>
+			</GroupBox>
+
 		</ToolBar>
 	</ToolBarTray>
 </UserControl>
