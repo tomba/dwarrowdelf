@@ -125,6 +125,10 @@ namespace Dwarrowdelf.Client
 					GameData.Data.SendProceedTurn();
 					return true;
 
+				case Key.Enter:
+					App.GameWindow.promptTextBox.Focus();
+					return true;
+
 				default:
 					return false;
 			}
