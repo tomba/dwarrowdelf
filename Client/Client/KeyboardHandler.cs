@@ -119,19 +119,13 @@ namespace Dwarrowdelf.Client
 				return true;
 			}
 
-			switch (e.Key)
+			if (e.Key == Key.Enter && e.KeyboardDevice.Modifiers == ModifierKeys.None)
 			{
-				case Key.OemPeriod:
-					GameData.Data.SendProceedTurn();
-					return true;
-
-				case Key.Enter:
-					App.GameWindow.promptTextBox.Focus();
-					return true;
-
-				default:
-					return false;
+				App.GameWindow.promptTextBox.Focus();
+				return true;
 			}
+
+			return false;
 		}
 
 		bool HandleKeyUpLiving(KeyEventArgs e)
@@ -155,6 +149,10 @@ namespace Dwarrowdelf.Client
 
 			switch (text)
 			{
+				case ".":
+					GameData.Data.SendProceedTurn();
+					return true;
+
 				case ">":
 					CommandPromptHandler.HandleDirection(Direction.Down);
 					return true;

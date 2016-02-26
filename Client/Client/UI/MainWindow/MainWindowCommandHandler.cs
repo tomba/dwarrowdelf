@@ -9,15 +9,19 @@ namespace Dwarrowdelf.Client.UI
 	sealed class MainWindowCommandHandler
 	{
 		MainWindow m_mainWindow;
+		MapControl3D m_map;
 
 		public MainWindowCommandHandler(MainWindow mainWindow)
 		{
 			m_mainWindow = mainWindow;
+			m_map = mainWindow.MapControl;
 		}
 
 		public void AddCommandBindings(GameMode mode)
 		{
-			m_mainWindow.CommandBindings.AddRange(new CommandBinding[] {
+			var bindings = m_map.CommandBindings;
+
+			bindings.AddRange(new[] {
 				new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler),
 				new CommandBinding(ClientCommands.OpenFocusDebugCommand, OpenFocusDebugHandler),
 			});
@@ -26,11 +30,11 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			// add common bindings
-			m_mainWindow.CommandBindings.AddRange(new CommandBinding[] {
+			bindings.AddRange(new[] {
 				new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler),
 			});
 
-			m_mainWindow.CommandBindings.AddRange(new CommandBinding[] {
+			bindings.AddRange(new[] {
 				new CommandBinding(ClientCommands.ToggleFullScreen, ToggleFullScreenHandler),
 			});
 
@@ -41,7 +45,7 @@ namespace Dwarrowdelf.Client.UI
 					foreach (var kvp in ClientTools.ToolDatas)
 					{
 						var toolMode = kvp.Value.Mode;
-						m_mainWindow.CommandBindings.Add(new CommandBinding(kvp.Value.Command,
+						bindings.Add(new CommandBinding(kvp.Value.Command,
 							(s, e) => m_mainWindow.ClientTools.ToolMode = toolMode));
 					}
 					break;
