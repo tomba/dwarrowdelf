@@ -488,7 +488,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_followObject != null)
 				{
 					m_followObject.ObjectMoved += FollowedObjectMoved;
-					map.CameraMoveTo(m_followObject);
+					map.CameraLookAt(m_followObject);
 				}
 
 				Notify("FollowObject");
