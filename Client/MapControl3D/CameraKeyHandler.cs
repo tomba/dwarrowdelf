@@ -182,7 +182,7 @@ namespace Dwarrowdelf.Client
 				case Key.Home:
 					var ob = m_game.Environment.World.Controllables.FirstOrDefault();
 					if (ob != null)
-						m_game.GoTo(ob.Location);
+						m_game.CameraLookAt(ob.Location);
 					return;
 
 				default:

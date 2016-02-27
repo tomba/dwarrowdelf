@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Client
 
 		void Data_UserDisconnected()
 		{
-			App.GameWindow.MapControl.GoTo(null);
+			App.GameWindow.MapControl.CameraLookAt(null);
 		}
 
 		void Data_UserConnected()
@@ -60,9 +60,9 @@ namespace Dwarrowdelf.Client
 			var data = GameData.Data;
 
 			if (data.GameMode == GameMode.Adventure)
-				App.GameWindow.MapControl.GoTo(data.FocusedObject);
+				App.GameWindow.MapControl.CameraLookAt(data.FocusedObject);
 			else
-				App.GameWindow.MapControl.GoTo(data.World.Controllables.First());
+				App.GameWindow.MapControl.CameraLookAt(data.World.Controllables.First());
 
 			if (Program.StartupStopwatch != null)
 			{

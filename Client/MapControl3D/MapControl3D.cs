@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Client
 			m_debugWindow = dbg;
 		}
 
-		public void GoTo(MovableObject ob)
+		public void CameraLookAt(MovableObject ob)
 		{
 			if (ob == null)
 			{
@@ -89,17 +89,17 @@ namespace Dwarrowdelf.Client
 			else
 			{
 				var env = ob.Environment;
-				GoTo(env, ob.Location);
+				CameraLookAt(env, ob.Location);
 			}
 		}
 
-		public void GoTo(EnvironmentObject env, IntVector3 p)
+		public void CameraLookAt(EnvironmentObject env, IntVector3 p)
 		{
 			this.Environment = env;
-			m_game.GoTo(p);
+			m_game.CameraLookAt(p);
 		}
 
-		public void ScrollTo(MovableObject ob)
+		public void CameraMoveTo(MovableObject ob)
 		{
 			if (ob == null)
 			{
@@ -108,14 +108,14 @@ namespace Dwarrowdelf.Client
 			else
 			{
 				var env = ob.Environment;
-				ScrollTo(env, ob.Location);
+				CameraMoveTo(env, ob.Location);
 			}
 		}
 
-		public void ScrollTo(EnvironmentObject env, IntVector3 p)
+		public void CameraMoveTo(EnvironmentObject env, IntVector3 p)
 		{
 			this.Environment = env;
-			m_game.ScrollTo(p);
+			m_game.CameraMoveTo(p);
 		}
 
 		public Point PointToDevice(Point p)

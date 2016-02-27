@@ -488,7 +488,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_followObject != null)
 				{
 					m_followObject.ObjectMoved += FollowedObjectMoved;
-					map.ScrollTo(m_followObject);
+					map.CameraMoveTo(m_followObject);
 				}
 
 				Notify("FollowObject");
@@ -497,7 +497,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void FollowedObjectMoved(MovableObject ob, ContainerObject dst, IntVector3 loc)
 		{
-			map.GoTo(ob);
+			map.CameraLookAt(ob);
 		}
 
 		protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -560,7 +560,7 @@ namespace Dwarrowdelf.Client.UI
 			if (movable == null || movable.Environment == null)
 				return;
 
-			map.ScrollTo(movable);
+			map.CameraMoveTo(movable);
 		}
 
 		private void MessageListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -573,7 +573,7 @@ namespace Dwarrowdelf.Client.UI
 			if (msg.Environment == null)
 				return;
 
-			map.ScrollTo(msg.Environment, msg.Location);
+			map.CameraMoveTo(msg.Environment, msg.Location);
 		}
 
 		void CommandPromptTextBox_TextEntered(string str)

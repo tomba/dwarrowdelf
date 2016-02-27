@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client.UI
 						var movable = baseObject as MovableObject;
 						if (movable != null && movable.Environment != null)
 						{
-							App.GameWindow.MapControl.ScrollTo(movable);
+							App.GameWindow.MapControl.CameraMoveTo(movable);
 							return;
 						}
 					}
