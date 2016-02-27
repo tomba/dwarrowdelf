@@ -81,10 +81,7 @@ namespace Dwarrowdelf.Client.UI
 			// add default commands
 			m_cmdHandler.AddCommandBindings(GameMode.Undefined);
 
-			this.KeyboardHandler = new KeyboardHandler();
-			this.MapControl.PreviewKeyDown += this.KeyboardHandler.PreviewKeyDown;
-			this.MapControl.PreviewKeyUp += this.KeyboardHandler.PreviewKeyUp;
-			this.MapControl.PreviewTextInput += this.KeyboardHandler.PreviewTextInput;
+			this.KeyboardHandler = new KeyboardHandler(this.MapControl);
 		}
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e)

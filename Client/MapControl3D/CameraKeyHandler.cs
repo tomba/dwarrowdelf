@@ -135,6 +135,11 @@ namespace Dwarrowdelf.Client
 					return;
 			}
 
+			var controlMode = m_control.Config.CameraControlMode;
+
+			if (controlMode == CameraControlMode.None)
+				return;
+
 			Key key = e.Key;
 
 			if (key == Key.System || key == Key.Tab)
@@ -198,6 +203,11 @@ namespace Dwarrowdelf.Client
 
 		void OnKeyUp(object sender, KeyEventArgs e)
 		{
+			var controlMode = m_control.Config.CameraControlMode;
+
+			if (controlMode == CameraControlMode.None)
+				return;
+
 			Key key = e.Key;
 
 			if (key == Key.System || key == Key.Tab)

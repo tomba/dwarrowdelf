@@ -17,8 +17,12 @@ namespace Dwarrowdelf.Client
 	{
 		public KeyHandlerMode Mode { get; private set; }
 
-		public KeyboardHandler()
+		public KeyboardHandler(MapControl3D mapControl)
 		{
+			mapControl.KeyDown += this.KeyDown;
+			mapControl.KeyUp += this.KeyUp;
+			mapControl.TextInput += this.TextInput;
+
 			GameData.Data.GameModeChanged += (mode) =>
 			{
 				switch (mode)
@@ -40,7 +44,7 @@ namespace Dwarrowdelf.Client
 			this.Mode = KeyHandlerMode.None;
 		}
 
-		public void PreviewKeyDown(object sender, KeyEventArgs e)
+		public void KeyDown(object sender, KeyEventArgs e)
 		{
 			bool handled;
 
@@ -61,7 +65,7 @@ namespace Dwarrowdelf.Client
 			e.Handled = handled;
 		}
 
-		public void PreviewKeyUp(object sender, KeyEventArgs e)
+		public void KeyUp(object sender, KeyEventArgs e)
 		{
 			bool handled;
 
@@ -83,7 +87,7 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		public void PreviewTextInput(object sender, TextCompositionEventArgs e)
+		public void TextInput(object sender, TextCompositionEventArgs e)
 		{
 			bool handled;
 
