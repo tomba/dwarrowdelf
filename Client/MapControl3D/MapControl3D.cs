@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Client
 	public class MapControlConfig
 	{
 		public MapControlPickMode PickMode { get; set; }
-		public MapControlMode ControlMode { get; set; }
+		public CameraControlMode CameraControlMode { get; set; }
 	}
 
 	public enum MapControlPickMode

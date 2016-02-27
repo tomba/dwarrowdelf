@@ -87,7 +87,7 @@
     <Compile Include="GameCore\GameSurfaceView.cs" />
     <Compile Include="GameCore\GameTime.cs" />
     <Compile Include="GameCore\SharpDXHost.cs" />
-    <Compile Include="KeyboardHandler.cs" />
+    <Compile Include="CameraKeyHandler.cs" />
     <Compile Include="MapControl3D.cs" />
     <Compile Include="DesignationRenderer.cs" />
     <Compile Include="ToolTipService.cs" />

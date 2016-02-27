@@ -9,11 +9,11 @@ namespace Dwarrowdelf.Client
 	class ViewGridAdjusterService : IGameUpdatable
 	{
 		MyGame m_game;
-		SharpDXHost m_control;
+		MapControl3D m_control;
 
 		public int Height = 32;
 
-		public ViewGridAdjusterService(MyGame game, SharpDXHost control)
+		public ViewGridAdjusterService(MyGame game, MapControl3D control)
 		{
 			m_game = game;
 			m_control = control;
@@ -21,8 +21,8 @@ namespace Dwarrowdelf.Client
 
 		void IGameUpdatable.Update()
 		{
-			var controlMode = ((MapControl3D)m_control).Config.ControlMode;
-			if (controlMode != MapControlMode.Rts)
+			var controlMode = m_control.Config.CameraControlMode;
+			if (controlMode == CameraControlMode.Fps)
 				return;
 
 			if (m_game.Environment == null)

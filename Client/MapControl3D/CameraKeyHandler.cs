@@ -10,23 +10,22 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client
 {
-
-	public enum MapControlMode
+	public enum CameraControlMode
 	{
+		None,
 		Rts,
 		Fps,
 	}
 
-
-	class KeyboardHandler : IGameUpdatable
+	class CameraKeyHandler : IGameUpdatable
 	{
-		SharpDXHost m_control;
+		MapControl3D m_control;
 
 		MyGame m_game;
 
 		public Action<KeyEventArgs> KeyDown;
 
-		public KeyboardHandler(MyGame game, SharpDXHost control)
+		public CameraKeyHandler(MyGame game, MapControl3D control)
 		{
 			m_game = game;
 			m_control = control;
@@ -42,15 +41,18 @@ namespace Dwarrowdelf.Client
 			if (e.Text.Length != 1)
 				return;
 
-			var controlMode = ((MapControl3D)m_control).Config.ControlMode;
+			var controlMode = m_control.Config.CameraControlMode;
 
 			switch (controlMode)
 			{
-				case MapControlMode.Fps:
+				case CameraControlMode.None:
+					return;
+
+				case CameraControlMode.Fps:
 					OnTextInputFps(e);
 					break;
 
-				case MapControlMode.Rts:
+				case CameraControlMode.Rts:
 					OnTextInputRts(e);
 					break;
 
@@ -236,15 +238,18 @@ namespace Dwarrowdelf.Client
 
 		public void Update()
 		{
-			var controlMode = ((MapControl3D)m_control).Config.ControlMode;
+			var controlMode = m_control.Config.CameraControlMode;
 
 			switch (controlMode)
 			{
-				case MapControlMode.Fps:
+				case CameraControlMode.None:
+					return;
+
+				case CameraControlMode.Fps:
 					HandleFpsKeyboard();
 					break;
 
-				case MapControlMode.Rts:
+				case CameraControlMode.Rts:
 					HandleRtsKeyboard();
 					break;
 

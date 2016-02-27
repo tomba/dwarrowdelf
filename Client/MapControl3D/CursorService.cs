@@ -34,14 +34,14 @@ namespace Dwarrowdelf.Client
 				if (m_enabled)
 				{
 					m_game.MousePositionService.MouseLocationChanged += OnMouseLocationChanged;
-					m_game.KeyboardHandler.KeyDown += OnKeyDown;
+					m_game.CameraKeyHandler.KeyDown += OnKeyDown;
 
 					SetInitialCursorPos();
 				}
 				else
 				{
 					m_game.MousePositionService.MouseLocationChanged -= OnMouseLocationChanged;
-					m_game.KeyboardHandler.KeyDown -= OnKeyDown;
+					m_game.CameraKeyHandler.KeyDown -= OnKeyDown;
 
 					this.Location = null;
 				}

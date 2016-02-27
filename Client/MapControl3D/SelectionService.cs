@@ -49,14 +49,14 @@ namespace Dwarrowdelf.Client
 						m_control.Dragging -= OnDragging;
 						m_control.DragAborted -= OnDragAborted;
 
-						m_game.KeyboardHandler.KeyDown -= OnKeyDown;
+						m_game.CameraKeyHandler.KeyDown -= OnKeyDown;
 						m_game.CursorService.LocationChanged -= OnCursorMoved;
 
 						break;
 
 					case MapSelectionMode.Point:
 						m_control.MouseClicked -= OnMouseClicked;
-						m_game.KeyboardHandler.KeyDown -= OnKeyDown;
+						m_game.CameraKeyHandler.KeyDown -= OnKeyDown;
 						m_game.CursorService.LocationChanged -= OnCursorMoved;
 						break;
 				}
@@ -75,14 +75,14 @@ namespace Dwarrowdelf.Client
 						m_control.Dragging += OnDragging;
 						m_control.DragAborted += OnDragAborted;
 
-						m_game.KeyboardHandler.KeyDown += OnKeyDown;
+						m_game.CameraKeyHandler.KeyDown += OnKeyDown;
 						m_game.CursorService.LocationChanged += OnCursorMoved;
 
 						break;
 
 					case MapSelectionMode.Point:
 						m_control.MouseClicked += OnMouseClicked;
-						m_game.KeyboardHandler.KeyDown += OnKeyDown;
+						m_game.CameraKeyHandler.KeyDown += OnKeyDown;
 						m_game.CursorService.LocationChanged += OnCursorMoved;
 
 						break;

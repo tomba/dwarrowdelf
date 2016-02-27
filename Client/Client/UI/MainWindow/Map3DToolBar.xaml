@@ -25,10 +25,12 @@
 
 			<GroupBox Header="Camera">
 				<UniformGrid Columns="1">
+					<RadioButton Content="None" Style="{StaticResource {x:Type ToggleButton}}"
+							 IsChecked="{Binding Path=CameraControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:CameraControlMode.None}}" />
 					<RadioButton Content="RTS" Style="{StaticResource {x:Type ToggleButton}}"
-							 IsChecked="{Binding Path=ControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlMode.Rts}}" />
+							 IsChecked="{Binding Path=CameraControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:CameraControlMode.Rts}}" />
 					<RadioButton Content="FPS" Style="{StaticResource {x:Type ToggleButton}}"
-							 IsChecked="{Binding Path=ControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:MapControlMode.Fps}}" />
+							 IsChecked="{Binding Path=CameraControlMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static map:CameraControlMode.Fps}}" />
 				</UniformGrid>
 			</GroupBox>
 
