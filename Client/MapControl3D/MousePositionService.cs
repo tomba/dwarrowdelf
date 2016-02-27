@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client
 {
-	class MousePositionService
+	class MousePositionService : IGameUpdatable
 	{
 		MyGame m_game;
 		GameSurfaceView m_surfaceView;
@@ -24,8 +24,14 @@ namespace Dwarrowdelf.Client
 			m_control = control;
 			m_surfaceView = surfaceView;
 
-			m_control.MouseMove += OnMouseMove;
-			m_control.MouseLeave += OnMouseLeave;
+			//m_control.MouseMove += OnMouseMove;
+			//m_control.MouseLeave += OnMouseLeave;
+		}
+
+		// use Update for now, much simpler
+		void IGameUpdatable.Update()
+		{
+			UpdateMousePos();
 		}
 
 		void OnMouseMove(object sender, MouseEventArgs e)

@@ -93,6 +93,7 @@ namespace Dwarrowdelf.Client
 			base.Surfaces.Add(surface);
 
 			this.MousePositionService = new MousePositionService(this, mainHost, mainView);
+			base.Updatables.Add(this.MousePositionService);
 
 			this.SelectionService = new Client.SelectionService(this, mainHost, this.Camera);
 
