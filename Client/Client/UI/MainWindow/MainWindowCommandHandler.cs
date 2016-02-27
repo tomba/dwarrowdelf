@@ -51,6 +51,13 @@ namespace Dwarrowdelf.Client.UI
 					break;
 
 				case GameMode.Adventure:
+					// allow all tools for adventure mode for now
+					foreach (var kvp in ClientTools.ToolDatas)
+					{
+						var toolMode = kvp.Value.Mode;
+						bindings.Add(new CommandBinding(kvp.Value.Command,
+							(s, e) => m_mainWindow.ClientTools.ToolMode = toolMode));
+					}
 					break;
 			}
 		}
