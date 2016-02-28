@@ -39,8 +39,6 @@ namespace Dwarrowdelf.Client.UI
 
 		MainWindowCommandHandler m_cmdHandler;
 
-		public ClientTools ClientTools { get; private set; }
-
 		public MapControl3D MapControl { get { return map; } }
 
 		public GameData Data { get { return GameData.Data; } }
@@ -67,16 +65,12 @@ namespace Dwarrowdelf.Client.UI
 			GameData.Data.GameModeChanged += OnGameModeChanged;
 			GameData.Data.FocusedObjectChanged += OnFocusedObjectChanged;
 
-			this.ClientTools = new ClientTools();
-			this.ClientTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
-			this.ClientTools.ToolMode = ClientToolMode.Info;
+			this.ToolMode = ClientToolMode.Info;
 
 			this.MapControl.GotSelection += MapControl_GotSelection;
 
 			// for some reason this prevents the changing of focus from mapcontrol with cursor keys
 			KeyboardNavigation.SetDirectionalNavigation(this, KeyboardNavigationMode.Once);
-
-			mainWindowTools.SetClientTools(this.ClientTools);
 
 			// add default commands
 			m_cmdHandler.AddCommandBindings(GameMode.Undefined);
@@ -181,10 +175,26 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void MainWindowTools_ToolModeChanged(ClientToolMode toolMode)
+		ClientToolMode m_toolMode;
+		public ClientToolMode ToolMode
+		{
+			get { return m_toolMode; }
+
+			set
+			{
+				m_toolMode = value;
+				HandleToolModeChanged(value);
+				Notify("ToolMode");
+			}
+		}
+
+		void HandleToolModeChanged(ClientToolMode toolMode)
 		{
 			switch (toolMode)
 			{
+				case ClientToolMode.None:
+					break;
+
 				case ClientToolMode.Info:
 					this.MapControl.SelectionMode = MapSelectionMode.None;
 					break;
@@ -229,7 +239,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var env = this.Map;
 
-			switch (this.ClientTools.ToolMode)
+			switch (this.ToolMode)
 			{
 				case ClientToolMode.View:
 					ShowObjectsPopup(selection.SelectionPoint);
@@ -357,7 +367,7 @@ namespace Dwarrowdelf.Client.UI
 					{
 						ConstructMode mode;
 
-						switch (this.ClientTools.ToolMode)
+						switch (this.ToolMode)
 						{
 							case ClientToolMode.ConstructWall:
 								mode = ConstructMode.Wall;

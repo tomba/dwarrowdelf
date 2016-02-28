@@ -18,5 +18,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		public TileSet TileSet { get; private set; }
+
+		public UI.MainWindow GameWindow { get { return (UI.MainWindow)App.Current.MainWindow; } }
 	}
 }

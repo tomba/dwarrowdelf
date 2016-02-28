@@ -24,52 +24,13 @@ namespace Dwarrowdelf.Client.UI
 			bindings.AddRange(new[] {
 				new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler),
 				new CommandBinding(ClientCommands.OpenFocusDebugCommand, OpenFocusDebugHandler),
-			});
-
-			if (mode == GameMode.Undefined)
-				return;
-
-			// add common bindings
-			bindings.AddRange(new[] {
-				new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler),
-			});
-
-			bindings.AddRange(new[] {
 				new CommandBinding(ClientCommands.ToggleFullScreen, ToggleFullScreenHandler),
 			});
-
-			// add mode specific bindings
-			switch (mode)
-			{
-				case GameMode.Fortress:
-					foreach (var kvp in ClientTools.ToolDatas)
-					{
-						var toolMode = kvp.Value.Mode;
-						bindings.Add(new CommandBinding(kvp.Value.Command,
-							(s, e) => m_mainWindow.ClientTools.ToolMode = toolMode));
-					}
-					break;
-
-				case GameMode.Adventure:
-					// allow all tools for adventure mode for now
-					foreach (var kvp in ClientTools.ToolDatas)
-					{
-						var toolMode = kvp.Value.Mode;
-						bindings.Add(new CommandBinding(kvp.Value.Command,
-							(s, e) => m_mainWindow.ClientTools.ToolMode = toolMode));
-					}
-					break;
-			}
 		}
 
 		void ToggleFullScreenHandler(object sender, ExecutedRoutedEventArgs e)
 		{
 			App.GameWindow.ToggleFullScreen();
-		}
-
-		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;
 		}
 
 		void OpenConsoleHandler(object sender, ExecutedRoutedEventArgs e)

@@ -55,10 +55,24 @@
 		</ToolBar>
 
 		<ToolBar Band="1">
-			<ToggleButton Content="Run" Command="ui:ClientCommands.AutoAdvanceTurnCommand"
-							  IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}" ToolTip="Shortcut: space" />
+			<ToggleButton Content="Run" IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}" ToolTip="Shortcut: space" />
+			
 			<Separator />
 			<Button Click="Button_Click_Step" ToolTip="Shortcut: .">Step</Button>
+		</ToolBar>
+
+		<ToolBar Band="1">
+			<ToolBar.Resources>
+				<ObjectDataProvider x:Key="toolModeFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+					<ObjectDataProvider.MethodParameters>
+						<x:Type TypeName="ui:ClientToolMode"/>
+					</ObjectDataProvider.MethodParameters>
+				</ObjectDataProvider>
+			</ToolBar.Resources>
+			
+			<Label>Tool</Label>
+			<ComboBox Width="100"
+				ItemsSource="{Binding Source={StaticResource toolModeFromEnum}}" SelectedItem="{Binding ToolMode}" />
 		</ToolBar>
 
 	</ToolBarTray>

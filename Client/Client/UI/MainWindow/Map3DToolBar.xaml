@@ -9,7 +9,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
 	<ToolBarTray Orientation="Vertical">
 		<ToolBar ToolBarTray.IsLocked="True">
-
 			<GroupBox Header="Selection">
 				<UniformGrid Columns="3">
 					<RadioButton Content="U" Style="{StaticResource {x:Type ToggleButton}}"

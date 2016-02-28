@@ -29,8 +29,6 @@ namespace Dwarrowdelf.Client.UI
 			GameData.Data.SendProceedTurn();
 		}
 
-
-
 		void Button_LaborManager_Click(object sender, RoutedEventArgs e)
 		{
 			var dialog = new LaborManagerDialog();

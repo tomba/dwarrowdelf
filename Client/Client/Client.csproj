@@ -136,10 +136,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainWindow\MapToolBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\TestControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -261,16 +257,13 @@
     <Compile Include="DebugScriptMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="TileGraphics.cs" />
-    <Compile Include="UI\ClientTools.cs" />
+    <Compile Include="UI\ClientToolMode.cs" />
     <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
     <Compile Include="UI\MainWindow\FocusedObjectStats.xaml.cs">
       <DependentUpon>FocusedObjectStats.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainWindow\MainWindowMenuBar.xaml.cs">
       <DependentUpon>MainWindowMenuBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainWindow\MapToolBar.xaml.cs">
-      <DependentUpon>MapToolBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Converters\UIElementToDescConverter.cs" />
     <Compile Include="UI\BaseObjectPropertiesControl.xaml.cs">

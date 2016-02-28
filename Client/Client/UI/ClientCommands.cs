@@ -17,7 +17,6 @@ namespace Dwarrowdelf.Client.UI
 	public static class ClientCommands
 	{
 		public static RoutedUICommand ToggleFullScreen;
-		public static RoutedUICommand AutoAdvanceTurnCommand;
 		public static RoutedUICommand OpenConsoleCommand;
 		public static RoutedUICommand OpenFocusDebugCommand;
 
@@ -26,11 +25,8 @@ namespace Dwarrowdelf.Client.UI
 			ToggleFullScreen = new RoutedUICommand("Toggle Full Screen", "ToggleFullScreen", typeof(ClientCommands),
 				new InputGestureCollection() { new KeyGesture(Key.F11) });
 
-			AutoAdvanceTurnCommand = new RoutedUICommand("Auto-advance turn", "AutoAdvanceTurn", typeof(ClientCommands),
-				new InputGestureCollection() { new KeyGesture(Key.Space) });
-
 			OpenConsoleCommand = new RoutedUICommand("Open Console", "OpenConsole", typeof(ClientCommands),
-				new InputGestureCollection() { new GameKeyGesture(Key.Enter, ModifierKeys.Control) });
+				new InputGestureCollection() { new KeyGesture(Key.Enter, ModifierKeys.Control) });
 
 			OpenFocusDebugCommand = new RoutedUICommand("Open FocusDebug", "OpenFocusDebug", typeof(ClientCommands));
 		}
