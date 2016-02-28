@@ -122,7 +122,7 @@ namespace Dwarrowdelf.Server
 				return;
 			}
 
-			if (this.Environment.GetTileData(this.Location).HasFloor == false)
+			if (this.Environment.GetTileData(this.Location).HasSupportBelow == false)
 			{
 				// fall down
 				Trace.TraceInformation("{0} falls down", this);
