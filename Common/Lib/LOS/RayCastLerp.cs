@@ -69,6 +69,12 @@ namespace Dwarrowdelf
 
 				bool vis = FindLos3(viewerLocation, dst, blockerDelegate);
 				visibilityMap[dst] = vis;
+
+				// XXX Cheat a bit so that the floor will be visible
+				if (vis && dst.Z == 0 && viewerLocation.Z > 1)
+				{
+					visibilityMap[dst.SetZ(dst.Z - 1)] = true;
+				}
 			}
 		}
 
