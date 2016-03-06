@@ -54,6 +54,11 @@ namespace Dwarrowdelf.Client
 			cbTexture.Checked += (s, e) => m_scene.Effect.DisableTexture = true;
 			cbTexture.Unchecked += (s, e) => m_scene.Effect.DisableTexture = false;
 
+			cbBigUnknownChunk.Checked += (s, e) => { Chunk.UseBigUnknownChunk = true; m_scene.ChunkManager.InvalidateChunks(); };
+			cbBigUnknownChunk.Unchecked += (s, e) => { Chunk.UseBigUnknownChunk = false; m_scene.ChunkManager.InvalidateChunks(); };
+
+			buttonInvalidate.Click += (s, e) => m_scene.ChunkManager.InvalidateChunks();
+
 			/*
 			cbVsync.Checked += (s, e) => m_game.GraphicsDevice.Presenter.Description.PresentationInterval = SharpDX.Toolkit.Graphics.PresentInterval.Immediate;
 			cbVsync.Unchecked += (s, e) => m_game.GraphicsDevice.Presenter.Description.PresentationInterval = SharpDX.Toolkit.Graphics.PresentInterval.One;
