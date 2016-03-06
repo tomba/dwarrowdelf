@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Client
 			axesView.Drawables.Add(m_debugAxesRenderer);
 
 #if OUTLINERENDERER
-			m_outlineRenderer = ToDispose(new ChunkOutlineRenderer(this, m_terrainRenderer.ChunkManager));
+			m_outlineRenderer = ToDispose(new ChunkOutlineRenderer(this, this.TerrainRenderer.ChunkManager));
 			base.Updatables.Add(m_outlineRenderer);
 			mainView.Drawables.Add(m_outlineRenderer);
 #endif
