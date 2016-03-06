@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMLog", "MemoryMappedLog\MMLog\MMLog.csproj", "{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlCore", "Client\TileControlCore\TileControlCore.csproj", "{2DC159B4-2248-49B1-8665-210CDC0B6B09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlCore", "Tests\TileControlCore\TileControlCore.csproj", "{2DC159B4-2248-49B1-8665-210CDC0B6B09}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Libs", "_Libs", "{3882B917-D566-4E92-8254-8F51A28803C3}"
 EndProject

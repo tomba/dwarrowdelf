@@ -102,7 +102,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Client\TileControlCore\TileControlCore.csproj">
+    <ProjectReference Include="..\TileControlCore\TileControlCore.csproj">
       <Project>{2DC159B4-2248-49B1-8665-210CDC0B6B09}</Project>
       <Name>TileControlCore</Name>
     </ProjectReference>
