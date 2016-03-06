@@ -25,17 +25,17 @@ namespace Dwarrowdelf.Client
 
 		public static bool UseBigUnknownChunk;
 
-		EnvironmentObject m_map;
+		readonly EnvironmentObject m_map;
 		VoxelMap m_voxelMap;
 
 		/// <summary>
 		/// Chunk position
 		/// </summary>
-		public IntVector3 ChunkPosition { get; private set; }
+		public IntVector3 ChunkPosition { get; }
 		/// <summary>
 		/// Chunk offset, i.e. position * CHUNK_SIZE
 		/// </summary>
-		public IntVector3 ChunkOffset { get; private set; }
+		public IntVector3 ChunkOffset { get; }
 
 		// Maximum number of vertices this Chunk has had
 		int m_maxVertices;
@@ -63,8 +63,8 @@ namespace Dwarrowdelf.Client
 		}
 
 		bool m_scanned;
-		public bool IsAllEmpty { get; private set; }
-		public bool IsAllUndefined { get; private set; }
+		public bool IsAllEmpty { get; private set; }		// XXX public for OutlineRenderer
+		public bool IsAllUndefined { get; private set; }    // XXX public for OutlineRenderer
 
 		void ScanForAllEmptyOrUndefined()
 		{
