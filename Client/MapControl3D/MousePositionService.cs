@@ -86,7 +86,8 @@ namespace Dwarrowdelf.Client
 
 			var mousePos = new IntVector2(MyMath.Round(pos.X), MyMath.Round(pos.Y));
 
-			if (m_surfaceView.ViewPort.Width == 0 || m_surfaceView.ViewPort.Height == 0 ||
+			if (m_game.Environment == null ||
+				m_surfaceView.ViewPort.Width == 0 || m_surfaceView.ViewPort.Height == 0 ||
 				m_surfaceView.ViewPort.Bounds.Contains(mousePos.X, mousePos.Y) == false)
 			{
 				this.ScreenLocation = null;
