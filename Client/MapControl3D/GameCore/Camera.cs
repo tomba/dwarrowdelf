@@ -148,6 +148,7 @@ namespace Dwarrowdelf.Client
 		void UpdateProjection()
 		{
 			m_projection = Matrix.PerspectiveFovLH(m_fovY, m_aspect, m_nearZ, m_farZ);
+			//m_projection = Matrix.OrthoLH(32, 32 / m_aspect, m_nearZ, m_farZ);
 
 			m_projectionDirty = false;
 			m_frustumDirty = true;
