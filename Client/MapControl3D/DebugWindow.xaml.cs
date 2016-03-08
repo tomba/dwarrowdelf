@@ -54,6 +54,9 @@ namespace Dwarrowdelf.Client
 			cbTexture.Checked += (s, e) => m_scene.Effect.DisableTexture = true;
 			cbTexture.Unchecked += (s, e) => m_scene.Effect.DisableTexture = false;
 
+			cbOcclusionDebug.Checked += (s, e) => m_scene.Effect.EnableOcclusionDebug = true;
+			cbOcclusionDebug.Unchecked += (s, e) => m_scene.Effect.EnableOcclusionDebug = false;
+
 			cbBigUnknownChunk.Checked += (s, e) => { Chunk.UseBigUnknownChunk = true; m_scene.ChunkManager.InvalidateChunks(); };
 			cbBigUnknownChunk.Unchecked += (s, e) => { Chunk.UseBigUnknownChunk = false; m_scene.ChunkManager.InvalidateChunks(); };
 

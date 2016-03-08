@@ -124,6 +124,11 @@ namespace Dwarrowdelf.Client
 		{
 			set { this.Parameters["g_disableTexture"].SetValue(value); }
 		}
+
+		public bool EnableOcclusionDebug
+		{
+			set { this.Parameters["g_showOcclusionCorner"].SetValue(value); }
+		}
 	}
 
 	struct FaceTexture
