@@ -59,11 +59,6 @@ namespace Dwarrowdelf.Client
 
 			buttonInvalidate.Click += (s, e) => m_scene.ChunkManager.InvalidateChunks();
 
-			/*
-			cbVsync.Checked += (s, e) => m_game.GraphicsDevice.Presenter.Description.PresentationInterval = SharpDX.Toolkit.Graphics.PresentInterval.Immediate;
-			cbVsync.Unchecked += (s, e) => m_game.GraphicsDevice.Presenter.Description.PresentationInterval = SharpDX.Toolkit.Graphics.PresentInterval.One;
-			*/
-
 			cbWireframe.Checked += OnRenderStateCheckBoxChanged;
 			cbWireframe.Unchecked += OnRenderStateCheckBoxChanged;
 			cbCulling.Checked += OnRenderStateCheckBoxChanged;
