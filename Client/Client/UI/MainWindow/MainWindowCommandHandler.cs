@@ -25,6 +25,7 @@ namespace Dwarrowdelf.Client.UI
 				new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler),
 				new CommandBinding(ClientCommands.OpenFocusDebugCommand, OpenFocusDebugHandler),
 				new CommandBinding(ClientCommands.ToggleFullScreen, ToggleFullScreenHandler),
+				new CommandBinding(ClientCommands.Open3DDebugCommand, Open3DDebugHandler),
 			});
 		}
 
@@ -45,6 +46,11 @@ namespace Dwarrowdelf.Client.UI
 			var dialog = new Dwarrowdelf.Client.UI.FocusDebugWindow();
 			dialog.Owner = m_mainWindow;
 			dialog.Show();
+		}
+
+		void Open3DDebugHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			App.GameWindow.map.OpenDebugWindow();
 		}
 	}
 }

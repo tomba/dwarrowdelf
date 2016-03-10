@@ -153,10 +153,5 @@ namespace Dwarrowdelf.Client.UI
 			wnd.Owner = App.GameWindow;
 			wnd.Show();
 		}
-
-		private void ThreeD_MenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			App.GameWindow.map.OpenDebugWindow();
-		}
 	}
 }

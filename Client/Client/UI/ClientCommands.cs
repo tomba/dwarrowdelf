@@ -19,6 +19,7 @@ namespace Dwarrowdelf.Client.UI
 		public static RoutedUICommand ToggleFullScreen;
 		public static RoutedUICommand OpenConsoleCommand;
 		public static RoutedUICommand OpenFocusDebugCommand;
+		public static RoutedUICommand Open3DDebugCommand;
 
 		static ClientCommands()
 		{
@@ -29,6 +30,9 @@ namespace Dwarrowdelf.Client.UI
 				new InputGestureCollection() { new KeyGesture(Key.Enter, ModifierKeys.Control) });
 
 			OpenFocusDebugCommand = new RoutedUICommand("Open FocusDebug", "OpenFocusDebug", typeof(ClientCommands));
+
+			Open3DDebugCommand = new RoutedUICommand("Open 3D Debug", "Open3DDebug", typeof(ClientCommands),
+				new InputGestureCollection() { new KeyGesture(Key.D, ModifierKeys.Control) });
 		}
 	}
 

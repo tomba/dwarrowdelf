@@ -25,7 +25,7 @@
 			<MenuItem Header="NetStats" Click="NetStats_MenuItem_Click" />
 			<MenuItem Header="Stats" Click="Stats_MenuItem_Click" />
 			<MenuItem Header="GCDebug" Click="GCDebug_MenuItem_Click" />
-			<MenuItem Header="3D Debug" Click="ThreeD_MenuItem_Click" />
+			<MenuItem Header="3D Debug" Command="ui:ClientCommands.Open3DDebugCommand" />
 		</MenuItem>
         <MenuItem Header="Window">
             <MenuItem Header="Full Screen" Command="ui:ClientCommands.ToggleFullScreen" />
