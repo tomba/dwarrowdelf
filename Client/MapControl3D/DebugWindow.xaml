@@ -95,7 +95,9 @@
 				<CheckBox x:Name="cbOcclusion" Content="Disable Occlusion" />
 				<CheckBox x:Name="cbTexture" Content="Disable Texture" />
 				<CheckBox x:Name="cbOcclusionDebug" Content="Enable Occ Debug" />
+				<CheckBox x:Name="cbEdges" Content="Disable Edges" />
 				<CheckBox x:Name="cbBigUnknownChunk" Content="Big Unknown chunk" />
+				<CheckBox x:Name="cbEdgeDebug" Content="Enable Edge Debug" />
 				<Button x:Name="buttonInvalidate" Content="Invalidate All" />
 			</UniformGrid>
 		</GroupBox>
