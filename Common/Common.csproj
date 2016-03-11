@@ -78,6 +78,7 @@
     <Compile Include="Game\Messages\ChangeDatas.cs" />
     <Compile Include="Game\TerrainGen\RiverGen.cs" />
     <Compile Include="Lib\BufferPool.cs" />
+    <Compile Include="Lib\DataTypes\SByte4.cs" />
     <Compile Include="Lib\DataTypes\Byte4.cs" />
     <Compile Include="Lib\DataTypes\Containment.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMask.cs" />
