@@ -71,6 +71,13 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public string GetChunkDebug(IntVector3 mp)
+		{
+			var cp = mp / Chunk.CHUNK_SIZE;
+			var chunk = GetChunk(cp);
+			return chunk.GetVoxelDebug(mp);
+		}
+
 		TerrainRenderer m_scene;
 
 		public int VerticesRendered { get; private set; }

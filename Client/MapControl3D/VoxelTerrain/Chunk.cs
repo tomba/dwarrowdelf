@@ -66,6 +66,16 @@ namespace Dwarrowdelf.Client
 		public bool IsAllEmpty { get; private set; }		// XXX public for OutlineRenderer
 		public bool IsAllUndefined { get; private set; }	// XXX public for OutlineRenderer
 
+		public string GetVoxelDebug(IntVector3 mp)
+		{
+			if (m_voxelMap == null)
+				return "no voxelmap";
+
+			var voxel = m_voxelMap.GetVoxel(mp - this.ChunkOffset);
+
+			return string.Format("{0}: visible {1}", mp, voxel.VisibleFaces);
+		}
+
 		void ScanForAllEmptyOrUndefined()
 		{
 			m_scanned = true;

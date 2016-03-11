@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Client
 
 			m_timer = new DispatcherTimer();
 			m_timer.Tick += m_data.Update;
-			m_timer.Interval = TimeSpan.FromSeconds(1);
+			m_timer.Interval = TimeSpan.FromSeconds(0.25);
 			m_timer.IsEnabled = true;
 
 			var m_scene = m_game.TerrainRenderer;
@@ -171,6 +171,25 @@ namespace Dwarrowdelf.Client
 		{
 			get { return m_game.ViewGridProvider.ViewCorner2.Y; }
 			set { m_game.ViewGridProvider.ViewCorner2 = m_game.ViewGridProvider.ViewCorner2.SetY(value); }
+		}
+
+		public string VoxelData
+		{
+			get
+			{
+				var mln = m_game.MousePositionService.MapLocation;
+
+				if (mln.HasValue)
+				{
+					var ml = mln.Value;
+
+					return m_game.TerrainRenderer.ChunkManager.GetChunkDebug(ml);
+				}
+				else
+				{
+					return "";
+				}
+			}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
