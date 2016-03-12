@@ -493,7 +493,8 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void GetTextures(IntVector3 p, ref Voxel vox, out FaceTexture baseTexture, out FaceTexture topTexture)
+		void GetTextures(IntVector3 p, ref Voxel vox, out FaceTexture baseTexture, out FaceTexture topTexture,
+			bool showFloor)
 		{
 			var td = m_map.GetTileData(p);
 
@@ -553,7 +554,7 @@ namespace Dwarrowdelf.Client
 					}
 
 					// If the top face of the tile is visible, we have a "floor"
-					if ((vox.VisibleFaces & Direction.PositiveZ) != 0)
+					if (showFloor && (vox.VisibleFaces & Direction.PositiveZ) != 0)
 					{
 						if (m_map.Contains(p.Up) && m_map.GetTileData(p.Up).IsGreen)
 						{
@@ -623,16 +624,12 @@ namespace Dwarrowdelf.Client
 		void HandleVoxel(IntVector3 p, ref Voxel vox, ref IntGrid3 viewGrid, Direction visibleChunkFaces,
 			VertexList<TerrainVertex> vertexList)
 		{
-			FaceTexture baseTexture, topTexture;
-
-			GetTextures(p, ref vox, out baseTexture, out topTexture);
-
 			int x = p.X;
 			int y = p.Y;
 			int z = p.Z;
 
 			Direction visibleFaces = visibleChunkFaces & vox.VisibleFaces;
-			/* sides that are shown due to the viewgrid, but are really hidden by other voxels */
+			// Faces that are hidden by other voxels, but shown due to viewgrid
 			Direction visibleHiddenFaces = 0;
 
 			// up
@@ -641,8 +638,6 @@ namespace Dwarrowdelf.Client
 				const Direction b = Direction.PositiveZ;
 				visibleHiddenFaces |= b & ~visibleFaces;
 				visibleFaces |= b;
-				// override the top tex to remove the grass
-				topTexture = baseTexture;
 			}
 
 			// down
@@ -684,6 +679,10 @@ namespace Dwarrowdelf.Client
 
 			if (visibleFaces == 0)
 				return;
+
+			FaceTexture baseTexture, topTexture;
+			bool showFloor = z != viewGrid.Z2;
+			GetTextures(p, ref vox, out baseTexture, out topTexture, showFloor);
 
 			CreateCube(p, visibleFaces, visibleHiddenFaces, ref baseTexture, ref topTexture, vertexList);
 		}
