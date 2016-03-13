@@ -422,7 +422,7 @@ namespace Dwarrowdelf.Client
 				Color1 = GameColor.LightGray,
 			};
 
-			const int occlusion = 4;
+			const int occlusion = 0;
 			var offset = chunkGrid.Corner1 - this.ChunkOffset;
 			var size = new IntVector3(chunkGrid.Size.Width, chunkGrid.Size.Height, chunkGrid.Size.Depth);
 
@@ -489,7 +489,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		void GetTextures(IntVector3 p, ref Voxel vox, out FaceTexture baseTexture, out FaceTexture topTexture,
-			bool showFloor)
+			Direction sliceFaces)
 		{
 			var td = m_map.GetTileData(p);
 
@@ -549,8 +549,8 @@ namespace Dwarrowdelf.Client
 							break;
 					}
 
-					// If the top face of the tile is visible, we have a "floor"
-					if (showFloor && (vox.VisibleFaces & Direction.PositiveZ) != 0)
+					// If the top face of the tile is visible, and it's not the slice level, we have a "floor"
+					if ((sliceFaces & Direction.Up) == 0 && (vox.VisibleFaces & Direction.PositiveZ) != 0)
 					{
 						if (m_map.Contains(p.Up) && m_map.GetTileData(p.Up).IsGreen)
 						{
@@ -647,29 +647,26 @@ namespace Dwarrowdelf.Client
 		void HandleVoxel(IntVector3 p, ref Voxel vox, ref IntGrid3 viewGrid, Direction visibleChunkFaces,
 			VertexList<TerrainVertex> vertexList)
 		{
-			// Faces that are drawn (if there's something to draw)
-			Direction visibleFaces = vox.VisibleFaces & visibleChunkFaces;
-
 			// Faces that are visible due to viewgrid
 			Direction sliceFaces = GetVoxelSliceDirections(p, ref viewGrid) & visibleChunkFaces;
 
-			// Faces that are hidden by other voxels, but shown due to viewgrid
-			Direction visibleHiddenFaces = sliceFaces & ~visibleFaces;
-
-			visibleFaces |= sliceFaces;
+			// Faces that are drawn (if there's something to draw)
+			Direction visibleFaces = (vox.VisibleFaces | sliceFaces) & visibleChunkFaces;
 
 			if (visibleFaces == 0)
 				return;
 
 			FaceTexture baseTexture, topTexture;
-			bool showFloor = p.Z != viewGrid.Z2;
-			GetTextures(p, ref vox, out baseTexture, out topTexture, showFloor);
 
-			CreateCube(p, visibleFaces, visibleHiddenFaces, ref baseTexture, ref topTexture, vertexList);
+			GetTextures(p, ref vox, out baseTexture, out topTexture, sliceFaces);
+
+			CreateCube(p, visibleFaces, ref baseTexture, ref topTexture, vertexList,
+				sliceFaces);
 		}
 
-		void CreateCube(IntVector3 p, Direction visibleFaces, Direction visibleHiddenFaces,
-			ref FaceTexture baseTexture, ref FaceTexture topTexture, VertexList<TerrainVertex> vertexList)
+		void CreateCube(IntVector3 p, Direction visibleFaces,
+			ref FaceTexture baseTexture, ref FaceTexture topTexture, VertexList<TerrainVertex> vertexList,
+			Direction sliceFaces)
 		{
 			var offset = p - this.ChunkOffset;
 
@@ -689,11 +686,15 @@ namespace Dwarrowdelf.Client
 				v2 = vertices[2] + offset;
 				v3 = vertices[3] + offset;
 
+				Direction dir = (Direction)(1 << side);
+
+				bool isSliceFace = (sliceFaces & dir) != 0;
+
 				int occ0, occ1, occ2, occ3;
 
-				if (((int)visibleHiddenFaces & (1 << side)) != 0)
+				if (isSliceFace)
 				{
-					occ0 = occ1 = occ2 = occ3 = 4;
+					occ0 = occ1 = occ2 = occ3 = 0;
 				}
 				else
 				{
