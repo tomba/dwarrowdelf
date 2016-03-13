@@ -500,6 +500,7 @@ namespace Dwarrowdelf.Client
 			{
 				baseTexture.Symbol1 = SymbolID.Unknown;
 				baseTexture.Color1 = GameColor.LightGray;
+				topTexture = baseTexture;
 				return;
 			}
 
