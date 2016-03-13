@@ -423,13 +423,12 @@ namespace Dwarrowdelf.Client
 			};
 
 			const int occlusion = 4;
+			var offset = chunkGrid.Corner1 - this.ChunkOffset;
+			var size = new IntVector3(chunkGrid.Size.Width, chunkGrid.Size.Height, chunkGrid.Size.Depth);
 
 			if (Chunk.UseBigUnknownChunk)
 			{
 				/* Note: Using chunk sized quads causes t-junction problems */
-
-				var scale = new IntVector3(chunkGrid.Size.Width, chunkGrid.Size.Height, chunkGrid.Size.Depth);
-				var offset = chunkGrid.Corner1 - this.ChunkOffset;
 
 				for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
 				{
@@ -438,10 +437,10 @@ namespace Dwarrowdelf.Client
 
 					var vertices = s_cubeFaceInfo[side].Vertices;
 
-					IntVector3 v0 = vertices[0] * scale + offset;
-					IntVector3 v1 = vertices[1] * scale + offset;
-					IntVector3 v2 = vertices[2] * scale + offset;
-					IntVector3 v3 = vertices[3] * scale + offset;
+					IntVector3 v0 = vertices[0] * size + offset;
+					IntVector3 v1 = vertices[1] * size + offset;
+					IntVector3 v2 = vertices[2] * size + offset;
+					IntVector3 v3 = vertices[3] * size + offset;
 
 					var vd = new TerrainVertex(v0, v1, v2, v3, occlusion, occlusion, occlusion, occlusion, tex,
 						new SByte4());
@@ -450,10 +449,6 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				var offset = chunkGrid.Corner1 - this.ChunkOffset;
-
-				var dim = new IntVector3(chunkGrid.Size.Width, chunkGrid.Size.Height, chunkGrid.Size.Depth);
-
 				for (int side = 0; side < 6 && sides != 0; ++side, sides >>= 1)
 				{
 					if ((sides & 1) == 0)
@@ -478,12 +473,12 @@ namespace Dwarrowdelf.Client
 					var vec2 = new IntVector3();
 					vec2[d2] = 1;
 
-					for (int v = 0; v < dim[d1]; ++v)
-						for (int u = 0; u < dim[d2]; ++u)
+					for (int v = 0; v < size[d1]; ++v)
+						for (int u = 0; u < size[d2]; ++u)
 						{
 							var off = vec1 * v + vec2 * u;
 							if (posFace)
-								off[d0] = dim[d0] - 1;
+								off[d0] = size[d0] - 1;
 
 							var vd = new TerrainVertex(v0 + off, v1 + off, v2 + off, v3 + off,
 								occlusion, occlusion, occlusion, occlusion, tex, new SByte4());
