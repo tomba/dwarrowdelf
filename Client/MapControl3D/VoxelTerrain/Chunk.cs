@@ -616,67 +616,52 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		/// <summary>
+		/// Directions of faces which are revealed due to ViewGrid
+		/// </summary>
+		Direction GetVoxelSliceDirections(IntVector3 p, ref IntGrid3 viewGrid)
+		{
+			Direction d = 0;
+
+			// Note: we never draw the bottommost layer in the map, so we don't check for Z1
+
+			if (p.Z == viewGrid.Z2)
+				d |= Direction.Up;
+
+			if (p.X == viewGrid.X1)
+				d |= Direction.West;
+
+			if (p.X == viewGrid.X2)
+				d |= Direction.East;
+
+			if (p.Y == viewGrid.Y1)
+				d |= Direction.North;
+
+			if (p.Y == viewGrid.Y2)
+				d |= Direction.South;
+
+			return d;
+		}
+
 		void HandleVoxel(IntVector3 p, ref Voxel vox, ref IntGrid3 viewGrid, Direction visibleChunkFaces,
 			VertexList<TerrainVertex> vertexList)
 		{
-			int x = p.X;
-			int y = p.Y;
-			int z = p.Z;
+			// Faces that are drawn (if there's something to draw)
+			Direction visibleFaces = vox.VisibleFaces & visibleChunkFaces;
 
-			Direction visibleFaces = visibleChunkFaces & vox.VisibleFaces;
+			// Faces that are visible due to viewgrid
+			Direction sliceFaces = GetVoxelSliceDirections(p, ref viewGrid) & visibleChunkFaces;
+
 			// Faces that are hidden by other voxels, but shown due to viewgrid
-			Direction visibleHiddenFaces = 0;
+			Direction visibleHiddenFaces = sliceFaces & ~visibleFaces;
 
-			// up
-			if ((visibleChunkFaces & Direction.PositiveZ) != 0 && z == viewGrid.Z2)
-			{
-				const Direction b = Direction.PositiveZ;
-				visibleHiddenFaces |= b & ~visibleFaces;
-				visibleFaces |= b;
-			}
-
-			// down
-			// Note: we never draw the bottommost layer in the map
-			if (z == 0)
-				visibleFaces &= ~Direction.NegativeZ;
-
-			// east
-			if ((visibleChunkFaces & Direction.PositiveX) != 0 && x == viewGrid.X2)
-			{
-				const Direction b = Direction.PositiveX;
-				visibleHiddenFaces |= b & ~visibleFaces;
-				visibleFaces |= b;
-			}
-
-			// west
-			if ((visibleChunkFaces & Direction.NegativeX) != 0 && x == viewGrid.X1)
-			{
-				const Direction b = Direction.NegativeX;
-				visibleHiddenFaces |= b & ~visibleFaces;
-				visibleFaces |= b;
-			}
-
-			// south
-			if ((visibleChunkFaces & Direction.PositiveY) != 0 && y == viewGrid.Y2)
-			{
-				const Direction b = Direction.PositiveY;
-				visibleHiddenFaces |= b & ~visibleFaces;
-				visibleFaces |= b;
-			}
-
-			// north
-			if ((visibleChunkFaces & Direction.NegativeY) != 0 && y == viewGrid.Y1)
-			{
-				const Direction b = Direction.NegativeY;
-				visibleHiddenFaces |= b & ~visibleFaces;
-				visibleFaces |= b;
-			}
+			visibleFaces |= sliceFaces;
 
 			if (visibleFaces == 0)
 				return;
 
 			FaceTexture baseTexture, topTexture;
-			bool showFloor = z != viewGrid.Z2;
+			bool showFloor = p.Z != viewGrid.Z2;
 			GetTextures(p, ref vox, out baseTexture, out topTexture, showFloor);
 
 			CreateCube(p, visibleFaces, visibleHiddenFaces, ref baseTexture, ref topTexture, vertexList);
