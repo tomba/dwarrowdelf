@@ -1,6 +1,7 @@
 ﻿using Dwarrowdelf.Client.UI;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,10 +10,30 @@ using System.Windows.Controls;
 
 namespace Dwarrowdelf.Client
 {
-	public class MapControlConfig
+	public class MapControlConfig : INotifyPropertyChanged
 	{
-		public MapControlPickMode PickMode { get; set; }
-		public CameraControlMode CameraControlMode { get; set; }
+		MapControlPickMode m_pickMode;
+		CameraControlMode m_cameraControlMode;
+
+		public MapControlPickMode PickMode
+		{
+			get { return m_pickMode; }
+			set { m_pickMode = value; Notify("PickMode");  }
+		}
+
+		public CameraControlMode CameraControlMode
+		{
+			get { return m_cameraControlMode; }
+			set { m_cameraControlMode = value; Notify("CameraControlMode"); }
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		void Notify(string info)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(info));
+		}
 	}
 
 	public enum MapControlPickMode

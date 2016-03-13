@@ -423,6 +423,8 @@ namespace Dwarrowdelf.Client.UI
 				GameData.Data.IsAutoAdvanceTurn = false;
 				GameData.Data.GameSpeed = GameSpeed.Fast;
 			}
+
+			map.Config.CameraControlMode = mode == GameMode.Fortress ? CameraControlMode.Rts : CameraControlMode.None;
 		}
 
 		public LogOnDialog OpenLogOnDialog()
