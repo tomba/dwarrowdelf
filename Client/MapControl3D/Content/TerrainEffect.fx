@@ -1,4 +1,6 @@
 ﻿
+static const float PI = 3.14159265f;
+
 struct VS_IN
 {
 	uint4 pos0 : POSITION0;
@@ -276,6 +278,16 @@ float4 PSMain(PS_IN input) : SV_Target
 		c2 = blockTextures.Sample(blockSampler, float3(input.tex, input.texPack[2]));
 		c2 = float4(c2.rgb * g_colorBuffer[input.colorPack[2]], c2.a);
 		color = c2.rgb + (1.0f - c2.a) * color.rgb;
+
+		// XXX slice hack. Show diagonal line pattern on slice level
+		// this could be a normal texture
+		if (input.texPack[3])
+		{
+			float f = sin((input.tex.x - input.tex.y) * 2 * PI);
+			f = saturate(f);
+			f *= fadeMult;
+			color *= 1 - f * 0.5;
+		}
 	}
 
 	float4 edgecolor = float4(0, 0, 0, 0);

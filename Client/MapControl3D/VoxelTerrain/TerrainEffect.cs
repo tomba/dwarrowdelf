@@ -210,7 +210,8 @@ namespace Dwarrowdelf.Client
 
 		// vertices in order: top right, bottom right, bottom left, top left
 		public TerrainVertex(IntVector3 p0, IntVector3 p1, IntVector3 p2, IntVector3 p3,
-			int occ0, int occ1, int occ2, int occ3, FaceTexture tex, SByte4 edges)
+			int occ0, int occ1, int occ2, int occ3, FaceTexture tex, SByte4 edges,
+			byte sliceHack = 0)
 		{
 			// last bytes of positions are unused
 			this.Position0 = new Byte4(p3.X, p3.Y, p3.Z, 0);
@@ -218,7 +219,7 @@ namespace Dwarrowdelf.Client
 			this.Position2 = new Byte4(p2.X, p2.Y, p2.Z, 0);
 			this.Position3 = new Byte4(p1.X, p1.Y, p1.Z, 0);
 			this.Occlusion = new Byte4(occ3, occ0, occ2, occ1);
-			this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, (byte)0);
+			this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, sliceHack);
 			this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, (byte)tex.Color2, (byte)0);
 			this.Edges = edges;
 		}

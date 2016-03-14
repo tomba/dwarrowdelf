@@ -63,8 +63,8 @@ namespace Dwarrowdelf.Client
 		}
 
 		bool m_scanned;
-		public bool IsAllEmpty { get; private set; }		// XXX public for OutlineRenderer
-		public bool IsAllUndefined { get; private set; }	// XXX public for OutlineRenderer
+		public bool IsAllEmpty { get; private set; }        // XXX public for OutlineRenderer
+		public bool IsAllUndefined { get; private set; }    // XXX public for OutlineRenderer
 
 		public string GetVoxelDebug(IntVector3 mp)
 		{
@@ -705,9 +705,11 @@ namespace Dwarrowdelf.Client
 				SByte4 edges;
 				GetEdgeHighlightsForFace(p, (DirectionOrdinal)side, out edges);
 
+				var tex = side == (int)DirectionOrdinal.PositiveZ ? topTexture : baseTexture;
+				byte sliceHack = isSliceFace ? (byte)1 : (byte)0;
+
 				var vd = new TerrainVertex(v0, v1, v2, v3, occ0, occ1, occ2, occ3,
-					side == (int)DirectionOrdinal.PositiveZ ? topTexture : baseTexture,
-					edges);
+					tex, edges, sliceHack);
 				vertexList.Add(vd);
 			}
 		}
