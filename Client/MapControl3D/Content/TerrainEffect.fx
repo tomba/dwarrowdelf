@@ -181,9 +181,24 @@ int getSector(float2 tex)
 		return sign(p.x) + 1;
 }
 
+// fade multipler [0:1] based on distance and angle
+float getFadeMultiplier(float3 posW)
+{
+		const float eyedist = length(g_eyePos - posW);
+		const float fadeStart = 70;
+		const float fadeLen = 5;
+
+		const float fadeDist = saturate(1 - (eyedist - fadeStart) / fadeLen);
+		const float fadeAngle = saturate(1 - (fwidth(eyedist) * 6.25 - 1));
+
+		return fadeDist * fadeAngle;
+}
+
 float4 PSMain(PS_IN input) : SV_Target
 {
 	float3 litColor = float3(1, 1, 1);
+
+	const float fadeMult = getFadeMultiplier(input.posW);
 
 	if (!g_disableLight)
 	{
@@ -244,18 +259,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		border = smoothstep(0, edgeThreshold + lineSmooth, dist) * 0.7f + 0.3f;
 #endif
 
-#define BORDER_FADE
-#ifdef BORDER_FADE
-		// fade the border based on eye distance and ddx/ddy
-		float edist = length(g_eyePos - input.posW);
-		const float fadeStart = 60;
-		const float fadeLen = 20;
-		border = 1 - border;
-		float distMult = 1 - saturate((edist - fadeStart) / fadeLen);
-		float ddMult = 1 - saturate(max(ddEdge.x, ddEdge.y) * 5);
-		border *= distMult * ddMult;
-		border = 1 - border;
-#endif
+		border = 1 - (1 - border) * fadeMult;
 	}
 
 	/* background */
