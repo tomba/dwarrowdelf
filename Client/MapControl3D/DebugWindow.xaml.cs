@@ -72,6 +72,12 @@ namespace Dwarrowdelf.Client
 			cbWireframe.Unchecked += OnRenderStateCheckBoxChanged;
 			cbCulling.Checked += OnRenderStateCheckBoxChanged;
 			cbCulling.Unchecked += OnRenderStateCheckBoxChanged;
+
+			tunable1.Value = m_scene.Effect.Tunable1;
+			tunable1.ValueChanged += (s, e) => { m_scene.Effect.Tunable1 = (float)tunable1.Value; };
+
+			tunable2.Value = m_scene.Effect.Tunable2;
+			tunable2.ValueChanged += (s, e) => { m_scene.Effect.Tunable2 = (float)tunable2.Value; };
 		}
 
 		void OnRenderStateCheckBoxChanged(object sender, EventArgs e)

@@ -50,6 +50,9 @@ bool g_disableEdges;
 bool g_showOcclusionDebug;
 bool g_showEdgeDebug;
 
+float g_tunable1;
+float g_tunable2;
+
 cbuffer PerFrame
 {
 	matrix g_viewProjMatrix;

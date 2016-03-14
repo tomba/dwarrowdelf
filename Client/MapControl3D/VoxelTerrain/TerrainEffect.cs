@@ -139,6 +139,40 @@ namespace Dwarrowdelf.Client
 		{
 			set { this.Parameters["g_showEdgeDebug"].SetValue(value); }
 		}
+
+		public float Tunable1
+		{
+			get
+			{
+				if (this.Parameters["g_tunable1"] != null)
+					return this.Parameters["g_tunable1"].GetValue<float>();
+				else
+					return 0;
+			}
+
+			set
+			{
+				if (this.Parameters["g_tunable1"] != null)
+					this.Parameters["g_tunable1"].SetValue(value);
+			}
+		}
+
+		public float Tunable2
+		{
+			get
+			{
+				if (this.Parameters["g_tunable2"] != null)
+					return this.Parameters["g_tunable2"].GetValue<float>();
+				else
+					return 0;
+			}
+
+			set
+			{
+				if (this.Parameters["g_tunable2"] != null)
+					this.Parameters["g_tunable2"].SetValue(value);
+			}
+		}
 	}
 
 	struct FaceTexture
