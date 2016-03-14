@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AStarTest", "Tests\AStarTest\AStarTest.csproj", "{7780AA39-EF69-4343-B023-AE335191AD17}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerfTest", "Tests\PerfTest\PerfTest.csproj", "{7E9C7EB0-BE4C-486F-A46B-60225851D953}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrainGenTest", "Tests\TerrainGenTest\TerrainGenTest.csproj", "{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexShaderTest", "Tests\TexShaderTest\TexShaderTest.csproj", "{ED296CFD-604B-4186-8425-EE596D2A9A7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +81,14 @@ Global
 		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Release|x86.ActiveCfg = Release|Any CPU
+		{ED296CFD-604B-4186-8425-EE596D2A9A7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED296CFD-604B-4186-8425-EE596D2A9A7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED296CFD-604B-4186-8425-EE596D2A9A7C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ED296CFD-604B-4186-8425-EE596D2A9A7C}.Debug|x86.Build.0 = Debug|Any CPU
+		{ED296CFD-604B-4186-8425-EE596D2A9A7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED296CFD-604B-4186-8425-EE596D2A9A7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED296CFD-604B-4186-8425-EE596D2A9A7C}.Release|x86.ActiveCfg = Release|Any CPU
+		{ED296CFD-604B-4186-8425-EE596D2A9A7C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
