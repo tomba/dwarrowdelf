@@ -23,6 +23,8 @@ namespace Dwarrowdelf.Client
 
 		public static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
+		static readonly FaceTexture UndefinedFaceTexture = new FaceTexture() { Symbol1 = SymbolID.Unknown, Color1 = GameColor.LightGray, };
+
 		public static bool UseBigUnknownChunk;
 
 		readonly EnvironmentObject m_map;
@@ -416,11 +418,7 @@ namespace Dwarrowdelf.Client
 
 			int sides = (int)visibleChunkFaces;
 
-			var tex = new FaceTexture()
-			{
-				Symbol1 = SymbolID.Unknown,
-				Color1 = GameColor.LightGray,
-			};
+			FaceTexture tex = Chunk.UndefinedFaceTexture;
 
 			const int occlusion = 0;
 			var offset = chunkGrid.Corner1 - this.ChunkOffset;
@@ -497,8 +495,7 @@ namespace Dwarrowdelf.Client
 
 			if (td.IsUndefined)
 			{
-				baseTexture.Symbol1 = SymbolID.Unknown;
-				baseTexture.Color1 = GameColor.LightGray;
+				baseTexture = Chunk.UndefinedFaceTexture;
 				topTexture = baseTexture;
 				return;
 			}
