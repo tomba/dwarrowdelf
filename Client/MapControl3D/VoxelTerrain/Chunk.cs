@@ -384,45 +384,55 @@ namespace Dwarrowdelf.Client
 			sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen, (uint)symbol));
 		}
 
+		/// <summary>
+		/// Directions of faces which are revealed due to ViewGrid
+		/// </summary>
+		Direction GetGridSliceDirections(ref IntGrid3 grid, ref IntGrid3 viewGrid)
+		{
+			Direction d = 0;
+
+			// Note: we never draw the bottommost layer in the map, so we don't check for Z1
+
+			if (grid.Z2 == viewGrid.Z2)
+				d |= Direction.Up;
+
+			if (grid.X1 == viewGrid.X1)
+				d |= Direction.West;
+
+			if (grid.X2 == viewGrid.X2)
+				d |= Direction.East;
+
+			if (grid.Y1 == viewGrid.Y1)
+				d |= Direction.North;
+
+			if (grid.Y2 == viewGrid.Y2)
+				d |= Direction.South;
+
+			return d;
+		}
+
 		void CreateUndefinedChunk(ref IntGrid3 viewGrid, ref IntGrid3 chunkGrid, VertexList<TerrainVertex> vertexList,
 			Direction visibleChunkFaces)
 		{
-			// clear the visible chunk faces that are not at the view's edge
+			// Faces that are visible due to viewgrid
+			Direction sliceFaces = GetGridSliceDirections(ref chunkGrid, ref viewGrid) & visibleChunkFaces;
 
-			// up
-			if ((visibleChunkFaces & Direction.PositiveZ) != 0 && chunkGrid.Z2 != viewGrid.Z2)
-				visibleChunkFaces &= ~Direction.PositiveZ;
+			// Only faces revealed by viewgrid are visible
+			Direction visibleFaces = sliceFaces;
 
-			// down
-			// Note: we never draw the bottommost layer in the map
-			visibleChunkFaces &= ~Direction.NegativeZ;
-
-			// east
-			if ((visibleChunkFaces & Direction.PositiveX) != 0 && chunkGrid.X2 != viewGrid.X2)
-				visibleChunkFaces &= ~Direction.PositiveX;
-
-			// west
-			if ((visibleChunkFaces & Direction.NegativeX) != 0 && chunkGrid.X1 != viewGrid.X1)
-				visibleChunkFaces &= ~Direction.NegativeX;
-
-			// south
-			if ((visibleChunkFaces & Direction.PositiveY) != 0 && chunkGrid.Y2 != viewGrid.Y2)
-				visibleChunkFaces &= ~Direction.PositiveY;
-
-			// north
-			if ((visibleChunkFaces & Direction.NegativeY) != 0 && chunkGrid.Y1 != viewGrid.Y1)
-				visibleChunkFaces &= ~Direction.NegativeY;
-
-			if (visibleChunkFaces == 0)
+			if (visibleFaces == 0)
 				return;
 
-			int sides = (int)visibleChunkFaces;
+			int sides = (int)visibleFaces;
 
 			FaceTexture tex = Chunk.UndefinedFaceTexture;
 
 			const int occlusion = 0;
 			var offset = chunkGrid.Corner1 - this.ChunkOffset;
 			var size = new IntVector3(chunkGrid.Size.Width, chunkGrid.Size.Height, chunkGrid.Size.Depth);
+
+			// All faces are revealed by viewgrid
+			byte sliceHack = (byte)1;
 
 			if (Chunk.UseBigUnknownChunk)
 			{
@@ -440,7 +450,7 @@ namespace Dwarrowdelf.Client
 					IntVector3 v2 = vertices[2] * size + offset;
 					IntVector3 v3 = vertices[3] * size + offset;
 
-					var vd = new TerrainVertex(v0, v1, v2, v3, occlusion, occlusion, occlusion, occlusion, tex);
+					var vd = new TerrainVertex(v0, v1, v2, v3, occlusion, occlusion, occlusion, occlusion, tex, sliceHack);
 					vertexList.Add(vd);
 				}
 			}
@@ -478,7 +488,7 @@ namespace Dwarrowdelf.Client
 								off[d0] = size[d0] - 1;
 
 							var vd = new TerrainVertex(v0 + off, v1 + off, v2 + off, v3 + off,
-								occlusion, occlusion, occlusion, occlusion, tex);
+								occlusion, occlusion, occlusion, occlusion, tex, sliceHack);
 							vertexList.Add(vd);
 						}
 				}
