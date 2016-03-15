@@ -218,7 +218,7 @@ float4 PSMain(PS_IN input) : SV_Target
 			diffuse = lightIntensity * diffuseColor;
 
 			float3 v = reflect(-lightDir, normal);
-				float specFactor = pow(max(dot(v, toEye), 0.0f), 64);
+			float specFactor = pow(max(dot(v, toEye), 0.0f), 64);
 			specular = specFactor * specularColor;
 		}
 
