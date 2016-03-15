@@ -199,8 +199,8 @@ namespace Dwarrowdelf.Client
 		public Byte4 Position2;
 		[VertexElement("POSITION3", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 		public Byte4 Position3;
-		[VertexElement("OCCLUSION", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
-		public Byte4 Occlusion;
+		[VertexElement("OCCLUSION", SharpDX.DXGI.Format.R8G8B8A8_SInt)]
+		public SByte4 Occlusion;
 		[VertexElement("TEX", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 		public Byte4 TexPack;
 		[VertexElement("COLOR", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
@@ -218,7 +218,7 @@ namespace Dwarrowdelf.Client
 			this.Position1 = new Byte4(p0.X, p0.Y, p0.Z, 0);
 			this.Position2 = new Byte4(p2.X, p2.Y, p2.Z, 0);
 			this.Position3 = new Byte4(p1.X, p1.Y, p1.Z, 0);
-			this.Occlusion = new Byte4(occ3, occ0, occ2, occ1);
+			this.Occlusion = new SByte4(occ3, occ0, occ2, occ1);
 			this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, sliceHack);
 			this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, (byte)tex.Color2, (byte)0);
 			this.Edges = edges;

@@ -795,33 +795,47 @@ namespace Dwarrowdelf.Client
 		{
 			// XXX can we store occlusion data to the Voxel?
 
-			var odata = s_cubeFaceInfo[(int)face].OcclusionVectors;
+			var exp_data = s_cubeFaceInfo[(int)face].ExposionVectors;
+			var occ_data = s_cubeFaceInfo[(int)face].OcclusionVectors;
 
 			o0 = o1 = o2 = o3 = 0;
 
-			bool b_edge2 = IsBlocker(p + odata[0]);
+			bool occ_edge2 = IsBlocker(p + occ_data[0]);
+			bool exp_edge2 = !IsBlocker(p + exp_data[0]);
 
 			for (int i = 0; i < 4; ++i)
 			{
-				bool b_edge1 = b_edge2;
-				bool b_corner = IsBlocker(p + odata[i * 2 + 1]);
-				b_edge2 = IsBlocker(p + odata[(i * 2 + 2) % 8]);
+				bool occ_edge1 = occ_edge2;
+				bool occ_corner = IsBlocker(p + occ_data[i * 2 + 1]);
+				occ_edge2 = IsBlocker(p + occ_data[(i * 2 + 2) % 8]);
+
+				bool exp_edge1 = exp_edge2;
+				bool exp_corner = !IsBlocker(p + exp_data[i * 2 + 1]);
+				exp_edge2 = !IsBlocker(p + exp_data[(i * 2 + 2) % 8]);
 
 				int occlusion;
 
-				if (b_edge1 && b_edge2)
+				if (occ_edge1 && occ_edge2)
 				{
-					occlusion = 3;
+					occlusion = -3;
 				}
 				else
 				{
 					occlusion = 0;
 
-					if (b_edge1)
+					if (occ_edge1)
+						occlusion--;
+					else if (exp_edge1)
 						occlusion++;
-					if (b_edge2)
+
+					if (occ_edge2)
+						occlusion--;
+					else if (exp_edge2)
 						occlusion++;
-					if (b_corner)
+
+					if (occ_corner)
+						occlusion--;
+					else if (exp_corner)
 						occlusion++;
 				}
 
@@ -859,7 +873,7 @@ namespace Dwarrowdelf.Client
 				.Select(v => v / 2)                                     // scale to [0,1]
 				.ToArray();
 
-			var occlusionVectors = new[] {
+			var exposionVectors = new[] {
 				up,
 				up + right,
 				right,
@@ -868,7 +882,9 @@ namespace Dwarrowdelf.Client
 				-up - right,
 				-right,
 				up - right,
-			}.Select(v => v + normal).ToArray();
+			}.ToArray();
+
+			var occlusionVectors = exposionVectors.Select(v => v + normal).ToArray();
 
 			var edgeVectors = new[]
 			{
@@ -882,7 +898,7 @@ namespace Dwarrowdelf.Client
 				-up + normal,
 			}.ToArray();
 
-			return new CubeFaceInfo(normal, vertices, occlusionVectors, edgeVectors);
+			return new CubeFaceInfo(normal, vertices, exposionVectors, occlusionVectors, edgeVectors);
 		}
 
 		/// <summary>
@@ -903,11 +919,12 @@ namespace Dwarrowdelf.Client
 
 		public class CubeFaceInfo
 		{
-			public CubeFaceInfo(IntVector3 normal, IntVector3[] vertices, IntVector3[] occlusionVectors,
-				IntVector3[] edgeVectors)
+			public CubeFaceInfo(IntVector3 normal, IntVector3[] vertices, IntVector3[] exposionVectors,
+				IntVector3[] occlusionVectors, IntVector3[] edgeVectors)
 			{
 				this.Normal = normal;
 				this.Vertices = vertices;
+				this.ExposionVectors = exposionVectors;
 				this.OcclusionVectors = occlusionVectors;
 				this.EdgeVectors = edgeVectors;
 			}
@@ -921,6 +938,11 @@ namespace Dwarrowdelf.Client
 			/// Face vertices (4) in [0,1] range
 			/// </summary>
 			public readonly IntVector3[] Vertices;
+
+			/// <summary>
+			/// Exposion help vectors (8). Vectors point to exposing neighbors in clockwise order, starting from top.
+			/// </summary>
+			public readonly IntVector3[] ExposionVectors;
 
 			/// <summary>
 			/// Occlusion help vectors (8). Vectors point to occluding neighbors in clockwise order, starting from top.

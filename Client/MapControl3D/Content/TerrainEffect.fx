@@ -7,7 +7,7 @@ struct VS_IN
 	uint4 pos1 : POSITION1;
 	uint4 pos2 : POSITION2;
 	uint4 pos3 : POSITION3;
-	uint4 occlusion : OCCLUSION;
+	int4 occlusion : OCCLUSION;
 	uint4 texPack : TEX;
 	uint4 colorPack : COLOR;
 	int4 edge : EDGE;
@@ -23,7 +23,7 @@ struct GS_IN
 	float3 posW1 : POSITIONW1;
 	float3 posW2 : POSITIONW2;
 	float3 posW3 : POSITIONW3;
-	nointerpolation uint4 occlusion : OCCLUSION;
+	nointerpolation int4 occlusion : OCCLUSION;
 	nointerpolation uint4 texPack : TEX;
 	nointerpolation uint4 colorPack : COLOR;
 	nointerpolation int4 edge : EDGE;
@@ -34,7 +34,7 @@ struct PS_IN
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
 	float2 tex : TEXCOORD0;
-	nointerpolation uint4 occlusion : OCCLUSION;
+	nointerpolation int4 occlusion : OCCLUSION;
 	nointerpolation uint4 texPack : TEX;
 	nointerpolation uint4 colorPack : COLOR;
 	nointerpolation int4 edge : EDGE;
@@ -232,14 +232,18 @@ float4 PSMain(PS_IN input) : SV_Target
 		litColor = ambient + diffuse + specular;
 	}
 
-	float occlusion = 1.0f;
-	const float occlusionStep = 0.2f;
+	float occlusion = 0;
 
 	if (!g_disableOcclusion)
 	{
-		float o1 = lerp(input.occlusion[0], input.occlusion[1], input.tex.x);
-		float o2 = lerp(input.occlusion[2], input.occlusion[3], input.tex.x);
-		occlusion = 1.0f - lerp(o1, o2, input.tex.y) * occlusionStep;
+		const float occlusionStep = 0.2f;
+
+		// occ [-1:1]
+		float4 occ = input.occlusion / 3.0f;
+
+		float o1 = lerp(occ[0], occ[1], input.tex.x);
+		float o2 = lerp(occ[2], occ[3], input.tex.x);
+		occlusion = lerp(o1, o2, input.tex.y) * occlusionStep;
 	}
 
 	float border = 1.0f;
@@ -315,21 +319,25 @@ float4 PSMain(PS_IN input) : SV_Target
 		edgecolor = float4(c, c, c, a);
 	}
 
-	color = color * litColor * occlusion * border;
+	color = color * litColor * border;
 
 	color = color * (1.0f - edgecolor.a) + edgecolor.rgb * edgecolor.a;
 
+	color += occlusion;
+
 	if (g_showOcclusionDebug)
 	{
-		uint4 occ = input.occlusion;
-
 		int quadrant = getQuadrant(input.tex);
 
-		float o = 1.0f - occ[quadrant] / 4.0f;
+		int4 occ = input.occlusion;
+
+		float o = (occ[quadrant] + 3) / 6.0f;
 
 		float cornerDist = distanceFromNearestCorner(input.tex);
 		if (cornerDist < 0.2f)
 			color = float3(o, o, o);
+		else if (cornerDist < 0.22f)
+			color = 1 - float3(o, o, o);
 	}
 
 	if (g_showEdgeDebug)
