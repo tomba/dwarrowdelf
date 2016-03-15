@@ -514,14 +514,6 @@ namespace Dwarrowdelf.Client
 
 			switch (td.ID)
 			{
-				case TileID.Undefined:
-					baseTexture.Symbol1 = SymbolID.Unknown;
-					baseTexture.Color1 = GameColor.LightGray;
-					return;
-
-				case TileID.Empty:
-					throw new Exception();
-
 				case TileID.NaturalWall:
 					var matInfo = Materials.GetMaterial(td.MaterialID);
 					var color = matInfo.Color;
