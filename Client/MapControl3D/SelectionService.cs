@@ -48,6 +48,7 @@ namespace Dwarrowdelf.Client
 						m_control.DragEnded -= OnDragEnded;
 						m_control.Dragging -= OnDragging;
 						m_control.DragAborted -= OnDragAborted;
+						m_control.MouseClicked -= OnMouseClicked;
 
 						m_game.CameraKeyHandler.KeyDown -= OnKeyDown;
 						m_game.CursorService.LocationChanged -= OnCursorMoved;
@@ -74,6 +75,7 @@ namespace Dwarrowdelf.Client
 						m_control.DragEnded += OnDragEnded;
 						m_control.Dragging += OnDragging;
 						m_control.DragAborted += OnDragAborted;
+						m_control.MouseClicked += OnMouseClicked;
 
 						m_game.CameraKeyHandler.KeyDown += OnKeyDown;
 						m_game.CursorService.LocationChanged += OnCursorMoved;
