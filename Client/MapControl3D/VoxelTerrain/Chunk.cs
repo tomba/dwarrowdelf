@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client
 
 		public static readonly IntSize3 ChunkSize = new IntSize3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
-		static readonly FaceTexture UndefinedFaceTexture = new FaceTexture() { Symbol1 = SymbolID.Unknown, Color1 = GameColor.LightGray, };
+		static readonly FaceTexture UndefinedFaceTexture = new FaceTexture() { Color0 = GameColor.Gray, };
 
 		public static bool UseBigUnknownChunk;
 
