@@ -10,7 +10,6 @@ struct VS_IN
 	int4 occlusion : OCCLUSION;
 	uint4 texPack : TEX;
 	uint4 colorPack : COLOR;
-	int4 edge : EDGE;
 };
 
 struct GS_IN
@@ -26,7 +25,6 @@ struct GS_IN
 	nointerpolation int4 occlusion : OCCLUSION;
 	nointerpolation uint4 texPack : TEX;
 	nointerpolation uint4 colorPack : COLOR;
-	nointerpolation int4 edge : EDGE;
 };
 
 struct PS_IN
@@ -37,7 +35,6 @@ struct PS_IN
 	nointerpolation int4 occlusion : OCCLUSION;
 	nointerpolation uint4 texPack : TEX;
 	nointerpolation uint4 colorPack : COLOR;
-	nointerpolation int4 edge : EDGE;
 };
 
 Buffer<float3> g_colorBuffer;		// GameColor -> RGB
@@ -48,9 +45,7 @@ bool g_disableLight;
 bool g_disableBorders;
 bool g_disableOcclusion;
 bool g_disableTexture;
-bool g_disableEdges;
 bool g_showOcclusionDebug;
-bool g_showEdgeDebug;
 
 float g_tunable1;
 float g_tunable2;
@@ -103,7 +98,6 @@ GS_IN VSMain(VS_IN input)
 	output.occlusion = input.occlusion;
 	output.texPack = input.texPack;
 	output.colorPack = input.colorPack;
-	output.edge = input.edge;
 
 	return output;
 }
@@ -123,7 +117,6 @@ void GSMain(point GS_IN inputs[1], inout TriangleStream<PS_IN> OutputStream)
 	output.colorPack = input.colorPack;
 
 	output.occlusion = input.occlusion;
-	output.edge = input.edge;
 
 	OutputStream.Append(output);
 
@@ -294,34 +287,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		}
 	}
 
-	float4 edgecolor = float4(0, 0, 0, 0);
-
-	if (!g_disableEdges)
-	{
-		float dist = distanceFromNearestEdge(input.tex);
-		float2 ddEdge = fwidth(input.tex);
-
-		float constWidth = min(ddEdge.x, ddEdge.y);
-
-		const float edgeWidth = 2.0f;
-		float edgeThreshold = constWidth * edgeWidth;
-
-		const float lineSmooth = 0.02f;
-		float a = 1.0f - (smoothstep(0, edgeThreshold + lineSmooth, dist) * 0.7f + 0.3f);
-
-		// edge is [-1, 1]
-		int edge = input.edge[getSector(input.tex)];
-
-		// if edge is 0, transparent
-		a *= abs(edge);
-
-		float c = 0.75f + edge * 0.25f;
-		edgecolor = float4(c, c, c, a);
-	}
-
 	color = color * litColor * border;
-
-	color = color * (1.0f - edgecolor.a) + edgecolor.rgb * edgecolor.a;
 
 	color += occlusion;
 
@@ -338,17 +304,6 @@ float4 PSMain(PS_IN input) : SV_Target
 			color = float3(o, o, o);
 		else if (cornerDist < 0.22f)
 			color = 1 - float3(o, o, o);
-	}
-
-	if (g_showEdgeDebug)
-	{
-		int sector = getSector(input.tex);
-
-		float o = (input.edge[sector] + 1) / 2.0f;
-
-		float dist = distanceFromNearestEdgeCenter(input.tex);
-		if (dist < 0.2f)
-			color = float3(o, o, o);
 	}
 
 	return float4(color, 1);

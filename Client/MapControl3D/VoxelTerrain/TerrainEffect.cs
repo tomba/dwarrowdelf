@@ -130,16 +130,6 @@ namespace Dwarrowdelf.Client
 			set { this.Parameters["g_showOcclusionDebug"].SetValue(value); }
 		}
 
-		public bool DisableEdges
-		{
-			set { this.Parameters["g_disableEdges"].SetValue(value); }
-		}
-
-		public bool EnableEdgeDebug
-		{
-			set { this.Parameters["g_showEdgeDebug"].SetValue(value); }
-		}
-
 		public float Tunable1
 		{
 			get
@@ -205,13 +195,10 @@ namespace Dwarrowdelf.Client
 		public Byte4 TexPack;
 		[VertexElement("COLOR", SharpDX.DXGI.Format.R8G8B8A8_UInt)]
 		public Byte4 ColorPack;
-		[VertexElement("EDGE", SharpDX.DXGI.Format.R8G8B8A8_SInt)]
-		public SByte4 Edges;
 
 		// vertices in order: top right, bottom right, bottom left, top left
 		public TerrainVertex(IntVector3 p0, IntVector3 p1, IntVector3 p2, IntVector3 p3,
-			int occ0, int occ1, int occ2, int occ3, FaceTexture tex, SByte4 edges,
-			byte sliceHack = 0)
+			int occ0, int occ1, int occ2, int occ3, FaceTexture tex, byte sliceHack = 0)
 		{
 			// last bytes of positions are unused
 			this.Position0 = new Byte4(p3.X, p3.Y, p3.Z, 0);
@@ -221,7 +208,6 @@ namespace Dwarrowdelf.Client
 			this.Occlusion = new SByte4(occ3, occ0, occ2, occ1);
 			this.TexPack = new Byte4((byte)0, (byte)tex.Symbol1, (byte)tex.Symbol2, sliceHack);
 			this.ColorPack = new Byte4((byte)tex.Color0, (byte)tex.Color1, (byte)tex.Color2, (byte)0);
-			this.Edges = edges;
 		}
 	}
 }

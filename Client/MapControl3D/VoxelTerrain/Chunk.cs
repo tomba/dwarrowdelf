@@ -442,8 +442,7 @@ namespace Dwarrowdelf.Client
 					IntVector3 v2 = vertices[2] * size + offset;
 					IntVector3 v3 = vertices[3] * size + offset;
 
-					var vd = new TerrainVertex(v0, v1, v2, v3, occlusion, occlusion, occlusion, occlusion, tex,
-						new SByte4());
+					var vd = new TerrainVertex(v0, v1, v2, v3, occlusion, occlusion, occlusion, occlusion, tex);
 					vertexList.Add(vd);
 				}
 			}
@@ -481,7 +480,7 @@ namespace Dwarrowdelf.Client
 								off[d0] = size[d0] - 1;
 
 							var vd = new TerrainVertex(v0 + off, v1 + off, v2 + off, v3 + off,
-								occlusion, occlusion, occlusion, occlusion, tex, new SByte4());
+								occlusion, occlusion, occlusion, occlusion, tex);
 							vertexList.Add(vd);
 						}
 				}
@@ -702,83 +701,14 @@ namespace Dwarrowdelf.Client
 						out occ0, out occ1, out occ2, out occ3);
 				}
 
-				SByte4 edges;
-				GetEdgeHighlightsForFace(p, (DirectionOrdinal)side, out edges);
-
 				var tex = side == (int)DirectionOrdinal.PositiveZ ? topTexture : baseTexture;
 				byte sliceHack = isSliceFace ? (byte)1 : (byte)0;
 
 				var vd = new TerrainVertex(v0, v1, v2, v3, occ0, occ1, occ2, occ3,
-					tex, edges, sliceHack);
+					tex, sliceHack);
 				vertexList.Add(vd);
 			}
 		}
-
-		void GetEdgeHighlightsForFace(IntVector3 p, DirectionOrdinal face, out SByte4 borders)
-		{
-			var odata = s_cubeFaceInfo[(int)face].EdgeVectors;
-
-			borders = new SByte4();
-
-			for (int i = 0; i < 4; ++i)
-			{
-				sbyte value;
-
-				if (NoEdgesTest(p + s_cubeFaceInfo[(int)face].Normal))
-				{
-					value = 0;
-				}
-				else
-				{
-					bool neighbor = IsBlocker2(p + odata[i]);
-					bool diagonal = IsBlocker2(p + odata[i + 4]);
-
-					if (diagonal)
-						value = -1; // dark
-					else if (!neighbor)
-						value = 1; // light
-					else
-						value = 0;
-				}
-
-				switch (i)
-				{
-					case 0:
-						borders.X = value;
-						break;
-					case 1:
-						borders.Y = value;
-						break;
-					case 2:
-						borders.Z = value;
-						break;
-					case 3:
-						borders.W = value;
-						break;
-				}
-			}
-		}
-
-		bool NoEdgesTest(IntVector3 p)
-		{
-			if (m_map.Size.Contains(p) == false)
-				return true;
-
-			var td = m_map.GetTileData(p);
-
-			return td.IsUndefined || !td.IsSeeThrough;
-		}
-
-		bool IsBlocker2(IntVector3 p)
-		{
-			if (m_map.Size.Contains(p) == false)
-				return false;
-
-			var td = m_map.GetTileData(p);
-
-			return !td.IsUndefined && td.IsSeeThrough == false;
-		}
-
 
 		bool IsBlocker(IntVector3 p)
 		{
@@ -886,19 +816,7 @@ namespace Dwarrowdelf.Client
 
 			var occlusionVectors = exposionVectors.Select(v => v + normal).ToArray();
 
-			var edgeVectors = new[]
-			{
-				-right,
-				up,
-				right,
-				-up,
-				-right + normal,
-				up + normal,
-				right + normal,
-				-up + normal,
-			}.ToArray();
-
-			return new CubeFaceInfo(normal, vertices, exposionVectors, occlusionVectors, edgeVectors);
+			return new CubeFaceInfo(normal, vertices, exposionVectors, occlusionVectors);
 		}
 
 		/// <summary>
@@ -920,13 +838,12 @@ namespace Dwarrowdelf.Client
 		public class CubeFaceInfo
 		{
 			public CubeFaceInfo(IntVector3 normal, IntVector3[] vertices, IntVector3[] exposionVectors,
-				IntVector3[] occlusionVectors, IntVector3[] edgeVectors)
+				IntVector3[] occlusionVectors)
 			{
 				this.Normal = normal;
 				this.Vertices = vertices;
 				this.ExposionVectors = exposionVectors;
 				this.OcclusionVectors = occlusionVectors;
-				this.EdgeVectors = edgeVectors;
 			}
 
 			/// <summary>
@@ -948,11 +865,6 @@ namespace Dwarrowdelf.Client
 			/// Occlusion help vectors (8). Vectors point to occluding neighbors in clockwise order, starting from top.
 			/// </summary>
 			public readonly IntVector3[] OcclusionVectors;
-
-			/// <summary>
-			/// Edge help vectors (4 + 4)
-			/// </summary>
-			public readonly IntVector3[] EdgeVectors;
 		}
 	}
 }
