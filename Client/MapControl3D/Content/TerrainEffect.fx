@@ -247,7 +247,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		float2 ddEdge = fwidth(input.tex);
 
 #ifdef SIMPLE_BORDER
-		border = smoothstep(0, 0.05f, dist) * 0.7f + 0.3f;
+		border = smoothstep(0, 0.05f, dist) * 0.2f + 0.8f;
 #else
 		float constWidth = min(ddEdge.x, ddEdge.y);
 
@@ -255,7 +255,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		float edgeThreshold = constWidth * edgeWidth;
 
 		const float lineSmooth = 0.02f;
-		border = smoothstep(0, edgeThreshold + lineSmooth, dist) * 0.7f + 0.3f;
+		border = smoothstep(0, edgeThreshold + lineSmooth, dist) * 0.2f + 0.8f;
 #endif
 
 		border = 1 - (1 - border) * fadeMult;
