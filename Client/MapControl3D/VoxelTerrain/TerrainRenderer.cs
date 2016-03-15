@@ -26,19 +26,9 @@ namespace Dwarrowdelf.Client
 		public int VerticesRendered { get { return m_chunkManager.VerticesRendered; } }
 		public int ChunkRecalcs { get { return m_chunkManager.ChunkRecalcs; } set { m_chunkManager.ChunkRecalcs = value; } }
 
-		DirectionalLight m_directionalLight;
-
 		public TerrainRenderer(MyGame game, Camera camera, ViewGridProvider viewGridProvider)
 			: base(game)
 		{
-			m_directionalLight = new DirectionalLight()
-			{
-				AmbientColor = new Vector3(0.4f),
-				DiffuseColor = new Vector3(0.6f),
-				SpecularColor = new Vector3(0.1f),
-				LightDirection = Vector3.Normalize(new Vector3(1, 2, -4)),
-			};
-
 			m_chunkManager = ToDispose(new ChunkManager(this, camera, viewGridProvider));
 
 			LoadContent();
@@ -57,16 +47,6 @@ namespace Dwarrowdelf.Client
 
 		public override void Update()
 		{
-			var tTime = (float)this.Game.Time.TotalTime.TotalSeconds;
-
-			if (IsRotationEnabled)
-			{
-				Matrix m = Matrix.Identity;
-				m *= Matrix.RotationX(tTime);
-				m *= Matrix.RotationY(tTime * 1.1f);
-				m *= Matrix.RotationZ(tTime * 0.7f);
-				m_directionalLight.LightDirection = Vector3.TransformNormal(Vector3.Normalize(new Vector3(1, 1, 1)), m);
-			}
 		}
 
 		public override void Draw(Camera camera)
@@ -81,8 +61,6 @@ namespace Dwarrowdelf.Client
 			{
 				m_effect.EyePos = camera.Position;
 				m_effect.ViewProjection = camera.View * camera.Projection;
-
-				m_effect.SetDirectionalLight(m_directionalLight);
 
 				var renderPass = m_effect.CurrentTechnique.Passes[0];
 				renderPass.Apply();

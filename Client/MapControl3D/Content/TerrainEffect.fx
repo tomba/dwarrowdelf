@@ -54,16 +54,7 @@ cbuffer PerFrame
 {
 	matrix g_viewProjMatrix;
 
-	float3 ambientColor;
-	float3 diffuseColor;
-	float3 specularColor;
-	float3 lightDirection;
-	float _pad0;
 	float3 g_eyePos;
-	float _pad1;
-	float _pad2;
-	float _pad3;
-	float _pad4;
 };
 
 cbuffer PerObjectBuffer
@@ -191,38 +182,25 @@ float getFadeMultiplier(float3 posW)
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float3 litColor = float3(1, 1, 1);
-
 	const float fadeMult = getFadeMultiplier(input.posW);
+
+	float3 lightColor = float3(1, 1, 1);
 
 	if (!g_disableLight)
 	{
-		float3 toEye = normalize(g_eyePos - input.posW);
-
-		// Invert the light direction for calculations.
-		float3 lightDir = -lightDirection;
-
-		float3 ambient, diffuse, specular;
-
-		ambient = ambientColor;
+		// very simple light model that gives full light on top faces, less for side, and even less for bottom
+		const float3 ambient = { 0.5, 0.5, 0.5 };
+		const float3 diffuse = { 0.5, 0.5, 0.5 };
+		const float3 lightDir = { 0, 0, 1 };
 
 		float3 normal = cross(ddy(input.posW.xyz), ddx(input.posW.xyz));
 		normal = -normalize(normal);
 
 		float lightIntensity = dot(normal, lightDir);
 
-		diffuse = specular = 0;
+		lightIntensity = (lightIntensity + 1) / 2;
 
-		if (lightIntensity > 0.0f)
-		{
-			diffuse = lightIntensity * diffuseColor;
-
-			float3 v = reflect(-lightDir, normal);
-			float specFactor = pow(max(dot(v, toEye), 0.0f), 64);
-			specular = specFactor * specularColor;
-		}
-
-		litColor = ambient + diffuse + specular;
+		lightColor = ambient + lightIntensity * diffuse;
 	}
 
 	float occlusion = 0;
@@ -287,7 +265,7 @@ float4 PSMain(PS_IN input) : SV_Target
 		}
 	}
 
-	color = color * litColor * border;
+	color = color * lightColor * border;
 
 	color += occlusion;
 

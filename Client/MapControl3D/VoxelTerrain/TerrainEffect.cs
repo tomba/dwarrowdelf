@@ -11,14 +11,6 @@ using Dwarrowdelf.Client;
 
 namespace Dwarrowdelf.Client
 {
-	class DirectionalLight
-	{
-		public Vector3 AmbientColor;
-		public Vector3 DiffuseColor;
-		public Vector3 SpecularColor;
-		public Vector3 LightDirection;
-	}
-
 	class TerrainEffect : Effect
 	{
 		EffectConstantBuffer m_perObConstBuf;
@@ -85,14 +77,6 @@ namespace Dwarrowdelf.Client
 				if (this.Parameters.Contains("blockTextures"))
 					this.Parameters["blockTextures"].SetResource(value);
 			}
-		}
-
-		public void SetDirectionalLight(DirectionalLight m_directionalLight)
-		{
-			this.Parameters["ambientColor"].SetValue(m_directionalLight.AmbientColor);
-			this.Parameters["diffuseColor"].SetValue(m_directionalLight.DiffuseColor);
-			this.Parameters["specularColor"].SetValue(m_directionalLight.SpecularColor);
-			this.Parameters["lightDirection"].SetValue(m_directionalLight.LightDirection);
 		}
 
 		public Matrix ViewProjection
