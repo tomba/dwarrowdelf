@@ -14,7 +14,7 @@ Dwarrowdelf is implemented using C#, WPF and SharpDX. Dwarrowdelf is currently W
 
 ## Screenshots
 
-![Screenshot](http://taika.org/~tomba/dwarrowdelf/ss1.png)
-![Screenshot](http://taika.org/~tomba/dwarrowdelf/ss2.png)
-![Screenshot](http://taika.org/~tomba/dwarrowdelf/ss3.png)
-![Screenshot](http://taika.org/~tomba/dwarrowdelf/ss4.png)
+![Screenshot](https://github.com/tomba/dwarrowdelf/blob/master/Content/ss1.png)
+![Screenshot](https://github.com/tomba/dwarrowdelf/blob/master/Content/ss2.png)
+![Screenshot](https://github.com/tomba/dwarrowdelf/blob/master/Content/ss3.png)
+![Screenshot](https://github.com/tomba/dwarrowdelf/blob/master/Content/ss4.png)
