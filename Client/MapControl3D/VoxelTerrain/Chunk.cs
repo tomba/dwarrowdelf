@@ -381,7 +381,7 @@ namespace Dwarrowdelf.Client
 
 			color = Color.ForestGreen;
 
-			sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), Color.LightGreen, (uint)symbol));
+			sceneryVertexList.Add(new SceneryVertex(pos.ToVector3(), color, (uint)symbol));
 		}
 
 		/// <summary>
