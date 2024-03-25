@@ -7,3 +7,5 @@ Client/Client/publish
 Client/Client/Content/TileSet.png
 Client/Client/Content/TileSet.dds
 packages
+.vs
+
