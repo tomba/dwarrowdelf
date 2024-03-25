@@ -29,8 +29,8 @@ namespace Dwarrowdelf.Client
 
 			if (Directory.Exists(args[1]) == false)
 			{
-				Console.WriteLine("Source dir {0} doesn't exist", args[1]);
-				return 1;
+				Directory.CreateDirectory(args[1]);
+                Console.WriteLine("Dest dir {0} doesn't exist, created", args[1]);
 			}
 
 			string srcPath = args[0];
