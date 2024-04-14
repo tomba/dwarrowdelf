@@ -1,106 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0C31C7C2-586F-4F67-8225-1C09E816695B}</ProjectGuid>
+    <TargetFramework>net462</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dwarrowdelf.Server</RootNamespace>
     <AssemblyName>Dwarrowdelf.Server.World</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BaseObject.cs" />
-    <Compile Include="Changes.cs" />
-    <Compile Include="Collections.cs" />
-    <Compile Include="ContainerObject.cs" />
-    <Compile Include="Environment\EnvTreeHandler.cs" />
-    <Compile Include="Environment\EnvWaterHandler.cs" />
-    <Compile Include="Environment\EnvWildlifeHandler.cs" />
-    <Compile Include="Environment\TileGridReaderWriter.cs" />
-    <Compile Include="IPlayer.cs" />
-    <Compile Include="Item\ItemProperties.cs" />
-    <Compile Include="Living\Actions\Sleep.cs" />
-    <Compile Include="Living\Actions\EquipItem.cs" />
-    <Compile Include="Living\Actions\UnequipItem.cs" />
-    <Compile Include="Living\Actions\Mine.cs" />
-    <Compile Include="Living\Actions\FellTree.cs" />
-    <Compile Include="Living\Actions\Construct.cs" />
-    <Compile Include="Living\Actions\Wait.cs" />
-    <Compile Include="Living\Actions\BuildItem.cs" />
-    <Compile Include="Living\Actions\Attack.cs" />
-    <Compile Include="Living\Actions\GetItem.cs" />
-    <Compile Include="Living\Actions\DropItem.cs" />
-    <Compile Include="Living\Actions\CarryItem.cs" />
-    <Compile Include="Living\Actions\Consume.cs" />
-    <Compile Include="Living\Actions\InstallItem.cs" />
-    <Compile Include="Living\Actions\Move.cs" />
-    <Compile Include="Living\Actions\Haul.cs" />
-    <Compile Include="Living\LivingActions.cs" />
-    <Compile Include="ConcreteObject.cs" />
-    <Compile Include="Living\LivingProperties.cs" />
-    <Compile Include="ProcessableList.cs" />
-    <Compile Include="Item\ItemObject.cs" />
-    <Compile Include="Living\LivingObject.cs" />
-    <Compile Include="Environment\EnvironmentObject.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MovableObject.cs" />
-    <Compile Include="World\WorldObjects.cs" />
-    <Compile Include="World\World.cs" />
-    <Compile Include="World\WorldIronPython.cs" />
-    <Compile Include="World\WorldLivings.cs" />
-    <Compile Include="World\WorldLogger.cs" />
-    <Compile Include="World\WorldTaskHelpers.cs" />
-    <Compile Include="World\WorldTick.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj">
-      <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="World\World.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ObjectHierarchy.cd" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
