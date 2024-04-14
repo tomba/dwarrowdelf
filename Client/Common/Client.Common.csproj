@@ -1,87 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3A421FE6-7DEE-4782-9D89-B6D2EB2F24FB}</ProjectGuid>
+    <TargetFramework>net462</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dwarrowdelf.Client</RootNamespace>
     <AssemblyName>Dwarrowdelf.Client.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
+    <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\Base\Client.Base.csproj" />
+    <ProjectReference Include="..\Engine\Client.Engine.csproj" />
+    <ProjectReference Include="..\Win32\Win32.csproj" />
+    <ProjectReference Include="..\World\Client.World.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameDataBase.cs" />
-    <Compile Include="KeyHelpers.cs" />
-    <Compile Include="ListBoxExtenders.cs" />
-    <Compile Include="ListBoxHelper.cs" />
-    <Compile Include="MapSelection.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Selectables.cs" />
-    <Compile Include="TileAreaView.cs" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj">
-      <Project>{37d55ac1-bdae-4c0c-8856-8867fe772b2b}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Base\Client.Base.csproj">
-      <Project>{1794f5b1-762e-40d2-a314-040487deefe2}</Project>
-      <Name>Client.Base</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Engine\Client.Engine.csproj">
-      <Project>{a7884edf-fd74-45d6-9953-e1d76dc0a45a}</Project>
-      <Name>Client.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Win32\Win32.csproj">
-      <Project>{20715eeb-6df6-4a43-bf10-d7d0d4a39017}</Project>
-      <Name>Win32</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\World\Client.World.csproj">
-      <Project>{1f2d0cae-43a7-49cd-8a03-69a67c1a68fd}</Project>
-      <Name>Client.World</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

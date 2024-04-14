@@ -1,20 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1A669EF4-303D-40EE-8781-FE0C57A5DD49}</ProjectGuid>
+    <TargetFramework>net462</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dwarrowdelf.Client</RootNamespace>
     <AssemblyName>Dwarrowdelf.Client</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -31,25 +20,12 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\ApplicationIcon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Dwarrowdelf.Client.Program</StartupObject>
@@ -58,411 +34,38 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="ClientConfig.cs" />
-    <Compile Include="CommanPromptHandler.cs" />
-    <Compile Include="KeyboardHandler.cs" />
-    <Compile Include="UI\Converters\CoordinateValueConverter.cs" />
-    <Compile Include="UI\Converters\EnumToBooleanConverter.cs" />
-    <Compile Include="UI\FpsGraphControl.cs" />
-    <Compile Include="UI\MainWindow\Map3DToolBar.xaml.cs">
-      <DependentUpon>Map3DToolBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\StatWindow.xaml.cs">
-      <DependentUpon>StatWindow.xaml</DependentUpon>
-    </Compile>
-    <None Include="Content\TileSet.png">
+    <None Update="Content\TileSet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\TileSet.dds">
+    <None Update="Content\TileSet.dds">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
     <None Include="TileSet\TileSet.xaml" />
     <None Include="TileSet\Vectors.xaml" />
-    <None Include="TileSet\Vectors.design" />
-    <None Include="TileSet\Bitmaps.png" />
-    <None Include="TileSet\Bitmaps.pdn" />
-    <Page Include="UI\BaseObjectPropertiesControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\BuildingInfoControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\BuildingEditControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\BuildOrderEditControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ConcreteObjectPropertiesControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainWindow\FocusedObjectStats.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainWindow\MainWindowMenuBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainWindow\Map3DToolBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\TestControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\TreeViewTemplateDictionary.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\ItemObjectPropertiesControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ListItemInfoTemplateDictionary.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\LivingObjectPropertiesControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainWindow\MainWindowToolBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MovableObjectPropertiesControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\StockpileEditControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\StockpileInfoControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\ObjectInfoControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\ConstructDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\GCDebugWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\ItemSelectorDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\FocusDebugWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\InstallItemDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\LaborManagerDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\LivingControlWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\NetStatWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\ObjectEditDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\ConsoleDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\CreateLivingDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\Windows\CreateItemDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainWindow\MultiTileInfoControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\JobViewDictionary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainWindow\MainWindowStatusBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\SetTerrainDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\Windows\LogOnDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\LivingInfoControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainWindow\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="DebugScriptMessages.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="TileGraphics.cs" />
-    <Compile Include="UI\ClientToolMode.cs" />
-    <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="UI\MainWindow\FocusedObjectStats.xaml.cs">
-      <DependentUpon>FocusedObjectStats.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainWindow\MainWindowMenuBar.xaml.cs">
-      <DependentUpon>MainWindowMenuBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Converters\UIElementToDescConverter.cs" />
-    <Compile Include="UI\BaseObjectPropertiesControl.xaml.cs">
-      <DependentUpon>BaseObjectPropertiesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\BuildOrderEditControl.xaml.cs">
-      <DependentUpon>BuildOrderEditControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ConcreteObjectPropertiesControl.xaml.cs">
-      <DependentUpon>ConcreteObjectPropertiesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Converters\AssignmentToStringConverter.cs" />
-    <Compile Include="UI\ListItemInfoTemplateDictionary.cs">
-      <DependentUpon>ListItemInfoTemplateDictionary.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\TestControl.xaml.cs">
-      <DependentUpon>TestControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\TreeViewTemplateDictionary.xaml.cs">
-      <DependentUpon>TreeViewTemplateDictionary.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Converters\ObjectIDConverter.cs" />
-    <Compile Include="UI\ItemObjectPropertiesControl.xaml.cs">
-      <DependentUpon>ItemObjectPropertiesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Converters\DrawingConverter.cs" />
-    <Compile Include="UI\BuildingEditControl.xaml.cs">
-      <DependentUpon>BuildingEditControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Converters\CapitalizeConverter.cs" />
-    <Compile Include="UI\LivingObjectPropertiesControl.xaml.cs">
-      <DependentUpon>LivingObjectPropertiesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainWindow\MainWindowToolBar.xaml.cs">
-      <DependentUpon>MainWindowToolBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MovableObjectPropertiesControl.xaml.cs">
-      <DependentUpon>MovableObjectPropertiesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\StockpileEditControl.xaml.cs">
-      <DependentUpon>StockpileEditControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\StockpileInfoControl.xaml.cs">
-      <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainWindow\MultiTileInfoControl.xaml.cs">
-      <DependentUpon>MultiTileInfoControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainWindow\MainWindowStatusBar.xaml.cs">
-      <DependentUpon>MainWindowStatusBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainWindow\MainWindowCommandHandler.cs" />
-    <Compile Include="UI\BuildingInfoControl.xaml.cs">
-      <DependentUpon>BuildingInfoControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ObjectInfoControl.xaml.cs">
-      <DependentUpon>ObjectInfoControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\ConstructDialog.xaml.cs">
-      <DependentUpon>ConstructDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\GCDebugWindow.xaml.cs">
-      <DependentUpon>GCDebugWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\ItemSelectorDialog.xaml.cs">
-      <DependentUpon>ItemSelectorDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\FocusDebugWindow.xaml.cs">
-      <DependentUpon>FocusDebugWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\InstallItemDialog.xaml.cs">
-      <DependentUpon>InstallItemDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\LaborManagerDialog.xaml.cs">
-      <DependentUpon>LaborManagerDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\LivingControlWindow.xaml.cs">
-      <DependentUpon>LivingControlWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\NetStatWindow.xaml.cs">
-      <DependentUpon>NetStatWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\ObjectEditDialog.xaml.cs">
-      <DependentUpon>ObjectEditDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\ConsoleDialog.xaml.cs">
-      <DependentUpon>ConsoleDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ClientCommands.cs" />
-    <Compile Include="UI\Windows\CreateLivingDialog.xaml.cs">
-      <DependentUpon>CreateLivingDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\CreateItemDialog.xaml.cs">
-      <DependentUpon>CreateItemDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\SetTerrainDialog.xaml.cs">
-      <DependentUpon>SetTerrainDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\LogOnDialog.xaml.cs">
-      <DependentUpon>LogOnDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\HistoryTextBox.cs" />
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UI\LivingInfoControl.xaml.cs">
-      <DependentUpon>LivingInfoControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainWindow\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="UI\ItemInfoControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\StatWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameData.cs" />
-    <Compile Include="UI\ItemInfoControl.xaml.cs">
-      <DependentUpon>ItemInfoControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Resource Include="Images\splash.png" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="Dwarrowdelf.Server.exe.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj">
-      <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Server\Server\Server.csproj">
-      <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
-      <Name>Server</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common\Client.Common.csproj">
-      <Project>{3a421fe6-7dee-4782-9d89-b6d2eb2f24fb}</Project>
-      <Name>Client.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Engine\Client.Engine.csproj">
-      <Project>{a7884edf-fd74-45d6-9953-e1d76dc0a45a}</Project>
-      <Name>Client.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapControl3D\MapControl3D.csproj">
-      <Project>{4124c0fb-3646-4bc2-938a-98ad05c1e6ba}</Project>
-      <Name>MapControl3D</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Win32\Win32.csproj">
-      <Project>{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}</Project>
-      <Name>Win32</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Base\Client.Base.csproj">
-      <Project>{1794F5B1-762E-40D2-A314-040487DEEFE2}</Project>
-      <Name>Client.Base</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\World\Client.World.csproj">
-      <Project>{1f2d0cae-43a7-49cd-8a03-69a67c1a68fd}</Project>
-      <Name>Client.World</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\..\Server\Server\Server.csproj" />
+    <ProjectReference Include="..\Common\Client.Common.csproj" />
+    <ProjectReference Include="..\Engine\Client.Engine.csproj" />
+    <ProjectReference Include="..\MapControl3D\MapControl3D.csproj" />
+    <ProjectReference Include="..\Win32\Win32.csproj" />
+    <ProjectReference Include="..\Base\Client.Base.csproj" />
+    <ProjectReference Include="..\World\Client.World.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\eye.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ApplicationIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\MainWindow.png" />
@@ -489,19 +92,17 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-			 Other similar extension points exist, see Microsoft.Common.targets.
-	<Target Name="BeforeBuild">
-	</Target>
-	<Target Name="AfterBuild">
-	</Target>
-	-->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="TileSet\TileSet.xaml" />
+    <Page Remove="TileSet\Vectors.xaml" />
+  </ItemGroup>
+  <PropertyGroup />
   <Target AfterTargets="BeforeBuild" Name="TileSetGen" Inputs="TileSet/TileSet.xaml;TileSet/Bitmaps.png;TileSet/Vectors.xaml" Outputs="Content/TileSet.png;Content/TileSet.dds">
     <PropertyGroup>
       <ToolPath>$(SolutionDir)/Client/TileSetGen/bin/$(Configuration)</ToolPath>
