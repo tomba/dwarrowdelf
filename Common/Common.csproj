@@ -230,7 +230,7 @@
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="SharpNoise">
-      <Version>0.10.0</Version>
+      <Version>0.12.1.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
